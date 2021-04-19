@@ -1,0 +1,41 @@
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'jacoco'
+    id 'maven-publish'
+}
+
+group 'com.alexdlaird'
+version '1.0.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    group = 'Reporting'
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.destination "${buildDir}/reports/coverage"
+    }
+}
+
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir = file('out')
+        testOutputDir = file('out-test')
+    }
+}
