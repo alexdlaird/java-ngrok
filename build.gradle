@@ -34,3 +34,11 @@ jacocoTestReport {
         xml.destination = file("build/reports/jacoco/report.xml")
     }
 }
+
+publishing {
+    publications {
+        myLibrary(MavenPublication) {
+            from components.java
+        }
+    }
+}
