@@ -20,7 +20,7 @@ jobs:
         include:
           - java-version: 8
             os: ubuntu-latest
-          - java-version: 16
+          - java-version: 15
             os: ubuntu-latest
 
     runs-on: ${{ matrix.os }}

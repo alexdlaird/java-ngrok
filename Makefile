@@ -1,22 +1,27 @@
 .PHONY: all build install clean test local upload
 
 SHELL := /usr/bin/env bash
+ifeq ($(OS),Windows_NT)
+	GRADLE_BIN := gradlew.bat
+else
+	GRADLE_BIN := ./gradlew
+endif
 
 all: build
 
 install: local
 
 build:
-	./gradlew build
+	$(GRADLE_BIN) build
 
 clean:
-	./gradlew clean
+	$(GRADLE_BIN) clean
 
 test:
-	./gradlew test
+	$(GRADLE_BIN) test
 
 local:
-	./gradlew publishToMavenLocal
+	$(GRADLE_BIN) publishToMavenLocal
 
 upload:
-	./gradlew publish
+	$(GRADLE_BIN) publish
