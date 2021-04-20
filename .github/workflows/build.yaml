@@ -40,4 +40,4 @@ jobs:
         if: matrix.os == 'ubuntu-latest' && matrix.java-version == '11'
         uses: codecov/codecov-action@v1
         with:
-          file: ./target/site/jacoco/jacoco.xml
+          file: ./build/reports/jacoco/report.xml

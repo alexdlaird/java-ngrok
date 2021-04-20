@@ -23,19 +23,10 @@ test {
 }
 
 jacocoTestReport {
-    dependsOn test
-    group = 'Reporting'
     reports {
+        html.enabled true
         xml.enabled true
         csv.enabled false
-        html.destination "${buildDir}/reports/coverage"
-    }
-}
-
-idea {
-    module {
-        inheritOutputDirs = false
-        outputDir = file('out')
-        testOutputDir = file('out-test')
+        xml.destination = file("build/reports/jacoco/report.xml")
     }
 }
