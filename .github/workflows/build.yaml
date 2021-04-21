@@ -30,8 +30,8 @@ jobs:
       - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v2
         with:
-          java-version: '${{ matrix.java-version }}'
-          distribution: 'adopt'
+          java-version: ${{ matrix.java-version }}
+          distribution: adopt
       - name: Install dependencies
         run: make install
       - name: Run tests

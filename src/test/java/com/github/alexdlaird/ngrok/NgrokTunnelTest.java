@@ -1,4 +1,4 @@
-package com.alexdlaird.ngrok;
+package com.github.alexdlaird.ngrok;
 
 import static org.junit.jupiter.api.Assertions.*;
 

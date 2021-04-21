@@ -1,4 +1,4 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.alexdlaird/java-ngrok/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.alexdlaird/java-ngrok/)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/)
 [![CI/CD](https://github.com/alexdlaird/java-ngrok/workflows/CI/CD/badge.svg)](https://github.com/alexdlaird/java-ngrok/actions?query=workflow%3ACI%2FCD)
 [![Codecov](https://codecov.io/gh/alexdlaird/java-ngrok/branch/main/graph/badge.svg)](https://codecov.io/gh/alexdlaird/java-ngrok)
 ![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)
@@ -15,9 +15,9 @@ your own machine, and more, and its made even more powerful with native Java int
 
 ## Installation
 
-`java-ngrok` is available on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.alexdlaird/java-ngrok/).
+`java-ngrok` is available on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/).
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.alexdlaird/java-ngrok/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.alexdlaird/java-ngrok/)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/)
 
 ## Basic Usage
 

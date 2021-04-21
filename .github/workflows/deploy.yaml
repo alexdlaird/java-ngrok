@@ -1,0 +1,40 @@
+name: "CI/CD"
+
+on:
+  release:
+    types: [ created ]
+
+jobs:
+  deploy:
+    name: Deploy
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 15
+        uses: actions/setup-java@v2
+        with:
+          java-version: 15
+          distribution: adopt
+      - name: Install dependencies
+        run:
+          make install
+      - name: Get version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+      - name: Validate version
+        run:
+          make validate-release VERSION=${{ steps.get_version.outputs.VERSION }}
+      - name: Run tests
+        run:
+          make test
+      - name: Build
+        run: |
+          make docs
+          make local
+      - name: Publish
+        env:
+          GPG_SECRET: ${{ secrets.GPG_SECRET }}
+        run:
+          make upload
