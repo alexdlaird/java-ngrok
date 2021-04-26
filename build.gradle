@@ -54,7 +54,7 @@ publishing {
                 }
             }
             pom {
-                name = "java-ngrok"
+                name = Project.getName()
                 description = "A Java wrapper for ngrok"
                 url = "http://github.com/alexdlaird/java-ngrok"
                 licenses {
