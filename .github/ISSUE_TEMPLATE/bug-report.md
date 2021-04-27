@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-While we'd love to be able to support every person on their projects, that would simply be infeasible. Luckily, that's what the helpful developer community over at Stack Overflow is for! Please [create a question there with the "java-ngrok" tag](https://stackoverflow.com/questions/ask?tags=python+java-ngrok+ngrok) if what you're looking for is a programming question or you need help with an integration. You can refer to [`ngrok`'s documentation](https://ngrok.com/docs) to help you write the best possible question.
+While we'd love to be able to support every person on their projects, that would simply be infeasible. Luckily, that's what the helpful developer community over at Stack Overflow is for! Please [create a question there with the "java-ngrok" tag](https://stackoverflow.com/questions/ask?tags=python+java-ngrok+ngrok) if what you're looking for is a programming question or you need help with an integration. You can refer to [`java-ngrok's` own documentation](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok) to help you write the best possible question.
 
 **Describe the Bug**
 A clear and concise description of what the bug is, including exceptions thrown.

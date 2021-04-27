@@ -23,9 +23,15 @@ your own machine, and more, and its made even more powerful with native Java int
 
 TBD
 
+For details on how to fully leverage `ngrok` from the command line, see [ngrok's official documentation](https://ngrok.com/docs).
+
+## Documentation
+
+For more advanced usage, `java-ngrok`'s official documentation is available at [https://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok).
+
 ## Contributing
 
-If you would like to get involved, be sure to review the [Contribution Guide](https://github.com/alexdlaird/java-ngrok/blob/main/CONTRIBUTING.rst).
+If you would like to get involved, be sure to review the [Contribution Guide](https://github.com/alexdlaird/java-ngrok/blob/main/CONTRIBUTING.md).
 
 Want to contribute financially? If you've found `java-ngrok` useful, [a donation](https://www.paypal.me/alexdlaird) would
 also be greatly appreciated!

@@ -24,7 +24,7 @@
 package com.github.alexdlaird.ngrok;
 
 /**
- * 
+ * A client for interacting with  <a href="https://ngrok.com/docs">ngrok</a>, its binary, and its APIs.
  */
-public class NgrokTunnel {
+public class NgrokClient {
 }
