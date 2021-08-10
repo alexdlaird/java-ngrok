@@ -6,7 +6,7 @@
 
 # java-ngrok - a Java wrapper for ngrok
 
-`java-ngrok` is a Java wrapper for `ngrok` that manages its own binary making `ngrok` available via a
+`java-ngrok` is a Java wrapper for `ngrok` that manages its own binary, making `ngrok` available via a
 convenient Java API.
 
 [ngrok](https://ngrok.com) is a reverse proxy tool that opens secure tunnels from public URLs to localhost, perfect
@@ -19,6 +19,9 @@ your own machine, and more, and its made even more powerful with native Java int
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/)
 
+If we want `ngrok` to be available from the command line, [pyngrok](https://github.com/alexdlaird/pyngrok) can be
+installed using `pip` to manage that for us.
+
 ## Basic Usage
 
 TBD
@@ -27,7 +30,7 @@ For details on how to fully leverage `ngrok` from the command line, see [ngrok's
 
 ## Documentation
 
-For more advanced usage, `java-ngrok`'s official documentation is available at [https://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok).
+For more advanced usage, `java-ngrok`'s official documentation is available at [htts://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok).
 
 ## Contributing
 

@@ -24,7 +24,7 @@
 package com.github.alexdlaird.ngrok.conf;
 
 /**
- * An object for managing <code>java-ngroks</code>'s configuration to interact the <code>ngrok</code> binary.
+ * An object for managing <code>java-ngrok</code>'s configuration to interact the <code>ngrok</code> binary.
  */
 public class JavaNgrokConfig {
 }

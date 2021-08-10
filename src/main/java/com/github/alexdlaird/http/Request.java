@@ -21,10 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.alexdlaird.ngrok.process;
+package com.github.alexdlaird.http;
 
-/**
- * An object for interacting with the <code>ngrok</code> process.
- */
-public class NgrokProcess {
+public interface Request {
 }

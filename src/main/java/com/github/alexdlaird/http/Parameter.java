@@ -21,10 +21,38 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.alexdlaird.ngrok.component.rest;
+package com.github.alexdlaird.http;
 
 /**
- * A simple REST client for executing HTTP requests.
+ * A parameter for the {@link HttpClient}.
  */
-public interface RestClient {
+public class Parameter {
+    /**
+     * Name of the field.
+     */
+    private final String name;
+
+    /**
+     * Value of the field.
+     */
+    private final String value;
+
+    /**
+     * Construct a parameter.
+     *
+     * @param name  Name of the field.
+     * @param value Value of the field.
+     */
+    public Parameter(final String name, final String value) {
+        this.name = name;
+        this.value = value;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

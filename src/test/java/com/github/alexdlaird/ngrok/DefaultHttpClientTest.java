@@ -21,10 +21,15 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.alexdlaird.ngrok.process;
+package com.github.alexdlaird.ngrok;
 
-/**
- * An object for interacting with ``ngrok` tunnels.
- */
-public class NgrokTunnel {
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class DefaultHttpClientTest {
+    @Test
+    public void myTest() {
+        assertEquals(1, 1);
+    }
 }

@@ -21,10 +21,52 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.alexdlaird.ngrok.process;
+package com.github.alexdlaird.http;
+
+import java.util.List;
+import java.util.Map;
 
 /**
- * An object for interacting with parsed <code>ngrok</code> logs.
+ * A response from the {@link HttpClient}.
  */
-public class NgrokLog {
+public class Response {
+    /**
+     * Response code.
+     */
+    private final int statusCode;
+
+    /**
+     * Body of the response.
+     */
+    private final String body;
+
+    /**
+     * Headers from the response.
+     */
+    private final Map<String, List<String>> headerFields;
+
+    /**
+     * Construct a response.
+     *
+     * @param statusCode   The response code.
+     * @param body         The body of the response.
+     * @param headerFields Header fields in the response.
+     */
+    public Response(final int statusCode, final String body, final Map<String, List<String>> headerFields) {
+        this.statusCode = statusCode;
+        this.body = body;
+        this.headerFields = headerFields;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public Map<String, List<String>> getHeaderFields() {
+        return headerFields;
+    }
 }
