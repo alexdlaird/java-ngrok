@@ -34,8 +34,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-// TODO: this entire class is a POC placeholder for simple testing while the API is built out
-
 public class NgrokProcess {
 
     final ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -43,6 +41,8 @@ public class NgrokProcess {
     private Process proc;
 
     private Future<List<String>> future;
+
+    // TODO: this entire class is a POC placeholder for simple testing while the API is built out
 
     public void connect() throws IOException {
         final ProcessBuilder processBuilder = new ProcessBuilder();
