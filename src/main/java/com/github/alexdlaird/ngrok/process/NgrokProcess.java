@@ -61,7 +61,9 @@ public class NgrokProcess {
 
     public void disconnect() throws InterruptedException {
         future.cancel(true);
-        proc.destroyForcibly().waitFor();
+        proc.descendants().forEach(ProcessHandle::destroy);
+        proc.destroy();
+        Thread.sleep(2000);
     }
 
     private static class ProcessTask implements Callable<List<String>> {
