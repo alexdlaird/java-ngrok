@@ -21,7 +21,28 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.alexdlaird.http;
+package com.github.alexdlaird.ngrok;
 
-public interface Request {
+/**
+ * Root exception for {@link NgrokClient} interactions.
+ */
+public abstract class NgrokException extends RuntimeException {
+    /**
+     * An exception with a message.
+     *
+     * @param message The message describing the exception.
+     */
+    public NgrokException(final String message) {
+        super(message);
+    }
+
+    /**
+     * An exception with a message and a root cause.
+     *
+     * @param message The message describing the exception.
+     * @param cause   The initial cause of the exception.
+     */
+    public NgrokException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

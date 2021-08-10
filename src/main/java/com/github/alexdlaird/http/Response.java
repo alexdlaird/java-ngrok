@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * A response from the {@link HttpClient}.
  */
-public class Response {
+public class Response<T> {
     /**
      * Response code.
      */
@@ -38,7 +38,12 @@ public class Response {
     /**
      * Body of the response.
      */
-    private final String body;
+    private final T body;
+
+    /**
+     * Unparsed body of the response.
+     */
+    private final String bodyRaw;
 
     /**
      * Headers from the response.
@@ -50,11 +55,13 @@ public class Response {
      *
      * @param statusCode   The response code.
      * @param body         The body of the response.
+     * @param bodyRaw      The unparsed body of the response.
      * @param headerFields Header fields in the response.
      */
-    public Response(final int statusCode, final String body, final Map<String, List<String>> headerFields) {
+    public Response(final int statusCode, final T body, final String bodyRaw, final Map<String, List<String>> headerFields) {
         this.statusCode = statusCode;
         this.body = body;
+        this.bodyRaw = bodyRaw;
         this.headerFields = headerFields;
     }
 
@@ -62,7 +69,7 @@ public class Response {
         return statusCode;
     }
 
-    public String getBody() {
+    public T getBody() {
         return body;
     }
 

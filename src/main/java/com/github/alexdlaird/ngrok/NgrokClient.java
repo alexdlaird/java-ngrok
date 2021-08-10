@@ -27,17 +27,13 @@ package com.github.alexdlaird.ngrok;
  * A client for interacting with  <a href="https://ngrok.com/docs">ngrok</a>, its binary, and its APIs.
  */
 public class NgrokClient {
-    private final String someVar;
 
-    private NgrokClient(NgrokClientBuilder builder) {
-        this.someVar = builder.someVar;
+    private NgrokClient(final Builder builder) {
     }
 
-    public static class NgrokClientBuilder {
-        private final String someVar;
+    public static class Builder {
 
-        public NgrokClientBuilder(String someVar) {
-            this.someVar = someVar;
+        public Builder() {
         }
 
         public NgrokClient build() {

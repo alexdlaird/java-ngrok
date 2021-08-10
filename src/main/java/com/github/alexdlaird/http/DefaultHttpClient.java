@@ -24,7 +24,10 @@
 package com.github.alexdlaird.http;
 
 import com.github.alexdlaird.StringUtils;
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +42,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.github.alexdlaird.StringUtils.isBlank;
+
 /**
  * Implementation of a simple client for executing HTTP requests.
  */
@@ -52,7 +57,9 @@ public class DefaultHttpClient implements HttpClient {
     /**
      * Default serializer.
      */
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder()
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .create();
 
     /**
      * Base URL for the API.
@@ -69,57 +76,61 @@ public class DefaultHttpClient implements HttpClient {
      */
     private final String contentType;
 
-    private DefaultHttpClient(final DefaultHttpClientBuilder builder) {
+    private DefaultHttpClient(final Builder builder) {
         this.baseUrl = builder.baseUrl;
         this.encoding = builder.encoding;
         this.contentType = builder.contentType;
     }
 
     @Override
-    public Response get(final String url,
-                        final List<Parameter> parameters,
-                        final Map<String, String> additionalHeaders) {
+    public <B> Response<B> get(final String uri,
+                               final List<Parameter> parameters,
+                               final Map<String, String> additionalHeaders,
+                               final Class<B> clazz) {
         try {
-            return execute(urlWithParameters(baseUrl + url, parameters), null, "GET",
-                    additionalHeaders);
+            return execute(urlWithParameters(baseUrl + uri, parameters), null, "GET",
+                    additionalHeaders, clazz);
         } catch (Exception ex) {
             throw new HttpClientException("Rest client error", ex);
         }
     }
 
     @Override
-    public Response post(final String url,
-                         final Request request,
-                         final List<Parameter> parameters,
-                         final Map<String, String> additionalHeaders) {
+    public <R, B> Response<B> post(final String uri,
+                                   final R request,
+                                   final List<Parameter> parameters,
+                                   final Map<String, String> additionalHeaders,
+                                   final Class<B> clazz) {
         try {
-            return execute(urlWithParameters(baseUrl + url, parameters), convertRequestToJson(request), "POST",
-                    additionalHeaders);
+            return execute(urlWithParameters(baseUrl + uri, parameters), convertRequestToString(request), "POST",
+                    additionalHeaders, clazz);
         } catch (Exception ex) {
             throw new HttpClientException("Rest client error", ex);
         }
     }
 
     @Override
-    public Response put(final String url,
-                        final Request request,
-                        final List<Parameter> parameters,
-                        final Map<String, String> additionalHeaders) {
+    public <R, B> Response<B> put(final String uri,
+                                  final R request,
+                                  final List<Parameter> parameters,
+                                  final Map<String, String> additionalHeaders,
+                                  final Class<B> clazz) {
         try {
-            return execute(urlWithParameters(baseUrl + url, parameters), convertRequestToJson(request), "PUT",
-                    additionalHeaders);
+            return execute(urlWithParameters(baseUrl + uri, parameters), convertRequestToString(request), "PUT",
+                    additionalHeaders, clazz);
         } catch (Exception ex) {
             throw new HttpClientException("Rest client error", ex);
         }
     }
 
     @Override
-    public Response delete(final String url,
-                           final List<Parameter> parameters,
-                           final Map<String, String> additionalHeaders) {
+    public <B> Response<B> delete(final String uri,
+                                  final List<Parameter> parameters,
+                                  final Map<String, String> additionalHeaders,
+                                  final Class<B> clazz) {
         try {
-            return execute(urlWithParameters(baseUrl + url, parameters), null, "DELETE",
-                    additionalHeaders);
+            return execute(urlWithParameters(baseUrl + uri, parameters), null, "DELETE",
+                    additionalHeaders, clazz);
         } catch (Exception ex) {
             throw new HttpClientException("Rest client error", ex);
         }
@@ -146,9 +157,21 @@ public class DefaultHttpClient implements HttpClient {
         return (HttpURLConnection) new URL(url).openConnection();
     }
 
-    private String convertRequestToJson(final Request request) {
+    private <T> String convertRequestToString(final T request) {
         if (request != null) {
             return gson.toJson(request);
+        } else {
+            return null;
+        }
+    }
+
+    private <T> T convertResponseFromString(final String response, final Class<T> clazz) {
+        if (!isBlank(response)) {
+            try {
+                return gson.fromJson(response, clazz);
+            } catch (JsonSyntaxException ex) {
+                return null;
+            }
         } else {
             return null;
         }
@@ -180,10 +203,11 @@ public class DefaultHttpClient implements HttpClient {
         return stringBuilder.toString();
     }
 
-    private Response execute(final String url,
-                             final String body,
-                             final String method,
-                             final Map<String, String> additionalHeaders) {
+    private <B> Response<B> execute(final String url,
+                                    final String body,
+                                    final String method,
+                                    final Map<String, String> additionalHeaders,
+                                    final Class<B> clazz) {
         HttpURLConnection httpUrlConnection = null;
         OutputStream outputStream = null;
         InputStream inputStream = null;
@@ -209,8 +233,11 @@ public class DefaultHttpClient implements HttpClient {
 
             inputStream = httpUrlConnection.getInputStream();
 
-            return new Response(httpUrlConnection.getResponseCode(),
-                    StringUtils.streamToString(inputStream, Charset.forName(encoding)),
+            final String responseBody = StringUtils.streamToString(inputStream, Charset.forName(encoding));
+
+            return new Response<>(httpUrlConnection.getResponseCode(),
+                    convertResponseFromString(responseBody, clazz),
+                    responseBody,
                     httpUrlConnection.getHeaderFields());
         } catch (Exception ex) {
             String msg = "An unknown error occurred when performing the operation";
@@ -242,23 +269,23 @@ public class DefaultHttpClient implements HttpClient {
         }
     }
 
-    public static class DefaultHttpClientBuilder {
+    public static class Builder {
         private final String baseUrl;
         private String encoding;
         private String contentType;
 
-        public DefaultHttpClientBuilder(final String baseUrl) {
+        public Builder(final String baseUrl) {
             this.baseUrl = baseUrl;
             this.encoding = "UTF-8";
             this.contentType = "application/json";
         }
 
-        public DefaultHttpClientBuilder withEncoding(final String encoding) {
+        public Builder withEncoding(final String encoding) {
             this.encoding = encoding;
             return this;
         }
 
-        public DefaultHttpClientBuilder withContentType(final String contentType) {
+        public Builder withContentType(final String contentType) {
             this.contentType = contentType;
             return this;
         }

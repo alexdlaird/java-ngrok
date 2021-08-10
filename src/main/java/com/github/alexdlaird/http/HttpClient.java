@@ -34,48 +34,57 @@ public interface HttpClient {
     /**
      * Perform GET operation against an endpoint.
      *
-     * @param url               The URL relative to the base URL on which to perform the operation.
+     * @param uri               The URL relative to the base URL on which to perform the operation.
      * @param parameters        An arbitrary number of parameters to add to the URL.
      * @param additionalHeaders Additional headers for the request.
+     * @param clazz             The class for the Response's body.
      * @return The results of the query.
      */
-    Response get(final String url, final List<Parameter> parameters,
-                 final Map<String, String> additionalHeaders);
+    <B> Response<B> get(final String uri, final List<Parameter> parameters,
+                        final Map<String, String> additionalHeaders, final Class<B> clazz);
 
     /**
      * Perform POST operation against an endpoint.
      *
-     * @param url               The URL relative to the base URL on which to perform the operation.
-     * @param request              The element to be serialized into the request body.
+     * @param uri               The URL relative to the base URL on which to perform the operation.
+     * @param request           The element to be serialized into the request body.
      * @param parameters        An arbitrary number of parameters to add to the URL.
      * @param additionalHeaders Additional headers for the request.
+     * @param clazz             The class for the Response's body.
      * @return The results of the query.
      */
-    Response post(final String url, final Request request, final List<Parameter> parameters,
-                  final Map<String, String> additionalHeaders);
+    <R, B> Response<B> post(final String uri, final R request, final List<Parameter> parameters,
+                            final Map<String, String> additionalHeaders, final Class<B> clazz);
 
     /**
      * Perform PUT operation against an endpoint.
      *
-     * @param url               The URL relative to the base URL on which to perform the operation.
-     * @param request              The element to be serialized into the request body.
+     * @param uri               The URL relative to the base URL on which to perform the operation.
+     * @param request           The element to be serialized into the request body.
      * @param parameters        An arbitrary number of parameters to add to the URL.
      * @param additionalHeaders Additional headers for the request.
+     * @param clazz             The class for the Response's body.
      * @return The results of the query.
      */
-    Response put(final String url, final Request request, final List<Parameter> parameters,
-                 final Map<String, String> additionalHeaders);
+    <R, B> Response<B> put(final String uri, final R request, final List<Parameter> parameters,
+                           final Map<String, String> additionalHeaders, final Class<B> clazz);
 
     /**
      * Perform DELETE operation against an endpoint.
      *
-     * @param url               The URL relative to the base URL on which to perform the operation.
+     * @param uri               The URL relative to the base URL on which to perform the operation.
      * @param parameters        An arbitrary number of parameters to add to the URL.
      * @param additionalHeaders Additional headers for the request.
+     * @param clazz             The class for the Response's body.
      * @return The results of the query.
      */
-    Response delete(final String url, final List<Parameter> parameters,
-                    final Map<String, String> additionalHeaders);
+    <B> Response<B> delete(final String uri, final List<Parameter> parameters,
+                           final Map<String, String> additionalHeaders, final Class<B> clazz);
+
+    default Response<Map> delete(final String uri, final List<Parameter> parameters,
+                                 final Map<String, String> additionalHeaders) {
+        return delete(uri, parameters, additionalHeaders, Map.class);
+    }
 
     /**
      * Override this method if you could like to extend {@link DefaultHttpClient} and perform customer HTTP operations
@@ -83,21 +92,7 @@ public interface HttpClient {
      *
      * @param httpUrlConnection The URL connection to modify.
      */
-    default void modifyConnection(final HttpURLConnection httpUrlConnection) {}
-
-    class HttpClientException extends RuntimeException {
-        public HttpClientException(final String msg) {
-            super(msg);
-        }
-
-        public HttpClientException(final String msg, final Exception cause) {
-            super(msg, cause);
-        }
+    default void modifyConnection(final HttpURLConnection httpUrlConnection) {
     }
 
-    class HttpClientTokenExpiredException extends HttpClientException {
-        public HttpClientTokenExpiredException(final String msg) {
-            super(msg);
-        }
-    }
 }
