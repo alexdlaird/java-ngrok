@@ -51,11 +51,11 @@ public class DefaultHttpClientTest {
     @BeforeEach
     public void setUp() throws IOException, InterruptedException {
         ngrokProcess.connect();
-        Thread.sleep(5000);
+        Thread.sleep(2000);
     }
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown() throws InterruptedException {
         ngrokProcess.disconnect();
     }
 

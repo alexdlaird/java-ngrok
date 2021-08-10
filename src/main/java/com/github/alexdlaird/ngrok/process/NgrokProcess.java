@@ -23,6 +23,8 @@
 
 package com.github.alexdlaird.ngrok.process;
 
+import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +46,11 @@ public class NgrokProcess {
 
     // TODO: this entire class is a POC placeholder for simple testing while the API is built out
 
+    public NgrokProcess() {
+        final NgrokInstaller ngrokInstaller = new NgrokInstaller();
+        ngrokInstaller.installWithPython();
+    }
+
     public void connect() throws IOException {
         final ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command("ngrok", "start", "--none");
@@ -52,9 +59,9 @@ public class NgrokProcess {
         future = executorService.submit(task);
     }
 
-    public void disconnect() {
+    public void disconnect() throws InterruptedException {
         future.cancel(true);
-        proc.destroyForcibly();
+        proc.destroyForcibly().waitFor();
     }
 
     private static class ProcessTask implements Callable<List<String>> {
