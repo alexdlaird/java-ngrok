@@ -55,7 +55,7 @@ public class NgrokProcess {
         final ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command("ngrok", "start", "--none");
         proc = processBuilder.start();
-        var task = new ProcessTask(proc.getInputStream());
+        final ProcessTask task = new ProcessTask(proc.getInputStream());
         future = executorService.submit(task);
     }
 
