@@ -6,7 +6,7 @@ public class NgrokInstaller {
 
     // TODO: this entire class is a POC placeholder for simple testing while the API is built out, java-ngrok will soon manage its own binary
 
-    public void installWithPython() {
+    public void install() {
         final ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command("pip", "install", "pyngrok");
         final Process proc;

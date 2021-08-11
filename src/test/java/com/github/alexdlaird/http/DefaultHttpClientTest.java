@@ -21,15 +21,12 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.alexdlaird.ngrok;
+package com.github.alexdlaird.http;
 
-import com.github.alexdlaird.http.DefaultHttpClient;
-import com.github.alexdlaird.http.Parameter;
-import com.github.alexdlaird.http.Response;
-import com.github.alexdlaird.ngrok.http.CaptureRequestResponse;
-import com.github.alexdlaird.ngrok.http.TunnelRequest;
-import com.github.alexdlaird.ngrok.http.TunnelResponse;
-import com.github.alexdlaird.ngrok.http.TunnelsResponse;
+import com.github.alexdlaird.ngrok.protocol.CapturedRequests;
+import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
+import com.github.alexdlaird.ngrok.protocol.Tunnel;
+import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,22 +47,21 @@ public class DefaultHttpClientTest {
 
     @BeforeEach
     public void setUp() throws IOException, InterruptedException {
-        ngrokProcess.connect();
-        Thread.sleep(2000);
+        ngrokProcess.start();
     }
 
     @AfterEach
     public void tearDown() throws InterruptedException {
-        ngrokProcess.disconnect();
+        ngrokProcess.stop();
     }
 
     @Test
     public void testPost() {
         // GIVEN
-        final TunnelRequest request = new TunnelRequest.Builder("my-tunnel", "http", "80").build();
+        final CreateTunnel request = new CreateTunnel.Builder().withName("my-tunnel").build();
 
         // WHEN
-        final Response<TunnelResponse> createResponse = defaultHttpClient.post("/api/tunnels", request, Collections.emptyList(), Collections.emptyMap(), TunnelResponse.class);
+        final Response<Tunnel> createResponse = defaultHttpClient.post("/api/tunnels", request, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
 
         // THEN
         assertEquals(createResponse.getStatusCode(), 201);
@@ -77,11 +73,11 @@ public class DefaultHttpClientTest {
     @Test
     public void testGet() {
         // GIVEN
-        final TunnelRequest request = new TunnelRequest.Builder("my-tunnel", "http", "80").build();
-        defaultHttpClient.post("/api/tunnels", request, Collections.emptyList(), Collections.emptyMap(), TunnelResponse.class);
+        final CreateTunnel request = new CreateTunnel.Builder().withName("my-tunnel").build();
+        defaultHttpClient.post("/api/tunnels", request, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
 
         // WHEN
-        final Response<TunnelsResponse> getResponse = defaultHttpClient.get("/api/tunnels", Collections.emptyList(), Collections.emptyMap(), TunnelsResponse.class);
+        final Response<Tunnels> getResponse = defaultHttpClient.get("/api/tunnels", Collections.emptyList(), Collections.emptyMap(), Tunnels.class);
 
         // THEN
         assertEquals(getResponse.getStatusCode(), 200);
@@ -94,8 +90,8 @@ public class DefaultHttpClientTest {
     @Test
     public void testDelete() {
         // GIVEN
-        final TunnelRequest request = new TunnelRequest.Builder("my-tunnel", "http", "80").build();
-        final Response<TunnelResponse> createResponse = defaultHttpClient.post("/api/tunnels", request, Collections.emptyList(), Collections.emptyMap(), TunnelResponse.class);
+        final CreateTunnel request = new CreateTunnel.Builder().withName("my-tunnel").build();
+        final Response<Tunnel> createResponse = defaultHttpClient.post("/api/tunnels", request, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
 
         // WHEN
         final Response<?> deleteResponse = defaultHttpClient.delete(createResponse.getBody().getUri(), Collections.emptyList(), Collections.emptyMap());
@@ -107,8 +103,8 @@ public class DefaultHttpClientTest {
     @Test
     public void testGetWithQueryParameters() throws InterruptedException {
         // GIVEN
-        final TunnelRequest request = new TunnelRequest.Builder("tunnel (1)", "http", "4040").withBindTls().build();
-        final Response<TunnelResponse> createResponse = defaultHttpClient.post("/api/tunnels", request, Collections.emptyList(), Collections.emptyMap(), TunnelResponse.class);
+        final CreateTunnel request = new CreateTunnel.Builder().withName("tunnel (1)").withAddr("4040").withBindTls().build();
+        final Response<Tunnel> createResponse = defaultHttpClient.post("/api/tunnels", request, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
         final String publicUrl = createResponse.getBody().getPublicUrl();
         final DefaultHttpClient publicHttpClient = new DefaultHttpClient.Builder(publicUrl).build();
 
@@ -119,9 +115,9 @@ public class DefaultHttpClientTest {
         Thread.sleep(3000);
 
         // WHEN
-        final Response<CaptureRequestResponse> response1 = defaultHttpClient.get("/api/requests/http", Collections.emptyList(), Collections.emptyMap(), CaptureRequestResponse.class);
-        final Response<CaptureRequestResponse> response2 = defaultHttpClient.get("/api/requests/http", List.of(new Parameter("tunnel_name", "tunnel (1)")), Collections.emptyMap(), CaptureRequestResponse.class);
-        final Response<CaptureRequestResponse> response3 = defaultHttpClient.get("/api/requests/http", List.of(new Parameter("tunnel_name", "tunnel (1) (http)")), Collections.emptyMap(), CaptureRequestResponse.class);
+        final Response<CapturedRequests> response1 = defaultHttpClient.get("/api/requests/http", Collections.emptyList(), Collections.emptyMap(), CapturedRequests.class);
+        final Response<CapturedRequests> response2 = defaultHttpClient.get("/api/requests/http", List.of(new Parameter("tunnel_name", "tunnel (1)")), Collections.emptyMap(), CapturedRequests.class);
+        final Response<CapturedRequests> response3 = defaultHttpClient.get("/api/requests/http", List.of(new Parameter("tunnel_name", "tunnel (1) (http)")), Collections.emptyMap(), CapturedRequests.class);
 
         // THEN
         assertEquals(response1.getStatusCode(), 200);

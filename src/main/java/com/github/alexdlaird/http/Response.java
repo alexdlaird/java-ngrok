@@ -73,6 +73,10 @@ public class Response<T> {
         return body;
     }
 
+    public String getBodyRaw() {
+        return bodyRaw;
+    }
+
     public Map<String, List<String>> getHeaderFields() {
         return headerFields;
     }

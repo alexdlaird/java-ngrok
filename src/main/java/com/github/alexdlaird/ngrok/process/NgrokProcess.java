@@ -36,34 +36,53 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 public class NgrokProcess {
 
-    final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    private Process proc;
+    private Process proc = null;
 
-    private Future<List<String>> future;
+    private Future<List<String>> future = null;
 
     // TODO: this entire class is a POC placeholder for simple testing while the API is built out
 
     public NgrokProcess() {
         final NgrokInstaller ngrokInstaller = new NgrokInstaller();
-        ngrokInstaller.installWithPython();
+        ngrokInstaller.install();
     }
 
-    public void connect() throws IOException {
+    public void start() throws IOException, InterruptedException {
+        if (nonNull(proc) && nonNull(future)) {
+            return;
+        }
+
         final ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command("ngrok", "start", "--none");
         proc = processBuilder.start();
         final ProcessTask task = new ProcessTask(proc.getInputStream());
         future = executorService.submit(task);
+        Thread.sleep(2000);
     }
 
-    public void disconnect() throws InterruptedException {
+    public void stop() throws InterruptedException {
+        if (isNull(proc) || isNull(future)) {
+            return;
+        }
+
         future.cancel(true);
         proc.descendants().forEach(ProcessHandle::destroy);
         proc.destroy();
         Thread.sleep(2000);
+
+        proc = null;
+        future = null;
+    }
+
+    public Process getProc() {
+        return proc;
     }
 
     private static class ProcessTask implements Callable<List<String>> {

@@ -23,17 +23,97 @@
 
 package com.github.alexdlaird.ngrok;
 
+import com.github.alexdlaird.http.DefaultHttpClient;
+import com.github.alexdlaird.http.HttpClient;
+import com.github.alexdlaird.http.Response;
+import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
+import com.github.alexdlaird.ngrok.protocol.Tunnel;
+import com.github.alexdlaird.ngrok.protocol.Tunnels;
+import com.github.alexdlaird.ngrok.process.NgrokProcess;
+
+import java.io.IOException;
+import java.util.Collections;
+
+import static java.util.Objects.isNull;
+
 /**
  * A client for interacting with  <a href="https://ngrok.com/docs">ngrok</a>, its binary, and its APIs.
  */
 public class NgrokClient {
 
+    private final HttpClient httpClient;
+    private final NgrokProcess ngrokProcess;
+
+    // TODO: interactions with NgrokProcess in this class are POC for simple testing while the API is built out, java-ngrok will soon manage its own binary
+
     private NgrokClient(final Builder builder) {
+        this.httpClient = builder.httpClient;
+        this.ngrokProcess = builder.ngrokProcess;
+    }
+
+    public Tunnel connect(final CreateTunnel tunnelRequest) throws IOException, InterruptedException {
+        ngrokProcess.start();
+
+        Response<Tunnel> response = httpClient.post("/api/tunnels", tunnelRequest, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
+
+//        if proto == "http" and options.get("bind_tls", "both") == "both":
+
+        return response.getBody();
+    }
+
+    public void disconnect(final String publicUrl) throws IOException, InterruptedException {
+        ngrokProcess.start();
+
+        final Tunnels tunnels = getTunnels();
+        Tunnel tunnel = null;
+        // TODO: cache active tunnels so we can first check that before falling back to an API request
+        for (Tunnel t : tunnels.getTunnels()) {
+            if (t.getPublicUrl().equals(publicUrl)) {
+                tunnel = t;
+                break;
+            }
+        }
+
+        if (isNull(tunnel)) {
+            return;
+        }
+
+        httpClient.delete(tunnel.getUri(), Collections.emptyList(), Collections.emptyMap(), Object.class);
+    }
+
+    public Tunnels getTunnels() {
+        Response<Tunnels> response = httpClient.get("/api/tunnels", Collections.emptyList(), Collections.emptyMap(), Tunnels.class);
+
+        return response.getBody();
+    }
+
+    public void kill() throws InterruptedException {
+        ngrokProcess.stop();
+    }
+
+    public NgrokProcess getNgrokProcess() {
+        return ngrokProcess;
     }
 
     public static class Builder {
 
+        private HttpClient httpClient;
+        private NgrokProcess ngrokProcess;
+
         public Builder() {
+            // TODO: determine the port dynamically once NgrokProcess is properly implemented
+            this.httpClient = new DefaultHttpClient.Builder("http://localhost:4040").build();
+            this.ngrokProcess = new NgrokProcess();
+        }
+
+        public Builder withHttpClient(final HttpClient httpClient) {
+            this.httpClient = httpClient;
+            return this;
+        }
+
+        public Builder withNgrokProcess(final NgrokProcess ngrokProcess) {
+            this.ngrokProcess = ngrokProcess;
+            return this;
         }
 
         public NgrokClient build() {

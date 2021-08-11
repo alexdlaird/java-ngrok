@@ -1,9 +1,9 @@
-package com.github.alexdlaird.ngrok.http;
+package com.github.alexdlaird.ngrok.protocol;
 
 import java.util.List;
 import java.util.Map;
 
-public class CaptureRequest {
+public class CapturedRequest {
     private String uri;
     private String id;
     private String tunnelName;

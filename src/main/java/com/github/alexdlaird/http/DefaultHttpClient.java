@@ -45,7 +45,7 @@ import java.util.logging.Logger;
 import static com.github.alexdlaird.StringUtils.isBlank;
 
 /**
- * Implementation of a simple client for executing HTTP requests.
+ * Implementation of a default client for executing JSON-based HTTP requests.
  */
 public class DefaultHttpClient implements HttpClient {
 
@@ -271,13 +271,11 @@ public class DefaultHttpClient implements HttpClient {
 
     public static class Builder {
         private final String baseUrl;
-        private String encoding;
-        private String contentType;
+        private String encoding = "UTF-8";
+        private String contentType = "application/json";
 
         public Builder(final String baseUrl) {
             this.baseUrl = baseUrl;
-            this.encoding = "UTF-8";
-            this.contentType = "application/json";
         }
 
         public Builder withEncoding(final String encoding) {

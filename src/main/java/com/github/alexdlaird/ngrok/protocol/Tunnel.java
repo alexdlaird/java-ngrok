@@ -1,8 +1,8 @@
-package com.github.alexdlaird.ngrok.http;
+package com.github.alexdlaird.ngrok.protocol;
 
 import java.util.Map;
 
-public class TunnelResponse {
+public class Tunnel {
     private String name;
     private String uri;
     private String publicUrl;
