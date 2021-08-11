@@ -63,12 +63,11 @@ class NgrokClientTest {
         for (Tunnel t : tunnels.getTunnels()) {
             if (t.getProto().equals("http")) {
                 assertEquals(t.getPublicUrl(), tunnel.getPublicUrl());
-                assertEquals(t.getConfig().getAddr(), "http://localhost:80");
             } else {
                 assertEquals(t.getProto(), "https");
                 assertEquals(t.getPublicUrl(), tunnel.getPublicUrl().replace("http", "https"));
-                assertEquals(t.getConfig().getAddr(), "http://localhost:80");
             }
+            assertEquals(t.getConfig().getAddr(), "http://localhost:80");
         }
     }
 

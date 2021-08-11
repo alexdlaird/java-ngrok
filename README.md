@@ -2,7 +2,7 @@
 [![CI/CD](https://github.com/alexdlaird/java-ngrok/workflows/CI/CD/badge.svg)](https://github.com/alexdlaird/java-ngrok/actions?query=workflow%3ACI%2FCD)
 [![Codecov](https://codecov.io/gh/alexdlaird/java-ngrok/branch/main/graph/badge.svg)](https://codecov.io/gh/alexdlaird/java-ngrok)
 ![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)
-[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Check+out+%23java-ngrok%2C+a+Java+wrapper+for+%23ngrok+that+lets+you+programmatically+open+secure+%23tunnels+to+local+web+servers%2C+build+%23webhook+integrations%2C+enable+SSH+access%2C+test+chatbots%2C+demo+from+your+own+machine%2C+and+more.%0D%0A%0D%0A&url=https://github.com/alexdlaird/java-ngrok&via=alexdlaird)
+[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Check+out+java-ngrok%2C+a+Java+wrapper+for+%23ngrok+that+lets+you+programmatically+open+secure+%23tunnels+to+local+web+servers%2C+build+%23webhook+integrations%2C+enable+SSH+access%2C+test+chatbots%2C+demo+from+your+own+machine%2C+and+more.%0D%0A%0D%0A&url=https://github.com/alexdlaird/java-ngrok&via=alexdlaird)
 
 # java-ngrok - a Java wrapper for ngrok
 
@@ -18,7 +18,22 @@ machine, and more, and its made even more powerful with native Java integration 
 `java-ngrok` is available
 on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/).
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/)
+#### Maven
+
+```xml
+
+<dependency>
+    <groupId>com.github.alexdlaird</groupId>
+    <artifactId>java-ngrok</artifactId>
+    <version>0.0.3</version>
+</dependency>
+```
+
+#### Gradle
+
+```groovy
+implementation 'com.github.alexdlaird:java-ngrok:0.0.3'
+```
 
 If we want `ngrok` to be available from the command line, [pyngrok](https://github.com/alexdlaird/pyngrok) can be
 installed using `pip` to manage that for us.
@@ -60,7 +75,7 @@ takes [`CreateTunnel`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/l
 as well, which has a `Builder` that allows us to pass additional properties that
 are [supported by ngrok](https://ngrok.com/docs#tunnel-definitions).
 
-Assuming you have also installed [pyngrok](https://github.com/alexdlaird/pyngrok), all features of `ngrok` are available
+Assuming we have also installed [pyngrok](https://github.com/alexdlaird/pyngrok), all features of `ngrok` are available
 on the command line.
 
 ```sh

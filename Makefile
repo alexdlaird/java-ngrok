@@ -30,6 +30,8 @@ validate-release:
 	@if [[ "${VERSION}" == "" ]]; then echo "VERSION is not set" & exit 1 ; fi
 
 	@if [[ $$(grep "version \"${VERSION}\"" build.gradle) == "" ]] ; then echo "Version not bumped in build.gradle" & exit 1 ; fi
+	@if [[ $$(grep "<version>${VERSION}</version>" README.md) == "" ]] ; then echo "Version not bumped in README.md" & exit 1 ; fi
+	@if [[ $$(grep "com.github.alexdlaird:java-ngrok:${VERSION}" README.md) == "" ]] ; then echo "Version not bumped in README.md" & exit 1 ; fi
 
 upload:
 	$(GRADLE_BIN) publish
