@@ -11,7 +11,7 @@ public class CreateTunnel {
     private final boolean inspect;
     private final String auth;
     private final String hostHeader;
-    private final boolean bindTls;
+    private final String bindTls;
     private final String subdomain;
     private final String hostname;
     private final String crt;
@@ -37,14 +37,22 @@ public class CreateTunnel {
         this.metadata = builder.metadata;
     }
 
+    public String getProto() {
+        return proto;
+    }
+
+    public String getBindTls() {
+        return bindTls;
+    }
+
     public static class Builder {
         private String name = null;
         private String proto = "http";
         private String addr = "80";
         private boolean inspect = true;
+        private String bindTls = "both";
         private String auth;
         private String hostHeader;
-        private boolean bindTls;
         private String subdomain;
         private String hostname;
         private String crt;
@@ -83,8 +91,8 @@ public class CreateTunnel {
             return this;
         }
 
-        public Builder withBindTls() {
-            this.bindTls = true;
+        public Builder withBindTls(final String bindTls) {
+            this.bindTls = bindTls;
             return this;
         }
 

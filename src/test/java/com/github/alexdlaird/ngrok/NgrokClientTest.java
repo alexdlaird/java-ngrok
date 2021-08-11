@@ -30,7 +30,7 @@ class NgrokClientTest {
 
         // THEN
         assertNotNull(ngrokClient.getNgrokProcess().getProc());
-        assertEquals(tunnel.getName(), "my-tunnel");
+        assertEquals(tunnel.getName(), "my-tunnel (http)");
         assertEquals(tunnel.getProto(), "http");
         assertEquals(tunnel.getConfig().getAddr(), "http://localhost:80");
     }
@@ -38,7 +38,7 @@ class NgrokClientTest {
     @Test
     public void testDisconnect() throws IOException, InterruptedException {
         // GIVEN
-        final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build();
+        final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").withBindTls("true").build();
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
         assertNotNull(ngrokClient.getNgrokProcess().getProc());
 
@@ -48,6 +48,28 @@ class NgrokClientTest {
         // THEN
         final Tunnels tunnels = ngrokClient.getTunnels();
         assertEquals(tunnels.getTunnels().size(), 0);
+    }
+
+    @Test
+    public void testGetTunnels() throws IOException, InterruptedException {
+        // GIVEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build();
+        final Tunnel tunnel = ngrokClient.connect(createTunnel);
+
+        // WHEN
+        final Tunnels tunnels = ngrokClient.getTunnels();
+
+        assertEquals(tunnels.getTunnels().size(), 2);
+        for (Tunnel t : tunnels.getTunnels()) {
+            if (t.getProto().equals("http")) {
+                assertEquals(t.getPublicUrl(), tunnel.getPublicUrl());
+                assertEquals(t.getConfig().getAddr(), "http://localhost:80");
+            } else {
+                assertEquals(t.getProto(), "https");
+                assertEquals(t.getPublicUrl(), tunnel.getPublicUrl().replace("http", "https"));
+                assertEquals(t.getConfig().getAddr(), "http://localhost:80");
+            }
+        }
     }
 
     @Test

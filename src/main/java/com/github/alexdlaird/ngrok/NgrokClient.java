@@ -26,10 +26,10 @@ package com.github.alexdlaird.ngrok;
 import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.http.Response;
+import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
-import com.github.alexdlaird.ngrok.process.NgrokProcess;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -51,14 +51,20 @@ public class NgrokClient {
         this.ngrokProcess = builder.ngrokProcess;
     }
 
-    public Tunnel connect(final CreateTunnel tunnelRequest) throws IOException, InterruptedException {
+    public Tunnel connect(final CreateTunnel createTunnel) throws IOException, InterruptedException {
         ngrokProcess.start();
 
-        Response<Tunnel> response = httpClient.post("/api/tunnels", tunnelRequest, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
+        final Response<Tunnel> response = httpClient.post("/api/tunnels", createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
 
-//        if proto == "http" and options.get("bind_tls", "both") == "both":
+        final Tunnel tunnel;
+        if (createTunnel.getProto().equals("http") && createTunnel.getBindTls().equals("both")) {
+            final Response<Tunnel> getResponse = httpClient.get(response.getBody().getUri() + "%20%28http%29", Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
+            tunnel = getResponse.getBody();
+        } else {
+            tunnel = response.getBody();
+        }
 
-        return response.getBody();
+        return tunnel;
     }
 
     public void disconnect(final String publicUrl) throws IOException, InterruptedException {
@@ -82,7 +88,7 @@ public class NgrokClient {
     }
 
     public Tunnels getTunnels() {
-        Response<Tunnels> response = httpClient.get("/api/tunnels", Collections.emptyList(), Collections.emptyMap(), Tunnels.class);
+        final Response<Tunnels> response = httpClient.get("/api/tunnels", Collections.emptyList(), Collections.emptyMap(), Tunnels.class);
 
         return response.getBody();
     }
