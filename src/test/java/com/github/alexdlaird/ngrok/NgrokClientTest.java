@@ -22,11 +22,11 @@ class NgrokClientTest {
     @Test
     public void testConnect() throws IOException, InterruptedException {
         // GIVEN
-        final CreateTunnel tunnelRequest = new CreateTunnel.Builder().withName("my-tunnel").build();
+        final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build();
         assertNull(ngrokClient.getNgrokProcess().getProc());
 
         // WHEN
-        final Tunnel tunnel = ngrokClient.connect(tunnelRequest);
+        final Tunnel tunnel = ngrokClient.connect(createTunnel);
 
         // THEN
         assertNotNull(ngrokClient.getNgrokProcess().getProc());

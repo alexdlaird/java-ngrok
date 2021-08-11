@@ -39,7 +39,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DefaultHttpClientTest {
+class DefaultHttpClientTest {
 
     private final DefaultHttpClient defaultHttpClient = new DefaultHttpClient.Builder("http://localhost:4040").build();
 
