@@ -59,7 +59,7 @@ public class MyClass {
 
         // Open a HTTP tunnel on the default port 80
         // <Tunnel: "http://<public_sub>.ngrok.io" -> "http://localhost:80">
-        final Tunnel httpTunnel = ngrokClient.connect(new CreateTunnel.Builder().build());
+        final Tunnel httpTunnel = ngrokClient.connect();
 
         // Open a SSH tunnel
         // <Tunnel: "tcp://0.tcp.ngrok.io:12345" -> "localhost:22">

@@ -2,14 +2,11 @@ package com.github.alexdlaird.ngrok.installer;
 
 import com.github.alexdlaird.ngrok.NgrokException;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,6 +19,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class NgrokInstaller {
+
+    // TODO: this entire class is a POC placeholder for simple testing while the API is built out
 
     private static final List<String> unixBinaries = List.of("DARWIN", "LINUX", "FREEBSD");
 
@@ -43,8 +42,7 @@ public class NgrokInstaller {
             out.write("{}".getBytes());
             out.close();
         } catch (IOException e) {
-            // TODO: handle
-            e.printStackTrace();
+            throw new NgrokException(String.format("An error while installing the default ngrok config to %s.", dest), e);
         }
     }
 
@@ -55,7 +53,7 @@ public class NgrokInstaller {
         final String system = getSystem();
         final NgrokCDNUrl ngrokCDNUrl = NgrokCDNUrl.valueOf(String.format("%s_%s", system, arch));
 
-        final Path ngrokZip = Paths.get(dir + File.separator + "ngrok.zip");
+        final Path ngrokZip = Paths.get(dir.toString(), "ngrok.zip");
         downloadFile(ngrokCDNUrl.getUrl(), ngrokZip);
 
         installNgrokZip(ngrokZip, dir);
@@ -69,20 +67,18 @@ public class NgrokInstaller {
             final ZipInputStream in = new ZipInputStream(new FileInputStream(zip.toFile()));
             ZipEntry zipEntry = in.getNextEntry();
             while (zipEntry != null) {
-                final File file = new File(dest.toFile(), zipEntry.getName());
+                final Path file = Paths.get(dest.toString(), zipEntry.getName());
                 if (zipEntry.isDirectory()) {
-                    if (!file.isDirectory() && !file.mkdirs()) {
-                        throw new IOException("Failed to create directory " + file);
+                    if (!Files.isDirectory(file)) {
+                        Files.createDirectories(file);
                     }
                 } else {
-                    // fix for Windows-created archives
-                    final File parent = file.getParentFile();
-                    if (!parent.isDirectory() && !parent.mkdirs()) {
-                        throw new IOException("Failed to create directory " + parent);
+                    final Path parent = file.getParent();
+                    if (!Files.isDirectory(parent)) {
+                        Files.createDirectories(parent);
                     }
 
-                    // write file content
-                    final FileOutputStream out = new FileOutputStream(file);
+                    final FileOutputStream out = new FileOutputStream(file.toFile());
                     int len;
                     while ((len = in.read(buffer)) > 0) {
                         out.write(buffer, 0, len);
@@ -94,15 +90,14 @@ public class NgrokInstaller {
             in.closeEntry();
             in.close();
 
-            final Path ngrok = Paths.get(dest + File.separator + getNgrokBin());
+            final Path ngrok = Paths.get(dest.toString(), getNgrokBin());
             final Set<PosixFilePermission> perms = Files.readAttributes(ngrok, PosixFileAttributes.class).permissions();
             perms.add(PosixFilePermission.OWNER_EXECUTE);
             perms.add(PosixFilePermission.GROUP_EXECUTE);
             perms.add(PosixFilePermission.OTHERS_EXECUTE);
             Files.setPosixFilePermissions(ngrok, perms);
         } catch (IOException e) {
-            // TODO: handle
-            e.printStackTrace();
+            throw new NgrokException("An error occurred while unzipping ngrok.", e);
         }
     }
 
@@ -113,8 +108,7 @@ public class NgrokInstaller {
             final InputStream in = new URL(url).openStream();
             Files.copy(in, dest, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            // TODO: handle
-            e.printStackTrace();
+            throw new NgrokException(String.format("An error occurred while downloading the file from %s.", url), e);
         }
     }
 

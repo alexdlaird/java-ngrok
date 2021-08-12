@@ -30,7 +30,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -62,10 +62,10 @@ public class NgrokProcess {
         this.javaNgrokConfig = javaNgrokConfig;
         this.ngrokInstaller = ngrokInstaller;
 
-        if (javaNgrokConfig.getNgrokPath().toFile().exists()) {
+        if (!Files.exists(javaNgrokConfig.getNgrokPath())) {
             this.ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath());
         }
-        if (javaNgrokConfig.getConfigPath().toFile().exists()) {
+        if (!Files.exists(javaNgrokConfig.getConfigPath())) {
             this.ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath());
         }
     }
@@ -120,17 +120,24 @@ public class NgrokProcess {
         process.waitFor();
     }
 
+    public void update() throws IOException, InterruptedException {
+        final ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command(javaNgrokConfig.getNgrokPath().toString(), "update");
+        process = processBuilder.start();
+        process.waitFor();
+    }
+
+    public String getVersion() {
+        // TODO: implement capturing version output
+        throw new UnsupportedOperationException();
+    }
+
     public Process getProcess() {
         return process;
     }
 
     public String getApiUrl() {
         return apiUrl;
-    }
-
-    public String getVersion() {
-        // TODO: implement capturing version output
-        throw new UnsupportedOperationException();
     }
 
     private static class ProcessTask implements Callable<List<String>> {

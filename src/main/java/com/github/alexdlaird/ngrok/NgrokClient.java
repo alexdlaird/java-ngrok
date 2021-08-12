@@ -74,6 +74,10 @@ public class NgrokClient {
         return tunnel;
     }
 
+    public Tunnel connect() throws IOException, InterruptedException {
+        return connect(new CreateTunnel.Builder().build());
+    }
+
     public void disconnect(final String publicUrl) throws IOException, InterruptedException {
         ngrokProcess.start();
 
@@ -106,6 +110,10 @@ public class NgrokClient {
 
     public void setAuthToken(final String authToken) throws IOException, InterruptedException {
         ngrokProcess.setAuthToken(authToken);
+    }
+
+    public void update() throws IOException, InterruptedException {
+        ngrokProcess.update();
     }
 
     public Version getVersion() {

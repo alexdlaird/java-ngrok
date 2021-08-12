@@ -26,7 +26,6 @@ package com.github.alexdlaird.ngrok.conf;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.protocol.Region;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -93,10 +92,10 @@ public class JavaNgrokConfig {
 
         public JavaNgrokConfig build() {
             if (isNull(ngrokPath)) {
-                ngrokPath = Paths.get(System.getProperty("user.home") + File.separator + ".ngrok2" + File.separator + NgrokInstaller.getNgrokBin());
+                ngrokPath = Paths.get(System.getProperty("user.home"), ".ngrok2", NgrokInstaller.getNgrokBin());
             }
             if (isNull(configPath)) {
-                configPath = Paths.get(System.getProperty("user.home") + File.separator + ".ngrok2" + File.separator + "ngrok.yml");
+                configPath = Paths.get(System.getProperty("user.home"), ".ngrok2", "ngrok.yml");
             }
 
             return new JavaNgrokConfig(this);
