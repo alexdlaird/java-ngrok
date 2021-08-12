@@ -23,8 +23,82 @@
 
 package com.github.alexdlaird.ngrok.conf;
 
+import com.github.alexdlaird.ngrok.protocol.Region;
+
+import java.io.File;
+
+import static java.util.Objects.isNull;
+
 /**
  * An object for managing <code>java-ngrok</code>'s configuration to interact the <code>ngrok</code> binary.
  */
 public class JavaNgrokConfig {
+    private final File ngrokPath;
+    private final File configPath;
+    private final String authToken;
+    private final Region region;
+
+    public JavaNgrokConfig(final Builder builder) {
+        ngrokPath = builder.ngrokPath;
+        configPath = builder.configPath;
+        authToken = builder.authToken;
+        region = builder.region;
+    }
+
+    public File getNgrokPath() {
+        return ngrokPath;
+    }
+
+    public File getConfigPath() {
+        return configPath;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public Region getRegion() {
+        return region;
+    }
+
+    public static class Builder {
+
+        private File ngrokPath = null;
+        private File configPath = null;
+        private String authToken;
+        private Region region;
+
+        public Builder withNgrokPath(final File ngrokPath) {
+            this.ngrokPath = ngrokPath;
+            return this;
+        }
+
+        public Builder withConfigPath(final File configPath) {
+            this.configPath = configPath;
+            return this;
+        }
+
+        public Builder withAuthToken(final String authToken) {
+            this.authToken = authToken;
+            return this;
+        }
+
+        public Builder withRegion(final Region region) {
+            this.region = region;
+            return this;
+        }
+
+        public JavaNgrokConfig build() {
+            if (isNull(ngrokPath)) {
+                // TODO: once ngrok installer is implemented, this should point to the managed binary
+                ngrokPath = new File("ngrok");
+            }
+            if (isNull(configPath)) {
+                final String path = System.getProperty("user.home") + File.separator + ".ngrok2" + File.separator + "ngrok.yml";
+                configPath = new File(path);
+            }
+
+            return new JavaNgrokConfig(this);
+        }
+    }
 }

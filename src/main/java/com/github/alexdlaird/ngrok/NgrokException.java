@@ -26,7 +26,7 @@ package com.github.alexdlaird.ngrok;
 /**
  * Root exception for {@link NgrokClient} interactions.
  */
-public abstract class NgrokException extends RuntimeException {
+public class NgrokException extends RuntimeException {
     /**
      * An exception with a message.
      *

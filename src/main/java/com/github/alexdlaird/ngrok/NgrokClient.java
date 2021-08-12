@@ -26,10 +26,13 @@ package com.github.alexdlaird.ngrok;
 import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.http.Response;
+import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
+import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
+import com.github.alexdlaird.ngrok.protocol.Version;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -41,14 +44,18 @@ import static java.util.Objects.isNull;
  */
 public class NgrokClient {
 
-    private final HttpClient httpClient;
+    private final JavaNgrokConfig javaNgrokConfig;
+    private final NgrokInstaller ngrokInstaller;
     private final NgrokProcess ngrokProcess;
+    private final HttpClient httpClient;
 
     // TODO: interactions with NgrokProcess in this class are POC for simple testing while the API is built out, java-ngrok will soon manage its own binary
 
     private NgrokClient(final Builder builder) {
-        this.httpClient = builder.httpClient;
+        this.javaNgrokConfig = builder.javaNgrokConfig;
+        this.ngrokInstaller = builder.ngrokInstaller;
         this.ngrokProcess = builder.ngrokProcess;
+        this.httpClient = builder.httpClient;
     }
 
     public Tunnel connect(final CreateTunnel createTunnel) throws IOException, InterruptedException {
@@ -97,23 +104,51 @@ public class NgrokClient {
         ngrokProcess.stop();
     }
 
+    public void setAuthToken(final String authToken) throws IOException, InterruptedException {
+        ngrokProcess.setAuthToken(authToken);
+    }
+
+    public Version getVersion() {
+        final String ngrokVersion = ngrokProcess.getVersion();
+
+        // TODO: parse out java-ngrok version from POM
+        String javaNgrokVersion = null;
+
+//        new Version(ngrokVersion, javaNgrokVersion);
+
+        throw new UnsupportedOperationException();
+    }
+
+    public JavaNgrokConfig getJavaNgrokConfig() {
+        return javaNgrokConfig;
+    }
+
+    public NgrokInstaller getNgrokInstaller() {
+        return ngrokInstaller;
+    }
+
     public NgrokProcess getNgrokProcess() {
         return ngrokProcess;
     }
 
+    public HttpClient getHttpClient() {
+        return httpClient;
+    }
+
     public static class Builder {
 
-        private HttpClient httpClient;
-        private NgrokProcess ngrokProcess;
+        private JavaNgrokConfig javaNgrokConfig = null;
+        private NgrokInstaller ngrokInstaller = null;
+        private NgrokProcess ngrokProcess = null;
+        private HttpClient httpClient = null;
 
-        public Builder() {
-            // TODO: determine the port dynamically once NgrokProcess is properly implemented
-            this.httpClient = new DefaultHttpClient.Builder("http://localhost:4040").build();
-            this.ngrokProcess = new NgrokProcess();
+        public Builder withJavaNgrokConfig(final JavaNgrokConfig javaNgrokConfig) {
+            this.javaNgrokConfig = javaNgrokConfig;
+            return this;
         }
 
-        public Builder withHttpClient(final HttpClient httpClient) {
-            this.httpClient = httpClient;
+        public Builder withNgrokInstaller(final NgrokInstaller ngrokInstaller) {
+            this.ngrokInstaller = ngrokInstaller;
             return this;
         }
 
@@ -122,7 +157,25 @@ public class NgrokClient {
             return this;
         }
 
+        public Builder withHttpClient(final HttpClient httpClient) {
+            this.httpClient = httpClient;
+            return this;
+        }
+
         public NgrokClient build() {
+            if (isNull(javaNgrokConfig)) {
+                javaNgrokConfig = new JavaNgrokConfig.Builder().build();
+            }
+            if (isNull(ngrokInstaller)) {
+                ngrokInstaller = new NgrokInstaller();
+            }
+            if (isNull(ngrokProcess)) {
+                ngrokProcess = new NgrokProcess(javaNgrokConfig, ngrokInstaller);
+            }
+            if (isNull(httpClient)) {
+                httpClient = new DefaultHttpClient.Builder(ngrokProcess.getApiUrl()).build();
+            }
+
             return new NgrokClient(this);
         }
     }

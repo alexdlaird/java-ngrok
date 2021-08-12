@@ -23,6 +23,8 @@
 
 package com.github.alexdlaird.http;
 
+import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
+import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import com.github.alexdlaird.ngrok.protocol.CapturedRequests;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
@@ -37,13 +39,15 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DefaultHttpClientTest {
 
     private final DefaultHttpClient defaultHttpClient = new DefaultHttpClient.Builder("http://localhost:4040").build();
 
-    private final NgrokProcess ngrokProcess = new NgrokProcess();
+    // TODO: use a custom test config so tests never collide with system configs
+    private final NgrokProcess ngrokProcess = new NgrokProcess(new JavaNgrokConfig.Builder().build(), new NgrokInstaller());
 
     @BeforeEach
     public void setUp() throws IOException, InterruptedException {
@@ -58,24 +62,21 @@ class DefaultHttpClientTest {
     @Test
     public void testPost() {
         // GIVEN
-        final CreateTunnel request = new CreateTunnel.Builder().withName("my-tunnel").build();
+        final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build();
 
         // WHEN
-        final Response<Tunnel> postResponse = defaultHttpClient.post("/api/tunnels", request, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
+        final Response<Tunnel> postResponse = defaultHttpClient.post("/api/tunnels", createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
 
         // THEN
         assertEquals(postResponse.getStatusCode(), 201);
         assertEquals(postResponse.getBody().getName(), "my-tunnel");
-        assertEquals(postResponse.getBody().getProto(), "https");
-        assertEquals(postResponse.getBody().getConfig().getAddr(), "http://localhost:80");
     }
 
     @Test
     public void testGet() {
         // GIVEN
-        final CreateTunnel request = new CreateTunnel.Builder().withName("my-tunnel").withBindTls("true").build();
-        final Response<Tunnel> postResponse = defaultHttpClient.post("/api/tunnels", request, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
-        final String publicUrl = postResponse.getBody().getPublicUrl();
+        final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").withBindTls("true").build();
+        defaultHttpClient.post("/api/tunnels", createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
 
         // WHEN
         final Response<Tunnels> getResponse = defaultHttpClient.get("/api/tunnels", Collections.emptyList(), Collections.emptyMap(), Tunnels.class);
@@ -83,28 +84,27 @@ class DefaultHttpClientTest {
         // THEN
         assertEquals(getResponse.getStatusCode(), 200);
         assertEquals(getResponse.getBody().getTunnels().size(), 1);
-        assertEquals(getResponse.getBody().getTunnels().get(0).getProto(), "https");
-        assertEquals(getResponse.getBody().getTunnels().get(0).getPublicUrl(), publicUrl);
-        assertEquals(getResponse.getBody().getTunnels().get(0).getConfig().getAddr(), "http://localhost:80");
+        assertEquals(getResponse.getBody().getTunnels().get(0).getName(), "my-tunnel");
     }
 
     @Test
     public void testDelete() {
         // GIVEN
-        final CreateTunnel request = new CreateTunnel.Builder().withName("my-tunnel").build();
-        final Tunnel tunnel = defaultHttpClient.post("/api/tunnels", request, Collections.emptyList(), Collections.emptyMap(), Tunnel.class).getBody();
+        final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build();
+        final Tunnel tunnel = defaultHttpClient.post("/api/tunnels", createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class).getBody();
 
         // WHEN
         final Response<?> deleteResponse = defaultHttpClient.delete(tunnel.getUri(), Collections.emptyList(), Collections.emptyMap());
 
         // THEN
         assertEquals(deleteResponse.getStatusCode(), 204);
+        assertNull(deleteResponse.getBody());
     }
 
     @Test
     public void testGetWithQueryParameters() throws InterruptedException {
         // GIVEN
-        final CreateTunnel request = new CreateTunnel.Builder().withName("tunnel (1)").withAddr("4040").withBindTls("true").build();
+        final CreateTunnel request = new CreateTunnel.Builder().withName("my-tunnel").withAddr("4040").withBindTls("true").build();
         final Response<Tunnel> createResponse = defaultHttpClient.post("/api/tunnels", request, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
         final String publicUrl = createResponse.getBody().getPublicUrl();
         final DefaultHttpClient publicHttpClient = new DefaultHttpClient.Builder(publicUrl).build();
@@ -117,8 +117,8 @@ class DefaultHttpClientTest {
 
         // WHEN
         final Response<CapturedRequests> response1 = defaultHttpClient.get("/api/requests/http", Collections.emptyList(), Collections.emptyMap(), CapturedRequests.class);
-        final Response<CapturedRequests> response2 = defaultHttpClient.get("/api/requests/http", List.of(new Parameter("tunnel_name", "tunnel (1)")), Collections.emptyMap(), CapturedRequests.class);
-        final Response<CapturedRequests> response3 = defaultHttpClient.get("/api/requests/http", List.of(new Parameter("tunnel_name", "tunnel (1) (http)")), Collections.emptyMap(), CapturedRequests.class);
+        final Response<CapturedRequests> response2 = defaultHttpClient.get("/api/requests/http", List.of(new Parameter("tunnel_name", "my-tunnel")), Collections.emptyMap(), CapturedRequests.class);
+        final Response<CapturedRequests> response3 = defaultHttpClient.get("/api/requests/http", List.of(new Parameter("tunnel_name", "my-tunnel (http)")), Collections.emptyMap(), CapturedRequests.class);
 
         // THEN
         assertEquals(response1.getStatusCode(), 200);

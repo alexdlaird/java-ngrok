@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class NgrokClientTest {
 
@@ -23,13 +25,13 @@ class NgrokClientTest {
     public void testConnect() throws IOException, InterruptedException {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build();
-        assertNull(ngrokClient.getNgrokProcess().getProc());
+        assertNull(ngrokClient.getNgrokProcess().getProcess());
 
         // WHEN
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
 
         // THEN
-        assertNotNull(ngrokClient.getNgrokProcess().getProc());
+        assertNotNull(ngrokClient.getNgrokProcess().getProcess());
         assertEquals(tunnel.getName(), "my-tunnel (http)");
         assertEquals(tunnel.getProto(), "http");
         assertEquals(tunnel.getConfig().getAddr(), "http://localhost:80");
@@ -40,7 +42,7 @@ class NgrokClientTest {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").withBindTls("true").build();
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
-        assertNotNull(ngrokClient.getNgrokProcess().getProc());
+        assertNotNull(ngrokClient.getNgrokProcess().getProcess());
 
         // WHEN
         ngrokClient.disconnect(tunnel.getPublicUrl());
@@ -81,6 +83,6 @@ class NgrokClientTest {
         ngrokClient.kill();
 
         // THEN
-        assertNull(ngrokClient.getNgrokProcess().getProc());
+        assertNull(ngrokClient.getNgrokProcess().getProcess());
     }
 }

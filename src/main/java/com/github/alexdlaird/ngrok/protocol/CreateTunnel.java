@@ -1,5 +1,8 @@
 package com.github.alexdlaird.ngrok.protocol;
 
+import com.github.alexdlaird.ngrok.NgrokException;
+
+import java.util.List;
 import java.util.UUID;
 
 import static java.util.Objects.isNull;
@@ -46,6 +49,9 @@ public class CreateTunnel {
     }
 
     public static class Builder {
+        private final List<String> validProtos = List.of("http", "tcp", "tls");
+        private final List<String> validBindTls = List.of("true", "false", "both");
+
         private String name = null;
         private String proto = "http";
         private String addr = "80";
@@ -67,6 +73,10 @@ public class CreateTunnel {
         }
 
         public Builder withProto(final String proto) {
+            if (!validProtos.contains(proto)) {
+                throw new NgrokException(String.format("Invalid proto %s, valid values are: %s", proto, validProtos));
+            }
+
             this.proto = proto;
             return this;
         }
@@ -91,7 +101,16 @@ public class CreateTunnel {
             return this;
         }
 
+        public Builder withBindTls(final boolean bindTls) {
+            this.bindTls = String.valueOf(bindTls);
+            return this;
+        }
+
         public Builder withBindTls(final String bindTls) {
+            if (!validBindTls.contains(bindTls)) {
+                throw new NgrokException(String.format("Invalid bindTls %s, valid values are: %s", bindTls, validBindTls));
+            }
+
             this.bindTls = bindTls;
             return this;
         }

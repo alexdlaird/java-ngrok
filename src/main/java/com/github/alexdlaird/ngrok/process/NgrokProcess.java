@@ -23,12 +23,14 @@
 
 package com.github.alexdlaird.ngrok.process;
 
+import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -40,49 +42,90 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 public class NgrokProcess {
+    private final JavaNgrokConfig javaNgrokConfig;
 
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-    private Process proc = null;
-
-    private Future<List<String>> future = null;
+    private final NgrokInstaller ngrokInstaller;
 
     // TODO: this entire class is a POC placeholder for simple testing while the API is built out
 
-    public NgrokProcess() {
-        final NgrokInstaller ngrokInstaller = new NgrokInstaller();
-        ngrokInstaller.install();
+    private String apiUrl = "http://localhost:4040";
+
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+    private Process process = null;
+
+    private Future<List<String>> future = null;
+
+    public NgrokProcess(final JavaNgrokConfig javaNgrokConfig,
+                        final NgrokInstaller ngrokInstaller) {
+        this.javaNgrokConfig = javaNgrokConfig;
+        this.ngrokInstaller = ngrokInstaller;
+
+        this.ngrokInstaller.install();
     }
 
     public void start() throws IOException, InterruptedException {
-        if (nonNull(proc) && nonNull(future)) {
+        if (nonNull(process) && nonNull(future)) {
             return;
         }
 
         final ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("ngrok", "start", "--none");
-        proc = processBuilder.start();
-        final ProcessTask task = new ProcessTask(proc.getInputStream());
+
+        final List<String> command = new ArrayList<>();
+        // TODO: only using getName() until the installer manages its own binary
+        command.add(javaNgrokConfig.getNgrokPath().getName());//.getAbsolutePath());
+        command.add("start");
+        command.add("--none");
+
+        if (nonNull(javaNgrokConfig.getConfigPath())) {
+            command.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().getAbsolutePath()));
+        }
+        if (nonNull(javaNgrokConfig.getAuthToken())) {
+            command.add(String.format("--authtoken=%s", javaNgrokConfig.getAuthToken()));
+        }
+        if (nonNull(javaNgrokConfig.getRegion())) {
+            command.add(String.format("--region=%s", javaNgrokConfig.getRegion()));
+        }
+
+        processBuilder.command(command);
+        process = processBuilder.start();
+        final ProcessTask task = new ProcessTask(process.getInputStream());
         future = executorService.submit(task);
         Thread.sleep(2000);
     }
 
     public void stop() throws InterruptedException {
-        if (isNull(proc) || isNull(future)) {
+        if (isNull(process) || isNull(future)) {
             return;
         }
 
         future.cancel(true);
-        proc.descendants().forEach(ProcessHandle::destroy);
-        proc.destroy();
+        process.descendants().forEach(ProcessHandle::destroy);
+        process.destroy();
         Thread.sleep(2000);
 
-        proc = null;
+        process = null;
         future = null;
     }
 
-    public Process getProc() {
-        return proc;
+    public void setAuthToken(final String authToken) throws IOException, InterruptedException {
+        final ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command("ngrok", "authtoken", authToken);
+        process = processBuilder.start();
+        process.waitFor();
+    }
+
+    public Process getProcess() {
+        return process;
+    }
+
+    public String getApiUrl() {
+        return apiUrl;
+    }
+
+    public String getVersion() {
+        // TODO: implement capturing version output
+        throw new UnsupportedOperationException();
     }
 
     private static class ProcessTask implements Callable<List<String>> {
