@@ -2,39 +2,118 @@ package com.github.alexdlaird.ngrok.installer;
 
 import com.github.alexdlaird.ngrok.NgrokException;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.List;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class NgrokInstaller {
 
-    // TODO: this entire class is a POC placeholder for simple testing while the API is built out, java-ngrok will soon manage its own binary
+    private static final List<String> unixBinaries = List.of("DARWIN", "LINUX", "FREEBSD");
 
-    public void installNgrok() {
+    public static String getNgrokBin() {
+        final String system = getSystem();
+
+        if (unixBinaries.contains(system)) {
+            return "ngrok";
+        } else {
+            return "ngrok.exe";
+        }
+    }
+
+    public void installDefaultConfig(Path dest) {
+        try {
+            Files.createDirectories(dest.getParent());
+
+            final FileOutputStream out = new FileOutputStream(dest.toFile());
+            out.write("{}".getBytes());
+            out.close();
+        } catch (IOException e) {
+            // TODO: handle
+            e.printStackTrace();
+        }
+    }
+
+    public void installNgrok(final Path ngrokPath) {
+        final Path dir = ngrokPath.getParent();
+
         final String arch = getArch();
         final String system = getSystem();
         final NgrokCDNUrl ngrokCDNUrl = NgrokCDNUrl.valueOf(String.format("%s_%s", system, arch));
-//        System.out.println(System.getenv("PROCESSOR_ARCHITECTURE"));
-//        System.out.println(System.getenv("PROCESSOR_ARCHITEW6432"));
 
-//        try {
-//            final InputStream in = new URL(ngrokCDNUrl.getUrl()).openStream();
-//            Files.copy(in, Paths.get("ngrok"), StandardCopyOption.REPLACE_EXISTING);
-//        } catch (IOException e) {
-//            // TODO: handle
-//            e.printStackTrace();
-//        }
+        final Path ngrokZip = Paths.get(dir + File.separator + "ngrok.zip");
+        downloadFile(ngrokCDNUrl.getUrl(), ngrokZip);
 
-        final ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("pip", "install", "pyngrok");
-        final Process proc;
+        installNgrokZip(ngrokZip, dir);
+    }
+
+    private void installNgrokZip(Path zip, Path dest) {
         try {
-            proc = processBuilder.start();
-            proc.waitFor();
-        } catch (IOException | InterruptedException e) {
+            Files.createDirectories(dest);
+
+            final byte[] buffer = new byte[1024];
+            final ZipInputStream in = new ZipInputStream(new FileInputStream(zip.toFile()));
+            ZipEntry zipEntry = in.getNextEntry();
+            while (zipEntry != null) {
+                final File file = new File(dest.toFile(), zipEntry.getName());
+                if (zipEntry.isDirectory()) {
+                    if (!file.isDirectory() && !file.mkdirs()) {
+                        throw new IOException("Failed to create directory " + file);
+                    }
+                } else {
+                    // fix for Windows-created archives
+                    final File parent = file.getParentFile();
+                    if (!parent.isDirectory() && !parent.mkdirs()) {
+                        throw new IOException("Failed to create directory " + parent);
+                    }
+
+                    // write file content
+                    final FileOutputStream out = new FileOutputStream(file);
+                    int len;
+                    while ((len = in.read(buffer)) > 0) {
+                        out.write(buffer, 0, len);
+                    }
+                    out.close();
+                }
+                zipEntry = in.getNextEntry();
+            }
+            in.closeEntry();
+            in.close();
+
+            final Path ngrok = Paths.get(dest + File.separator + getNgrokBin());
+            final Set<PosixFilePermission> perms = Files.readAttributes(ngrok, PosixFileAttributes.class).permissions();
+            perms.add(PosixFilePermission.OWNER_EXECUTE);
+            perms.add(PosixFilePermission.GROUP_EXECUTE);
+            perms.add(PosixFilePermission.OTHERS_EXECUTE);
+            Files.setPosixFilePermissions(ngrok, perms);
+        } catch (IOException e) {
+            // TODO: handle
+            e.printStackTrace();
+        }
+    }
+
+    private void downloadFile(final String url, final Path dest) {
+        try {
+            Files.createDirectories(dest.getParent());
+
+            final InputStream in = new URL(url).openStream();
+            Files.copy(in, dest, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            // TODO: handle
             e.printStackTrace();
         }
     }
@@ -55,7 +134,7 @@ public class NgrokInstaller {
         return arch.toString();
     }
 
-    private String getSystem() {
+    private static String getSystem() {
         final String os = System.getProperty("os.name").replaceAll(" ", "").toLowerCase();
 
         if (os.startsWith("mac")) {
@@ -70,48 +149,4 @@ public class NgrokInstaller {
             throw new NgrokException(String.format("Unknown os.name: %s", os));
         }
     }
-
-//    def validate_config(data):
-//            if data.get("web_addr", None) is False:
-//    raise PyngrokError("\"web_addr\" cannot be False, as the ngrok API is a dependency for pyngrok")
-//    elif data.get("log_format") == "json":
-//    raise PyngrokError("\"log_format\" must be \"term\" to be compatible with pyngrok")
-//    elif data.get("log_level", "info") not in ["info", "debug"]:
-//    raise PyngrokError("\"log_level\" must be \"info\" to be compatible with pyngrok")
-
-
-//    def install_default_config(config_path, data=None):
-//    if data is None:
-//    data = {}
-//
-//    config_dir = os.path.dirname(config_path)
-//            if not os.path.exists(config_dir):
-//            os.makedirs(config_dir)
-//            if not os.path.exists(config_path):
-//    open(config_path, "w").close()
-//
-//    config = get_ngrok_config(config_path, use_cache=False)
-//
-//    config.update(data)
-//
-//    validate_config(config)
-//
-//    with open(config_path, "w") as config_file:
-//            logger.debug("Installing default ngrok config to {} ...".format(config_path))
-//
-//            yaml.dump(config, config_file)
-
-
-//    def get_ngrok_config(config_path, use_cache=True):
-//    global _config_cache
-//
-//    if not _config_cache or not use_cache:
-//    with open(config_path, "r") as config_file:
-//    config = yaml.safe_load(config_file)
-//            if config is None:
-//    config = {}
-//
-//    _config_cache = config
-//
-//    return _config_cache
 }

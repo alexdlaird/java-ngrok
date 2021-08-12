@@ -30,6 +30,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -61,7 +62,12 @@ public class NgrokProcess {
         this.javaNgrokConfig = javaNgrokConfig;
         this.ngrokInstaller = ngrokInstaller;
 
-        this.ngrokInstaller.installNgrok();
+        if (javaNgrokConfig.getNgrokPath().toFile().exists()) {
+            this.ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath());
+        }
+        if (javaNgrokConfig.getConfigPath().toFile().exists()) {
+            this.ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath());
+        }
     }
 
     public void start() throws IOException, InterruptedException {
@@ -72,13 +78,12 @@ public class NgrokProcess {
         final ProcessBuilder processBuilder = new ProcessBuilder();
 
         final List<String> command = new ArrayList<>();
-        // TODO: only using getName() until the installer manages its own binary
-        command.add(javaNgrokConfig.getNgrokPath().getName());//.getAbsolutePath());
+        command.add(javaNgrokConfig.getNgrokPath().toString());
         command.add("start");
         command.add("--none");
 
         if (nonNull(javaNgrokConfig.getConfigPath())) {
-            command.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().getAbsolutePath()));
+            command.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().toString()));
         }
         if (nonNull(javaNgrokConfig.getAuthToken())) {
             command.add(String.format("--authtoken=%s", javaNgrokConfig.getAuthToken()));
@@ -110,7 +115,7 @@ public class NgrokProcess {
 
     public void setAuthToken(final String authToken) throws IOException, InterruptedException {
         final ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("ngrok", "authtoken", authToken);
+        processBuilder.command(javaNgrokConfig.getNgrokPath().toString(), "authtoken", authToken);
         process = processBuilder.start();
         process.waitFor();
     }
