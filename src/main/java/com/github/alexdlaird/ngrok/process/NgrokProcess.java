@@ -52,16 +52,16 @@ public class NgrokProcess {
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    private Process process = null;
+    private Process process;
 
-    private Future<List<String>> future = null;
+    private Future<List<String>> future;
 
     public NgrokProcess(final JavaNgrokConfig javaNgrokConfig,
                         final NgrokInstaller ngrokInstaller) {
         this.javaNgrokConfig = javaNgrokConfig;
         this.ngrokInstaller = ngrokInstaller;
 
-        this.ngrokInstaller.install();
+        this.ngrokInstaller.installNgrok();
     }
 
     public void start() throws IOException, InterruptedException {

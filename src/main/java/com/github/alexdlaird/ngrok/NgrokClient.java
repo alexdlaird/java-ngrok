@@ -137,10 +137,10 @@ public class NgrokClient {
 
     public static class Builder {
 
-        private JavaNgrokConfig javaNgrokConfig = null;
-        private NgrokInstaller ngrokInstaller = null;
-        private NgrokProcess ngrokProcess = null;
-        private HttpClient httpClient = null;
+        private JavaNgrokConfig javaNgrokConfig;
+        private NgrokInstaller ngrokInstaller;
+        private NgrokProcess ngrokProcess;
+        private HttpClient httpClient;
 
         public Builder withJavaNgrokConfig(final JavaNgrokConfig javaNgrokConfig) {
             this.javaNgrokConfig = javaNgrokConfig;

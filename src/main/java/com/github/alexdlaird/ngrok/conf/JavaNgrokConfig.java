@@ -63,8 +63,8 @@ public class JavaNgrokConfig {
 
     public static class Builder {
 
-        private File ngrokPath = null;
-        private File configPath = null;
+        private File ngrokPath;
+        private File configPath;
         private String authToken;
         private Region region;
 

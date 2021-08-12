@@ -52,7 +52,7 @@ public class CreateTunnel {
         private final List<String> validProtos = List.of("http", "tcp", "tls");
         private final List<String> validBindTls = List.of("true", "false", "both");
 
-        private String name = null;
+        private String name;
         private String proto = "http";
         private String addr = "80";
         private boolean inspect = true;
