@@ -3,26 +3,32 @@ package com.github.alexdlaird.ngrok;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class NgrokClientTest {
+class NgrokClientTest extends NgrokTestCase {
 
-    private final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+    private final NgrokClient ngrokClient = new NgrokClient.Builder()
+            .withNgrokProcess(ngrokProcess)
+            .build();
 
-    @AfterEach
-    public void tearDown() {
-        ngrokClient.kill();
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+
+        ngrokProcess.start();
     }
 
     @Test
     public void testConnect() {
         // GIVEN
-        final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build();
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withName("my-tunnel")
+                .build();
         assertNull(ngrokClient.getNgrokProcess().getProcess());
 
         // WHEN
@@ -38,7 +44,10 @@ class NgrokClientTest {
     @Test
     public void testDisconnect() {
         // GIVEN
-        final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").withBindTls("true").build();
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withName("my-tunnel")
+                .withBindTls(true)
+                .build();
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
         assertNotNull(ngrokClient.getNgrokProcess().getProcess());
 
@@ -53,7 +62,9 @@ class NgrokClientTest {
     @Test
     public void testGetTunnels() {
         // GIVEN
-        final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build();
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withName("my-tunnel")
+                .build();
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
 
         // WHEN

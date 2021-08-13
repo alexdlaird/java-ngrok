@@ -127,8 +127,8 @@ public class NgrokInstaller {
 
             final byte[] buffer = new byte[1024];
             final ZipInputStream in = new ZipInputStream(new FileInputStream(zipPath.toFile()));
-            ZipEntry zipEntry = in.getNextEntry();
-            while (zipEntry != null) {
+            ZipEntry zipEntry;
+            while ((zipEntry = in.getNextEntry()) != null) {
                 final Path file = Paths.get(dir.toString(), zipEntry.getName());
                 if (zipEntry.isDirectory()) {
                     if (!Files.isDirectory(file)) {
@@ -147,7 +147,6 @@ public class NgrokInstaller {
                     }
                     out.close();
                 }
-                zipEntry = in.getNextEntry();
             }
             in.closeEntry();
             in.close();

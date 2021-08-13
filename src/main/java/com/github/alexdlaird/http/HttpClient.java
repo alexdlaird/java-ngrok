@@ -100,5 +100,4 @@ public interface HttpClient {
      */
     default void modifyConnection(final HttpURLConnection httpUrlConnection) {
     }
-
 }

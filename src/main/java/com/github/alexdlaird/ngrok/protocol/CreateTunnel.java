@@ -51,7 +51,7 @@ public class CreateTunnel {
     private final String remoteAddr;
     private final String metadata;
 
-    public CreateTunnel(final Builder builder) {
+    private CreateTunnel(final Builder builder) {
         this.name = builder.name;
         this.proto = builder.proto;
         this.addr = builder.addr;

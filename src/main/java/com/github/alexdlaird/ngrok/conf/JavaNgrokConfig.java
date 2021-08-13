@@ -40,7 +40,7 @@ public class JavaNgrokConfig {
     private final String authToken;
     private final Region region;
 
-    public JavaNgrokConfig(final Builder builder) {
+    private JavaNgrokConfig(final Builder builder) {
         ngrokPath = builder.ngrokPath;
         configPath = builder.configPath;
         authToken = builder.authToken;

@@ -30,15 +30,6 @@ import com.github.alexdlaird.ngrok.NgrokClient;
  */
 public class JavaNgrokHTTPException extends JavaNgrokException {
     /**
-     * An exception with a message.
-     *
-     * @param message The message describing the exception.
-     */
-    public JavaNgrokHTTPException(final String message) {
-        super(message);
-    }
-
-    /**
      * An exception with a message and a root cause.
      *
      * @param message The message describing the exception.

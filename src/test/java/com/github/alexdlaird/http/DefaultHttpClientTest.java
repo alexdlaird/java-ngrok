@@ -23,14 +23,11 @@
 
 package com.github.alexdlaird.http;
 
-import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
-import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
-import com.github.alexdlaird.ngrok.process.NgrokProcess;
+import com.github.alexdlaird.ngrok.NgrokTestCase;
 import com.github.alexdlaird.ngrok.protocol.CapturedRequests;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -41,27 +38,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class DefaultHttpClientTest {
+class DefaultHttpClientTest extends NgrokTestCase {
 
-    private final DefaultHttpClient defaultHttpClient = new DefaultHttpClient.Builder("http://localhost:4040").build();
-
-    // TODO: use a custom test config so tests never collide with system configs
-    private final NgrokProcess ngrokProcess = new NgrokProcess(new JavaNgrokConfig.Builder().build(), new NgrokInstaller());
+    private DefaultHttpClient defaultHttpClient;
 
     @BeforeEach
     public void setUp() {
-        ngrokProcess.start();
-    }
+        super.setUp();
 
-    @AfterEach
-    public void tearDown() {
-        ngrokProcess.stop();
+        ngrokProcess.start();
+
+        defaultHttpClient = new DefaultHttpClient.Builder(ngrokProcess.getApiUrl()).build();
     }
 
     @Test
     public void testPost() {
         // GIVEN
-        final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build();
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withName("my-tunnel")
+                .build();
 
         // WHEN
         final Response<Tunnel> postResponse = defaultHttpClient.post("/api/tunnels", createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
@@ -74,7 +69,10 @@ class DefaultHttpClientTest {
     @Test
     public void testGet() {
         // GIVEN
-        final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").withBindTls("true").build();
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withName("my-tunnel")
+                .withBindTls(true)
+                .build();
         defaultHttpClient.post("/api/tunnels", createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
 
         // WHEN
@@ -89,7 +87,9 @@ class DefaultHttpClientTest {
     @Test
     public void testDelete() {
         // GIVEN
-        final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build();
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withName("my-tunnel")
+                .build();
         final Tunnel tunnel = defaultHttpClient.post("/api/tunnels", createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class).getBody();
 
         // WHEN
@@ -103,7 +103,11 @@ class DefaultHttpClientTest {
     @Test
     public void testGetWithQueryParameters() throws InterruptedException {
         // GIVEN
-        final CreateTunnel request = new CreateTunnel.Builder().withName("my-tunnel").withAddr(4040).withBindTls("true").build();
+        final CreateTunnel request = new CreateTunnel.Builder()
+                .withName("my-tunnel")
+                .withAddr(4040)
+                .withBindTls(true)
+                .build();
         final Response<Tunnel> createResponse = defaultHttpClient.post("/api/tunnels", request, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
         final String publicUrl = createResponse.getBody().getPublicUrl();
         final DefaultHttpClient publicHttpClient = new DefaultHttpClient.Builder(publicUrl).build();
