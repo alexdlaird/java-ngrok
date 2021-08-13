@@ -63,7 +63,7 @@ public class MyClass {
 
         // Open a SSH tunnel
         // <Tunnel: "tcp://0.tcp.ngrok.io:12345" -> "localhost:22">
-        final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder().withProto("tcp").withAddr("22").build();
+        final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder().withProto("tcp").withAddr(22).build();
         final Tunnel sshTunnel = ngrokClient.connect(sshCreateTunnel);
     }
 }

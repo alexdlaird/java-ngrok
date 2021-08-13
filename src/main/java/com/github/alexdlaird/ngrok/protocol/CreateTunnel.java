@@ -86,6 +86,10 @@ public class CreateTunnel {
             return this;
         }
 
+        public Builder withAddr(final int addr) {
+            return withAddr(String.valueOf(addr));
+        }
+
         public Builder withoutInspect() {
             this.inspect = false;
             return this;
@@ -101,11 +105,6 @@ public class CreateTunnel {
             return this;
         }
 
-        public Builder withBindTls(final boolean bindTls) {
-            this.bindTls = String.valueOf(bindTls);
-            return this;
-        }
-
         public Builder withBindTls(final String bindTls) {
             if (!validBindTls.contains(bindTls)) {
                 throw new NgrokException(String.format("Invalid bindTls %s, valid values are: %s", bindTls, validBindTls));
@@ -113,6 +112,10 @@ public class CreateTunnel {
 
             this.bindTls = bindTls;
             return this;
+        }
+
+        public Builder withBindTls(final boolean bindTls) {
+            return withBindTls(String.valueOf(bindTls));
         }
 
         public Builder withSubdomain(final String subdomain) {
