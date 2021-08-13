@@ -34,7 +34,6 @@ import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import com.github.alexdlaird.ngrok.protocol.Version;
 
-import java.io.IOException;
 import java.util.Collections;
 
 import static java.util.Objects.isNull;
@@ -58,7 +57,7 @@ public class NgrokClient {
         this.httpClient = builder.httpClient;
     }
 
-    public Tunnel connect(final CreateTunnel createTunnel) throws IOException, InterruptedException {
+    public Tunnel connect(final CreateTunnel createTunnel) {
         ngrokProcess.start();
 
         final Response<Tunnel> response = httpClient.post("/api/tunnels", createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
@@ -74,11 +73,11 @@ public class NgrokClient {
         return tunnel;
     }
 
-    public Tunnel connect() throws IOException, InterruptedException {
+    public Tunnel connect() {
         return connect(new CreateTunnel.Builder().build());
     }
 
-    public void disconnect(final String publicUrl) throws IOException, InterruptedException {
+    public void disconnect(final String publicUrl) {
         ngrokProcess.start();
 
         final Tunnels tunnels = getTunnels();
@@ -104,15 +103,15 @@ public class NgrokClient {
         return response.getBody();
     }
 
-    public void kill() throws InterruptedException {
+    public void kill() {
         ngrokProcess.stop();
     }
 
-    public void setAuthToken(final String authToken) throws IOException, InterruptedException {
+    public void setAuthToken(final String authToken) {
         ngrokProcess.setAuthToken(authToken);
     }
 
-    public void update() throws IOException, InterruptedException {
+    public void update() {
         ngrokProcess.update();
     }
 

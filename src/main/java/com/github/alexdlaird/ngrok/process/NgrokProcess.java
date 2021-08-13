@@ -23,6 +23,7 @@
 
 package com.github.alexdlaird.ngrok.process;
 
+import com.github.alexdlaird.exception.NgrokException;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 
@@ -70,7 +71,7 @@ public class NgrokProcess {
         }
     }
 
-    public void start() throws IOException, InterruptedException {
+    public void start() {
         if (nonNull(process) && nonNull(future)) {
             return;
         }
@@ -93,13 +94,17 @@ public class NgrokProcess {
         }
 
         processBuilder.command(command);
-        process = processBuilder.start();
-        final ProcessTask task = new ProcessTask(process.getInputStream());
-        future = executorService.submit(task);
-        Thread.sleep(2000);
+        try {
+            process = processBuilder.start();
+            final ProcessTask task = new ProcessTask(process.getInputStream());
+            future = executorService.submit(task);
+            Thread.sleep(2000);
+        } catch (IOException | InterruptedException e) {
+            throw new NgrokException("An error occurred while starting ngrok.", e);
+        }
     }
 
-    public void stop() throws InterruptedException {
+    public void stop() {
         if (isNull(process) || isNull(future)) {
             return;
         }
@@ -107,24 +112,38 @@ public class NgrokProcess {
         future.cancel(true);
         process.descendants().forEach(ProcessHandle::destroy);
         process.destroy();
-        Thread.sleep(2000);
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            // TODO: remove
+            e.printStackTrace();
+        }
 
         process = null;
         future = null;
     }
 
-    public void setAuthToken(final String authToken) throws IOException, InterruptedException {
+    public void setAuthToken(final String authToken) {
         final ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(javaNgrokConfig.getNgrokPath().toString(), "authtoken", authToken);
-        process = processBuilder.start();
-        process.waitFor();
+        try {
+            process = processBuilder.start();
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            throw new NgrokException("An error occurred while setting the auth token for ngrok.", e);
+        }
     }
 
-    public void update() throws IOException, InterruptedException {
+    public void update() {
         final ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(javaNgrokConfig.getNgrokPath().toString(), "update");
-        process = processBuilder.start();
-        process.waitFor();
+        try {
+            process = processBuilder.start();
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            throw new NgrokException("An error occurred while trying to update ngrok.", e);
+        }
     }
 
     public String getVersion() {
@@ -134,6 +153,10 @@ public class NgrokProcess {
 
     public Process getProcess() {
         return process;
+    }
+
+    public NgrokInstaller getNgrokInstaller() {
+        return ngrokInstaller;
     }
 
     public String getApiUrl() {

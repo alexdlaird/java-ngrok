@@ -1,6 +1,6 @@
 package com.github.alexdlaird.ngrok.installer;
 
-import com.github.alexdlaird.ngrok.NgrokException;
+import com.github.alexdlaird.exception.JavaNgrokInstallerException;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -42,7 +42,7 @@ public class NgrokInstaller {
             out.write("{}".getBytes());
             out.close();
         } catch (IOException e) {
-            throw new NgrokException(String.format("An error while installing the default ngrok config to %s.", dest), e);
+            throw new JavaNgrokInstallerException(String.format("An error while installing the default ngrok config to %s.", dest), e);
         }
     }
 
@@ -99,7 +99,7 @@ public class NgrokInstaller {
                 Files.setPosixFilePermissions(ngrok, perms);
             }
         } catch (IOException e) {
-            throw new NgrokException("An error occurred while unzipping ngrok.", e);
+            throw new JavaNgrokInstallerException("An error occurred while unzipping ngrok.", e);
         }
     }
 
@@ -110,7 +110,7 @@ public class NgrokInstaller {
             final InputStream in = new URL(url).openStream();
             Files.copy(in, dest, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new NgrokException(String.format("An error occurred while downloading the file from %s.", url), e);
+            throw new JavaNgrokInstallerException(String.format("An error occurred while downloading the file from %s.", url), e);
         }
     }
 
@@ -142,7 +142,7 @@ public class NgrokInstaller {
         } else if (os.startsWith("freebsd")) {
             return "FREEBSD";
         } else {
-            throw new NgrokException(String.format("Unknown os.name: %s", os));
+            throw new JavaNgrokInstallerException(String.format("Unknown os.name: %s", os));
         }
     }
 }

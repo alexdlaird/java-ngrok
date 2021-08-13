@@ -34,7 +34,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -50,12 +49,12 @@ class DefaultHttpClientTest {
     private final NgrokProcess ngrokProcess = new NgrokProcess(new JavaNgrokConfig.Builder().build(), new NgrokInstaller());
 
     @BeforeEach
-    public void setUp() throws IOException, InterruptedException {
+    public void setUp() {
         ngrokProcess.start();
     }
 
     @AfterEach
-    public void tearDown() throws InterruptedException {
+    public void tearDown() {
         ngrokProcess.stop();
     }
 

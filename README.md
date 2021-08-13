@@ -50,11 +50,9 @@ import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 
-import java.io.IOException;
-
 public class MyClass {
 
-    public void myMethod() throws IOException, InterruptedException {
+    public void myMethod() {
         final NgrokClient ngrokClient = new NgrokClient.Builder().build();
 
         // Open a HTTP tunnel on the default port 80

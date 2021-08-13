@@ -21,18 +21,20 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.alexdlaird.ngrok;
+package com.github.alexdlaird.exception;
+
+import com.github.alexdlaird.ngrok.NgrokClient;
 
 /**
- * Root exception for {@link NgrokClient} interactions.
+ * Root exception for the {@link NgrokClient} and the `java-ngrok` library.
  */
-public class NgrokException extends RuntimeException {
+public class JavaNgrokException extends RuntimeException {
     /**
      * An exception with a message.
      *
      * @param message The message describing the exception.
      */
-    public NgrokException(final String message) {
+    public JavaNgrokException(final String message) {
         super(message);
     }
 
@@ -42,7 +44,7 @@ public class NgrokException extends RuntimeException {
      * @param message The message describing the exception.
      * @param cause   The initial cause of the exception.
      */
-    public NgrokException(final String message, final Throwable cause) {
+    public JavaNgrokException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

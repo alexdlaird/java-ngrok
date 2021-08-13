@@ -6,8 +6,6 @@ import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -17,12 +15,12 @@ class NgrokClientTest {
     private final NgrokClient ngrokClient = new NgrokClient.Builder().build();
 
     @AfterEach
-    public void tearDown() throws InterruptedException {
+    public void tearDown() {
         ngrokClient.kill();
     }
 
     @Test
-    public void testConnect() throws IOException, InterruptedException {
+    public void testConnect() {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build();
         assertNull(ngrokClient.getNgrokProcess().getProcess());
@@ -38,7 +36,7 @@ class NgrokClientTest {
     }
 
     @Test
-    public void testDisconnect() throws IOException, InterruptedException {
+    public void testDisconnect() {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").withBindTls("true").build();
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
@@ -53,7 +51,7 @@ class NgrokClientTest {
     }
 
     @Test
-    public void testGetTunnels() throws IOException, InterruptedException {
+    public void testGetTunnels() {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build();
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
@@ -74,7 +72,7 @@ class NgrokClientTest {
     }
 
     @Test
-    public void testKill() throws IOException, InterruptedException {
+    public void testKill() {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build();
         ngrokClient.connect(createTunnel);
