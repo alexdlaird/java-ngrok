@@ -104,7 +104,7 @@ class DefaultHttpClientTest {
     @Test
     public void testGetWithQueryParameters() throws InterruptedException {
         // GIVEN
-        final CreateTunnel request = new CreateTunnel.Builder().withName("my-tunnel").withAddr("4040").withBindTls("true").build();
+        final CreateTunnel request = new CreateTunnel.Builder().withName("my-tunnel").withAddr(4040).withBindTls("true").build();
         final Response<Tunnel> createResponse = defaultHttpClient.post("/api/tunnels", request, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
         final String publicUrl = createResponse.getBody().getPublicUrl();
         final DefaultHttpClient publicHttpClient = new DefaultHttpClient.Builder(publicUrl).build();
