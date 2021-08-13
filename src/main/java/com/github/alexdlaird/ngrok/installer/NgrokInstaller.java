@@ -68,7 +68,7 @@ public class NgrokInstaller {
     }
 
     /**
-     * Install the default <code>ngrok</code>> config. If a config is not already present for the given path,
+     * Install the default <code>ngrok</code> config. If a config is not already present for the given path,
      * create one.
      *
      * @param configPath The path to where the <code>ngrok</code> config should be installed.

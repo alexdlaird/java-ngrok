@@ -38,6 +38,7 @@ public interface HttpClient {
      * @param parameters        An arbitrary number of parameters to add to the URL.
      * @param additionalHeaders Additional headers for the request.
      * @param clazz             The class for the Response's body.
+     * @param <B>               The response body type.
      * @return The results of the query.
      */
     <B> Response<B> get(final String uri, final List<Parameter> parameters,
@@ -51,6 +52,8 @@ public interface HttpClient {
      * @param parameters        An arbitrary number of parameters to add to the URL.
      * @param additionalHeaders Additional headers for the request.
      * @param clazz             The class for the Response's body.
+     * @param <R>               The Request type.
+     * @param <B>               The Response body type.
      * @return The results of the query.
      */
     <R, B> Response<B> post(final String uri, final R request, final List<Parameter> parameters,
@@ -64,6 +67,8 @@ public interface HttpClient {
      * @param parameters        An arbitrary number of parameters to add to the URL.
      * @param additionalHeaders Additional headers for the request.
      * @param clazz             The class for the Response's body.
+     * @param <R>               The Request type.
+     * @param <B>               The Response body type.
      * @return The results of the query.
      */
     <R, B> Response<B> put(final String uri, final R request, final List<Parameter> parameters,
@@ -76,6 +81,7 @@ public interface HttpClient {
      * @param parameters        An arbitrary number of parameters to add to the URL.
      * @param additionalHeaders Additional headers for the request.
      * @param clazz             The class for the Response's body.
+     * @param <B>               The Response body type.
      * @return The results of the query.
      */
     <B> Response<B> delete(final String uri, final List<Parameter> parameters,
