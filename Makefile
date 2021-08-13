@@ -18,7 +18,7 @@ clean:
 	$(GRADLE_BIN) clean
 
 test:
-	$(GRADLE_BIN) test --debug
+	$(GRADLE_BIN) test
 
 docs:
 	$(GRADLE_BIN) javadoc

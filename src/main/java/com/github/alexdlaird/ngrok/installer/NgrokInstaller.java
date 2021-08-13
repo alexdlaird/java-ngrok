@@ -90,12 +90,14 @@ public class NgrokInstaller {
             in.closeEntry();
             in.close();
 
-            final Path ngrok = Paths.get(dest.toString(), getNgrokBin());
-            final Set<PosixFilePermission> perms = Files.readAttributes(ngrok, PosixFileAttributes.class).permissions();
-            perms.add(PosixFilePermission.OWNER_EXECUTE);
-            perms.add(PosixFilePermission.GROUP_EXECUTE);
-            perms.add(PosixFilePermission.OTHERS_EXECUTE);
-            Files.setPosixFilePermissions(ngrok, perms);
+            if (dest.getFileSystem().supportedFileAttributeViews().contains("posix")) {
+                final Path ngrok = Paths.get(dest.toString(), getNgrokBin());
+                final Set<PosixFilePermission> perms = Files.readAttributes(ngrok, PosixFileAttributes.class).permissions();
+                perms.add(PosixFilePermission.OWNER_EXECUTE);
+                perms.add(PosixFilePermission.GROUP_EXECUTE);
+                perms.add(PosixFilePermission.OTHERS_EXECUTE);
+                Files.setPosixFilePermissions(ngrok, perms);
+            }
         } catch (IOException e) {
             throw new NgrokException("An error occurred while unzipping ngrok.", e);
         }
