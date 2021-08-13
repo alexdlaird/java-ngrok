@@ -23,6 +23,9 @@
 
 package com.github.alexdlaird.ngrok.installer;
 
+/**
+ * An enum that maps systems and architectures to their corresponding <code>ngrok</code> download URLs.
+ */
 public enum NgrokCDNUrl {
     DARWIN_x86_64("ngrok-stable-darwin-amd64.zip"),
     DARWIN_i386("ngrok-stable-darwin-386.zip"),

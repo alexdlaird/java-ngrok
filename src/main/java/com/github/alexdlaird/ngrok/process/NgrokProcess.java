@@ -43,6 +43,9 @@ import java.util.stream.Collectors;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+/**
+ * An object containing information about the <code>ngrok</code> process.
+ */
 public class NgrokProcess {
     private final JavaNgrokConfig javaNgrokConfig;
 
@@ -71,10 +74,17 @@ public class NgrokProcess {
         }
     }
 
+    /**
+     * Start a <code>ngrok</code> process with no tunnels. This will start the <code>ngrok</code> web interface,
+     * against which HTTP requests can be made to create, interact with, and destroy tunnels.
+     */
     public void start() {
         if (nonNull(process) && nonNull(future)) {
             return;
         }
+
+        // TODO: parse the ngrok config, then validated it before startup
+        // ngrokInstaller.validateConfig(data);
 
         final ProcessBuilder processBuilder = new ProcessBuilder();
 
@@ -104,6 +114,10 @@ public class NgrokProcess {
         }
     }
 
+    /**
+     * Terminate the <code>ngrok</code> processes, if running. This method will not block, it will
+     * just issue a kill request.
+     */
     public void stop() {
         if (isNull(process) || isNull(future)) {
             return;
@@ -113,17 +127,16 @@ public class NgrokProcess {
         process.descendants().forEach(ProcessHandle::destroy);
         process.destroy();
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            // TODO: remove
-            e.printStackTrace();
-        }
-
         process = null;
         future = null;
     }
 
+    /**
+     * Set the <code>ngrok</code> auth token in the config file, enabling authenticated features (for instance,
+     * more concurrent tunnels, custom subdomains, etc.).
+     *
+     * @param authToken The auth token.
+     */
     public void setAuthToken(final String authToken) {
         final ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(javaNgrokConfig.getNgrokPath().toString(), "authtoken", authToken);
@@ -135,6 +148,9 @@ public class NgrokProcess {
         }
     }
 
+    /**
+     * Update <code>ngrok</code>, if an update is available.
+     */
     public void update() {
         final ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(javaNgrokConfig.getNgrokPath().toString(), "update");
@@ -146,6 +162,11 @@ public class NgrokProcess {
         }
     }
 
+    /**
+     * Get the <code>ngrok</code> version.
+     *
+     * @return The version.
+     */
     public String getVersion() {
         // TODO: implement capturing version output
         throw new UnsupportedOperationException();

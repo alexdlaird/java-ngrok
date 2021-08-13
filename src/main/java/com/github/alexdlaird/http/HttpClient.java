@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A simple client for executing HTTP requests.
+ * A simple interface for executing HTTP requests.
  */
 public interface HttpClient {
     /**

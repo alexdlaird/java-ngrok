@@ -90,8 +90,8 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(baseUrl + uri, parameters), null, "GET",
                     additionalHeaders, clazz);
-        } catch (Exception ex) {
-            throw new HttpClientException("Rest client error", ex);
+        } catch (Exception e) {
+            throw new HttpClientException("HTTP client error", e);
         }
     }
 
@@ -104,8 +104,8 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(baseUrl + uri, parameters), convertRequestToString(request), "POST",
                     additionalHeaders, clazz);
-        } catch (Exception ex) {
-            throw new HttpClientException("Rest client error", ex);
+        } catch (Exception e) {
+            throw new HttpClientException("HTTP client error", e);
         }
     }
 
@@ -118,8 +118,8 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(baseUrl + uri, parameters), convertRequestToString(request), "PUT",
                     additionalHeaders, clazz);
-        } catch (Exception ex) {
-            throw new HttpClientException("Rest client error", ex);
+        } catch (Exception e) {
+            throw new HttpClientException("HTTP client error", e);
         }
     }
 
@@ -131,8 +131,8 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(baseUrl + uri, parameters), null, "DELETE",
                     additionalHeaders, clazz);
-        } catch (Exception ex) {
-            throw new HttpClientException("Rest client error", ex);
+        } catch (Exception e) {
+            throw new HttpClientException("HTTP client error", e);
         }
     }
 
