@@ -282,8 +282,6 @@ public class NgrokProcess {
                     }
                 }
 
-                // TODO: check if we've errored out and the process needs to be shut down
-
                 // TODO: add support to keep monitoring logs after startup
             } catch (IOException e) {
                 throw new NgrokException("An error occurred in the ngrok process.", e);
