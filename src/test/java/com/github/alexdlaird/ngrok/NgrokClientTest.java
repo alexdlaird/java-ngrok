@@ -3,24 +3,27 @@ package com.github.alexdlaird.ngrok;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
+import com.github.alexdlaird.ngrok.protocol.Version;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NgrokClientTest extends NgrokTestCase {
 
-    private final NgrokClient ngrokClient = new NgrokClient.Builder()
-            .withNgrokProcess(ngrokProcess)
-            .build();
+    private NgrokClient ngrokClient;
 
     @BeforeEach
     public void setUp() {
         super.setUp();
 
-        ngrokProcess.start();
+        ngrokClient = new NgrokClient.Builder()
+                .withNgrokProcess(ngrokProcess)
+                .build();
     }
 
     @Test
@@ -29,13 +32,13 @@ class NgrokClientTest extends NgrokTestCase {
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withName("my-tunnel")
                 .build();
-        assertNull(ngrokClient.getNgrokProcess().getProcess());
+        assertFalse(ngrokClient.getNgrokProcess().isRunning());
 
         // WHEN
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
 
         // THEN
-        assertNotNull(ngrokClient.getNgrokProcess().getProcess());
+        assertTrue(ngrokClient.getNgrokProcess().isRunning());
         assertEquals(tunnel.getName(), "my-tunnel (http)");
         assertEquals(tunnel.getProto(), "http");
         assertEquals(tunnel.getConfig().getAddr(), "http://localhost:80");
@@ -49,7 +52,7 @@ class NgrokClientTest extends NgrokTestCase {
                 .withBindTls(true)
                 .build();
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
-        assertNotNull(ngrokClient.getNgrokProcess().getProcess());
+        assertTrue(ngrokClient.getNgrokProcess().isRunning());
 
         // WHEN
         ngrokClient.disconnect(tunnel.getPublicUrl());
@@ -92,6 +95,16 @@ class NgrokClientTest extends NgrokTestCase {
         ngrokClient.kill();
 
         // THEN
-        assertNull(ngrokClient.getNgrokProcess().getProcess());
+        assertFalse(ngrokClient.getNgrokProcess().isRunning());
+    }
+
+    @Test
+    public void testGetVersion() {
+        // WHEN
+        final Version version = ngrokClient.getVersion();
+
+        // THEN
+        assertNotNull(version.getJavaNgrokVersion());
+        assertNotEquals(version.getNgrokVersion(), "unknown");
     }
 }

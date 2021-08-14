@@ -29,18 +29,11 @@ import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 /**
@@ -51,15 +44,13 @@ public class NgrokProcess {
 
     private final NgrokInstaller ngrokInstaller;
 
-    // TODO: this entire class is a POC placeholder for simple testing while the API is built out
+    // TODO: this entire class is a POC implementation for simple testing while the API is built out
 
     private String apiUrl = "http://localhost:4040";
 
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-
     private Process process;
 
-    private Future<List<String>> future;
+    private ProcessMonitor processMonitor;
 
     public NgrokProcess(final JavaNgrokConfig javaNgrokConfig,
                         final NgrokInstaller ngrokInstaller) {
@@ -79,7 +70,7 @@ public class NgrokProcess {
      * against which HTTP requests can be made to create, interact with, and destroy tunnels.
      */
     public void start() {
-        if (nonNull(process) && nonNull(future)) {
+        if (isRunning()) {
             return;
         }
 
@@ -87,11 +78,14 @@ public class NgrokProcess {
         // ngrokInstaller.validateConfig(data);
 
         final ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.redirectErrorStream(true);
+        processBuilder.inheritIO().redirectOutput(ProcessBuilder.Redirect.PIPE);
 
         final List<String> command = new ArrayList<>();
         command.add(javaNgrokConfig.getNgrokPath().toString());
         command.add("start");
         command.add("--none");
+        command.add("--log=stdout");
 
         if (nonNull(javaNgrokConfig.getConfigPath())) {
             command.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().toString()));
@@ -106,12 +100,20 @@ public class NgrokProcess {
         processBuilder.command(command);
         try {
             process = processBuilder.start();
-            final ProcessTask task = new ProcessTask(process.getInputStream());
-            future = executorService.submit(task);
-            Thread.sleep(2000);
+            processMonitor = new ProcessMonitor(process);
+            new Thread(processMonitor).start();
+
+            // TODO: make this sleep more elegant
+            while (!processMonitor.isHealthy()) {
+                Thread.sleep(1000);
+            }
         } catch (IOException | InterruptedException e) {
             throw new NgrokException("An error occurred while starting ngrok.", e);
         }
+    }
+
+    public boolean isRunning() {
+        return nonNull(processMonitor);
     }
 
     /**
@@ -119,16 +121,16 @@ public class NgrokProcess {
      * just issue a kill request.
      */
     public void stop() {
-        if (isNull(process) || isNull(future)) {
+        if (!isRunning()) {
             return;
         }
 
-        future.cancel(true);
+        processMonitor.stop();
         process.descendants().forEach(ProcessHandle::destroy);
         process.destroy();
 
         process = null;
-        future = null;
+        processMonitor = null;
     }
 
     /**
@@ -139,9 +141,22 @@ public class NgrokProcess {
      */
     public void setAuthToken(final String authToken) {
         final ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command(javaNgrokConfig.getNgrokPath().toString(), "authtoken", authToken);
+        processBuilder.redirectErrorStream(true);
+        processBuilder.inheritIO().redirectOutput(ProcessBuilder.Redirect.PIPE);
+
+        final List<String> command = new ArrayList<>();
+        command.add(javaNgrokConfig.getNgrokPath().toString());
+        command.add("authtoken");
+        command.add(authToken);
+        command.add("--log=stdout");
+
+        if (nonNull(javaNgrokConfig.getConfigPath())) {
+            command.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().toString()));
+        }
+
+        processBuilder.command(command);
         try {
-            process = processBuilder.start();
+            final Process process = processBuilder.start();
             process.waitFor();
         } catch (IOException | InterruptedException e) {
             throw new NgrokException("An error occurred while setting the auth token for ngrok.", e);
@@ -153,9 +168,17 @@ public class NgrokProcess {
      */
     public void update() {
         final ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command(javaNgrokConfig.getNgrokPath().toString(), "update");
+        processBuilder.redirectErrorStream(true);
+        processBuilder.inheritIO().redirectOutput(ProcessBuilder.Redirect.PIPE);
+
+        final List<String> command = new ArrayList<>();
+        command.add(javaNgrokConfig.getNgrokPath().toString());
+        command.add("update");
+        command.add("--log=stdout");
+
+        processBuilder.command(command);
         try {
-            process = processBuilder.start();
+            final Process process = processBuilder.start();
             process.waitFor();
         } catch (IOException | InterruptedException e) {
             throw new NgrokException("An error occurred while trying to update ngrok.", e);
@@ -168,12 +191,33 @@ public class NgrokProcess {
      * @return The version.
      */
     public String getVersion() {
-        // TODO: implement capturing version output
-        throw new UnsupportedOperationException();
-    }
+        final ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.redirectErrorStream(true);
+        processBuilder.inheritIO().redirectOutput(ProcessBuilder.Redirect.PIPE);
 
-    public Process getProcess() {
-        return process;
+        final List<String> command = new ArrayList<>();
+        command.add(javaNgrokConfig.getNgrokPath().toString());
+        command.add("version");
+
+        processBuilder.command(command);
+        try {
+            final Process process = processBuilder.start();
+            process.waitFor();
+
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            String version = "unknown";
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("ngrok version")) {
+                    version = line.split("ngrok version")[1];
+                }
+            }
+
+            return version;
+        } catch (IOException | InterruptedException e) {
+            throw new NgrokException("An error occurred while trying to update ngrok.", e);
+        }
     }
 
     public NgrokInstaller getNgrokInstaller() {
@@ -184,19 +228,39 @@ public class NgrokProcess {
         return apiUrl;
     }
 
-    private static class ProcessTask implements Callable<List<String>> {
+    private static class ProcessMonitor implements Runnable {
+        private final Process process;
 
-        private final InputStream inputStream;
+        private boolean alive = true;
 
-        public ProcessTask(InputStream inputStream) {
-            this.inputStream = inputStream;
+        private boolean isHealthy = false;
+
+        public ProcessMonitor(final Process process) {
+            this.process = process;
         }
 
-        @Override
-        public List<String> call() {
-            return new BufferedReader(new InputStreamReader(inputStream))
-                    .lines()
-                    .collect(Collectors.toList());
+        public void stop() {
+            this.alive = false;
+        }
+
+        public void run() {
+            try {
+                final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+                // TODO: parse the actual logs to determine when startup is healthy
+                isHealthy = true;
+
+                String s;
+                while (alive && (s = reader.readLine()) != null) {
+                    System.out.println(s);
+                }
+            } catch (IOException e) {
+                throw new NgrokException("An error occurred in the ngrok process.", e);
+            }
+        }
+
+        public boolean isHealthy() {
+            return isHealthy;
         }
     }
 }
