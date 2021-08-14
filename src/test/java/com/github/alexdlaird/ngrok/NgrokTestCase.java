@@ -15,7 +15,7 @@ import java.util.Comparator;
 public class NgrokTestCase {
 
     protected JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-            .withConfigPath(Paths.get(".ngrok2", "config.yml").toAbsolutePath())
+            .withConfigPath(Paths.get("build", ".ngrok2", "config.yml").toAbsolutePath())
             .build();
 
     protected NgrokProcess ngrokProcess;

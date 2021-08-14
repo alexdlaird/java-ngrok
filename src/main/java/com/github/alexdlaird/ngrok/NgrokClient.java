@@ -46,12 +46,12 @@ import static java.util.Objects.isNull;
  */
 public class NgrokClient {
 
+    private static final String VERSION = "0.1.0";
+
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokInstaller ngrokInstaller;
     private final NgrokProcess ngrokProcess;
     private final HttpClient httpClient;
-
-    // TODO: interactions with NgrokProcess in this class are POC for simple testing while the API is built out, java-ngrok will soon manage its own binary
 
     private NgrokClient(final Builder builder) {
         this.javaNgrokConfig = builder.javaNgrokConfig;
@@ -108,8 +108,6 @@ public class NgrokClient {
      * @param publicUrl The public URL of the tunnel to disconnect.
      */
     public void disconnect(final String publicUrl) {
-        ngrokProcess.start();
-
         final Tunnels tunnels = getTunnels();
         Tunnel tunnel = null;
         // TODO: cache active tunnels so we can first check that before falling back to an API request
@@ -124,6 +122,8 @@ public class NgrokClient {
             return;
         }
 
+        ngrokProcess.start();
+
         try {
             httpClient.delete(tunnel.getUri(), Collections.emptyList(), Collections.emptyMap(), Object.class);
         } catch (HttpClientException e) {
@@ -137,6 +137,8 @@ public class NgrokClient {
      * @return The active <code>ngrok</code> tunnels.
      */
     public Tunnels getTunnels() {
+        ngrokProcess.start();
+
         try {
             final Response<Tunnels> response = httpClient.get("/api/tunnels", Collections.emptyList(), Collections.emptyMap(), Tunnels.class);
 
@@ -179,12 +181,7 @@ public class NgrokClient {
     public Version getVersion() {
         final String ngrokVersion = ngrokProcess.getVersion();
 
-        // TODO: parse out java-ngrok version from POM
-        String javaNgrokVersion = null;
-
-        // new Version(ngrokVersion, javaNgrokVersion);
-
-        throw new UnsupportedOperationException();
+        return new Version(ngrokVersion, VERSION);
     }
 
     public JavaNgrokConfig getJavaNgrokConfig() {

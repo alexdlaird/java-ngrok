@@ -32,6 +32,7 @@ validate-release:
 	@if [[ $$(grep "version \"${VERSION}\"" build.gradle) == "" ]] ; then echo "Version not bumped in build.gradle" & exit 1 ; fi
 	@if [[ $$(grep "<version>${VERSION}</version>" README.md) == "" ]] ; then echo "Version not bumped in README.md" & exit 1 ; fi
 	@if [[ $$(grep "com.github.alexdlaird:java-ngrok:${VERSION}" README.md) == "" ]] ; then echo "Version not bumped in README.md" & exit 1 ; fi
+	@if [[ $$(grep "VERSION = \"${VERSION}\"" src/main/java/com/github/alexdlaird/ngrok/NgrokClient.java) == "" ]] ; then echo "Version not bumped in NgrokClient.java" & exit 1 ; fi
 
 upload:
 	$(GRADLE_BIN) publish
