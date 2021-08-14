@@ -39,12 +39,14 @@ public class JavaNgrokConfig {
     private final Path configPath;
     private final String authToken;
     private final Region region;
+    private final int startupTimeout;
 
     private JavaNgrokConfig(final Builder builder) {
         ngrokPath = builder.ngrokPath;
         configPath = builder.configPath;
         authToken = builder.authToken;
         region = builder.region;
+        startupTimeout = builder.startupTimeout;
     }
 
     public Path getNgrokPath() {
@@ -63,12 +65,17 @@ public class JavaNgrokConfig {
         return region;
     }
 
+    public int getStartupTime() {
+        return startupTimeout;
+    }
+
     public static class Builder {
 
         private Path ngrokPath;
         private Path configPath;
         private String authToken;
         private Region region;
+        private int startupTimeout = 15;
 
         public Builder withNgrokPath(final Path ngrokPath) {
             this.ngrokPath = ngrokPath;
@@ -87,6 +94,11 @@ public class JavaNgrokConfig {
 
         public Builder withRegion(final Region region) {
             this.region = region;
+            return this;
+        }
+
+        public Builder withStartupTimeout(final int startupTimeout) {
+            this.startupTimeout = startupTimeout;
             return this;
         }
 

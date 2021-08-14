@@ -33,6 +33,7 @@ import java.nio.charset.Charset;
  * Convenience methods for String manipulation.
  */
 public class StringUtils {
+
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
     /**

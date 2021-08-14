@@ -71,7 +71,7 @@ public class CapturedRequest {
         return response;
     }
 
-    private static class Request {
+    public static class Request {
         private String method;
         private String proto;
         private Map<String, List<String>> headers;
@@ -99,7 +99,7 @@ public class CapturedRequest {
         }
     }
 
-    private static class Response {
+    public static class Response {
         private String status;
         private int statusCode;
         private String proto;

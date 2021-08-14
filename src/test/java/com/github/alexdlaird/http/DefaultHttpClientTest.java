@@ -48,7 +48,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
 
         ngrokProcess.start();
 
-        defaultHttpClient = new DefaultHttpClient.Builder(ngrokProcess.getApiUrl()).build();
+        defaultHttpClient = new DefaultHttpClient.Builder().build();
     }
 
     @Test
@@ -59,7 +59,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
                 .build();
 
         // WHEN
-        final Response<Tunnel> postResponse = defaultHttpClient.post("/api/tunnels", createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
+        final Response<Tunnel> postResponse = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
 
         // THEN
         assertEquals(postResponse.getStatusCode(), 201);
@@ -73,10 +73,10 @@ class DefaultHttpClientTest extends NgrokTestCase {
                 .withName("my-tunnel")
                 .withBindTls(true)
                 .build();
-        defaultHttpClient.post("/api/tunnels", createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
+        defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
 
         // WHEN
-        final Response<Tunnels> getResponse = defaultHttpClient.get("/api/tunnels", Collections.emptyList(), Collections.emptyMap(), Tunnels.class);
+        final Response<Tunnels> getResponse = defaultHttpClient.get(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), Collections.emptyList(), Collections.emptyMap(), Tunnels.class);
 
         // THEN
         assertEquals(getResponse.getStatusCode(), 200);
@@ -90,10 +90,10 @@ class DefaultHttpClientTest extends NgrokTestCase {
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withName("my-tunnel")
                 .build();
-        final Tunnel tunnel = defaultHttpClient.post("/api/tunnels", createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class).getBody();
+        final Tunnel tunnel = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class).getBody();
 
         // WHEN
-        final Response<?> deleteResponse = defaultHttpClient.delete(tunnel.getUri(), Collections.emptyList(), Collections.emptyMap());
+        final Response<?> deleteResponse = defaultHttpClient.delete(ngrokProcess.getApiUrl() + tunnel.getUri(), Collections.emptyList(), Collections.emptyMap());
 
         // THEN
         assertEquals(deleteResponse.getStatusCode(), 204);
@@ -108,20 +108,20 @@ class DefaultHttpClientTest extends NgrokTestCase {
                 .withAddr(4040)
                 .withBindTls(true)
                 .build();
-        final Response<Tunnel> createResponse = defaultHttpClient.post("/api/tunnels", request, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
+        final Response<Tunnel> createResponse = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), request, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
         final String publicUrl = createResponse.getBody().getPublicUrl();
-        final DefaultHttpClient publicHttpClient = new DefaultHttpClient.Builder(publicUrl).build();
+        final DefaultHttpClient publicHttpClient = new DefaultHttpClient.Builder().build();
 
         Thread.sleep(1000);
 
-        publicHttpClient.get("/status", Collections.emptyList(), Collections.emptyMap(), Object.class);
+        publicHttpClient.get(String.format("%s/status", ngrokProcess.getApiUrl()), Collections.emptyList(), Collections.emptyMap(), Object.class);
 
         Thread.sleep(3000);
 
         // WHEN
-        final Response<CapturedRequests> response1 = defaultHttpClient.get("/api/requests/http", Collections.emptyList(), Collections.emptyMap(), CapturedRequests.class);
-        final Response<CapturedRequests> response2 = defaultHttpClient.get("/api/requests/http", List.of(new Parameter("tunnel_name", "my-tunnel")), Collections.emptyMap(), CapturedRequests.class);
-        final Response<CapturedRequests> response3 = defaultHttpClient.get("/api/requests/http", List.of(new Parameter("tunnel_name", "my-tunnel (http)")), Collections.emptyMap(), CapturedRequests.class);
+        final Response<CapturedRequests> response1 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), Collections.emptyList(), Collections.emptyMap(), CapturedRequests.class);
+        final Response<CapturedRequests> response2 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), List.of(new Parameter("tunnel_name", "my-tunnel")), Collections.emptyMap(), CapturedRequests.class);
+        final Response<CapturedRequests> response3 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), List.of(new Parameter("tunnel_name", "my-tunnel (http)")), Collections.emptyMap(), CapturedRequests.class);
 
         // THEN
         assertEquals(response1.getStatusCode(), 200);

@@ -74,7 +74,7 @@ class NgrokClientTest extends NgrokTestCase {
         final Tunnels tunnels = ngrokClient.getTunnels();
 
         assertEquals(tunnels.getTunnels().size(), 2);
-        for (Tunnel t : tunnels.getTunnels()) {
+        for (final Tunnel t : tunnels.getTunnels()) {
             if (t.getProto().equals("http")) {
                 assertEquals(t.getPublicUrl(), tunnel.getPublicUrl());
             } else {

@@ -62,11 +62,6 @@ public class DefaultHttpClient implements HttpClient {
             .create();
 
     /**
-     * Base URL for the API.
-     */
-    private final String baseUrl;
-
-    /**
      * Default encoding for requests.
      */
     private final String encoding;
@@ -77,18 +72,17 @@ public class DefaultHttpClient implements HttpClient {
     private final String contentType;
 
     private DefaultHttpClient(final Builder builder) {
-        this.baseUrl = builder.baseUrl;
         this.encoding = builder.encoding;
         this.contentType = builder.contentType;
     }
 
     @Override
-    public <B> Response<B> get(final String uri,
+    public <B> Response<B> get(final String url,
                                final List<Parameter> parameters,
                                final Map<String, String> additionalHeaders,
                                final Class<B> clazz) {
         try {
-            return execute(urlWithParameters(baseUrl + uri, parameters), null, "GET",
+            return execute(urlWithParameters(url, parameters), null, "GET",
                     additionalHeaders, clazz);
         } catch (Exception e) {
             throw new HttpClientException("HTTP client error", e);
@@ -96,13 +90,13 @@ public class DefaultHttpClient implements HttpClient {
     }
 
     @Override
-    public <R, B> Response<B> post(final String uri,
+    public <R, B> Response<B> post(final String url,
                                    final R request,
                                    final List<Parameter> parameters,
                                    final Map<String, String> additionalHeaders,
                                    final Class<B> clazz) {
         try {
-            return execute(urlWithParameters(baseUrl + uri, parameters), convertRequestToString(request), "POST",
+            return execute(urlWithParameters(url, parameters), convertRequestToString(request), "POST",
                     additionalHeaders, clazz);
         } catch (Exception e) {
             throw new HttpClientException("HTTP client error", e);
@@ -110,13 +104,13 @@ public class DefaultHttpClient implements HttpClient {
     }
 
     @Override
-    public <R, B> Response<B> put(final String uri,
+    public <R, B> Response<B> put(final String url,
                                   final R request,
                                   final List<Parameter> parameters,
                                   final Map<String, String> additionalHeaders,
                                   final Class<B> clazz) {
         try {
-            return execute(urlWithParameters(baseUrl + uri, parameters), convertRequestToString(request), "PUT",
+            return execute(urlWithParameters(url, parameters), convertRequestToString(request), "PUT",
                     additionalHeaders, clazz);
         } catch (Exception e) {
             throw new HttpClientException("HTTP client error", e);
@@ -124,12 +118,12 @@ public class DefaultHttpClient implements HttpClient {
     }
 
     @Override
-    public <B> Response<B> delete(final String uri,
+    public <B> Response<B> delete(final String url,
                                   final List<Parameter> parameters,
                                   final Map<String, String> additionalHeaders,
                                   final Class<B> clazz) {
         try {
-            return execute(urlWithParameters(baseUrl + uri, parameters), null, "DELETE",
+            return execute(urlWithParameters(url, parameters), null, "DELETE",
                     additionalHeaders, clazz);
         } catch (Exception e) {
             throw new HttpClientException("HTTP client error", e);
@@ -140,7 +134,7 @@ public class DefaultHttpClient implements HttpClient {
                                             final Map<String, String> additionalHeaders) {
         httpUrlConnection.setRequestProperty("Content-Type", contentType);
         if (additionalHeaders != null) {
-            for (Map.Entry<String, String> entry : additionalHeaders.entrySet()) {
+            for (final Map.Entry<String, String> entry : additionalHeaders.entrySet()) {
                 httpUrlConnection.setRequestProperty(entry.getKey(), entry.getValue());
             }
         }
@@ -185,7 +179,7 @@ public class DefaultHttpClient implements HttpClient {
 
         if (parameters != null && parameters.size() > 0) {
             boolean first = true;
-            for (Parameter parameter : parameters) {
+            for (final Parameter parameter : parameters) {
                 if (!first) {
                     stringBuilder.append("&");
                 } else {
@@ -270,13 +264,8 @@ public class DefaultHttpClient implements HttpClient {
     }
 
     public static class Builder {
-        private final String baseUrl;
         private String encoding = "UTF-8";
         private String contentType = "application/json";
-
-        public Builder(final String baseUrl) {
-            this.baseUrl = baseUrl;
-        }
 
         public Builder withEncoding(final String encoding) {
             this.encoding = encoding;

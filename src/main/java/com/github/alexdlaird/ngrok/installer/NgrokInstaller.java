@@ -25,6 +25,7 @@ package com.github.alexdlaird.ngrok.installer;
 
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokInstallerException;
+import com.github.alexdlaird.ngrok.NgrokClient;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -40,6 +41,7 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -47,6 +49,8 @@ import java.util.zip.ZipInputStream;
  * A helper for downloading and installing the <code>ngrok</code> for the current system.
  */
 public class NgrokInstaller {
+
+    private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokInstaller.class));
 
     private static final List<String> UNIX_BINARIES = List.of("DARWIN", "LINUX", "FREEBSD");
 

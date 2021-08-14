@@ -73,7 +73,7 @@ public class Tunnel {
         }
     }
 
-    private static class Metrics {
+    public static class Metrics {
         private int count;
         private int gauge;
         private int rate1;

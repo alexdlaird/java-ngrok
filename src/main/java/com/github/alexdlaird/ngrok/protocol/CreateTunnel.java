@@ -127,7 +127,7 @@ public class CreateTunnel {
             return this;
         }
 
-        public Builder setAuth(final String auth) {
+        public Builder withAuth(final String auth) {
             this.auth = auth;
             return this;
         }

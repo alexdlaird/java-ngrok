@@ -26,25 +26,15 @@ package com.github.alexdlaird.exception;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 
 /**
- * Thrown from {@link NgrokProcess} when an error occurs interacting directly with the <code>ngrok</code> binary.
+ * Thrown from {@link NgrokProcess} when a security error occurs.
  */
-public class NgrokException extends JavaNgrokException {
+public class JavaNgrokSecurityException extends JavaNgrokException {
     /**
      * An exception with a message.
      *
      * @param message The message describing the exception.
      */
-    public NgrokException(final String message) {
+    public JavaNgrokSecurityException(final String message) {
         super(message);
-    }
-
-    /**
-     * An exception with a message and a root cause.
-     *
-     * @param message The message describing the exception.
-     * @param cause   The initial cause of the exception.
-     */
-    public NgrokException(final String message, final Throwable cause) {
-        super(message, cause);
     }
 }
