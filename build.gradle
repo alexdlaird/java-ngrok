@@ -27,6 +27,11 @@ dependencies {
 test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
+
+    testLogging {
+        events "failed"
+        exceptionFormat "full"
+    }
 }
 
 jacoco {
