@@ -24,10 +24,12 @@
 package com.github.alexdlaird.ngrok.conf;
 
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
+import com.github.alexdlaird.ngrok.process.NgrokLog;
 import com.github.alexdlaird.ngrok.protocol.Region;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.function.Function;
 
 import static java.util.Objects.isNull;
 
@@ -39,6 +41,9 @@ public class JavaNgrokConfig {
     private final Path configPath;
     private final String authToken;
     private final Region region;
+    private final boolean keepMonitoring;
+    private final int maxLogs;
+    private final Function<NgrokLog, Void> logEventCallback;
     private final int startupTimeout;
 
     private JavaNgrokConfig(final Builder builder) {
@@ -46,6 +51,9 @@ public class JavaNgrokConfig {
         configPath = builder.configPath;
         authToken = builder.authToken;
         region = builder.region;
+        keepMonitoring = builder.keepMonitoring;
+        maxLogs = builder.maxLogs;
+        logEventCallback = builder.logEventCallback;
         startupTimeout = builder.startupTimeout;
     }
 
@@ -78,6 +86,27 @@ public class JavaNgrokConfig {
     }
 
     /**
+     * Get whether the <code>ngrok</code> process will continue to be monitored after it finishes starting up.
+     */
+    public boolean isKeepMonitoring() {
+        return keepMonitoring;
+    }
+
+    /**
+     * Get the maximum number of <code>ngrok</code> logs to retain in the monitoring thread.
+     */
+    public int getMaxLogs() {
+        return maxLogs;
+    }
+
+    /**
+     * Get the log event callback that will be invoked each time <code>ngrok</code> emits a log.
+     */
+    public Function<NgrokLog, Void> getLogEventCallback() {
+        return logEventCallback;
+    }
+
+    /**
      * Get the startup time before <code>ngrok</code> times out on boot.
      */
     public int getStartupTime() {
@@ -93,6 +122,9 @@ public class JavaNgrokConfig {
         private Path configPath;
         private String authToken;
         private Region region;
+        private boolean keepMonitoring;
+        private int maxLogs;
+        private Function<NgrokLog, Void> logEventCallback;
         private int startupTimeout = 15;
 
         /**
@@ -124,6 +156,31 @@ public class JavaNgrokConfig {
          */
         public Builder withRegion(final Region region) {
             this.region = region;
+            return this;
+        }
+
+        /**
+         * Don't keep monitoring <code>ngrok</code> (for logs, etc.) after startup is complete.
+         */
+        public Builder withoutMonitoring() {
+            this.keepMonitoring = false;
+            return this;
+        }
+
+        /**
+         * The maximum number of <code>ngrok</code> logs to retain in the monitoring thread.
+         */
+        public Builder withMaxLogs(final int maxLogs) {
+            this.maxLogs = maxLogs;
+            return this;
+        }
+
+        /**
+         * A callback that will be invoked each time <code>ngrok</code> emits a log. {@link #keepMonitoring} must be
+         * set to <code>true</code> or the function will stop being called after <code>ngrok</code> finishes starting.
+         */
+        public Builder withLogEventCallback(final Function<NgrokLog, Void> logEventCallback) {
+            this.logEventCallback = logEventCallback;
             return this;
         }
 

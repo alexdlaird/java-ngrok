@@ -79,6 +79,10 @@ public class NgrokClient {
     public Tunnel connect(final CreateTunnel createTunnel) {
         ngrokProcess.start();
 
+        // TODO: add support to utilize tunnel definitions from the config file
+
+        // TODO: add support for a java-ngrok-default tunnel definition from config file
+
         LOGGER.info(String.format("Opening tunnel named: %s", createTunnel.getName()));
 
         final Response<Tunnel> response;
@@ -157,6 +161,8 @@ public class NgrokClient {
             throw new JavaNgrokHTTPException("An error occurred when GETing the tunnels.", e);
         }
     }
+
+    // TODO: implement a refreshMetrics method that gets the latest metrics for a given Tunnel
 
     /**
      * Terminate the <code>ngrok</code> processes, if running. This method will not block, it will
