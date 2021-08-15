@@ -58,6 +58,14 @@ public class NgrokProcess {
 
     private ProcessMonitor processMonitor;
 
+    /**
+     * If <code>ngrok</code> is not already installed at {@link JavaNgrokConfig#getNgrokPath()}, the given
+     * {@link NgrokInstaller} will install it. This will also provision a default <code>ngrok</code> config
+     * at {@link JavaNgrokConfig#getConfigPath()} ()}, if none exists.
+     *
+     * @param javaNgrokConfig The <code>java-ngrok</code> to use when interacting with the <code>ngrok</code> binary.
+     * @param ngrokInstaller  The class used to download and install <code>ngrok</code>.
+     */
     public NgrokProcess(final JavaNgrokConfig javaNgrokConfig,
                         final NgrokInstaller ngrokInstaller) {
         this.javaNgrokConfig = javaNgrokConfig;
@@ -72,8 +80,9 @@ public class NgrokProcess {
     }
 
     /**
-     * Start a <code>ngrok</code> process with no tunnels. This will start the <code>ngrok</code> web interface,
-     * against which HTTP requests can be made to create, interact with, and destroy tunnels.
+     * If not already running, start a <code>ngrok</code> process with no tunnels. This will start the
+     * <code>ngrok</code> web interface, against which HTTP requests can be made to create, interact with, and
+     * destroy tunnels.
      */
     public void start() {
         if (isRunning()) {
@@ -94,18 +103,23 @@ public class NgrokProcess {
         command.add("--log=stdout");
 
         if (nonNull(javaNgrokConfig.getConfigPath())) {
+            LOGGER.info(String.format("Starting ngrok with config file: %s", javaNgrokConfig.getConfigPath()));
             command.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().toString()));
         }
         if (nonNull(javaNgrokConfig.getAuthToken())) {
+            LOGGER.info("Overriding default auth token");
             command.add(String.format("--authtoken=%s", javaNgrokConfig.getAuthToken()));
         }
         if (nonNull(javaNgrokConfig.getRegion())) {
+            LOGGER.info(String.format("Starting ngrok in region: %s", javaNgrokConfig.getRegion()));
             command.add(String.format("--region=%s", javaNgrokConfig.getRegion()));
         }
 
         processBuilder.command(command);
         try {
             process = processBuilder.start();
+            LOGGER.fine(String.format("ngrok process starting with PID: %s", process.pid()));
+
             processMonitor = new ProcessMonitor(process);
             new Thread(processMonitor).start();
 
@@ -113,6 +127,8 @@ public class NgrokProcess {
             timeout.add(Calendar.SECOND, javaNgrokConfig.getStartupTime());
             while (Calendar.getInstance().before(timeout)) {
                 if (processMonitor.isHealthy()) {
+                    LOGGER.info(String.format("ngrok process has started with API URL: %s", processMonitor.apiUrl));
+
                     break;
                 }
             }
@@ -130,6 +146,9 @@ public class NgrokProcess {
         }
     }
 
+    /**
+     * Check if this object is currently managing a running <code>ngrok</code> process.
+     */
     public boolean isRunning() {
         return nonNull(processMonitor);
     }
@@ -140,8 +159,12 @@ public class NgrokProcess {
      */
     public void stop() {
         if (!isRunning()) {
+            LOGGER.info(String.format("\"ngrokPath\" %s is not running a process", javaNgrokConfig.getNgrokPath()));
+
             return;
         }
+
+        LOGGER.info(String.format("Killing ngrok process: %s", process.pid()));
 
         processMonitor.stop();
         process.descendants().forEach(ProcessHandle::destroy);
@@ -171,6 +194,8 @@ public class NgrokProcess {
         if (nonNull(javaNgrokConfig.getConfigPath())) {
             command.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().toString()));
         }
+
+        LOGGER.info(String.format("Updating authtoken for \"configPath\": %s", javaNgrokConfig.getConfigPath()));
 
         processBuilder.command(command);
         try {
@@ -239,10 +264,9 @@ public class NgrokProcess {
         }
     }
 
-    public NgrokInstaller getNgrokInstaller() {
-        return ngrokInstaller;
-    }
-
+    /**
+     * Get the API URL for the <code>ngrok</code> web interface.
+     */
     public String getApiUrl() {
         if (!isRunning() || !processMonitor.isHealthy()) {
             return null;
@@ -263,10 +287,7 @@ public class NgrokProcess {
             this.process = process;
         }
 
-        public void stop() {
-            this.alive = false;
-        }
-
+        @Override
         public void run() {
             try {
                 final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -288,7 +309,11 @@ public class NgrokProcess {
             }
         }
 
-        public boolean isHealthy() {
+        private void stop() {
+            this.alive = false;
+        }
+
+        private boolean isHealthy() {
             if (isNull(apiUrl) || !tunnelStarted || !clientConnected) {
                 return false;
             }

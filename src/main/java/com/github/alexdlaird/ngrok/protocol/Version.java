@@ -35,10 +35,16 @@ public class Version {
         this.javaNgrokVersion = javaNgrokVersion;
     }
 
+    /**
+     * Get the <code>ngrok</code> version.
+     */
     public String getNgrokVersion() {
         return ngrokVersion;
     }
 
+    /**
+     * Get the <code>java-ngrok</code> version.
+     */
     public String getJavaNgrokVersion() {
         return javaNgrokVersion;
     }

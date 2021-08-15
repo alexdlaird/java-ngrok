@@ -49,26 +49,44 @@ public class JavaNgrokConfig {
         startupTimeout = builder.startupTimeout;
     }
 
+    /**
+     * Get the path to the <code>ngrok</code> binary.
+     */
     public Path getNgrokPath() {
         return ngrokPath;
     }
 
+    /**
+     * Get the path to the <code>ngrok</code> config file.
+     */
     public Path getConfigPath() {
         return configPath;
     }
 
+    /**
+     * Get the authtoken that will be passed to commands.
+     */
     public String getAuthToken() {
         return authToken;
     }
 
+    /**
+     * Get the region in which <code>ngrok</code> will start.
+     */
     public Region getRegion() {
         return region;
     }
 
+    /**
+     * Get the startup time before <code>ngrok</code> times out on boot.
+     */
     public int getStartupTime() {
         return startupTimeout;
     }
 
+    /**
+     * Builder for a {@link JavaNgrokConfig}.
+     */
     public static class Builder {
 
         private Path ngrokPath;
@@ -77,26 +95,41 @@ public class JavaNgrokConfig {
         private Region region;
         private int startupTimeout = 15;
 
+        /**
+         * The path to the <code>ngrok</code> binary, defaults to ~/.ngrok2/ngrok.
+         */
         public Builder withNgrokPath(final Path ngrokPath) {
             this.ngrokPath = ngrokPath;
             return this;
         }
 
+        /**
+         * The path to the <code>ngrok</code> config file, defaults to ~/.ngrok2/config.yml.
+         */
         public Builder withConfigPath(final Path configPath) {
             this.configPath = configPath;
             return this;
         }
 
+        /**
+         * An authtoken to pass to commands (overrides what is in the config).
+         */
         public Builder withAuthToken(final String authToken) {
             this.authToken = authToken;
             return this;
         }
 
+        /**
+         * The region in which <code>ngrok</code> should start
+         */
         public Builder withRegion(final Region region) {
             this.region = region;
             return this;
         }
 
+        /**
+         * The max number of seconds to wait for <code>ngrok</code> to start before timing out.
+         */
         public Builder withStartupTimeout(final int startupTimeout) {
             this.startupTimeout = startupTimeout;
             return this;

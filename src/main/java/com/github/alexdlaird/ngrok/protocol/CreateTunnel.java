@@ -80,6 +80,10 @@ public class CreateTunnel {
         return bindTls;
     }
 
+    /**
+     * Builder for a {@link CreateTunnel}, which can be used to construct a request that conforms to
+     * <a href="https://ngrok.com/docs#tunnel-definitions"><code>ngrok</code>'s tunnel definition</a>.
+     */
     public static class Builder {
         private final List<String> validProtos = List.of("http", "tcp", "tls");
         private final List<String> validBindTls = List.of("true", "false", "both");
@@ -99,11 +103,17 @@ public class CreateTunnel {
         private String remoteAddr;
         private String metadata;
 
+        /**
+         * The name of the tunnel.
+         */
         public Builder withName(final String name) {
             this.name = name;
             return this;
         }
 
+        /**
+         * A valid <a href="<https://ngrok.com/docs#tunnel-definitions>">tunnel protocol</a>, defaults to "http".
+         */
         public Builder withProto(final String proto) {
             if (!validProtos.contains(proto)) {
                 throw new JavaNgrokException(String.format("Invalid proto %s, valid values are: %s", proto, validProtos));
@@ -113,30 +123,49 @@ public class CreateTunnel {
             return this;
         }
 
+        /**
+         * The local port to which the tunnel will forward traffic, or a
+         * <a href="https://ngrok.com/docs#http-file-urls">local directory or network address</a>, defaults to "80"
+         */
         public Builder withAddr(final String addr) {
             this.addr = addr;
             return this;
         }
 
+        /**
+         * See {@link #withAddr(String)}.
+         */
         public Builder withAddr(final int addr) {
             return withAddr(String.valueOf(addr));
         }
 
+        /**
+         * Disable HTTP request inspection on tunnels.
+         */
         public Builder withoutInspect() {
             this.inspect = false;
             return this;
         }
 
+        /**
+         * HTTP basic authentication credentials to enforce on tunneled requests
+         */
         public Builder withAuth(final String auth) {
             this.auth = auth;
             return this;
         }
 
+        /**
+         * Rewrite the HTTP Host header to this value, or <code>preserve</code> to leave it unchanged.
+         */
         public Builder withHostHeader(final String hostHeader) {
             this.hostHeader = hostHeader;
             return this;
         }
 
+        /**
+         * Bind an HTTPS ("true") or HTTP ("false") endpoint, defaults to "both".
+         */
         public Builder withBindTls(final String bindTls) {
             if (!validBindTls.contains(bindTls)) {
                 throw new JavaNgrokException(String.format("Invalid bindTls %s, valid values are: %s", bindTls, validBindTls));
@@ -146,40 +175,64 @@ public class CreateTunnel {
             return this;
         }
 
+        /**
+         * See {@link #withBindTls(String)}.
+         */
         public Builder withBindTls(final boolean bindTls) {
             return withBindTls(String.valueOf(bindTls));
         }
 
+        /**
+         * Subdomain name to request. If unspecified, uses the tunnel name.
+         */
         public Builder withSubdomain(final String subdomain) {
             this.subdomain = subdomain;
             return this;
         }
 
+        /**
+         * Hostname to request (requires reserved name and DNS CNAME).
+         */
         public Builder withHostname(final String hostname) {
             this.hostname = hostname;
             return this;
         }
 
+        /**
+         * PEM TLS certificate at this path to terminate TLS traffic before forwarding locally.
+         */
         public Builder withCrt(final String crt) {
             this.crt = crt;
             return this;
         }
 
+        /**
+         * PEM TLS private key at this path to terminate TLS traffic before forwarding locally.
+         */
         public Builder withKey(final String key) {
             this.key = key;
             return this;
         }
 
+        /**
+         * PEM TLS certificate authority at this path will verify incoming TLS client connection certificates.
+         */
         public Builder withClientCas(final String clientCas) {
             this.clientCas = clientCas;
             return this;
         }
 
+        /**
+         * Bind the remote TCP port on the given address.
+         */
         public Builder withRemoteAddr(final String remoteAddr) {
             this.remoteAddr = remoteAddr;
             return this;
         }
 
+        /**
+         * Arbitrary user-defined metadata that will appear in the ngrok service API when listing tunnels.
+         */
         public Builder withMetadata(final String metadata) {
             this.metadata = metadata;
             return this;

@@ -67,11 +67,19 @@ public class NgrokClient {
      * Establish a new <code>ngrok</code> tunnel for the tunnel definition, returning an object representing
      * the connected tunnel.
      *
+     * <p><code>ngrok</code>'s default behavior for <code>http</code> when no additional properties are passed is to
+     * open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This method will return a
+     * reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed, call
+     * {@link CreateTunnel.Builder#withBindTls(boolean)} with <code>true</code> and a reference to the
+     * <code>https</code> tunnel will be returned.</p>
+     *
      * @param createTunnel The tunnel definition.
      * @return The created Tunnel.
      */
     public Tunnel connect(final CreateTunnel createTunnel) {
         ngrokProcess.start();
+
+        LOGGER.info(String.format("Opening tunnel named: %s", createTunnel.getName()));
 
         final Response<Tunnel> response;
         try {
@@ -96,10 +104,7 @@ public class NgrokClient {
     }
 
     /**
-     * Establish a new <code>ngrok</code> tunnel with a default tunnel definition, returning an object representing
-     * the connected tunnel.
-     *
-     * @return The created Tunnel.
+     * See {@link #connect(CreateTunnel)}.
      */
     public Tunnel connect() {
         return connect(new CreateTunnel.Builder().build());
@@ -126,6 +131,8 @@ public class NgrokClient {
         }
 
         ngrokProcess.start();
+
+        LOGGER.info(String.format("Disconnecting tunnel: %s", tunnel.getPublicUrl()));
 
         try {
             httpClient.delete(ngrokProcess.getApiUrl() + tunnel.getUri(), Collections.emptyList(), Collections.emptyMap(), Object.class);
@@ -187,22 +194,37 @@ public class NgrokClient {
         return new Version(ngrokVersion, VERSION);
     }
 
+    /**
+     * Get the <code>java-ngrok</code> to use when interacting with the <code>ngrok</code> binary.
+     */
     public JavaNgrokConfig getJavaNgrokConfig() {
         return javaNgrokConfig;
     }
 
+    /**
+     * Get the class used to download and install <code>ngrok</code>.
+     */
     public NgrokInstaller getNgrokInstaller() {
         return ngrokInstaller;
     }
 
+    /**
+     * Get the class used to manage the <code>ngrok</code> binary.
+     */
     public NgrokProcess getNgrokProcess() {
         return ngrokProcess;
     }
 
+    /**
+     * Get the class used to make HTTP requests to <code>ngrok</code>'s APIs.
+     */
     public HttpClient getHttpClient() {
         return httpClient;
     }
 
+    /**
+     * Builder for a {@link NgrokClient}.
+     */
     public static class Builder {
 
         private JavaNgrokConfig javaNgrokConfig;
@@ -210,21 +232,33 @@ public class NgrokClient {
         private NgrokProcess ngrokProcess;
         private HttpClient httpClient;
 
+        /**
+         * The <code>java-ngrok</code> to use when interacting with the <code>ngrok</code> binary.
+         */
         public Builder withJavaNgrokConfig(final JavaNgrokConfig javaNgrokConfig) {
             this.javaNgrokConfig = javaNgrokConfig;
             return this;
         }
 
+        /**
+         * The class used to download and install <code>ngrok</code>.
+         */
         public Builder withNgrokInstaller(final NgrokInstaller ngrokInstaller) {
             this.ngrokInstaller = ngrokInstaller;
             return this;
         }
 
+        /**
+         * The class used to manage the <code>ngrok</code> binary.
+         */
         public Builder withNgrokProcess(final NgrokProcess ngrokProcess) {
             this.ngrokProcess = ngrokProcess;
             return this;
         }
 
+        /**
+         * The class used to make HTTP requests to <code>ngrok</code>'s APIs.
+         */
         public Builder withHttpClient(final HttpClient httpClient) {
             this.httpClient = httpClient;
             return this;

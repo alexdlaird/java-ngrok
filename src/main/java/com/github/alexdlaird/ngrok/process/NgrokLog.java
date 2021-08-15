@@ -40,6 +40,11 @@ public class NgrokLog extends HashMap<String, String> {
     private String err;
     private String addr;
 
+    /**
+     * Parse a String <code>ngrok</code> log to an object representation.
+     *
+     * @param line The raw log line from <code>ngrok</code>.
+     */
     public NgrokLog(final String line) {
         this.line = line.strip();
 

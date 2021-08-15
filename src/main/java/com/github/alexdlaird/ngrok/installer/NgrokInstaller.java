@@ -25,7 +25,6 @@ package com.github.alexdlaird.ngrok.installer;
 
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokInstallerException;
-import com.github.alexdlaird.ngrok.NgrokClient;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -81,6 +80,8 @@ public class NgrokInstaller {
         try {
             Files.createDirectories(configPath.getParent());
 
+            LOGGER.fine(String.format("Installing default config to %s ...", configPath));
+
             final FileOutputStream out = new FileOutputStream(configPath.toFile());
             out.write("{}".getBytes());
             out.close();
@@ -90,7 +91,7 @@ public class NgrokInstaller {
     }
 
     /**
-     * Download and install the latest ``ngrok`` for the current system, overwriting any existing contents
+     * Download and install the latest <code>ngrok</code> for the current system, overwriting any existing contents
      * at the given path.
      *
      * @param ngrokPath The path to where the <code>ngrok</code> binary will be downloaded.
@@ -98,7 +99,12 @@ public class NgrokInstaller {
     public void installNgrok(final Path ngrokPath) {
         final String arch = getArch();
         final String system = getSystem();
-        final NgrokCDNUrl ngrokCDNUrl = NgrokCDNUrl.valueOf(String.format("%s_%s", system, arch));
+        final String plat = String.format("%s_%s", arch, system);
+
+        LOGGER.fine(String.format("Platform to download: %s", plat));
+        final NgrokCDNUrl ngrokCDNUrl = NgrokCDNUrl.valueOf(plat);
+
+        LOGGER.fine(String.format("Installing ngrok to %s%s ...", ngrokPath, Files.exists(ngrokPath) ? ", overwriting" : ""));
 
         final Path ngrokZip = Paths.get(ngrokPath.getParent().toString(), "ngrok.zip");
         downloadFile(ngrokCDNUrl.getUrl(), ngrokZip);
@@ -107,7 +113,7 @@ public class NgrokInstaller {
     }
 
     /**
-     * Validate that the given dict of config items are valid for ``ngrok`` and ``pyngrok``.
+     * Validate that the given dict of config items are valid for <code>ngrok</code> and <code>java-ngrok</code>.
      *
      * @param data A map of things to be validated as config items.
      */
@@ -126,6 +132,8 @@ public class NgrokInstaller {
     private void installNgrokZip(final Path zipPath, final Path ngrokPath) {
         try {
             final Path dir = ngrokPath.getParent();
+
+            LOGGER.fine(String.format("Extracting ngrok binary from %s to %s ...", zipPath, ngrokPath));
 
             Files.createDirectories(dir);
 
@@ -170,6 +178,8 @@ public class NgrokInstaller {
     private void downloadFile(final String url, final Path dest) {
         try {
             Files.createDirectories(dest.getParent());
+
+            LOGGER.fine(String.format("Download ngrok from %s ...", url));
 
             final InputStream in = new URL(url).openStream();
             Files.copy(in, dest, StandardCopyOption.REPLACE_EXISTING);

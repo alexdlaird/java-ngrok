@@ -87,6 +87,9 @@ public interface HttpClient {
     <B> Response<B> delete(final String url, final List<Parameter> parameters,
                            final Map<String, String> additionalHeaders, final Class<B> clazz);
 
+    /**
+     * See {@link #delete(String, List, Map, Class)}.
+     */
     default Response<Map> delete(final String url, final List<Parameter> parameters,
                                  final Map<String, String> additionalHeaders) {
         return delete(url, parameters, additionalHeaders, Map.class);
