@@ -99,7 +99,7 @@ public class NgrokInstaller {
     public void installNgrok(final Path ngrokPath) {
         final String arch = getArch();
         final String system = getSystem();
-        final String plat = String.format("%s_%s", arch, system);
+        final String plat = String.format("%s_%s", system, arch);
 
         LOGGER.fine(String.format("Platform to download: %s", plat));
         final NgrokCDNUrl ngrokCDNUrl = NgrokCDNUrl.valueOf(plat);
