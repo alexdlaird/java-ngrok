@@ -89,7 +89,8 @@ public class NgrokClient {
         try {
             response = httpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
         } catch (HttpClientException e) {
-            throw new JavaNgrokHTTPException(String.format("An error occurred when POSTing to create the tunnel %s.", createTunnel.getName()), e);
+            throw new JavaNgrokHTTPException(String.format("An error occurred when POSTing to create the tunnel %s.", createTunnel.getName()),
+                    e, e.getUrl(), e.getStatusCode(), e.getBody());
         }
 
         final Tunnel tunnel;
@@ -98,7 +99,8 @@ public class NgrokClient {
                 final Response<Tunnel> getResponse = httpClient.get(ngrokProcess.getApiUrl() + response.getBody().getUri() + "%20%28http%29", Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
                 tunnel = getResponse.getBody();
             } catch (HttpClientException e) {
-                throw new JavaNgrokHTTPException(String.format("An error occurred when GETing the HTTP tunnel %s.", response.getBody().getName()), e);
+                throw new JavaNgrokHTTPException(String.format("An error occurred when GETing the HTTP tunnel %s.", response.getBody().getName()),
+                        e, e.getUrl(), e.getStatusCode(), e.getBody());
             }
         } else {
             tunnel = response.getBody();
@@ -146,7 +148,8 @@ public class NgrokClient {
         try {
             httpClient.delete(ngrokProcess.getApiUrl() + tunnel.getUri(), Collections.emptyList(), Collections.emptyMap(), Object.class);
         } catch (HttpClientException e) {
-            throw new JavaNgrokHTTPException(String.format("An error occurred when DELETing the tunnel %s.", publicUrl), e);
+            throw new JavaNgrokHTTPException(String.format("An error occurred when DELETing the tunnel %s.", publicUrl),
+                    e, e.getUrl(), e.getStatusCode(), e.getBody());
         }
     }
 
@@ -163,7 +166,8 @@ public class NgrokClient {
 
             return response.getBody();
         } catch (HttpClientException e) {
-            throw new JavaNgrokHTTPException("An error occurred when GETing the tunnels.", e);
+            throw new JavaNgrokHTTPException("An error occurred when GETing the tunnels.", e, e.getUrl(),
+                    e.getStatusCode(), e.getBody());
         }
     }
 

@@ -71,7 +71,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), null, "GET",
                     additionalHeaders, clazz);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new HttpClientException("HTTP GET error", e);
         }
     }
@@ -85,7 +85,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), convertRequestToString(request), "POST",
                     additionalHeaders, clazz);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new HttpClientException("HTTP POST error", e);
         }
     }
@@ -99,7 +99,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), convertRequestToString(request), "PUT",
                     additionalHeaders, clazz);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new HttpClientException("HTTP PUT error", e);
         }
     }
@@ -112,7 +112,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), null, "DELETE",
                     additionalHeaders, clazz);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new HttpClientException("HTTP DELETE error", e);
         }
     }
@@ -188,7 +188,7 @@ public class DefaultHttpClient implements HttpClient {
                                     final String body,
                                     final String method,
                                     final Map<String, String> additionalHeaders,
-                                    final Class<B> clazz) {
+                                    final Class<B> clazz) throws IOException {
         HttpURLConnection httpUrlConnection = null;
         OutputStream outputStream = null;
         InputStream inputStream = null;
@@ -223,16 +223,19 @@ public class DefaultHttpClient implements HttpClient {
         } catch (Exception ex) {
             String msg = "An unknown error occurred when performing the operation";
 
+            int statusCode = -1;
+            String errorResponse = null;
             if (httpUrlConnection != null) {
                 try {
-                    String errorString = StringUtils.streamToString(httpUrlConnection.getErrorStream(), Charset.forName(encoding));
+                    statusCode = httpUrlConnection.getResponseCode();
+                    errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(), Charset.forName(encoding));
 
-                    msg = "An error occurred when performing the operation (" + httpUrlConnection.getResponseCode() + "): " + errorString;
+                    msg = "An error occurred when performing the operation (" + httpUrlConnection.getResponseCode() + "): " + errorResponse;
                 } catch (IOException | NullPointerException ignored) {
                 }
             }
 
-            throw new HttpClientException(msg, ex);
+            throw new HttpClientException(msg, ex, url, statusCode, errorResponse);
         } finally {
             if (httpUrlConnection != null) {
                 httpUrlConnection.disconnect();
