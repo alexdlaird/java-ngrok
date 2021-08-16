@@ -121,7 +121,7 @@ public class NgrokClient {
      */
     public void disconnect(final String publicUrl) {
         // If ngrok is not running, there are no tunnels to disconnect
-        if (ngrokProcess.isRunning()) {
+        if (!ngrokProcess.isRunning()) {
             return;
         }
 
