@@ -24,7 +24,6 @@
 package com.github.alexdlaird.http;
 
 import com.github.alexdlaird.StringUtils;
-import com.github.alexdlaird.ngrok.NgrokClient;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

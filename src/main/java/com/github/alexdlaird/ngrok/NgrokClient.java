@@ -79,9 +79,9 @@ public class NgrokClient {
     public Tunnel connect(final CreateTunnel createTunnel) {
         ngrokProcess.start();
 
-        // TODO: add support to utilize tunnel definitions from the config file
+        // TODO: If a "java-ngrok-default" tunnel definition exists in the ngrok config, use that
 
-        // TODO: add support for a java-ngrok-default tunnel definition from config file
+        // TODO: Use a tunnel definition for the given name, if it exists
 
         LOGGER.info(String.format("Opening tunnel named: %s", createTunnel.getName()));
 
@@ -120,6 +120,11 @@ public class NgrokClient {
      * @param publicUrl The public URL of the tunnel to disconnect.
      */
     public void disconnect(final String publicUrl) {
+        // If ngrok is not running, there are no tunnels to disconnect
+        if (ngrokProcess.isRunning()) {
+            return;
+        }
+
         final Tunnels tunnels = getTunnels();
         Tunnel tunnel = null;
         // TODO: cache active tunnels so we can first check that before falling back to an API request

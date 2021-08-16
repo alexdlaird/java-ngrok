@@ -51,8 +51,6 @@ public class NgrokProcess {
 
     private final JavaNgrokConfig javaNgrokConfig;
 
-    private final NgrokInstaller ngrokInstaller;
-
     private Process process;
 
     private ProcessMonitor processMonitor;
@@ -68,13 +66,12 @@ public class NgrokProcess {
     public NgrokProcess(final JavaNgrokConfig javaNgrokConfig,
                         final NgrokInstaller ngrokInstaller) {
         this.javaNgrokConfig = javaNgrokConfig;
-        this.ngrokInstaller = ngrokInstaller;
 
         if (!Files.exists(javaNgrokConfig.getNgrokPath())) {
-            this.ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath());
+            ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath());
         }
         if (!Files.exists(javaNgrokConfig.getConfigPath())) {
-            this.ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath());
+            ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath());
         }
     }
 
@@ -133,6 +130,7 @@ public class NgrokProcess {
             }
 
             if (!processMonitor.isHealthy()) {
+                // If the process did not come up in a healthy state, clean up the state
                 stop();
 
                 if (nonNull(processMonitor.startupError)) {
@@ -344,7 +342,7 @@ public class NgrokProcess {
                 throw new JavaNgrokSecurityException(String.format("URL must start with \"http\": %s", apiUrl));
             }
 
-            // TODO: ensure the process is available for requests before registering it as healthy
+            // TODO: Ensure the process is available for requests before registering it as healthy
 
             return process.isAlive() && isNull(startupError);
         }
@@ -359,6 +357,7 @@ public class NgrokProcess {
             if (ngrokLog.getLvl().equals("ERROR") || ngrokLog.getLine().equals("CRITICAL")) {
                 this.startupError = ngrokLog.getErr();
             } else {
+                // Log `ngrok` startup states as they come in
                 if (ngrokLog.getMsg().contains("starting web service") && nonNull(ngrokLog.getAddr())) {
                     this.apiUrl = String.format("http://%s", ngrokLog.getAddr());
                 } else if (ngrokLog.getMsg().contains("tunnel session started")) {

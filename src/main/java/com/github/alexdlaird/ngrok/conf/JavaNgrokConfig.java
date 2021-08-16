@@ -123,9 +123,10 @@ public class JavaNgrokConfig {
         private String authToken;
         private Region region;
         private boolean keepMonitoring;
-        private int maxLogs;
+        private int maxLogs = 100;
         private Function<NgrokLog, Void> logEventCallback;
         private int startupTimeout = 15;
+        // TODO: implement reconnectSessionRetries config var
 
         /**
          * The path to the <code>ngrok</code> binary, defaults to ~/.ngrok2/ngrok.
@@ -171,6 +172,10 @@ public class JavaNgrokConfig {
          * The maximum number of <code>ngrok</code> logs to retain in the monitoring thread.
          */
         public Builder withMaxLogs(final int maxLogs) {
+            if (maxLogs < 1) {
+                throw new IllegalArgumentException("\"maxLogs\" must be greater than 0.");
+            }
+
             this.maxLogs = maxLogs;
             return this;
         }
@@ -188,6 +193,10 @@ public class JavaNgrokConfig {
          * The max number of seconds to wait for <code>ngrok</code> to start before timing out.
          */
         public Builder withStartupTimeout(final int startupTimeout) {
+            if (startupTimeout < 1) {
+                throw new IllegalArgumentException("\"startupTimeout\" must be greater than 0.");
+            }
+
             this.startupTimeout = startupTimeout;
             return this;
         }
