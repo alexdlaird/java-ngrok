@@ -25,6 +25,10 @@ package com.github.alexdlaird.ngrok.installer;
 
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokInstallerException;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -37,12 +41,15 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static com.github.alexdlaird.StringUtils.isBlank;
 
 /**
  * A helper for downloading and installing the <code>ngrok</code> for the current system.
@@ -54,6 +61,10 @@ public class NgrokInstaller {
     private static final List<String> UNIX_BINARIES = List.of("DARWIN", "LINUX", "FREEBSD");
 
     private static final List<String> VALID_LOG_LEVELS = List.of("info", "debug");
+
+    private final Gson gson = new GsonBuilder()
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .create();
 
     /**
      * Get the <code>ngrok</code> executable for the current system.
@@ -75,15 +86,24 @@ public class NgrokInstaller {
      * create one.
      *
      * @param configPath The path to where the <code>ngrok</code> config should be installed.
+     * @param data       A map of things to add to the default config.
      */
-    public void installDefaultConfig(final Path configPath) {
+    public void installDefaultConfig(final Path configPath, Map<String, String> data) {
         try {
             Files.createDirectories(configPath.getParent());
+            if (!Files.exists(configPath)) {
+                Files.createFile(configPath);
+            }
+
+            final Map<String, String> config = getNgrokConfig(configPath);
+            config.putAll(data);
+
+            validateConfig(config);
 
             LOGGER.fine(String.format("Installing default config to %s ...", configPath));
 
             final FileOutputStream out = new FileOutputStream(configPath.toFile());
-            out.write("{}".getBytes());
+            out.write(gson.toJson(config).getBytes());
             out.close();
         } catch (IOException e) {
             throw new JavaNgrokInstallerException(String.format("An error while installing the default ngrok config to %s.", configPath), e);
@@ -113,19 +133,45 @@ public class NgrokInstaller {
     }
 
     /**
-     * Validate that the given dict of config items are valid for <code>ngrok</code> and <code>java-ngrok</code>.
+     * Validate that the config file at the given path is valid for <code>ngrok</code> and <code>java-ngrok</code>.
+     *
+     * @param configPath The config path to validate.
+     */
+    public void validateConfig(final Path configPath) {
+        final Map<String, String> config = getNgrokConfig(configPath);
+
+        validateConfig(config);
+    }
+
+    /**
+     * Validate that the given map of config items are valid for <code>ngrok</code> and <code>java-ngrok</code>.
      *
      * @param data A map of things to be validated as config items.
      */
     public void validateConfig(final Map<String, String> data) {
-        if (data.getOrDefault("web_addr", null).equals("false")) {
+        if (data.getOrDefault("web_addr", "127.0.0.1:4040").equals("false")) {
             throw new JavaNgrokException("\"web_addr\" cannot be false, as the ngrok API is a dependency for java-ngrok");
         }
-        if (data.get("log_format").equals("json")) {
+        if (data.getOrDefault("log_format", "term").equals("json")) {
             throw new JavaNgrokException("\"log_format\" must be \"term\" to be compatible with java-ngrok");
         }
         if (!VALID_LOG_LEVELS.contains(data.getOrDefault("log_level", "info"))) {
             throw new JavaNgrokException("\"log_level\" must be \"info\" to be compatible with java-ngrok");
+        }
+    }
+
+    private Map<String, String> getNgrokConfig(final Path configPath) {
+        // TODO: implement a cache so we don't hit file IO every time we read the config
+        try {
+            final String config = Files.readString(configPath);
+
+            if (isBlank(config)) {
+                return Collections.emptyMap();
+            }
+
+            return gson.<Map<String, String>>fromJson(config, Map.class);
+        } catch (IOException | JsonParseException e) {
+            throw new JavaNgrokInstallerException(String.format("An error occurred while parsing the config file: %s", configPath), e);
         }
     }
 

@@ -45,16 +45,18 @@ public class JavaNgrokConfig {
     private final int maxLogs;
     private final Function<NgrokLog, Void> logEventCallback;
     private final int startupTimeout;
+    private final int reconnectSessionRetries;
 
     private JavaNgrokConfig(final Builder builder) {
-        ngrokPath = builder.ngrokPath;
-        configPath = builder.configPath;
-        authToken = builder.authToken;
-        region = builder.region;
-        keepMonitoring = builder.keepMonitoring;
-        maxLogs = builder.maxLogs;
-        logEventCallback = builder.logEventCallback;
-        startupTimeout = builder.startupTimeout;
+        this.ngrokPath = builder.ngrokPath;
+        this.configPath = builder.configPath;
+        this.authToken = builder.authToken;
+        this.region = builder.region;
+        this.keepMonitoring = builder.keepMonitoring;
+        this.maxLogs = builder.maxLogs;
+        this.logEventCallback = builder.logEventCallback;
+        this.startupTimeout = builder.startupTimeout;
+        this.reconnectSessionRetries = builder.reconnectSessionRetries;
     }
 
     /**
@@ -114,6 +116,14 @@ public class JavaNgrokConfig {
     }
 
     /**
+     * Get the max number of times to retry establishing a new session with <code>ngrok</code> if the connection
+     * fails on startup.
+     */
+    public int getReconnectSessionRetries() {
+        return reconnectSessionRetries;
+    }
+
+    /**
      * Builder for a {@link JavaNgrokConfig}.
      */
     public static class Builder {
@@ -126,7 +136,7 @@ public class JavaNgrokConfig {
         private int maxLogs = 100;
         private Function<NgrokLog, Void> logEventCallback;
         private int startupTimeout = 15;
-        // TODO: implement reconnectSessionRetries config var
+        private int reconnectSessionRetries = 0;
 
         /**
          * The path to the <code>ngrok</code> binary, defaults to ~/.ngrok2/ngrok.
@@ -198,6 +208,19 @@ public class JavaNgrokConfig {
             }
 
             this.startupTimeout = startupTimeout;
+            return this;
+        }
+
+        /**
+         * The max number of times to retry establishing a new session with <code>ngrok</code> if the connection
+         * fails on startup.
+         */
+        public Builder withReconnectSessionRetries(final int reconnectSessionRetries) {
+            if (reconnectSessionRetries < 0) {
+                throw new IllegalArgumentException("\"reconnectSessionRetries\" cannot be less than 0.");
+            }
+
+            this.reconnectSessionRetries = reconnectSessionRetries;
             return this;
         }
 

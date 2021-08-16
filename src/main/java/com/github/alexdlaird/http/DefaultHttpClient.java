@@ -49,26 +49,14 @@ import static com.github.alexdlaird.StringUtils.isBlank;
  */
 public class DefaultHttpClient implements HttpClient {
 
-    /**
-     * Logger.
-     */
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(DefaultHttpClient.class));
 
-    /**
-     * Default serializer.
-     */
     private final Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create();
 
-    /**
-     * Default encoding for requests.
-     */
     private final String encoding;
 
-    /**
-     * Default contentType header for requests.
-     */
     private final String contentType;
 
     private DefaultHttpClient(final Builder builder) {
@@ -270,11 +258,17 @@ public class DefaultHttpClient implements HttpClient {
         private String encoding = "UTF-8";
         private String contentType = "application/json";
 
+        /**
+         * Default encoding for requests.
+         */
         public Builder withEncoding(final String encoding) {
             this.encoding = encoding;
             return this;
         }
 
+        /**
+         * Default contentType header for requests.
+         */
         public Builder withContentType(final String contentType) {
             this.contentType = contentType;
             return this;

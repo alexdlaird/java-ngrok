@@ -16,6 +16,7 @@ public class NgrokTestCase {
 
     protected JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
             .withConfigPath(Paths.get("build", ".ngrok2", "config.yml").toAbsolutePath())
+            .withReconnectSessionRetries(10)
             .build();
 
     protected NgrokProcess ngrokProcess;

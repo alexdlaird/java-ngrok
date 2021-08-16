@@ -25,8 +25,12 @@ package com.github.alexdlaird.ngrok.process;
 
 import com.github.alexdlaird.exception.JavaNgrokSecurityException;
 import com.github.alexdlaird.exception.NgrokException;
+import com.github.alexdlaird.http.DefaultHttpClient;
+import com.github.alexdlaird.http.HttpClient;
+import com.github.alexdlaird.http.Response;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
+import com.github.alexdlaird.ngrok.protocol.Tunnels;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,11 +38,13 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.github.alexdlaird.StringUtils.isBlank;
+import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -50,6 +56,8 @@ public class NgrokProcess {
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokProcess.class));
 
     private final JavaNgrokConfig javaNgrokConfig;
+
+    private final NgrokInstaller ngrokInstaller;
 
     private Process process;
 
@@ -66,12 +74,13 @@ public class NgrokProcess {
     public NgrokProcess(final JavaNgrokConfig javaNgrokConfig,
                         final NgrokInstaller ngrokInstaller) {
         this.javaNgrokConfig = javaNgrokConfig;
+        this.ngrokInstaller = ngrokInstaller;
 
         if (!Files.exists(javaNgrokConfig.getNgrokPath())) {
             ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath());
         }
         if (!Files.exists(javaNgrokConfig.getConfigPath())) {
-            ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath());
+            ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Collections.emptyMap());
         }
     }
 
@@ -81,12 +90,15 @@ public class NgrokProcess {
      * destroy tunnels.
      */
     public void start() {
+        start(0);
+    }
+
+    private void start(final int retries) {
         if (isRunning()) {
             return;
         }
 
-        // TODO: parse the ngrok config, then validated it before startup
-        // ngrokInstaller.validateConfig(data);
+        ngrokInstaller.validateConfig(javaNgrokConfig.getConfigPath());
 
         final ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.redirectErrorStream(true);
@@ -134,16 +146,22 @@ public class NgrokProcess {
                 stop();
 
                 if (nonNull(processMonitor.startupError)) {
-                    // TODO: if startupError is "failed to reconnect session", retry the connect X times (based on new JavaNgrokConfig value)
+                    if (processMonitor.logs.get(processMonitor.logs.size() - 1).getMsg().equals("failed to reconnect session")
+                            && retries < javaNgrokConfig.getReconnectSessionRetries()) {
+                        LOGGER.fine("ngrok reset our connection, retrying in 0.5 seconds ...");
+                        wait(500);
 
-                    throw new NgrokException(String.format("The ngrok process errored on start: %s.", processMonitor.startupError),
-                            processMonitor.logs,
-                            processMonitor.startupError);
+                        start(retries + 1);
+                    } else {
+                        throw new NgrokException(String.format("The ngrok process errored on start: %s.", processMonitor.startupError),
+                                processMonitor.logs,
+                                processMonitor.startupError);
+                    }
                 } else {
                     throw new NgrokException("The ngrok process was unable to start.", processMonitor.logs);
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             throw new NgrokException("An error occurred while starting ngrok.", e);
         }
     }
@@ -291,6 +309,7 @@ public class NgrokProcess {
     private static class ProcessMonitor implements Runnable {
         private final Process process;
         private final JavaNgrokConfig javaNgrokConfig;
+        private final HttpClient httpClient;
         private String apiUrl;
         private boolean tunnelStarted;
         private boolean clientConnected;
@@ -301,8 +320,15 @@ public class NgrokProcess {
 
         public ProcessMonitor(final Process process,
                               final JavaNgrokConfig javaNgrokConfig) {
+            this(process, javaNgrokConfig, new DefaultHttpClient.Builder().build());
+        }
+
+        protected ProcessMonitor(final Process process,
+                                 final JavaNgrokConfig javaNgrokConfig,
+                                 final HttpClient httpClient) {
             this.process = process;
             this.javaNgrokConfig = javaNgrokConfig;
+            this.httpClient = httpClient;
         }
 
         @Override
@@ -342,7 +368,10 @@ public class NgrokProcess {
                 throw new JavaNgrokSecurityException(String.format("URL must start with \"http\": %s", apiUrl));
             }
 
-            // TODO: Ensure the process is available for requests before registering it as healthy
+            final Response<Tunnels> tunnelsResponse = httpClient.get(String.format("%s/api/tunnels", apiUrl), Collections.emptyList(), Collections.emptyMap(), Tunnels.class);
+            if (tunnelsResponse.getStatusCode() != HTTP_OK) {
+                return false;
+            }
 
             return process.isAlive() && isNull(startupError);
         }
