@@ -29,6 +29,7 @@ import java.util.Map;
  * An object representing a Tunnel response from <code>ngrok</code>'s API.
  */
 public class Tunnel {
+
     private String name;
     private String uri;
     private String publicUrl;

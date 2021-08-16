@@ -27,6 +27,7 @@ package com.github.alexdlaird.ngrok.protocol;
  * An object representing <code>ngrok</code>'s version and <code>java-ngrok</code>'s version.
  */
 public class Version {
+
     private final String ngrokVersion;
     private final String javaNgrokVersion;
 

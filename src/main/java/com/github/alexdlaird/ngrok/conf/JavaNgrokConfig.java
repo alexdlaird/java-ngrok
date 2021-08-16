@@ -37,6 +37,7 @@ import static java.util.Objects.isNull;
  * An object for managing <code>java-ngrok</code>'s configuration to interact the <code>ngrok</code> binary.
  */
 public class JavaNgrokConfig {
+
     private final Path ngrokPath;
     private final Path configPath;
     private final String authToken;

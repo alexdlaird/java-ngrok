@@ -32,6 +32,7 @@ import java.util.List;
  * Thrown from {@link NgrokProcess} when an error occurs interacting directly with the <code>ngrok</code> binary.
  */
 public class NgrokException extends JavaNgrokException {
+
     private final List<NgrokLog> ngrokLogs;
     private final String ngrokError;
 

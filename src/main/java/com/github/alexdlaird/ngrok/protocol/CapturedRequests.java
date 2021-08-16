@@ -29,6 +29,7 @@ import java.util.List;
  * An object representing CapturedRequests response from <code>ngrok</code>'s API.
  */
 public class CapturedRequests {
+
     private List<CapturedRequest> requests;
     private String uri;
 

@@ -27,14 +27,8 @@ package com.github.alexdlaird.http;
  * A parameter for the {@link HttpClient}.
  */
 public class Parameter {
-    /**
-     * Name of the field.
-     */
-    private final String name;
 
-    /**
-     * Value of the field.
-     */
+    private final String name;
     private final String value;
 
     /**
@@ -48,10 +42,16 @@ public class Parameter {
         this.value = value;
     }
 
+    /**
+     * Get the name of the field.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Get the value of the field.
+     */
     public String getValue() {
         return value;
     }

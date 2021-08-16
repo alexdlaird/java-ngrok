@@ -29,8 +29,8 @@ import java.util.List;
  * An object representing a Tunnels response from <code>ngrok</code>'s API.
  */
 public class Tunnels {
-    private List<Tunnel> tunnels;
 
+    private List<Tunnel> tunnels;
     private String uri;
 
     public List<Tunnel> getTunnels() {

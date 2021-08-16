@@ -33,6 +33,7 @@ import static com.github.alexdlaird.StringUtils.isBlank;
  * An object containing a parsed log from the <code>ngrok</code> process.
  */
 public class NgrokLog extends HashMap<String, String> {
+
     private final String line;
     private String t;
     private String lvl;

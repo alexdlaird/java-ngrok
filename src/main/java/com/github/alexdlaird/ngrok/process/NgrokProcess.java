@@ -56,11 +56,8 @@ public class NgrokProcess {
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokProcess.class));
 
     private final JavaNgrokConfig javaNgrokConfig;
-
     private final NgrokInstaller ngrokInstaller;
-
     private Process process;
-
     private ProcessMonitor processMonitor;
 
     /**

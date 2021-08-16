@@ -51,17 +51,16 @@ public class DefaultHttpClient implements HttpClient {
 
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(DefaultHttpClient.class));
 
-    private final Gson gson = new GsonBuilder()
-            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .create();
-
+    private final Gson gson;
     private final String encoding;
-
     private final String contentType;
 
     private DefaultHttpClient(final Builder builder) {
         this.encoding = builder.encoding;
         this.contentType = builder.contentType;
+        this.gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
     }
 
     @Override
@@ -73,7 +72,7 @@ public class DefaultHttpClient implements HttpClient {
             return execute(urlWithParameters(url, parameters), null, "GET",
                     additionalHeaders, clazz);
         } catch (Exception e) {
-            throw new HttpClientException("HTTP client error", e);
+            throw new HttpClientException("HTTP GET error", e);
         }
     }
 
@@ -87,7 +86,7 @@ public class DefaultHttpClient implements HttpClient {
             return execute(urlWithParameters(url, parameters), convertRequestToString(request), "POST",
                     additionalHeaders, clazz);
         } catch (Exception e) {
-            throw new HttpClientException("HTTP client error", e);
+            throw new HttpClientException("HTTP POST error", e);
         }
     }
 
@@ -101,7 +100,7 @@ public class DefaultHttpClient implements HttpClient {
             return execute(urlWithParameters(url, parameters), convertRequestToString(request), "PUT",
                     additionalHeaders, clazz);
         } catch (Exception e) {
-            throw new HttpClientException("HTTP client error", e);
+            throw new HttpClientException("HTTP PUT error", e);
         }
     }
 
@@ -114,7 +113,7 @@ public class DefaultHttpClient implements HttpClient {
             return execute(urlWithParameters(url, parameters), null, "DELETE",
                     additionalHeaders, clazz);
         } catch (Exception e) {
-            throw new HttpClientException("HTTP client error", e);
+            throw new HttpClientException("HTTP DELETE error", e);
         }
     }
 

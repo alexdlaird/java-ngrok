@@ -58,8 +58,11 @@ public class NgrokInstaller {
 
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokInstaller.class));
 
-    private static final List<String> UNIX_BINARIES = List.of("DARWIN", "LINUX", "FREEBSD");
-
+    private static final String MAC = "DARWIN";
+    private static final String WINDOWS = "WINDOWS";
+    private static final String LINUX = "LINUX";
+    private static final String FREEBSD = "FREEBSD";
+    private static final List<String> UNIX_BINARIES = List.of(MAC, LINUX, FREEBSD);
     private static final List<String> VALID_LOG_LEVELS = List.of("info", "debug");
 
     private final Gson gson = new GsonBuilder()
@@ -254,13 +257,13 @@ public class NgrokInstaller {
         final String os = System.getProperty("os.name").replaceAll(" ", "").toLowerCase();
 
         if (os.startsWith("mac")) {
-            return "DARWIN";
+            return MAC;
         } else if (os.startsWith("windows") || os.contains("cygwin")) {
-            return "WINDOWS";
+            return WINDOWS;
         } else if (os.startsWith("linux")) {
-            return "LINUX";
+            return LINUX;
         } else if (os.startsWith("freebsd")) {
-            return "FREEBSD";
+            return FREEBSD;
         } else {
             throw new JavaNgrokInstallerException(String.format("Unknown os.name: %s", os));
         }

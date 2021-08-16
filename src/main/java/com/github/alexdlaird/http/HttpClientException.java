@@ -28,15 +28,6 @@ package com.github.alexdlaird.http;
  */
 public class HttpClientException extends RuntimeException {
     /**
-     * An exception with a message.
-     *
-     * @param message The message describing the exception.
-     */
-    public HttpClientException(final String message) {
-        super(message);
-    }
-
-    /**
      * An exception with a message and a root cause.
      *
      * @param message The message describing the exception.

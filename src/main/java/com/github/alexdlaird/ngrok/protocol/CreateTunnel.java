@@ -23,7 +23,6 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
-import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.http.HttpClient;
 
 import java.util.List;
@@ -36,6 +35,7 @@ import static java.util.Objects.isNull;
  * and passed to the {@link HttpClient}.
  */
 public class CreateTunnel {
+
     private final String name;
     private final String proto;
     private final String addr;

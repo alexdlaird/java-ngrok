@@ -30,24 +30,10 @@ import java.util.Map;
  * A response from the {@link HttpClient}.
  */
 public class Response<T> {
-    /**
-     * Response code.
-     */
+
     private final int statusCode;
-
-    /**
-     * Body of the response.
-     */
     private final T body;
-
-    /**
-     * Unparsed body of the response.
-     */
     private final String bodyRaw;
-
-    /**
-     * Headers from the response.
-     */
     private final Map<String, List<String>> headerFields;
 
     /**
@@ -65,18 +51,30 @@ public class Response<T> {
         this.headerFields = headerFields;
     }
 
+    /**
+     * Get the response code.
+     */
     public int getStatusCode() {
         return statusCode;
     }
 
+    /**
+     * Get the body of the response.
+     */
     public T getBody() {
         return body;
     }
 
+    /**
+     * Get the raw body of the response (can be useful if parsing fails).
+     */
     public String getBodyRaw() {
         return bodyRaw;
     }
 
+    /**
+     * Get the response headers.
+     */
     public Map<String, List<String>> getHeaderFields() {
         return headerFields;
     }

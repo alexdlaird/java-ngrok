@@ -30,6 +30,7 @@ import java.util.Map;
  * An object representing a CapturedRequest response from <code>ngrok</code>'s API.
  */
 public class CapturedRequest {
+
     private String uri;
     private String id;
     private String tunnelName;
