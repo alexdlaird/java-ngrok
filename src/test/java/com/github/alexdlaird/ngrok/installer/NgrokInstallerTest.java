@@ -17,8 +17,7 @@ class NgrokInstallerTest extends NgrokTestCase {
         // GIVEN
         if (Files.exists(javaNgrokConfig.getNgrokPath())) {
             // Due to Windows file locking behavior, wait a beat
-            System.out.println(System.getProperty("os.name"));
-            if (System.getProperty("os.name").equals("Windows")) {
+            if (System.getProperty("os.name").toLowerCase().contains("windows")) {
                 Thread.sleep(1000);
             }
             Files.delete(javaNgrokConfig.getNgrokPath());
