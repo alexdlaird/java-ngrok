@@ -1,45 +1,44 @@
 package com.github.alexdlaird.ngrok.installer;
 
+import com.github.alexdlaird.ngrok.NgrokTestCase;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class NgrokInstallerTest {
-
-    private final NgrokInstaller ngrokInstaller = new NgrokInstaller();
+class NgrokInstallerTest extends NgrokTestCase {
 
     @Test
     public void testInstallNgrok() throws IOException {
         // GIVEN
-        final Path ngrokPath = Paths.get(System.getProperty("user.home"), ".ngrok2", NgrokInstaller.getNgrokBin());
-        Files.delete(ngrokPath);
-        assertFalse(Files.exists(ngrokPath));
+        if (Files.exists(javaNgrokConfig.getNgrokPath())) {
+            Files.delete(javaNgrokConfig.getNgrokPath());
+        }
+        assertFalse(Files.exists(javaNgrokConfig.getNgrokPath()));
 
         // WHEN
-        ngrokInstaller.installNgrok(ngrokPath);
+        ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath());
 
         // THEN
-        assertTrue(Files.exists(ngrokPath));
+        assertTrue(Files.exists(javaNgrokConfig.getNgrokPath()));
     }
 
     @Test
     public void testInstallDefaultConfig() throws IOException {
         // GIVEN
-        final Path configPath = Paths.get(System.getProperty("user.home"), ".ngrok2", "ngrok.yml");
-        Files.delete(configPath);
-        assertFalse(Files.exists(configPath));
+        if (Files.exists(javaNgrokConfig.getConfigPath())) {
+            Files.delete(javaNgrokConfig.getConfigPath());
+        }
+        assertFalse(Files.exists(javaNgrokConfig.getConfigPath()));
 
         // WHEN
-        ngrokInstaller.installDefaultConfig(configPath, Collections.emptyMap());
+        ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Collections.emptyMap());
 
         // THEN
-        assertTrue(Files.exists(configPath));
+        assertTrue(Files.exists(javaNgrokConfig.getConfigPath()));
     }
 }

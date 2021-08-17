@@ -19,11 +19,13 @@ public class NgrokTestCase {
             .withReconnectSessionRetries(10)
             .build();
 
+    protected NgrokInstaller ngrokInstaller = new NgrokInstaller();
+
     protected NgrokProcess ngrokProcess;
 
     @BeforeEach
     public void setUp() {
-        ngrokProcess = new NgrokProcess(javaNgrokConfig, new NgrokInstaller());
+        ngrokProcess = new NgrokProcess(javaNgrokConfig, ngrokInstaller);
     }
 
     @AfterEach
