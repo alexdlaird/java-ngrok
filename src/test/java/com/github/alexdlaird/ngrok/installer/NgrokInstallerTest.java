@@ -14,10 +14,12 @@ class NgrokInstallerTest extends NgrokTestCase {
 
     @Test
     public void testInstallNgrok() throws IOException, InterruptedException {
-        Thread.sleep(1000);
-
         // GIVEN
         if (Files.exists(javaNgrokConfig.getNgrokPath())) {
+            // Due to Windows file locking behavior, wait a beat
+            if (System.getProperty("os.name").equals("Windows")) {
+                Thread.sleep(1000);
+            }
             Files.delete(javaNgrokConfig.getNgrokPath());
         }
         assertFalse(Files.exists(javaNgrokConfig.getNgrokPath()));
