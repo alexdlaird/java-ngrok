@@ -13,7 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class NgrokInstallerTest extends NgrokTestCase {
 
     @Test
-    public void testInstallNgrok() throws IOException {
+    public void testInstallNgrok() throws IOException, InterruptedException {
+        Thread.sleep(1000);
+
         // GIVEN
         if (Files.exists(javaNgrokConfig.getNgrokPath())) {
             Files.delete(javaNgrokConfig.getNgrokPath());
