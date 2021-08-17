@@ -6,6 +6,7 @@ ifeq ($(OS),Windows_NT)
 		GRADLE_BIN := ./gradlew
 	else
 		GRADLE_BIN := gradlew.bat
+	endif
 else
 	GRADLE_BIN := ./gradlew
 endif
