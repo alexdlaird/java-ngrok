@@ -2,7 +2,10 @@
 
 SHELL := /usr/bin/env bash
 ifeq ($(OS),Windows_NT)
-	GRADLE_BIN := ./gradlew.bat
+	ifeq ($(OSTYPE),cygwin)
+		GRADLE_BIN := ./gradlew
+	else
+		GRADLE_BIN := gradlew.bat
 else
 	GRADLE_BIN := ./gradlew
 endif
