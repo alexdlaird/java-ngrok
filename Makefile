@@ -2,7 +2,7 @@
 
 SHELL := /usr/bin/env bash
 ifeq ($(OS),Windows_NT)
-	ifeq ($(OSTYPE),cygwin)
+	ifneq (,$(findstring /cygdrive/,$(PATH)))
 		GRADLE_BIN := ./gradlew
 	else
 		GRADLE_BIN := gradlew.bat
