@@ -37,22 +37,37 @@ public class Tunnel {
     private TunnelConfig config;
     private Map<String, Metrics> metrics;
 
+    /**
+     * Get the name of the tunnel.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Get the relative URI of the tunnel.
+     */
     public String getUri() {
         return uri;
     }
 
+    /**
+     * Get the public URL of the tunnel.
+     */
     public String getPublicUrl() {
         return publicUrl;
     }
 
+    /**
+     * Get the proto of the tunnel.
+     */
     public String getProto() {
         return proto;
     }
 
+    /**
+     * Get the tunnel config.
+     */
     public TunnelConfig getConfig() {
         return config;
     }
@@ -65,10 +80,16 @@ public class Tunnel {
         private String addr;
         private boolean inspect;
 
+        /**
+         * Get the local addr to which the tunnel forwards traffic.
+         */
         public String getAddr() {
             return addr;
         }
 
+        /**
+         * Whether tunnel traffic is being inspected.
+         */
         public boolean isInspect() {
             return inspect;
         }

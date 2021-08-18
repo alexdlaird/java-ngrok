@@ -67,58 +67,101 @@ public class CreateTunnel {
         this.metadata = builder.metadata;
     }
 
+    /**
+     * Get the name of the tunnel.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Get the tunnel protocol.
+     */
     public Proto getProto() {
         return proto;
     }
 
+    /**
+     * Get the local port to which the tunnel will forward traffic.
+     */
     public String getAddr() {
         return addr;
     }
 
+    /**
+     * Whether HTTP request inspection on tunnels is enabled.
+     */
     public boolean isInspect() {
         return inspect;
     }
 
+    /**
+     * Get HTTP basic authentication credentials enforced on tunnel requests.
+     */
     public String getAuth() {
         return auth;
     }
 
+    /**
+     * Get the HTTP Host header.
+     */
     public String getHostHeader() {
         return hostHeader;
     }
 
+    /**
+     * Get <code>ngrok</code>'s <code>bind_tls</code> value.
+     */
     public BindTls getBindTls() {
         return bindTls;
     }
 
+    /**
+     * Get the subdomain.
+     */
     public String getSubdomain() {
         return subdomain;
     }
 
+    /**
+     * Get the hostname.
+     */
     public String getHostname() {
         return hostname;
     }
 
+    /**
+     * Get the PEM TLS certificate path that will be used to terminate TLS traffic before forwarding locally.
+     */
     public String getCrt() {
         return crt;
     }
 
+    /**
+     * Get the PEM TLS private key path that will be used to terminate TLS traffic before forwarding locally.
+     */
     public String getKey() {
         return key;
     }
 
+    /**
+     * Get the PEM TLS certificate authority path that will be used to verify incoming TLS client
+     * connection certificates.
+     */
     public String getClientCas() {
         return clientCas;
     }
 
+    /**
+     * Get the bound remote TCP port on the given address.
+     */
     public String getRemoteAddr() {
         return remoteAddr;
     }
 
+    /**
+     * Get the arbitrary user-defined metadata that will appear in the ngrok service API when listing tunnels.
+     */
     public String getMetadata() {
         return metadata;
     }
@@ -152,7 +195,7 @@ public class CreateTunnel {
         }
 
         /**
-         * A valid <a href="<https://ngrok.com/docs#tunnel-definitions>">tunnel protocol</a>, defaults to "http".
+         * The tunnel protocol, defaults to {@link Proto#HTTP}.
          */
         public Builder withProto(final Proto proto) {
             this.proto = proto;

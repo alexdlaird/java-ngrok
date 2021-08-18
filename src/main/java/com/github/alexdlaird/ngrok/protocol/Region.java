@@ -26,7 +26,8 @@ package com.github.alexdlaird.ngrok.protocol;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * An enum representing <code>ngrok</code>'s valid regions.
+ * An enum representing <code>ngrok</code>'s valid regions, as defined in
+ * <a href="https://ngrok.com/docs#config-options"><code>ngrok</code>'s docs</a>.
  */
 public enum Region {
     @SerializedName("us")

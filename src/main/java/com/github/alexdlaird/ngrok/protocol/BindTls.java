@@ -26,7 +26,8 @@ package com.github.alexdlaird.ngrok.protocol;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * An enum representing <code>ngrok</code>'s valid bind_tls values.
+ * An enum representing <code>ngrok</code>'s valid <code>bind_tls</code> values, as defined in
+ * <a href="https://ngrok.com/docs#tunnel-definitions"><code>ngrok</code>'s docs</a>.
  */
 public enum BindTls {
     @SerializedName("true")
