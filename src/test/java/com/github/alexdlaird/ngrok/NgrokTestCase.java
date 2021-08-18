@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Comparator;
+import java.util.Locale;
+import java.util.UUID;
 
 public class NgrokTestCase {
 
@@ -41,5 +43,9 @@ public class NgrokTestCase {
                         throw new JavaNgrokException(String.format("An error occurred cleaning up file %s when testing.", path));
                     }
                 });
+    }
+
+    protected String createUniqueSubdomain() {
+        return String.format("java-ngrok-%s-%s-%s-tcp", UUID.randomUUID(), System.getProperty("java.version").replaceAll("\\.", ""), NgrokInstaller.getSystem().toLowerCase());
     }
 }

@@ -25,7 +25,6 @@ package com.github.alexdlaird.ngrok.protocol;
 
 import com.github.alexdlaird.http.HttpClient;
 
-import java.util.List;
 import java.util.UUID;
 
 import static java.util.Objects.isNull;
@@ -37,12 +36,12 @@ import static java.util.Objects.isNull;
 public class CreateTunnel {
 
     private final String name;
-    private final String proto;
+    private final Proto proto;
     private final String addr;
     private final boolean inspect;
     private final String auth;
     private final String hostHeader;
-    private final String bindTls;
+    private final BindTls bindTls;
     private final String subdomain;
     private final String hostname;
     private final String crt;
@@ -72,12 +71,56 @@ public class CreateTunnel {
         return name;
     }
 
-    public String getProto() {
+    public Proto getProto() {
         return proto;
     }
 
-    public String getBindTls() {
+    public String getAddr() {
+        return addr;
+    }
+
+    public boolean isInspect() {
+        return inspect;
+    }
+
+    public String getAuth() {
+        return auth;
+    }
+
+    public String getHostHeader() {
+        return hostHeader;
+    }
+
+    public BindTls getBindTls() {
         return bindTls;
+    }
+
+    public String getSubdomain() {
+        return subdomain;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public String getCrt() {
+        return crt;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getClientCas() {
+        return clientCas;
+    }
+
+    public String getRemoteAddr() {
+        return remoteAddr;
+    }
+
+    public String getMetadata() {
+        return metadata;
     }
 
     /**
@@ -85,14 +128,11 @@ public class CreateTunnel {
      * <a href="https://ngrok.com/docs#tunnel-definitions"><code>ngrok</code>'s tunnel definition</a>.
      */
     public static class Builder {
-        private final List<String> validProtos = List.of("http", "tcp", "tls");
-        private final List<String> validBindTls = List.of("true", "false", "both");
-
         private String name;
-        private String proto = "http";
+        private Proto proto = Proto.HTTP;
         private String addr = "80";
         private boolean inspect = true;
-        private String bindTls = "both";
+        private BindTls bindTls = BindTls.BOTH;
         private String auth;
         private String hostHeader;
         private String subdomain;
@@ -114,11 +154,7 @@ public class CreateTunnel {
         /**
          * A valid <a href="<https://ngrok.com/docs#tunnel-definitions>">tunnel protocol</a>, defaults to "http".
          */
-        public Builder withProto(final String proto) {
-            if (!validProtos.contains(proto)) {
-                throw new IllegalArgumentException(String.format("Invalid proto %s, valid values are: %s", proto, validProtos));
-            }
-
+        public Builder withProto(final Proto proto) {
             this.proto = proto;
             return this;
         }
@@ -164,22 +200,19 @@ public class CreateTunnel {
         }
 
         /**
-         * Bind an HTTPS ("true") or HTTP ("false") endpoint, defaults to "both".
+         * Bind an HTTPS ({@link BindTls#TRUE} or HTTP ({@link BindTls#FALSE}) endpoint, defaults
+         * to {@link BindTls#BOTH}.
          */
-        public Builder withBindTls(final String bindTls) {
-            if (!validBindTls.contains(bindTls)) {
-                throw new IllegalArgumentException(String.format("Invalid bindTls %s, valid values are: %s", bindTls, validBindTls));
-            }
-
+        public Builder withBindTls(final BindTls bindTls) {
             this.bindTls = bindTls;
             return this;
         }
 
         /**
-         * See {@link #withBindTls(String)}.
+         * See {@link #withBindTls(BindTls)}.
          */
         public Builder withBindTls(final boolean bindTls) {
-            return withBindTls(String.valueOf(bindTls));
+            return withBindTls(BindTls.valueOf(String.valueOf(bindTls).toUpperCase()));
         }
 
         /**

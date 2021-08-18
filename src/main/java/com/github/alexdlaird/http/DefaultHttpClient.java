@@ -23,7 +23,7 @@
 
 package com.github.alexdlaird.http;
 
-import com.github.alexdlaird.StringUtils;
+import com.github.alexdlaird.util.StringUtils;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.github.alexdlaird.StringUtils.isBlank;
+import static com.github.alexdlaird.util.StringUtils.isBlank;
 
 /**
  * Implementation of a default client for executing JSON-based HTTP requests.

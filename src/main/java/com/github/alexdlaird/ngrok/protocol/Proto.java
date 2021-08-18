@@ -26,23 +26,15 @@ package com.github.alexdlaird.ngrok.protocol;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * An enum representing <code>ngrok</code>'s valid regions.
+ * An enum representing <code>ngrok</code>'s valid protos.
  */
-public enum Region {
-    @SerializedName("us")
-    US,
-    @SerializedName("eu")
-    EU,
-    @SerializedName("ap")
-    AP,
-    @SerializedName("au")
-    AU,
-    @SerializedName("sa")
-    SA,
-    @SerializedName("jp")
-    JP,
-    @SerializedName("in")
-    IN;
+public enum Proto {
+    @SerializedName("http")
+    HTTP,
+    @SerializedName("tcp")
+    TCP,
+    @SerializedName("tls")
+    TLS;
 
     @Override
     public String toString() {

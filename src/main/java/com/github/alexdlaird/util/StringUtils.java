@@ -21,7 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.alexdlaird;
+package com.github.alexdlaird.util;
 
 import java.io.IOException;
 import java.io.InputStream;

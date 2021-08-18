@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.github.alexdlaird.StringUtils.isBlank;
+import static com.github.alexdlaird.util.StringUtils.isBlank;
 
 /**
  * An object containing a parsed log from the <code>ngrok</code> process.
@@ -36,7 +36,7 @@ public class NgrokLog extends HashMap<String, String> {
 
     private final String line;
     private String t;
-    private String lvl;
+    private String lvl = "INFO";
     private String msg;
     private String err;
     private String addr;
@@ -52,11 +52,14 @@ public class NgrokLog extends HashMap<String, String> {
         for (final String i : shellSplit(this.line)) {
             final String[] split = i.split("=", 2);
             final String key = split[0];
-            String value = split[1];
+            String value = "";
+            if (split.length > 1) {
+                value = split[1];
+            }
 
             if (key.equals("lvl")) {
                 if (isBlank(value)) {
-                    value = "INFO";
+                    value = this.lvl;
                 }
 
                 value = value.toUpperCase();

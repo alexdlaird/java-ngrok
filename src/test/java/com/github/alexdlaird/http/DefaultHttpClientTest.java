@@ -31,9 +31,14 @@ import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
+import static java.net.HttpURLConnection.HTTP_CREATED;
+import static java.net.HttpURLConnection.HTTP_NO_CONTENT;
+import static java.net.HttpURLConnection.HTTP_OK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -62,8 +67,8 @@ class DefaultHttpClientTest extends NgrokTestCase {
         final Response<Tunnel> postResponse = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
 
         // THEN
-        assertEquals(postResponse.getStatusCode(), 201);
-        assertEquals(postResponse.getBody().getName(), "my-tunnel");
+        assertEquals(HTTP_CREATED, postResponse.getStatusCode());
+        assertEquals("my-tunnel", postResponse.getBody().getName());
     }
 
     @Test
@@ -79,9 +84,9 @@ class DefaultHttpClientTest extends NgrokTestCase {
         final Response<Tunnels> getResponse = defaultHttpClient.get(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), Collections.emptyList(), Collections.emptyMap(), Tunnels.class);
 
         // THEN
-        assertEquals(getResponse.getStatusCode(), 200);
-        assertEquals(getResponse.getBody().getTunnels().size(), 1);
-        assertEquals(getResponse.getBody().getTunnels().get(0).getName(), "my-tunnel");
+        assertEquals(HTTP_OK, getResponse.getStatusCode());
+        assertEquals(1, getResponse.getBody().getTunnels().size());
+        assertEquals("my-tunnel", getResponse.getBody().getTunnels().get(0).getName());
     }
 
     @Test
@@ -96,16 +101,16 @@ class DefaultHttpClientTest extends NgrokTestCase {
         final Response<?> deleteResponse = defaultHttpClient.delete(ngrokProcess.getApiUrl() + tunnel.getUri(), Collections.emptyList(), Collections.emptyMap());
 
         // THEN
-        assertEquals(deleteResponse.getStatusCode(), 204);
+        assertEquals(HTTP_NO_CONTENT, deleteResponse.getStatusCode());
         assertNull(deleteResponse.getBody());
     }
 
     @Test
-    public void testGetWithQueryParameters() throws InterruptedException {
+    public void testGetWithQueryParameters() throws InterruptedException, MalformedURLException {
         // GIVEN
         final CreateTunnel request = new CreateTunnel.Builder()
                 .withName("my-tunnel")
-                .withAddr(4040)
+                .withAddr(new URL(ngrokProcess.getApiUrl()).getPort())
                 .withBindTls(true)
                 .build();
         final Response<Tunnel> createResponse = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), request, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
@@ -124,11 +129,11 @@ class DefaultHttpClientTest extends NgrokTestCase {
         final Response<CapturedRequests> response3 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), List.of(new Parameter("tunnel_name", "my-tunnel (http)")), Collections.emptyMap(), CapturedRequests.class);
 
         // THEN
-        assertEquals(response1.getStatusCode(), 200);
+        assertEquals(HTTP_OK, response1.getStatusCode());
         assertTrue(response1.getBody().getRequests().size() > 0);
-        assertEquals(response2.getStatusCode(), 200);
+        assertEquals(HTTP_OK, response2.getStatusCode());
         assertTrue(response2.getBody().getRequests().size() > 0);
-        assertEquals(response3.getStatusCode(), 200);
+        assertEquals(HTTP_OK, response3.getStatusCode());
         assertEquals(response3.getBody().getRequests().size(), 0);
     }
 }

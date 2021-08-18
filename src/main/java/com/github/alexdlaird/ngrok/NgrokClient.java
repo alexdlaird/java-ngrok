@@ -31,7 +31,9 @@ import com.github.alexdlaird.http.Response;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
+import com.github.alexdlaird.ngrok.protocol.BindTls;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
+import com.github.alexdlaird.ngrok.protocol.Proto;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import com.github.alexdlaird.ngrok.protocol.Version;
@@ -94,7 +96,7 @@ public class NgrokClient {
         }
 
         final Tunnel tunnel;
-        if (createTunnel.getProto().equals("http") && createTunnel.getBindTls().equals("both")) {
+        if (createTunnel.getProto() == Proto.HTTP && createTunnel.getBindTls() == BindTls.BOTH) {
             try {
                 final Response<Tunnel> getResponse = httpClient.get(ngrokProcess.getApiUrl() + response.getBody().getUri() + "%20%28http%29", Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
                 tunnel = getResponse.getBody();

@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.github.alexdlaird.StringUtils.isBlank;
+import static com.github.alexdlaird.util.StringUtils.isBlank;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -167,8 +167,7 @@ public class NgrokProcess {
      * Check if this object is currently managing a running <code>ngrok</code> process.
      */
     public boolean isRunning() {
-        // TODO: evaluate if this should also look at process.isAlive()
-        return nonNull(processMonitor);
+        return nonNull(process) && process.isAlive();
     }
 
     /**
@@ -189,7 +188,6 @@ public class NgrokProcess {
         process.destroy();
 
         process = null;
-        processMonitor = null;
     }
 
     /**
@@ -380,15 +378,15 @@ public class NgrokProcess {
                 return;
             }
 
-            if (ngrokLog.getLvl().equals("ERROR") || ngrokLog.getLine().equals("CRITICAL")) {
+            if (ngrokLog.getLvl().equals("SEVERE")) {
                 this.startupError = ngrokLog.getErr();
             } else {
                 // Log `ngrok` startup states as they come in
-                if (ngrokLog.getMsg().contains("starting web service") && nonNull(ngrokLog.getAddr())) {
+                if (nonNull(ngrokLog.getMsg()) && ngrokLog.getMsg().contains("starting web service") && nonNull(ngrokLog.getAddr())) {
                     this.apiUrl = String.format("http://%s", ngrokLog.getAddr());
-                } else if (ngrokLog.getMsg().contains("tunnel session started")) {
+                } else if (nonNull(ngrokLog.getMsg()) && ngrokLog.getMsg().contains("tunnel session started")) {
                     this.tunnelStarted = true;
-                } else if (ngrokLog.getMsg().contains("client session established")) {
+                } else if (nonNull(ngrokLog.getMsg()) && ngrokLog.getMsg().contains("client session established")) {
                     this.clientConnected = true;
                 }
             }

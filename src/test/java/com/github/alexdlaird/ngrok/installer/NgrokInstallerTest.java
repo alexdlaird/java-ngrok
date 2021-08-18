@@ -1,13 +1,16 @@
 package com.github.alexdlaird.ngrok.installer;
 
+import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.ngrok.NgrokTestCase;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NgrokInstallerTest extends NgrokTestCase {
@@ -44,5 +47,10 @@ class NgrokInstallerTest extends NgrokTestCase {
 
         // THEN
         assertTrue(Files.exists(javaNgrokConfig.getConfigPath()));
+    }
+
+    @Test
+    public void testWebAddrFalseNotAllowed() {
+        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Map.of("web_addr", "false")));
     }
 }

@@ -26,23 +26,15 @@ package com.github.alexdlaird.ngrok.protocol;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * An enum representing <code>ngrok</code>'s valid regions.
+ * An enum representing <code>ngrok</code>'s valid bind_tls values.
  */
-public enum Region {
-    @SerializedName("us")
-    US,
-    @SerializedName("eu")
-    EU,
-    @SerializedName("ap")
-    AP,
-    @SerializedName("au")
-    AU,
-    @SerializedName("sa")
-    SA,
-    @SerializedName("jp")
-    JP,
-    @SerializedName("in")
-    IN;
+public enum BindTls {
+    @SerializedName("true")
+    TRUE,
+    @SerializedName("false")
+    FALSE,
+    @SerializedName("both")
+    BOTH;
 
     @Override
     public String toString() {

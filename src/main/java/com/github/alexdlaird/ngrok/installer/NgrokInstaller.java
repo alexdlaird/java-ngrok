@@ -25,15 +25,14 @@ package com.github.alexdlaird.ngrok.installer;
 
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokInstallerException;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,7 +48,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static com.github.alexdlaird.StringUtils.isBlank;
+import static com.github.alexdlaird.util.StringUtils.isBlank;
 
 /**
  * A helper for downloading and installing the <code>ngrok</code> for the current system.
@@ -65,9 +64,7 @@ public class NgrokInstaller {
     private static final List<String> UNIX_BINARIES = List.of(MAC, LINUX, FREEBSD);
     private static final List<String> VALID_LOG_LEVELS = List.of("info", "debug");
 
-    private final Gson gson = new GsonBuilder()
-            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .create();
+    private final Yaml yaml = new Yaml();
 
     /**
      * Get the <code>ngrok</code> executable for the current system.
@@ -106,7 +103,9 @@ public class NgrokInstaller {
             LOGGER.fine(String.format("Installing default config to %s ...", configPath));
 
             final FileOutputStream out = new FileOutputStream(configPath.toFile());
-            out.write(gson.toJson(config).getBytes());
+            final StringWriter writer = new StringWriter();
+            yaml.dump(config, writer);
+            out.write(writer.toString().getBytes());
             out.close();
         } catch (IOException e) {
             throw new JavaNgrokInstallerException(String.format("An error while installing the default ngrok config to %s.", configPath), e);
@@ -163,6 +162,27 @@ public class NgrokInstaller {
         }
     }
 
+    /**
+     * Parse the name fo the OS from system properties and return a friendly name.
+     *
+     * @return The friendly name of the OS.
+     */
+    public static String getSystem() {
+        final String os = System.getProperty("os.name").replaceAll(" ", "").toLowerCase();
+
+        if (os.startsWith("mac")) {
+            return MAC;
+        } else if (os.startsWith("windows") || os.contains("cygwin")) {
+            return WINDOWS;
+        } else if (os.startsWith("linux")) {
+            return LINUX;
+        } else if (os.startsWith("freebsd")) {
+            return FREEBSD;
+        } else {
+            throw new JavaNgrokInstallerException(String.format("Unknown os.name: %s", os));
+        }
+    }
+
     private Map<String, String> getNgrokConfig(final Path configPath) {
         // TODO: implement a cache so we don't hit file IO every time we read the config
         try {
@@ -172,7 +192,7 @@ public class NgrokInstaller {
                 return Collections.emptyMap();
             }
 
-            return gson.<Map<String, String>>fromJson(config, Map.class);
+            return yaml.load(config);
         } catch (IOException | JsonParseException e) {
             throw new JavaNgrokInstallerException(String.format("An error occurred while parsing the config file: %s", configPath), e);
         }
@@ -251,21 +271,5 @@ public class NgrokInstaller {
         }
 
         return arch.toString();
-    }
-
-    private static String getSystem() {
-        final String os = System.getProperty("os.name").replaceAll(" ", "").toLowerCase();
-
-        if (os.startsWith("mac")) {
-            return MAC;
-        } else if (os.startsWith("windows") || os.contains("cygwin")) {
-            return WINDOWS;
-        } else if (os.startsWith("linux")) {
-            return LINUX;
-        } else if (os.startsWith("freebsd")) {
-            return FREEBSD;
-        } else {
-            throw new JavaNgrokInstallerException(String.format("Unknown os.name: %s", os));
-        }
     }
 }
