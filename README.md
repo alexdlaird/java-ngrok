@@ -24,14 +24,14 @@ on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.a
 <dependency>
     <groupId>com.github.alexdlaird</groupId>
     <artifactId>java-ngrok</artifactId>
-    <version>0.3.0</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
 #### Gradle
 
 ```groovy
-implementation "com.github.alexdlaird:java-ngrok:0.3.0"
+implementation "com.github.alexdlaird:java-ngrok:1.0.0"
 ```
 
 If we want `ngrok` to be available from the command line, [pyngrok](https://github.com/alexdlaird/pyngrok) can be
