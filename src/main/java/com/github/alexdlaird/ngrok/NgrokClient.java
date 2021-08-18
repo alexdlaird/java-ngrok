@@ -84,6 +84,7 @@ import static java.util.Objects.isNull;
  * with the {@link NgrokClient#getTunnels()} method, which returns a list of {@link Tunnel} objects.
  * <p>
  * <pre>
+ * [&lt;Tunnel: "http://&lt;public_sub&gt;.ngrok.io" -&gt; "http://localhost:80"&gt;]
  * final List&lt;Tunnel&gt; tunnels = ngrokClient.getTunnels();
  * </pre>
  *
@@ -92,6 +93,7 @@ import static java.util.Objects.isNull;
  * manually with {@link NgrokClient#disconnect(String)}.
  * <p>
  * <pre>
+ * // The Tunnel returned from methods like connect(), getTunnels(), etc. contains the public URL
  * ngrokClient.disconnect(publicUrl);
  * </pre>
  */
