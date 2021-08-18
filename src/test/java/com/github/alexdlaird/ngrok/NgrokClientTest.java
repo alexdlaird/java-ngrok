@@ -7,7 +7,6 @@ import com.github.alexdlaird.ngrok.protocol.BindTls;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Region;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
-import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import com.github.alexdlaird.ngrok.protocol.Version;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -112,10 +112,10 @@ class NgrokClientTest extends NgrokTestCase {
         final Tunnel tunnel = ngrokClient.connect();
 
         // WHEN
-        final Tunnels tunnels = ngrokClient.getTunnels();
+        final List<Tunnel> tunnels = ngrokClient.getTunnels();
 
-        assertEquals(2, tunnels.getTunnels().size());
-        for (final Tunnel t : tunnels.getTunnels()) {
+        assertEquals(2, tunnels.size());
+        for (final Tunnel t : tunnels) {
             if (t.getProto().equals("http")) {
                 assertEquals(tunnel.getPublicUrl(), t.getPublicUrl());
             } else {
@@ -124,7 +124,6 @@ class NgrokClientTest extends NgrokTestCase {
             }
             assertEquals("http://localhost:80", t.getConfig().getAddr());
         }
-        assertNotNull(tunnels.getUri());
     }
 
     @Test
@@ -136,10 +135,10 @@ class NgrokClientTest extends NgrokTestCase {
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
 
         // WHEN
-        final Tunnels tunnels = ngrokClient.getTunnels();
+        final List<Tunnel> tunnels = ngrokClient.getTunnels();
 
         // THEN
-        assertEquals(2, tunnels.getTunnels().size());
+        assertEquals(2, tunnels.size());
         assertTrue(tunnel.getPublicUrl().startsWith("http://"));
     }
 
@@ -152,10 +151,10 @@ class NgrokClientTest extends NgrokTestCase {
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
 
         // WHEN
-        final Tunnels tunnels = ngrokClient.getTunnels();
+        final List<Tunnel> tunnels = ngrokClient.getTunnels();
 
         // THEN
-        assertEquals(1, tunnels.getTunnels().size());
+        assertEquals(1, tunnels.size());
         assertTrue(tunnel.getPublicUrl().startsWith("https://"));
     }
 
@@ -168,10 +167,10 @@ class NgrokClientTest extends NgrokTestCase {
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
 
         // WHEN
-        final Tunnels tunnels = ngrokClient.getTunnels();
+        final List<Tunnel> tunnels = ngrokClient.getTunnels();
 
         // THEN
-        assertEquals(1, tunnels.getTunnels().size());
+        assertEquals(1, tunnels.size());
         assertTrue(tunnel.getPublicUrl().startsWith("http://"));
     }
 
@@ -189,8 +188,8 @@ class NgrokClientTest extends NgrokTestCase {
         ngrokClient.disconnect(tunnel.getPublicUrl());
 
         // THEN
-        final Tunnels tunnels = ngrokClient.getTunnels();
-        assertEquals(0, tunnels.getTunnels().size());
+        final List<Tunnel> tunnels = ngrokClient.getTunnels();
+        assertEquals(0, tunnels.size());
     }
 
     @Test

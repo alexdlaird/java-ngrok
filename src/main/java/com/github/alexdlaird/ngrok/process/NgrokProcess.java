@@ -389,7 +389,7 @@ public class NgrokProcess {
             if (ngrokLog.getLvl().equals("SEVERE")) {
                 this.startupError = ngrokLog.getErr();
             } else {
-                // Log `ngrok` startup states as they come in
+                // Log ngrok startup states as they come in
                 if (nonNull(ngrokLog.getMsg()) && ngrokLog.getMsg().contains("starting web service") && nonNull(ngrokLog.getAddr())) {
                     this.apiUrl = String.format("http://%s", ngrokLog.getAddr());
                 } else if (nonNull(ngrokLog.getMsg()) && ngrokLog.getMsg().contains("tunnel session started")) {

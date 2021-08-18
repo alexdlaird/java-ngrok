@@ -39,6 +39,7 @@ import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import com.github.alexdlaird.ngrok.protocol.Version;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static java.util.Objects.isNull;
@@ -77,6 +78,22 @@ import static java.util.Objects.isNull;
  * return a reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed, call
  * {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
  * <code>https</code> tunnel will be returned.
+ *
+ * <h2>Get Active Tunnels</h2>
+ * It can be useful to ask the <code>ngrok</code> client what tunnels are currently open. This can be accomplished
+ * with the {@link NgrokClient#getTunnels()} method, which returns a list of {@link Tunnel} objects.
+ * <p>
+ * <pre>
+ * final List&lt;Tunnel&gt; tunnels = ngrokClient.getTunnels();
+ * </pre>
+ *
+ * <h2>Close a Tunnel</h2>
+ * All open tunnels will automatically be closed when the Java process terminates, but we can also close them
+ * manually with {@link NgrokClient#disconnect(String)}.
+ * <p>
+ * <pre>
+ * ngrokClient.disconnect(publicUrl);
+ * </pre>
  */
 public class NgrokClient {
 
@@ -161,10 +178,10 @@ public class NgrokClient {
             return;
         }
 
-        final Tunnels tunnels = getTunnels();
+        final List<Tunnel> tunnels = getTunnels();
         Tunnel tunnel = null;
         // TODO: cache active tunnels so we can first check that before falling back to an API request
-        for (final Tunnel t : tunnels.getTunnels()) {
+        for (final Tunnel t : tunnels) {
             if (t.getPublicUrl().equals(publicUrl)) {
                 tunnel = t;
                 break;
@@ -195,13 +212,13 @@ public class NgrokClient {
      *
      * @return The active <code>ngrok</code> tunnels.
      */
-    public Tunnels getTunnels() {
+    public List<Tunnel> getTunnels() {
         ngrokProcess.start();
 
         try {
             final Response<Tunnels> response = httpClient.get(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), Collections.emptyList(), Collections.emptyMap(), Tunnels.class);
 
-            return response.getBody();
+            return response.getBody().getTunnels();
         } catch (HttpClientException e) {
             throw new JavaNgrokHTTPException("An error occurred when GETing the tunnels.", e, e.getUrl(),
                     e.getStatusCode(), e.getBody());
