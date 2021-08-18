@@ -50,6 +50,7 @@ import static java.util.Objects.nonNull;
 
 /**
  * An object containing information about the <code>ngrok</code> process.
+ * Can be configured with {@link JavaNgrokConfig}.
  */
 public class NgrokProcess {
 
@@ -63,7 +64,7 @@ public class NgrokProcess {
     /**
      * If <code>ngrok</code> is not already installed at {@link JavaNgrokConfig#getNgrokPath()}, the given
      * {@link NgrokInstaller} will install it. This will also provision a default <code>ngrok</code> config
-     * at {@link JavaNgrokConfig#getConfigPath()} ()}, if none exists.
+     * at {@link JavaNgrokConfig#getConfigPath()}, if none exists.
      *
      * @param javaNgrokConfig The <code>java-ngrok</code> to use when interacting with the <code>ngrok</code> binary.
      * @param ngrokInstaller  The class used to download and install <code>ngrok</code>.
@@ -299,6 +300,13 @@ public class NgrokProcess {
         }
 
         return processMonitor.apiUrl;
+    }
+
+    /**
+     * Get the class used to download and install <code>ngrok</code>.
+     */
+    public NgrokInstaller getNgrokInstaller() {
+        return ngrokInstaller;
     }
 
     private static class ProcessMonitor implements Runnable {

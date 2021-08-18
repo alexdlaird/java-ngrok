@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Map;
 
+import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -20,7 +21,7 @@ class NgrokInstallerTest extends NgrokTestCase {
         // GIVEN
         if (Files.exists(javaNgrokConfig.getNgrokPath())) {
             // Due to Windows file locking behavior, wait a beat
-            if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            if (NgrokInstaller.getSystem().equals(WINDOWS)) {
                 Thread.sleep(1000);
             }
             Files.delete(javaNgrokConfig.getNgrokPath());

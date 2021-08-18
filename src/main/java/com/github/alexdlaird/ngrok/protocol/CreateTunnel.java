@@ -32,6 +32,22 @@ import static java.util.Objects.isNull;
 /**
  * An object that represents a <code>ngrok</code> Tunnel creation request. This object can be serialized
  * and passed to the {@link HttpClient}.
+ *
+ * <h3>Basic Usage</h3>
+ * <pre>
+ * final CreateTunnel createTunnel = new CreateTunnel.Builder()
+ *         .withName("my-tunnel")
+ *         .withProto(Proto.TCP)
+ *         .withAddr(5000)
+ *         .build();
+ *
+ * final HttpClient httpClient = new DefaultHttpClient.Builder().build()
+ * final Response&lt;SomePOJOResponse&gt; postResponse = httpClient.post("http://localhost:4040/api/tunnels",
+ *                                                                 createTunnel,
+ *                                                                 Collections.emptyList(),
+ *                                                                 Collections.emptyMap(),
+ *                                                                 Tunnel.class);
+ * </pre>
  */
 public class CreateTunnel {
 

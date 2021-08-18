@@ -21,7 +21,6 @@ on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.a
 #### Maven
 
 ```xml
-
 <dependency>
     <groupId>com.github.alexdlaird</groupId>
     <artifactId>java-ngrok</artifactId>
@@ -32,7 +31,7 @@ on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.a
 #### Gradle
 
 ```groovy
-implementation 'com.github.alexdlaird:java-ngrok:0.3.0'
+implementation "com.github.alexdlaird:java-ngrok:0.3.0"
 ```
 
 If we want `ngrok` to be available from the command line, [pyngrok](https://github.com/alexdlaird/pyngrok) can be
@@ -47,25 +46,19 @@ method, which returns a `Tunnel`, and this returned object has a reference to th
 can be retrieved with [`getPublicUrl()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com/github/alexdlaird/ngrok/protocol/Tunnel.html#getPublicUrl()).
 
 ```java
-import com.github.alexdlaird.ngrok.NgrokClient;
-import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
-import com.github.alexdlaird.ngrok.protocol.Tunnel;
+final NgrokClient ngrokClient = new NgrokClient.Builder().build();
 
-public class MyClass {
+// Open a HTTP tunnel on the default port 80
+// <Tunnel: "http://<public_sub>.ngrok.io" -> "http://localhost:80">
+final Tunnel httpTunnel = ngrokClient.connect();
 
-    public void myMethod() {
-        final NgrokClient ngrokClient = new NgrokClient.Builder().build();
-
-        // Open a HTTP tunnel on the default port 80
-        // <Tunnel: "http://<public_sub>.ngrok.io" -> "http://localhost:80">
-        final Tunnel httpTunnel = ngrokClient.connect();
-
-        // Open a SSH tunnel
-        // <Tunnel: "tcp://0.tcp.ngrok.io:12345" -> "localhost:22">
-        final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder().withProto("tcp").withAddr(22).build();
-        final Tunnel sshTunnel = ngrokClient.connect(sshCreateTunnel);
-    }
-}
+// Open a SSH tunnel
+// <Tunnel: "tcp://0.tcp.ngrok.io:12345" -> "localhost:22">
+final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder()
+        .withProto(Proto.TCP)
+        .withAddr(22)
+        .build();
+final Tunnel sshTunnel = ngrokClient.connect(sshCreateTunnel);
 ```
 
 The [`connect`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com/github/alexdlaird/ngrok/NgrokClient.html#connect())

@@ -24,6 +24,7 @@
 package com.github.alexdlaird.http;
 
 import com.github.alexdlaird.ngrok.NgrokTestCase;
+import com.github.alexdlaird.ngrok.protocol.CapturedRequest;
 import com.github.alexdlaird.ngrok.protocol.CapturedRequests;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
@@ -40,6 +41,7 @@ import static java.net.HttpURLConnection.HTTP_CREATED;
 import static java.net.HttpURLConnection.HTTP_NO_CONTENT;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -135,5 +137,27 @@ class DefaultHttpClientTest extends NgrokTestCase {
         assertTrue(response2.getBody().getRequests().size() > 0);
         assertEquals(HTTP_OK, response3.getStatusCode());
         assertEquals(response3.getBody().getRequests().size(), 0);
+        final CapturedRequests capturedRequests = response1.getBody();
+        assertEquals(1, capturedRequests.getRequests().size());
+        assertNotNull(capturedRequests.getUri());
+        final CapturedRequest capturedRequest = capturedRequests.getRequests().get(0);
+        assertNotNull(capturedRequest.getRequest());
+        assertNotNull(capturedRequest.getRequest().getMethod());
+        assertNotNull(capturedRequest.getRequest().getUri());
+        assertNotNull(capturedRequest.getRequest().getHeaders());
+        assertNotNull(capturedRequest.getRequest().getProto());
+        assertNotNull(capturedRequest.getRequest().getRaw());
+        assertNotNull(capturedRequest.getResponse());
+        assertNotNull(capturedRequest.getResponse().getStatus());
+        assertEquals(0, capturedRequest.getResponse().getStatusCode());
+        assertNull(capturedRequest.getResponse().getHeaders());
+        assertNotNull(capturedRequest.getResponse().getProto());
+        assertNull(capturedRequest.getResponse().getRaw());
+        assertNotNull(capturedRequest.getUri());
+        assertEquals(0, capturedRequest.getDuration());
+        assertNotNull(capturedRequest.getId());
+        assertNotNull(capturedRequest.getRemoteAddr());
+        assertNotNull(capturedRequest.getStart());
+        assertNotNull(capturedRequest.getTunnelName());
     }
 }

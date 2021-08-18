@@ -28,13 +28,29 @@ import com.github.alexdlaird.ngrok.process.NgrokLog;
 import com.github.alexdlaird.ngrok.protocol.Region;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.function.Function;
 
 import static java.util.Objects.isNull;
 
 /**
  * An object for managing <code>java-ngrok</code>'s configuration to interact the <code>ngrok</code> binary.
+ *
+ * <h3>Basic Usage</h3>
+ * <pre>
+ * final Function&lt;NgrokLog, Void&gt; logEventCallback = ngrokLog -&gt; {
+ *     System.out.println(ngrokLog.getLine());
+ *     return null;
+ * };
+ * final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+ *         .withAuthToken("&lt;NGROK_AUTH_TOKEN&gt;")
+ *         .withRegion(Region.AU)
+ *         .withLogEventCallback(logEventCallback)
+ *         .withMaxLogs(10);
+ *
+ * final NgrokClient = new NgrokClient.Builder()
+ *         .withJavaNgrokConfig(javaNgrokConfig)
+ *         .build();
+ * </pre>
  */
 public class JavaNgrokConfig {
 
@@ -227,10 +243,10 @@ public class JavaNgrokConfig {
 
         public JavaNgrokConfig build() {
             if (isNull(ngrokPath)) {
-                ngrokPath = Paths.get(System.getProperty("user.home"), ".ngrok2", NgrokInstaller.getNgrokBin());
+                ngrokPath = NgrokInstaller.DEFAULT_NGROK_PATH;
             }
             if (isNull(configPath)) {
-                configPath = Paths.get(System.getProperty("user.home"), ".ngrok2", "ngrok.yml");
+                configPath = NgrokInstaller.DEFAULT_CONFIG_PATH;
             }
 
             return new JavaNgrokConfig(this);

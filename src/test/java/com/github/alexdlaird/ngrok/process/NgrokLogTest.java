@@ -66,4 +66,13 @@ public class NgrokLogTest {
         assertEquals("INFO", ngrokLog.getLvl());
         assertNull(ngrokLog.getMsg());
     }
+
+    @Test
+    public void testNgrokLogTimestamp() {
+        // WHEN
+        final NgrokLog ngrokLog = new NgrokLog("t=123456789");
+
+        // THEN
+        assertEquals("123456789", ngrokLog.getT());
+    }
 }

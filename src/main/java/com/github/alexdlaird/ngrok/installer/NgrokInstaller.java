@@ -40,7 +40,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -57,11 +57,14 @@ public class NgrokInstaller {
 
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokInstaller.class));
 
-    private static final String MAC = "DARWIN";
-    private static final String WINDOWS = "WINDOWS";
-    private static final String LINUX = "LINUX";
-    private static final String FREEBSD = "FREEBSD";
-    private static final List<String> UNIX_BINARIES = List.of(MAC, LINUX, FREEBSD);
+    public static final String MAC = "DARWIN";
+    public static final String WINDOWS = "WINDOWS";
+    public static final String LINUX = "LINUX";
+    public static final String FREEBSD = "FREEBSD";
+    public static final List<String> UNIX_BINARIES = List.of(MAC, LINUX, FREEBSD);
+    public static final Path DEFAULT_NGROK_PATH = Paths.get(System.getProperty("user.home"), ".ngrok2", NgrokInstaller.getNgrokBin());
+    public static final Path DEFAULT_CONFIG_PATH = Paths.get(System.getProperty("user.home"), ".ngrok2", "config.yml");
+
     private static final List<String> VALID_LOG_LEVELS = List.of("info", "debug");
 
     private final Yaml yaml = new Yaml();
@@ -189,7 +192,7 @@ public class NgrokInstaller {
             final String config = Files.readString(configPath);
 
             if (isBlank(config)) {
-                return Collections.emptyMap();
+                return new HashMap<>();
             }
 
             return yaml.load(config);

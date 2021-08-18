@@ -40,6 +40,14 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
+    public void testGetters() {
+        assertEquals(javaNgrokConfig, ngrokClient.getJavaNgrokConfig());
+        assertEquals(ngrokProcess, ngrokClient.getNgrokProcess());
+        assertEquals(ngrokInstaller, ngrokClient.getNgrokProcess().getNgrokInstaller());
+        assertNotNull(ngrokClient.getHttpClient());
+    }
+
+    @Test
     public void testConnect() {
         // GIVEN
         assertFalse(ngrokClient.getNgrokProcess().isRunning());
@@ -55,8 +63,20 @@ class NgrokClientTest extends NgrokTestCase {
         assertTrue(tunnel.getName().startsWith("http-5000-"));
         assertEquals("http", tunnel.getProto());
         assertEquals("http://localhost:5000", tunnel.getConfig().getAddr());
+        assertTrue(tunnel.getConfig().isInspect());
         assertNotNull(tunnel.getPublicUrl());
         assertTrue(tunnel.getPublicUrl().startsWith("http://"));
+        assertNotNull(tunnel.getMetrics());
+        assertTrue(tunnel.getMetrics().containsKey("conns"));
+        assertEquals(0, tunnel.getMetrics().get("conns").getCount());
+        assertEquals(0, tunnel.getMetrics().get("conns").getGauge());
+        assertEquals(0, tunnel.getMetrics().get("conns").getP50());
+        assertEquals(0, tunnel.getMetrics().get("conns").getP90());
+        assertEquals(0, tunnel.getMetrics().get("conns").getP95());
+        assertEquals(0, tunnel.getMetrics().get("conns").getP99());
+        assertEquals(0, tunnel.getMetrics().get("conns").getRate1());
+        assertEquals(0, tunnel.getMetrics().get("conns").getRate5());
+        assertEquals(0, tunnel.getMetrics().get("conns").getRate15());
     }
 
     @Test
@@ -104,6 +124,7 @@ class NgrokClientTest extends NgrokTestCase {
             }
             assertEquals("http://localhost:80", t.getConfig().getAddr());
         }
+        assertNotNull(tunnels.getUri());
     }
 
     @Test

@@ -45,7 +45,35 @@ import java.util.logging.Logger;
 import static com.github.alexdlaird.util.StringUtils.isBlank;
 
 /**
- * Implementation of a default client for executing JSON-based HTTP requests.
+ * A default client for executing JSON-based HTTP requests.
+ *
+ * <h3>Basic Usage</h3>
+ * <pre>
+ * final HttpClient httpClient = new DefaultHttpClient.Builder();
+ *
+ * final SomePOJORequest postPojo = new MyPOJO("id", "data");
+ * final Response&lt;SomePOJOResponse&gt; postResponse = httpClient.post("http://localhost/pojo",
+ *                                                                 postPojo,
+ *                                                                 Collections.emptyList(),
+ *                                                                 Collections.emptyMap(),
+ *                                                                 SomePOJOResponse.class);
+ *
+ * final Response&lt;SomePOJOResponse&gt; getResponse = httpClient.get("http://localhost/pojo/id",
+ *                                                               Collections.emptyList(),
+ *                                                                     Collections.emptyMap(),
+ *                                                                     SomePOJOResponse.class);
+ *
+ * final SomePOJORequest putPojo = new MyPOJO("updated-data");
+ * final Response&lt;SomePOJOResponse&gt; postResponse = httpClient.post("http://localhost/pojo/id",
+ *                                                                 putPojo,
+ *                                                                 Collections.emptyList(),
+ *                                                                 Collections.emptyMap(),
+ *                                                                 SomePOJOResponse.class);
+ *
+ * final Response&lt;Map&gt; deleteResponse = httpClient.delete("http://localhost/pojo/id",
+ *                                                        Collections.emptyList(),
+ *                                                        Collections.emptyMap());
+ * </pre>
  */
 public class DefaultHttpClient implements HttpClient {
 

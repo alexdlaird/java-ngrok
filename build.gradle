@@ -109,6 +109,7 @@ signing {
 }
 
 javadoc {
+    options.overview = "src/main/java/overview.html"
     options.addStringOption('Xdoclint:none', '-quiet')
     if (JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption("html5", true)
