@@ -16,6 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NgrokProcessTest extends NgrokTestCase {
+    // TODO: testStart()
+
+    // TODO: testStop()
+
     @Test
     public void testStartPortInUse() {
         // GIVEN
@@ -37,9 +41,26 @@ public class NgrokProcessTest extends NgrokTestCase {
         // THEN
         if (NgrokInstaller.getSystem().equals(WINDOWS)) {
             assertTrue(exception.getMessage().contains("bind: Only one usage of each socket address"));
+            assertTrue(exception.getNgrokError().contains("bind: Only one usage of each socket address"));
         } else {
             assertTrue(exception.getMessage().contains("bind: address already in use"));
+            assertTrue(exception.getNgrokError().contains("bind: address already in use"));
         }
+        assertTrue(exception.getNgrokLogs().size() > 0);
         assertFalse(ngrokProcess2.isRunning());
     }
+
+    // TODO: testExternalKill()
+
+    // TODO: testMultipleProcessesDifferentBinaries()
+
+    // TODO: testMultipleProcessesSameBinaryFails()
+
+    // TODO: testProcessLogs()
+
+    // TODO: testLogEventCallbackAndMaxLogs()
+
+    // TODO: testNoMonitorThread()
+
+    // TODO: testStartNoBinary()
 }

@@ -1,11 +1,13 @@
 package com.github.alexdlaird.ngrok.installer;
 
 import com.github.alexdlaird.exception.JavaNgrokException;
+import com.github.alexdlaird.exception.JavaNgrokInstallerException;
 import com.github.alexdlaird.ngrok.NgrokTestCase;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
 
@@ -51,7 +53,22 @@ class NgrokInstallerTest extends NgrokTestCase {
     }
 
     @Test
+    public void testInstallToDirectoryFailsPermissions() {
+        assertThrows(JavaNgrokInstallerException.class, () -> ngrokInstaller.installNgrok(Paths.get("/no-perms")));
+    }
+
+    @Test
     public void testWebAddrFalseNotAllowed() {
         assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Map.of("web_addr", "false")));
+    }
+
+    @Test
+    public void testLogFormatJsonNotAllowed() {
+        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Map.of("log_format", "json")));
+    }
+
+    @Test
+    public void testLogLevelWarnNotAllowed() {
+        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Map.of("log_level", "warn")));
     }
 }

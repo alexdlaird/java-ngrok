@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
+import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -103,6 +104,8 @@ class NgrokClientTest extends NgrokTestCase {
         final JavaNgrokHTTPException exception = assertThrows(JavaNgrokHTTPException.class, () -> ngrokClient.connect(new CreateTunnel.Builder().withAddr(5001).build()));
 
         // THEN
+        assertEquals(HTTP_BAD_GATEWAY, exception.getStatusCode());
+        assertEquals(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), exception.getUrl());
         assertTrue(exception.getBody().contains("account may not run more than 2 tunnels"));
     }
 
