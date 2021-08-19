@@ -69,9 +69,9 @@ import static java.util.Objects.isNull;
  * final Tunnel sshTunnel = ngrokClient.connect(sshCreateTunnel);
  * </pre>
  * <p>
- * The {@link NgrokClient#connect()} method can also take a {@link CreateTunnel} (which can be built
- * through {@link CreateTunnel.Builder its Builder}) that allows us to pass additional properties that are
- * <a href="https://ngrok.com/docs#tunnel-definitions">supported by ngrok</a>.
+ * The {@link NgrokClient#connect(CreateTunnel) NgrokClient.connect()} method can also take a {@link CreateTunnel}
+ * (which can be built through {@link CreateTunnel.Builder its Builder}) that allows us to pass additional properties
+ * that are <a href="https://ngrok.com/docs#tunnel-definitions">supported by ngrok</a>.
  * <p>
  * <strong>Note:</strong> <code>ngrok</code>'s default behavior for <code>http</code> when no additional properties
  * are passed is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This method will
