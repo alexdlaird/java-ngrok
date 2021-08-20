@@ -5,10 +5,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.1.0...HEAD)
 
-## [1.1.0](https://github.com/alexdlaird/pyngrok/compare/1.0.0...1.1.0) - TBD
+## [1.1.0](https://github.com/alexdlaird/pyngrok/compare/1.0.0...1.1.0) - 2021-08-20
 ### Added
-- Support for [`ngrok`'s tunnel definitions](https://ngrok.com/docs#tunnel-definitions) when calling [NgrokClient.connect()](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/1.0.0/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)). If a tunnel definition in `ngrok`'s config matches the given `name`, it will be used to start the tunnel.
-- Support for a [`ngrok` tunnel definition](https://ngrok.com/docs#tunnel-definitions) named "java-ngrok-default" when calling [NgrokClient.connect()](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/1.0.0/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)). When `name` is `None` and a "java-ngrok-default" tunnel definition exists it `ngrok`'s config, it will be used.
+- Support for [`ngrok`'s tunnel definitions](https://ngrok.com/docs#tunnel-definitions) when calling [NgrokClient.connect()](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/1.1.0/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)). If a tunnel definition in `ngrok`'s config matches the given `name`, it will be used to start the tunnel.
+- Support for a [`ngrok` tunnel definition](https://ngrok.com/docs#tunnel-definitions) named "java-ngrok-default" when calling [NgrokClient.connect()](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/1.1.0/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)). When `name` is `None` and a "java-ngrok-default" tunnel definition exists it `ngrok`'s config, it will be used.
 - `refreshMetrics()` to [NgrokClient](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.1.0/com/github/alexdlaird/ngrok/NgrokClient.html).
 - Documentation improvements.
 - Test improvements.
