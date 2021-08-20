@@ -64,10 +64,11 @@ public class NgrokProcessTest extends NgrokTestCase {
 
         // WHEN
         final ProcessHandle processHandle = ProcessHandle.allProcesses()
-                .filter(p -> p.info().command().get().contains(javaNgrokConfig.getNgrokPath().toString()))
-                .findFirst().get();
+                .filter(p -> p.info().command().orElse("").contains(javaNgrokConfig.getNgrokPath().toString()))
+                .findFirst().orElse(null);
 
         // THEN
+        assertNotNull(processHandle);
         processHandle.destroy();
         long timeoutTime = System.currentTimeMillis() + 10 * 1000;
         while(processHandle.isAlive() && System.currentTimeMillis() < timeoutTime) {
