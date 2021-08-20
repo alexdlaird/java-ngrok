@@ -91,14 +91,14 @@ public class NgrokInstaller {
      * @param configPath The path to where the <code>ngrok</code> config should be installed.
      * @param data       A map of things to add to the default config.
      */
-    public void installDefaultConfig(final Path configPath, Map<String, String> data) {
+    public void installDefaultConfig(final Path configPath, Map<String, Object> data) {
         try {
             Files.createDirectories(configPath.getParent());
             if (!Files.exists(configPath)) {
                 Files.createFile(configPath);
             }
 
-            final Map<String, String> config = getNgrokConfig(configPath);
+            final Map<String, Object> config = getNgrokConfig(configPath);
             config.putAll(data);
 
             validateConfig(config);
@@ -143,7 +143,7 @@ public class NgrokInstaller {
      * @param configPath The config path to validate.
      */
     public void validateConfig(final Path configPath) {
-        final Map<String, String> config = getNgrokConfig(configPath);
+        final Map<String, Object> config = getNgrokConfig(configPath);
 
         validateConfig(config);
     }
@@ -153,14 +153,14 @@ public class NgrokInstaller {
      *
      * @param data A map of things to be validated as config items.
      */
-    public void validateConfig(final Map<String, String> data) {
+    public void validateConfig(final Map<String, Object> data) {
         if (data.getOrDefault("web_addr", "127.0.0.1:4040").equals("false")) {
             throw new JavaNgrokException("\"web_addr\" cannot be false, as the ngrok API is a dependency for java-ngrok");
         }
         if (data.getOrDefault("log_format", "term").equals("json")) {
             throw new JavaNgrokException("\"log_format\" must be \"term\" to be compatible with java-ngrok");
         }
-        if (!VALID_LOG_LEVELS.contains(data.getOrDefault("log_level", "info"))) {
+        if (!VALID_LOG_LEVELS.contains((String) data.getOrDefault("log_level", "info"))) {
             throw new JavaNgrokException("\"log_level\" must be \"info\" to be compatible with java-ngrok");
         }
     }
@@ -186,7 +186,13 @@ public class NgrokInstaller {
         }
     }
 
-    private Map<String, String> getNgrokConfig(final Path configPath) {
+    /**
+     * Get the <code>ngrok</code> config from the given path.
+     *
+     * @param configPath The <code>ngrok</code> config path to read.
+     * @return A map of the <code>ngrok</code> config.
+     */
+    public Map<String, Object> getNgrokConfig(final Path configPath) {
         // TODO: implement a cache so we don't hit file IO every time we read the config
         try {
             final String config = Files.readString(configPath);

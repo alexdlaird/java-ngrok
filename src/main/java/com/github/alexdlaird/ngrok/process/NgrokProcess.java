@@ -44,9 +44,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.github.alexdlaird.util.StringUtils.isBlank;
+import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.logging.Level.SEVERE;
 
 /**
  * An object containing information about the <code>ngrok</code> process.
@@ -144,7 +146,9 @@ public class NgrokProcess {
                 stop();
 
                 if (nonNull(processMonitor.startupError)) {
-                    if (processMonitor.logs.get(processMonitor.logs.size() - 1).getMsg().equals("failed to reconnect session")
+                    final List<NgrokLog> logs = processMonitor.getLogs();
+                    final String lastLogMsg = logs.size() > 0 ? logs.get(logs.size() - 1).getMsg() : null;
+                    if (nonNull(lastLogMsg) && lastLogMsg.equals("failed to reconnect session")
                             && retries < javaNgrokConfig.getReconnectSessionRetries()) {
                         LOGGER.fine("ngrok reset our connection, retrying in 0.5 seconds ...");
                         wait(500);
@@ -249,10 +253,7 @@ public class NgrokProcess {
         processBuilder.redirectErrorStream(true);
         processBuilder.inheritIO().redirectOutput(ProcessBuilder.Redirect.PIPE);
 
-        final List<String> command = new ArrayList<>();
-        command.add(javaNgrokConfig.getNgrokPath().toString());
-        command.add("update");
-        command.add("--log=stdout");
+        final List<String> command = List.of(javaNgrokConfig.getNgrokPath().toString(), "update", "--log=stdout");
 
         processBuilder.command(command);
         try {
@@ -273,9 +274,7 @@ public class NgrokProcess {
         processBuilder.redirectErrorStream(true);
         processBuilder.inheritIO().redirectOutput(ProcessBuilder.Redirect.PIPE);
 
-        final List<String> command = new ArrayList<>();
-        command.add(javaNgrokConfig.getNgrokPath().toString());
-        command.add("--version");
+        final List<String> command = List.of(javaNgrokConfig.getNgrokPath().toString(), "--version");
 
         processBuilder.command(command);
         try {
@@ -309,7 +308,14 @@ public class NgrokProcess {
         return ngrokInstaller;
     }
 
-    private static class ProcessMonitor implements Runnable {
+    /**
+     * Get the Runnable that is monitoring the <code>ngrok</code> thread.
+     */
+    public ProcessMonitor getProcessMonitor() {
+        return processMonitor;
+    }
+
+    public static class ProcessMonitor implements Runnable {
         private final Process process;
         private final JavaNgrokConfig javaNgrokConfig;
         private final HttpClient httpClient;
@@ -345,17 +351,24 @@ public class NgrokProcess {
 
                     if (isHealthy()) {
                         break;
-                    } else if (!isBlank(startupError)) {
-                        break;
+                    } else if (isNotBlank(startupError)) {
+                        return;
                     }
                 }
 
-                while (alive && javaNgrokConfig.isKeepMonitoring() && (line = reader.readLine()) != null) {
+                while (alive && process.isAlive() && javaNgrokConfig.isKeepMonitoring() && (line = reader.readLine()) != null) {
                     logLine(line);
                 }
             } catch (IOException e) {
                 throw new NgrokException("An error occurred in the ngrok process.", e);
             }
+        }
+
+        /**
+         * Get the <code>ngrok</code> logs.
+         */
+        public List<NgrokLog> getLogs() {
+            return List.of(logs.toArray(new NgrokLog[]{}));
         }
 
         private void stop() {
@@ -386,7 +399,7 @@ public class NgrokProcess {
                 return;
             }
 
-            if (ngrokLog.getLvl().equals("SEVERE")) {
+            if (nonNull(ngrokLog.getLvl()) && ngrokLog.getLvl().equals(SEVERE.getName())) {
                 this.startupError = ngrokLog.getErr();
             } else {
                 // Log ngrok startup states as they come in

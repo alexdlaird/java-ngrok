@@ -24,7 +24,9 @@
 package com.github.alexdlaird.ngrok.protocol;
 
 import com.github.alexdlaird.http.HttpClient;
+import com.github.alexdlaird.ngrok.NgrokClient;
 
+import java.util.Map;
 import java.util.UUID;
 
 import static java.util.Objects.isNull;
@@ -54,7 +56,7 @@ public class CreateTunnel {
     private final String name;
     private final Proto proto;
     private final String addr;
-    private final boolean inspect;
+    private final Boolean inspect;
     private final String auth;
     private final String hostHeader;
     private final BindTls bindTls;
@@ -107,7 +109,7 @@ public class CreateTunnel {
     /**
      * Whether HTTP request inspection on tunnels is enabled.
      */
-    public boolean isInspect() {
+    public Boolean isInspect() {
         return inspect;
     }
 
@@ -187,11 +189,13 @@ public class CreateTunnel {
      * <a href="https://ngrok.com/docs#tunnel-definitions"><code>ngrok</code>'s tunnel definition</a>.
      */
     public static class Builder {
+        private boolean setDefaults = false;
+
         private String name;
-        private Proto proto = Proto.HTTP;
-        private String addr = "80";
-        private boolean inspect = true;
-        private BindTls bindTls = BindTls.BOTH;
+        private Proto proto;
+        private String addr;
+        private Boolean inspect;
+        private BindTls bindTls;
         private String auth;
         private String hostHeader;
         private String subdomain;
@@ -201,6 +205,51 @@ public class CreateTunnel {
         private String clientCas;
         private String remoteAddr;
         private String metadata;
+
+        /**
+         * Use this constructor if default values should not be populated in required attributes when {@link #build()}
+         * is called.
+         * <p>
+         * If required attributes are not set in the built {@link CreateTunnel}, default values will be used in methods
+         * like {@link NgrokClient#connect(CreateTunnel)}.
+         */
+        public Builder() {
+        }
+
+        /**
+         * Use this constructor if default values should be populated in required attributes when {@link #build()}
+         * is called.
+         *
+         * @param setDefaults <code>true</code> to populate defaults.
+         */
+        public Builder(final boolean setDefaults) {
+            this.setDefaults = setDefaults;
+        }
+
+        /**
+         * Copy a {@link CreateTunnel} in to a new Builder. Using this constructor will also set default attributes
+         * when {@link #build} is called.
+         *
+         * @param createTunnel The CreateTunnel to copy.
+         */
+        public Builder(final CreateTunnel createTunnel) {
+            this.setDefaults = true;
+
+            this.name = createTunnel.name;
+            this.proto = createTunnel.proto;
+            this.addr = createTunnel.addr;
+            this.inspect = createTunnel.inspect;
+            this.bindTls = createTunnel.bindTls;
+            this.auth = createTunnel.auth;
+            this.hostHeader = createTunnel.hostHeader;
+            this.subdomain = createTunnel.subdomain;
+            this.hostname = createTunnel.hostname;
+            this.crt = createTunnel.crt;
+            this.key = createTunnel.key;
+            this.clientCas = createTunnel.clientCas;
+            this.remoteAddr = createTunnel.remoteAddr;
+            this.metadata = createTunnel.metadata;
+        }
 
         /**
          * The name of the tunnel.
@@ -330,12 +379,71 @@ public class CreateTunnel {
             return this;
         }
 
+        /**
+         * Populate any <code>null</code> attributes (with the exception of <code>name</code>) in this Builder with
+         * values from the given <code>tunnelDefinition</code>.
+         *
+         * @param tunnelDefinition The map from which <code>null</code> attributes will be populated.
+         */
+        public void withTunnelDefinition(Map<String, Object> tunnelDefinition) {
+            if (isNull(this.proto) && tunnelDefinition.containsKey("proto")) {
+                this.proto = Proto.valueOf(((String) tunnelDefinition.get("proto")).toUpperCase());
+            }
+            if (isNull(this.addr) && tunnelDefinition.containsKey("addr")) {
+                this.addr = (String) tunnelDefinition.get("addr");
+            }
+            if (isNull(this.inspect) && tunnelDefinition.containsKey("inspect")) {
+                this.inspect = Boolean.valueOf((String) tunnelDefinition.get("inspect"));
+            }
+            if (isNull(this.bindTls) && tunnelDefinition.containsKey("bind_tls")) {
+                this.bindTls = BindTls.valueOf(((String) tunnelDefinition.get("bind_tls")).toUpperCase());
+            }
+            if (isNull(this.auth) && tunnelDefinition.containsKey("auth")) {
+                this.auth = (String) tunnelDefinition.get("auth");
+            }
+            if (isNull(this.hostHeader) && tunnelDefinition.containsKey("host_header")) {
+                this.hostHeader = (String) tunnelDefinition.get("host_header");
+            }
+            if (isNull(this.subdomain) && tunnelDefinition.containsKey("subdomain")) {
+                this.subdomain = (String) tunnelDefinition.get("subdomain");
+            }
+            if (isNull(this.hostname) && tunnelDefinition.containsKey("hostname")) {
+                this.hostname = (String) tunnelDefinition.get("hostname");
+            }
+            if (isNull(this.crt) && tunnelDefinition.containsKey("crt")) {
+                this.crt = (String) tunnelDefinition.get("crt");
+            }
+            if (isNull(this.key) && tunnelDefinition.containsKey("key")) {
+                this.key = (String) tunnelDefinition.get("key");
+            }
+            if (isNull(this.clientCas) && tunnelDefinition.containsKey("client_cas")) {
+                this.clientCas = (String) tunnelDefinition.get("client_cas");
+            }
+            if (isNull(this.remoteAddr) && tunnelDefinition.containsKey("remote_addr")) {
+                this.remoteAddr = (String) tunnelDefinition.get("remote_addr");
+            }
+            if (isNull(this.metadata) && tunnelDefinition.containsKey("metadata")) {
+                this.metadata = (String) tunnelDefinition.get("metadata");
+            }
+        }
+
         public CreateTunnel build() {
-            if (isNull(name)) {
-                if (!addr.startsWith("file://")) {
-                    name = String.format("%s-%s-%s", proto, addr, UUID.randomUUID());
-                } else {
-                    name = String.format("%s-file-%s", proto, UUID.randomUUID());
+            if (setDefaults) {
+                if (isNull(proto)) {
+                    proto = Proto.HTTP;
+                }
+                if (isNull(addr)) {
+                    addr = "80";
+                }
+                if (isNull(name)) {
+                    if (!addr.startsWith("file://")) {
+                        name = String.format("%s-%s-%s", proto, addr, UUID.randomUUID());
+                    } else {
+                        name = String.format("%s-file-%s", proto, UUID.randomUUID());
+                    }
+                }
+                if (isNull(bindTls)) {
+                    bindTls = BindTls.BOTH;
                 }
             }
 

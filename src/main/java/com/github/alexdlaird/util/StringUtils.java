@@ -64,20 +64,20 @@ public class StringUtils {
     }
 
     /**
-     * Check that a String does not contain text.
+     * Check that a String contains text.
      *
      * @param cs The character sequence to check for text.
-     * @return True if not blank, false otherwise.
+     * @return <code>true</code> if not blank.
      */
     public static boolean isNotBlank(final CharSequence cs) {
         return !isBlank(cs);
     }
 
     /**
-     * Check that a String contains text.
+     * Check that a String does not contain text.
      *
      * @param cs The character sequence to check for text.
-     * @return True if blank, false otherwise.
+     * @return <code>true</code> if blank.
      */
     public static boolean isBlank(final CharSequence cs) {
         int strLen;

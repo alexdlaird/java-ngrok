@@ -43,6 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.github.alexdlaird.util.StringUtils.isBlank;
+import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 
 /**
  * A default client for executing JSON-based HTTP requests.
@@ -175,7 +176,7 @@ public class DefaultHttpClient implements HttpClient {
     }
 
     private <T> T convertResponseFromString(final String response, final Class<T> clazz) {
-        if (!isBlank(response)) {
+        if (isNotBlank(response)) {
             try {
                 return gson.fromJson(response, clazz);
             } catch (JsonSyntaxException ex) {
@@ -228,7 +229,7 @@ public class DefaultHttpClient implements HttpClient {
             appendDefaultsToConnection(httpUrlConnection, additionalHeaders);
             modifyConnection(httpUrlConnection);
 
-            if (StringUtils.isNotBlank(body)) {
+            if (isNotBlank(body)) {
                 httpUrlConnection.setDoOutput(true);
                 httpUrlConnection.connect();
 

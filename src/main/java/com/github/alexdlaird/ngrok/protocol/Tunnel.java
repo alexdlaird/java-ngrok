@@ -72,8 +72,20 @@ public class Tunnel {
         return config;
     }
 
+    /**
+     * Get tunnel metrics.
+     */
     public Map<String, Metrics> getMetrics() {
         return metrics;
+    }
+
+    /**
+     * Set tunnel metrics.
+     *
+     * @param metrics The updated metrics.
+     */
+    public void setMetrics(final Map<String, Metrics> metrics) {
+        this.metrics = metrics;
     }
 
     public static class TunnelConfig {
@@ -98,13 +110,13 @@ public class Tunnel {
     public static class Metrics {
         private int count;
         private int gauge;
-        private int rate1;
-        private int rate5;
-        private int rate15;
-        private int p50;
-        private int p90;
-        private int p95;
-        private int p99;
+        private double rate1;
+        private double rate5;
+        private double rate15;
+        private double p50;
+        private double p90;
+        private double p95;
+        private double p99;
 
         public int getCount() {
             return count;
@@ -114,31 +126,31 @@ public class Tunnel {
             return gauge;
         }
 
-        public int getRate1() {
+        public double getRate1() {
             return rate1;
         }
 
-        public int getRate5() {
+        public double getRate5() {
             return rate5;
         }
 
-        public int getRate15() {
+        public double getRate15() {
             return rate15;
         }
 
-        public int getP50() {
+        public double getP50() {
             return p50;
         }
 
-        public int getP90() {
+        public double getP90() {
             return p90;
         }
 
-        public int getP95() {
+        public double getP95() {
             return p95;
         }
 
-        public int getP99() {
+        public double getP99() {
             return p99;
         }
     }

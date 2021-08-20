@@ -26,6 +26,7 @@ package com.github.alexdlaird.exception;
 import com.github.alexdlaird.ngrok.process.NgrokLog;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -70,7 +71,7 @@ public class NgrokException extends JavaNgrokException {
     public NgrokException(final String message, final List<NgrokLog> ngrokLogs) {
         super(message);
 
-        this.ngrokLogs = ngrokLogs;
+        this.ngrokLogs = List.of(ngrokLogs.toArray(new NgrokLog[]{}));
         this.ngrokError = null;
     }
 
@@ -85,7 +86,7 @@ public class NgrokException extends JavaNgrokException {
     public NgrokException(final String message, final List<NgrokLog> ngrokLogs, final String ngrokError) {
         super(message);
 
-        this.ngrokLogs = ngrokLogs;
+        this.ngrokLogs = List.of(ngrokLogs.toArray(new NgrokLog[]{}));
         this.ngrokError = ngrokError;
     }
 

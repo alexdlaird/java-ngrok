@@ -15,6 +15,7 @@ import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 class NgrokInstallerTest extends NgrokTestCase {
 
@@ -54,21 +55,27 @@ class NgrokInstallerTest extends NgrokTestCase {
 
     @Test
     public void testInstallToDirectoryFailsPermissions() {
+        assumeFalse(NgrokInstaller.getSystem().equals(WINDOWS));
+
+        // WHEN
         assertThrows(JavaNgrokInstallerException.class, () -> ngrokInstaller.installNgrok(Paths.get("/no-perms")));
     }
 
     @Test
     public void testWebAddrFalseNotAllowed() {
+        // WHEN
         assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Map.of("web_addr", "false")));
     }
 
     @Test
     public void testLogFormatJsonNotAllowed() {
+        // WHEN
         assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Map.of("log_format", "json")));
     }
 
     @Test
     public void testLogLevelWarnNotAllowed() {
+        // WHEN
         assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Map.of("log_level", "warn")));
     }
 }

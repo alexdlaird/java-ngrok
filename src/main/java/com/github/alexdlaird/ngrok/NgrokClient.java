@@ -23,6 +23,7 @@
 
 package com.github.alexdlaird.ngrok;
 
+import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokHTTPException;
 import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.http.HttpClient;
@@ -38,11 +39,14 @@ import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import com.github.alexdlaird.ngrok.protocol.Version;
 
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * A client for interacting with <a href="https://ngrok.com/docs">ngrok</a>, its binary, and its APIs.
@@ -132,22 +136,20 @@ public class NgrokClient {
     public Tunnel connect(final CreateTunnel createTunnel) {
         ngrokProcess.start();
 
-        // TODO: If a "java-ngrok-default" tunnel definition exists in the ngrok config, use that
+        final CreateTunnel finalTunnel = interpolateTunnelDefinition(createTunnel);
 
-        // TODO: Use a tunnel definition for the given name, if it exists
-
-        LOGGER.info(String.format("Opening tunnel named: %s", createTunnel.getName()));
+        LOGGER.info(String.format("Opening tunnel named: %s", finalTunnel.getName()));
 
         final Response<Tunnel> response;
         try {
-            response = httpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
+            response = httpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), finalTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
         } catch (HttpClientException e) {
-            throw new JavaNgrokHTTPException(String.format("An error occurred when POSTing to create the tunnel %s.", createTunnel.getName()),
+            throw new JavaNgrokHTTPException(String.format("An error occurred when POSTing to create the tunnel %s.", finalTunnel.getName()),
                     e, e.getUrl(), e.getStatusCode(), e.getBody());
         }
 
         final Tunnel tunnel;
-        if (createTunnel.getProto() == Proto.HTTP && createTunnel.getBindTls() == BindTls.BOTH) {
+        if (finalTunnel.getProto() == Proto.HTTP && finalTunnel.getBindTls() == BindTls.BOTH) {
             try {
                 final Response<Tunnel> getResponse = httpClient.get(ngrokProcess.getApiUrl() + response.getBody().getUri() + "%20%28http%29", Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
                 tunnel = getResponse.getBody();
@@ -227,7 +229,20 @@ public class NgrokClient {
         }
     }
 
-    // TODO: implement a refreshMetrics method that gets the latest metrics for a given Tunnel
+    /**
+     * Get the latest metrics for the given {@link Tunnel} and update its <code>metrics</code> attribute.
+     *
+     * @param tunnel The Tunnel to update.
+     */
+    public void refreshMetrics(final Tunnel tunnel) {
+        Response<Tunnel> latestTunnel = httpClient.get(String.format("%s%s", ngrokProcess.getApiUrl(), tunnel.getUri()), Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
+
+        if (isNull(latestTunnel.getBody().getMetrics()) || latestTunnel.getBody().getMetrics().isEmpty()) {
+            throw new JavaNgrokException("The ngrok API did not return \"metrics\" in the response");
+        }
+
+        tunnel.setMetrics(latestTunnel.getBody().getMetrics());
+    }
 
     /**
      * Terminate the <code>ngrok</code> processes, if running. This method will not block, it will
@@ -284,6 +299,32 @@ public class NgrokClient {
      */
     public HttpClient getHttpClient() {
         return httpClient;
+    }
+
+    private CreateTunnel interpolateTunnelDefinition(final CreateTunnel createTunnel) {
+        final CreateTunnel.Builder createTunnelBuilder = new CreateTunnel.Builder(createTunnel);
+
+        final Map<String, Object> config;
+        if (Files.exists(javaNgrokConfig.getConfigPath())) {
+            config = ngrokProcess.getNgrokInstaller().getNgrokConfig(javaNgrokConfig.getConfigPath());
+        } else {
+            config = Collections.emptyMap();
+        }
+
+        final String name;
+        final Map<String, Object> tunnelDefinitions = (Map<String, Object>) config.getOrDefault("tunnels", Collections.emptyMap());
+        if (isNull(createTunnel.getName()) && tunnelDefinitions.containsKey("java-ngrok-default")) {
+            name = "java-ngrok-default";
+            createTunnelBuilder.withName(name);
+        } else {
+            name = createTunnel.getName();
+        }
+
+        if (nonNull(name) && tunnelDefinitions.containsKey(name)) {
+            createTunnelBuilder.withTunnelDefinition((Map<String, Object>) tunnelDefinitions.get(name));
+        }
+
+        return createTunnelBuilder.build();
     }
 
     /**

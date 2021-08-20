@@ -13,6 +13,8 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.UUID;
 
+import static java.util.Objects.nonNull;
+
 public class NgrokTestCase {
 
     protected JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
@@ -24,6 +26,8 @@ public class NgrokTestCase {
 
     protected NgrokProcess ngrokProcess;
 
+    protected NgrokProcess ngrokProcess2;
+
     @BeforeEach
     public void setUp() {
         ngrokProcess = new NgrokProcess(javaNgrokConfig, ngrokInstaller);
@@ -32,6 +36,9 @@ public class NgrokTestCase {
     @AfterEach
     public void tearDown() throws IOException {
         ngrokProcess.stop();
+        if (nonNull(ngrokProcess2)) {
+            ngrokProcess2.stop();
+        }
 
         Files.walk(javaNgrokConfig.getConfigPath().getParent())
                 .sorted(Comparator.reverseOrder())

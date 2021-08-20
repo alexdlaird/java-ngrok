@@ -61,7 +61,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
     @Test
     public void testPost() {
         // GIVEN
-        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+        final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
                 .withName("my-tunnel")
                 .build();
 
@@ -76,7 +76,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
     @Test
     public void testGet() {
         // GIVEN
-        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+        final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
                 .withName("my-tunnel")
                 .withBindTls(true)
                 .build();
@@ -94,8 +94,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
     @Test
     public void testDelete() {
         // GIVEN
-        final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withName("my-tunnel")
+        final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
                 .build();
         final Tunnel tunnel = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class).getBody();
 
@@ -110,18 +109,17 @@ class DefaultHttpClientTest extends NgrokTestCase {
     @Test
     public void testGetWithQueryParameters() throws InterruptedException, MalformedURLException {
         // GIVEN
-        final CreateTunnel request = new CreateTunnel.Builder()
+        final CreateTunnel request = new CreateTunnel.Builder(true)
                 .withName("my-tunnel")
                 .withAddr(new URL(ngrokProcess.getApiUrl()).getPort())
                 .withBindTls(true)
                 .build();
         final Response<Tunnel> createResponse = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), request, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
         final String publicUrl = createResponse.getBody().getPublicUrl();
-        final DefaultHttpClient publicHttpClient = new DefaultHttpClient.Builder().build();
 
         Thread.sleep(1000);
 
-        publicHttpClient.get(String.format("%s/status", ngrokProcess.getApiUrl()), Collections.emptyList(), Collections.emptyMap(), Object.class);
+        defaultHttpClient.get(String.format("%s/status", publicUrl), Collections.emptyList(), Collections.emptyMap(), Object.class);
 
         Thread.sleep(3000);
 
@@ -138,7 +136,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
         assertEquals(HTTP_OK, response3.getStatusCode());
         assertEquals(response3.getBody().getRequests().size(), 0);
         final CapturedRequests capturedRequests = response1.getBody();
-        assertEquals(1, capturedRequests.getRequests().size());
+        assertEquals(2, capturedRequests.getRequests().size());
         assertNotNull(capturedRequests.getUri());
         final CapturedRequest capturedRequest = capturedRequests.getRequests().get(0);
         assertNotNull(capturedRequest.getRequest());

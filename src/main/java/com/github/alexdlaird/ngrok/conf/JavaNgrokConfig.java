@@ -149,11 +149,31 @@ public class JavaNgrokConfig {
         private Path configPath;
         private String authToken;
         private Region region;
-        private boolean keepMonitoring;
+        private boolean keepMonitoring = true;
         private int maxLogs = 100;
         private Function<NgrokLog, Void> logEventCallback;
         private int startupTimeout = 15;
         private int reconnectSessionRetries = 0;
+
+        public Builder() {
+        }
+
+        /**
+         * Copy a {@link JavaNgrokConfig} in to a new Builder.
+         *
+         * @param javaNgrokConfig The JavaNgrokConfig to copy.
+         */
+        public Builder(final JavaNgrokConfig javaNgrokConfig) {
+            this.ngrokPath = javaNgrokConfig.ngrokPath;
+            this.configPath = javaNgrokConfig.configPath;
+            this.authToken = javaNgrokConfig.authToken;
+            this.region = javaNgrokConfig.region;
+            this.keepMonitoring = javaNgrokConfig.keepMonitoring;
+            this.maxLogs = javaNgrokConfig.maxLogs;
+            this.logEventCallback = javaNgrokConfig.logEventCallback;
+            this.startupTimeout = javaNgrokConfig.startupTimeout;
+            this.reconnectSessionRetries = javaNgrokConfig.reconnectSessionRetries;
+        }
 
         /**
          * The path to the <code>ngrok</code> binary, defaults to ~/.ngrok2/ngrok.

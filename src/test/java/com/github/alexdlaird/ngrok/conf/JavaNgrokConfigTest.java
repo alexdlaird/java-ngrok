@@ -47,16 +47,19 @@ public class JavaNgrokConfigTest {
 
     @Test
     public void testJavaNgrokConfigWithInvalidMaxLogs() {
+        // WHEN
         assertThrows(IllegalArgumentException.class, () -> new JavaNgrokConfig.Builder().withMaxLogs(0));
     }
 
     @Test
     public void testJavaNgrokConfigWithInvalidStartupTimeout() {
+        // WHEN
         assertThrows(IllegalArgumentException.class, () -> new JavaNgrokConfig.Builder().withStartupTimeout(0));
     }
 
     @Test
     public void testJavaNgrokConfigWithInvalidReconnectSessionRetries() {
+        // WHEN
         assertThrows(IllegalArgumentException.class, () -> new JavaNgrokConfig.Builder().withReconnectSessionRetries(-1));
     }
 }
