@@ -401,13 +401,13 @@ public class NgrokProcess {
 
             if (nonNull(ngrokLog.getLvl()) && ngrokLog.getLvl().equals(SEVERE.getName())) {
                 this.startupError = ngrokLog.getErr();
-            } else {
+            } else if(nonNull(ngrokLog.getMsg())) {
                 // Log ngrok startup states as they come in
-                if (nonNull(ngrokLog.getMsg()) && ngrokLog.getMsg().contains("starting web service") && nonNull(ngrokLog.getAddr())) {
+                if (ngrokLog.getMsg().contains("starting web service") && nonNull(ngrokLog.getAddr())) {
                     this.apiUrl = String.format("http://%s", ngrokLog.getAddr());
-                } else if (nonNull(ngrokLog.getMsg()) && ngrokLog.getMsg().contains("tunnel session started")) {
+                } else if (ngrokLog.getMsg().contains("tunnel session started")) {
                     this.tunnelStarted = true;
-                } else if (nonNull(ngrokLog.getMsg()) && ngrokLog.getMsg().contains("client session established")) {
+                } else if (ngrokLog.getMsg().contains("client session established")) {
                     this.clientConnected = true;
                 }
             }
