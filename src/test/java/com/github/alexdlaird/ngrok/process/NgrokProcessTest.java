@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.mockito.Mockito.mock;
 
 public class NgrokProcessTest extends NgrokTestCase {
@@ -177,7 +178,12 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testStartNoBinary() throws IOException {
+    public void testStartNoBinary() throws IOException, InterruptedException {
+        // Due to Windows file locking behavior, wait a beat
+        if (NgrokInstaller.getSystem().equals(WINDOWS)) {
+            Thread.sleep(1000);
+        }
+
         // GIVEN
         if (Files.exists(javaNgrokConfig.getNgrokPath())) {
             Files.delete(javaNgrokConfig.getNgrokPath());
