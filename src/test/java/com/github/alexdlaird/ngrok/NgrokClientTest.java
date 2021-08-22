@@ -1,6 +1,7 @@
 package com.github.alexdlaird.ngrok;
 
 import com.github.alexdlaird.exception.JavaNgrokHTTPException;
+import com.github.alexdlaird.http.Response;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import com.github.alexdlaird.ngrok.protocol.BindTls;
@@ -226,7 +227,37 @@ class NgrokClientTest extends NgrokTestCase {
         assertNotEquals(version.getNgrokVersion(), "unknown");
     }
 
-    // TODO: testRegionalTcp()
+    @Test
+    public void testRegionalTcp() {
+        final String ngrokAuthToken = System.getenv("NGROK_AUTHTOKEN");
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+
+        // GIVEN
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfig)
+                .withAuthToken(ngrokAuthToken)
+                .withRegion(Region.AU)
+                .build();
+        ngrokProcess2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+        final NgrokClient ngrokClient2 = new NgrokClient.Builder()
+                .withJavaNgrokConfig(javaNgrokConfig2)
+                .withNgrokProcess(ngrokProcess2)
+                .build();
+        assertFalse(ngrokClient2.getNgrokProcess().isRunning());
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withProto(Proto.TCP)
+                .withAddr(5000)
+                .build();
+
+        // WHEN
+        final Tunnel tunnel = ngrokClient2.connect(createTunnel);
+
+        // THEN
+        assertTrue(ngrokClient2.getNgrokProcess().isRunning());
+        assertNotNull(tunnel.getPublicUrl());
+        assertEquals("localhost:5000", tunnel.getConfig().getAddr());
+        assertTrue(tunnel.getPublicUrl().contains("tcp://"));
+        assertTrue(tunnel.getPublicUrl().contains(".au."));
+    }
 
     @Test
     public void testRegionalSubdomain() {
@@ -260,8 +291,6 @@ class NgrokClientTest extends NgrokTestCase {
         assertTrue(tunnel.getPublicUrl().contains(subdomain));
     }
 
-    // TODO: testRegionalSubdomain()
-
     @Test
     public void testConnectFileserver() {
         final String ngrokAuthToken = System.getenv("NGROK_AUTHTOKEN");
@@ -286,24 +315,68 @@ class NgrokClientTest extends NgrokTestCase {
         assertTrue(tunnel.getPublicUrl().startsWith("http://"));
     }
 
-    // TODO: testDisconnectFileserver()
+    @Test
+    public void testDisconnectFileserver() throws InterruptedException {
+        final String ngrokAuthToken = System.getenv("NGROK_AUTHTOKEN");
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
 
-    // TODO: testGetTunnelFileserver()
+        // GIVEN
+        ngrokClient.getNgrokProcess().setAuthToken(ngrokAuthToken);
+        assertFalse(ngrokClient.getNgrokProcess().isRunning());
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withAddr("file:///")
+                .build();
+        final String publicUrl = ngrokClient.connect(createTunnel).getPublicUrl();
+        Thread.sleep(1000);
+
+        // WHEN
+        ngrokClient.disconnect(publicUrl);
+        Thread.sleep(1000);
+        final List<Tunnel> tunnels = ngrokClient.getTunnels();
+
+        // THEN
+        assertTrue(ngrokClient.getNgrokProcess().isRunning());
+        // There is still one tunnel left, as we only disconnected the http tunnel
+        assertEquals(1, tunnels.size());
+    }
+
+    @Test
+    public void testGetTunnelFileserver() throws InterruptedException {
+        final String ngrokAuthToken = System.getenv("NGROK_AUTHTOKEN");
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+
+        // GIVEN
+        ngrokClient.getNgrokProcess().setAuthToken(ngrokAuthToken);
+        assertFalse(ngrokClient.getNgrokProcess().isRunning());
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withAddr("file:///")
+                .build();
+        final Tunnel tunnel = ngrokClient.connect(createTunnel);
+        Thread.sleep(1000);
+        final String apiUrl = ngrokClient.getNgrokProcess().getApiUrl();
+
+        // WHEN
+        final Response<Tunnel> response = ngrokClient.getHttpClient().get(String.format("%s%s", apiUrl, tunnel.getUri()), Tunnel.class);
+
+        // THEN
+        assertEquals(tunnel.getName(), response.getBody().getName());
+        assertTrue(tunnel.getName().startsWith("http-file-"));
+    }
 
     @Test
     public void testRefreshMetrics() throws MalformedURLException, InterruptedException {
         // GIVEN
-        ngrokProcess.start();
+        ngrokClient.getNgrokProcess().start();
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withName("my-tunnel")
-                .withAddr(new URL(ngrokProcess.getApiUrl()).getPort())
+                .withAddr(new URL(ngrokClient.getNgrokProcess().getApiUrl()).getPort())
                 .withBindTls(true)
                 .build();
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
         Thread.sleep(1000);
         assertEquals(0, tunnel.getMetrics().get("http").getCount());
 
-        ngrokClient.getHttpClient().get(String.format("%s/status", tunnel.getPublicUrl()), Collections.emptyList(), Collections.emptyMap(), Object.class);
+        ngrokClient.getHttpClient().get(String.format("%s/status", tunnel.getPublicUrl()), Object.class);
 
         Thread.sleep(3000);
 

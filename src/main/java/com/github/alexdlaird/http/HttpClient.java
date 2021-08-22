@@ -24,6 +24,7 @@
 package com.github.alexdlaird.http;
 
 import java.net.HttpURLConnection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +46,13 @@ public interface HttpClient {
                         final Map<String, String> additionalHeaders, final Class<B> clazz);
 
     /**
+     * See {@link #get(String, List, Map, Class)}.
+     */
+    default <B> Response<B> get(final String url, final Class<B> clazz) {
+        return get(url, Collections.emptyList(), Collections.emptyMap(), clazz);
+    }
+
+    /**
      * Perform POST operation against an endpoint.
      *
      * @param url               The URL on which to perform the operation.
@@ -60,6 +68,13 @@ public interface HttpClient {
                             final Map<String, String> additionalHeaders, final Class<B> clazz);
 
     /**
+     * See {@link #post(String, Object, List, Map, Class)}.
+     */
+    default <R, B> Response<B> post(final String url, final R request, final Class<B> clazz) {
+        return post(url, request, Collections.emptyList(), Collections.emptyMap(), clazz);
+    }
+
+    /**
      * Perform PUT operation against an endpoint.
      *
      * @param url               The URL on which to perform the operation.
@@ -73,6 +88,13 @@ public interface HttpClient {
      */
     <R, B> Response<B> put(final String url, final R request, final List<Parameter> parameters,
                            final Map<String, String> additionalHeaders, final Class<B> clazz);
+
+    /**
+     * See {@link #put(String, R, List, Map, Class)}.
+     */
+    default <R, B> Response<B> put(final String url, final R request, final Class<B> clazz) {
+        return put(url, request, Collections.emptyList(), Collections.emptyMap(), clazz);
+    }
 
     /**
      * Perform DELETE operation against an endpoint.
@@ -93,6 +115,13 @@ public interface HttpClient {
     default Response<Map> delete(final String url, final List<Parameter> parameters,
                                  final Map<String, String> additionalHeaders) {
         return delete(url, parameters, additionalHeaders, Map.class);
+    }
+
+    /**
+     * See {@link #delete(String, List, Map)}.
+     */
+    default Response<Map> delete(final String url) {
+        return delete(url, Collections.emptyList(), Collections.emptyMap());
     }
 
     /**

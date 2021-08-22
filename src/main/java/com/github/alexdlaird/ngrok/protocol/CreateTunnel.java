@@ -46,8 +46,6 @@ import static java.util.Objects.isNull;
  * final HttpClient httpClient = new DefaultHttpClient.Builder().build()
  * final Response&lt;SomePOJOResponse&gt; postResponse = httpClient.post("http://localhost:4040/api/tunnels",
  *                                                                 createTunnel,
- *                                                                 Collections.emptyList(),
- *                                                                 Collections.emptyMap(),
  *                                                                 Tunnel.class);
  * </pre>
  */

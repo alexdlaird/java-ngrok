@@ -7,6 +7,8 @@ import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -22,9 +24,29 @@ import static org.mockito.Mockito.mock;
 
 public class NgrokProcessTest extends NgrokTestCase {
 
-    // TODO: testStart()
+    @Test
+    public void testStart() {
+        // GIVEN
+        assertFalse(ngrokProcess.isRunning());
 
-    // TODO: testStop()
+        // WHEN
+        ngrokProcess.start();
+
+        // THEN
+        assertTrue(ngrokProcess.isRunning());
+    }
+
+    @Test
+    public void testStop() {
+        // GIVEN
+        ngrokProcess.start();
+
+        // WHEN
+        ngrokProcess.stop();
+
+        // THEN
+        assertFalse(ngrokProcess.isRunning());
+    }
 
     @Test
     public void testStartPortInUse() {
@@ -71,7 +93,7 @@ public class NgrokProcessTest extends NgrokTestCase {
         assertNotNull(processHandle);
         processHandle.destroy();
         long timeoutTime = System.currentTimeMillis() + 10 * 1000;
-        while(processHandle.isAlive() && System.currentTimeMillis() < timeoutTime) {
+        while (processHandle.isAlive() && System.currentTimeMillis() < timeoutTime) {
             Thread.sleep(50);
         }
         assertFalse(processHandle.isAlive());
@@ -106,8 +128,6 @@ public class NgrokProcessTest extends NgrokTestCase {
         assertEquals("http://localhost:4041", ngrokProcess2.getApiUrl());
     }
 
-    // TODO: testMultipleProcessesSameBinaryFails()
-
     @Test
     public void testProcessLogs() {
         // WHEN
@@ -140,7 +160,32 @@ public class NgrokProcessTest extends NgrokTestCase {
         assertEquals(5, ngrokProcess2.getProcessMonitor().getLogs().size());
     }
 
-    // TODO: testNoMonitorThread()
+    @Test
+    public void testNoMonitorThread() throws InterruptedException {
+        // GIVEN
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfig)
+                .withoutMonitoring()
+                .build();
+        ngrokProcess2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
 
-    // TODO: testStartNoBinary()
+        // WHEN
+        ngrokProcess2.start();
+
+        // THEN
+        assertTrue(ngrokProcess2.isRunning());
+        assertFalse(ngrokProcess2.getProcessMonitor().isMonitoring());
+    }
+
+    @Test
+    public void testStartNoBinary() throws IOException {
+        // GIVEN
+        Files.delete(javaNgrokConfig.getNgrokPath());
+
+        // WHEN
+        final NgrokException exception = assertThrows(NgrokException.class, ngrokProcess::start);
+
+        // THEN
+        assertTrue(exception.getMessage().contains("ngrok binary was not found"));
+        assertFalse(ngrokProcess.isRunning());
+    }
 }

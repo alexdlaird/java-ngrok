@@ -98,6 +98,10 @@ public class NgrokProcess {
             return;
         }
 
+        if (!Files.exists(javaNgrokConfig.getNgrokPath())) {
+            throw new NgrokException(String.format("ngrok binary was not found. " +
+                    "Be sure to call \"NgrokInstaller.installNgrok()\" first for \"ngrokPath\": %s", javaNgrokConfig.getNgrokPath()));
+        }
         ngrokInstaller.validateConfig(javaNgrokConfig.getConfigPath());
 
         final ProcessBuilder processBuilder = new ProcessBuilder();
@@ -359,6 +363,8 @@ public class NgrokProcess {
                 while (alive && process.isAlive() && javaNgrokConfig.isKeepMonitoring() && (line = reader.readLine()) != null) {
                     logLine(line);
                 }
+
+                alive = false;
             } catch (IOException e) {
                 throw new NgrokException("An error occurred in the ngrok process.", e);
             }
@@ -369,6 +375,13 @@ public class NgrokProcess {
          */
         public List<NgrokLog> getLogs() {
             return List.of(logs.toArray(new NgrokLog[]{}));
+        }
+
+        /**
+         * Get whether the thread is continuing to monitor <code>ngrok</code> logs.
+         */
+        public boolean isMonitoring() {
+            return alive;
         }
 
         private void stop() {
@@ -384,7 +397,7 @@ public class NgrokProcess {
                 throw new JavaNgrokSecurityException(String.format("URL must start with \"http\": %s", apiUrl));
             }
 
-            final Response<Tunnels> tunnelsResponse = httpClient.get(String.format("%s/api/tunnels", apiUrl), Collections.emptyList(), Collections.emptyMap(), Tunnels.class);
+            final Response<Tunnels> tunnelsResponse = httpClient.get(String.format("%s/api/tunnels", apiUrl), Tunnels.class);
             if (tunnelsResponse.getStatusCode() != HTTP_OK) {
                 return false;
             }
@@ -401,7 +414,7 @@ public class NgrokProcess {
 
             if (nonNull(ngrokLog.getLvl()) && ngrokLog.getLvl().equals(SEVERE.getName())) {
                 this.startupError = ngrokLog.getErr();
-            } else if(nonNull(ngrokLog.getMsg())) {
+            } else if (nonNull(ngrokLog.getMsg())) {
                 // Log ngrok startup states as they come in
                 if (ngrokLog.getMsg().contains("starting web service") && nonNull(ngrokLog.getAddr())) {
                     this.apiUrl = String.format("http://%s", ngrokLog.getAddr());

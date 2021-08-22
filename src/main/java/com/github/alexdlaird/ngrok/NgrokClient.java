@@ -40,10 +40,13 @@ import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import com.github.alexdlaird.ngrok.protocol.Version;
 
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -111,6 +114,8 @@ public class NgrokClient {
     private final NgrokProcess ngrokProcess;
     private final HttpClient httpClient;
 
+    private final Map<String, Tunnel> currentTunnels = new HashMap<>();
+
     private NgrokClient(final Builder builder) {
         this.javaNgrokConfig = builder.javaNgrokConfig;
         this.ngrokProcess = builder.ngrokProcess;
@@ -142,7 +147,7 @@ public class NgrokClient {
 
         final Response<Tunnel> response;
         try {
-            response = httpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), finalTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
+            response = httpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), finalTunnel, Tunnel.class);
         } catch (HttpClientException e) {
             throw new JavaNgrokHTTPException(String.format("An error occurred when POSTing to create the tunnel %s.", finalTunnel.getName()),
                     e, e.getUrl(), e.getStatusCode(), e.getBody());
@@ -151,7 +156,7 @@ public class NgrokClient {
         final Tunnel tunnel;
         if (finalTunnel.getProto() == Proto.HTTP && finalTunnel.getBindTls() == BindTls.BOTH) {
             try {
-                final Response<Tunnel> getResponse = httpClient.get(ngrokProcess.getApiUrl() + response.getBody().getUri() + "%20%28http%29", Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
+                final Response<Tunnel> getResponse = httpClient.get(ngrokProcess.getApiUrl() + response.getBody().getUri() + "%20%28http%29", Tunnel.class);
                 tunnel = getResponse.getBody();
             } catch (HttpClientException e) {
                 throw new JavaNgrokHTTPException(String.format("An error occurred when GETing the HTTP tunnel %s.", response.getBody().getName()),
@@ -160,6 +165,8 @@ public class NgrokClient {
         } else {
             tunnel = response.getBody();
         }
+
+        currentTunnels.put(tunnel.getPublicUrl(), tunnel);
 
         return tunnel;
     }
@@ -182,26 +189,23 @@ public class NgrokClient {
             return;
         }
 
-        final List<Tunnel> tunnels = getTunnels();
-        Tunnel tunnel = null;
-        // TODO: cache active tunnels so we can first check that before falling back to an API request
-        for (final Tunnel t : tunnels) {
-            if (t.getPublicUrl().equals(publicUrl)) {
-                tunnel = t;
-                break;
+        if (!currentTunnels.containsKey(publicUrl)) {
+            getTunnels();
+
+            // One more check, if the given URL is still not in the list of tunnels, it is not active
+            if (!currentTunnels.containsKey(publicUrl)) {
+                return;
             }
         }
 
-        if (isNull(tunnel)) {
-            return;
-        }
+        final Tunnel tunnel = currentTunnels.get(publicUrl);
 
         ngrokProcess.start();
 
         LOGGER.info(String.format("Disconnecting tunnel: %s", tunnel.getPublicUrl()));
 
         try {
-            httpClient.delete(ngrokProcess.getApiUrl() + tunnel.getUri(), Collections.emptyList(), Collections.emptyMap());
+            httpClient.delete(ngrokProcess.getApiUrl() + tunnel.getUri());
         } catch (HttpClientException e) {
             throw new JavaNgrokHTTPException(String.format("An error occurred when DELETing the tunnel %s.", publicUrl),
                     e, e.getUrl(), e.getStatusCode(), e.getBody());
@@ -220,9 +224,14 @@ public class NgrokClient {
         ngrokProcess.start();
 
         try {
-            final Response<Tunnels> response = httpClient.get(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), Collections.emptyList(), Collections.emptyMap(), Tunnels.class);
+            final Response<Tunnels> response = httpClient.get(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), Tunnels.class);
 
-            return response.getBody().getTunnels();
+            currentTunnels.clear();
+            for (final Tunnel tunnel : response.getBody().getTunnels()) {
+                currentTunnels.put(tunnel.getPublicUrl(), tunnel);
+            }
+
+            return new ArrayList<>(currentTunnels.values());
         } catch (HttpClientException e) {
             throw new JavaNgrokHTTPException("An error occurred when GETing the tunnels.", e, e.getUrl(),
                     e.getStatusCode(), e.getBody());
@@ -235,7 +244,7 @@ public class NgrokClient {
      * @param tunnel The Tunnel to update.
      */
     public void refreshMetrics(final Tunnel tunnel) {
-        Response<Tunnel> latestTunnel = httpClient.get(String.format("%s%s", ngrokProcess.getApiUrl(), tunnel.getUri()), Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
+        Response<Tunnel> latestTunnel = httpClient.get(String.format("%s%s", ngrokProcess.getApiUrl(), tunnel.getUri()), Tunnel.class);
 
         if (isNull(latestTunnel.getBody().getMetrics()) || latestTunnel.getBody().getMetrics().isEmpty()) {
             throw new JavaNgrokException("The ngrok API did not return \"metrics\" in the response");
@@ -250,6 +259,8 @@ public class NgrokClient {
      */
     public void kill() {
         ngrokProcess.stop();
+
+        currentTunnels.clear();
     }
 
     /**

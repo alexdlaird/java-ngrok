@@ -66,7 +66,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
                 .build();
 
         // WHEN
-        final Response<Tunnel> postResponse = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
+        final Response<Tunnel> postResponse = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Tunnel.class);
 
         // THEN
         assertEquals(HTTP_CREATED, postResponse.getStatusCode());
@@ -80,10 +80,10 @@ class DefaultHttpClientTest extends NgrokTestCase {
                 .withName("my-tunnel")
                 .withBindTls(true)
                 .build();
-        defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
+        defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Tunnel.class);
 
         // WHEN
-        final Response<Tunnels> getResponse = defaultHttpClient.get(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), Collections.emptyList(), Collections.emptyMap(), Tunnels.class);
+        final Response<Tunnels> getResponse = defaultHttpClient.get(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), Tunnels.class);
 
         // THEN
         assertEquals(HTTP_OK, getResponse.getStatusCode());
@@ -96,10 +96,10 @@ class DefaultHttpClientTest extends NgrokTestCase {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
                 .build();
-        final Tunnel tunnel = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class).getBody();
+        final Tunnel tunnel = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Tunnel.class).getBody();
 
         // WHEN
-        final Response<?> deleteResponse = defaultHttpClient.delete(ngrokProcess.getApiUrl() + tunnel.getUri(), Collections.emptyList(), Collections.emptyMap());
+        final Response<?> deleteResponse = defaultHttpClient.delete(ngrokProcess.getApiUrl() + tunnel.getUri());
 
         // THEN
         assertEquals(HTTP_NO_CONTENT, deleteResponse.getStatusCode());
@@ -114,17 +114,17 @@ class DefaultHttpClientTest extends NgrokTestCase {
                 .withAddr(new URL(ngrokProcess.getApiUrl()).getPort())
                 .withBindTls(true)
                 .build();
-        final Response<Tunnel> createResponse = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), request, Collections.emptyList(), Collections.emptyMap(), Tunnel.class);
+        final Response<Tunnel> createResponse = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), request, Tunnel.class);
         final String publicUrl = createResponse.getBody().getPublicUrl();
 
         Thread.sleep(1000);
 
-        defaultHttpClient.get(String.format("%s/status", publicUrl), Collections.emptyList(), Collections.emptyMap(), Object.class);
+        defaultHttpClient.get(String.format("%s/status", publicUrl), Object.class);
 
         Thread.sleep(3000);
 
         // WHEN
-        final Response<CapturedRequests> response1 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), Collections.emptyList(), Collections.emptyMap(), CapturedRequests.class);
+        final Response<CapturedRequests> response1 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), CapturedRequests.class);
         final Response<CapturedRequests> response2 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), List.of(new Parameter("tunnel_name", "my-tunnel")), Collections.emptyMap(), CapturedRequests.class);
         final Response<CapturedRequests> response3 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), List.of(new Parameter("tunnel_name", "my-tunnel (http)")), Collections.emptyMap(), CapturedRequests.class);
 

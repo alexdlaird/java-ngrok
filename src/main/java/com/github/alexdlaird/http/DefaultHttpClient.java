@@ -55,25 +55,17 @@ import static com.github.alexdlaird.util.StringUtils.isNotBlank;
  * final SomePOJORequest postPojo = new MyPOJO("id", "data");
  * final Response&lt;SomePOJOResponse&gt; postResponse = httpClient.post("http://localhost/pojo",
  *                                                                 postPojo,
- *                                                                 Collections.emptyList(),
- *                                                                 Collections.emptyMap(),
  *                                                                 SomePOJOResponse.class);
  *
  * final Response&lt;SomePOJOResponse&gt; getResponse = httpClient.get("http://localhost/pojo/id",
- *                                                               Collections.emptyList(),
- *                                                                     Collections.emptyMap(),
- *                                                                     SomePOJOResponse.class);
+ *                                                                 SomePOJOResponse.class);
  *
  * final SomePOJORequest putPojo = new MyPOJO("updated-data");
  * final Response&lt;SomePOJOResponse&gt; postResponse = httpClient.post("http://localhost/pojo/id",
  *                                                                 putPojo,
- *                                                                 Collections.emptyList(),
- *                                                                 Collections.emptyMap(),
  *                                                                 SomePOJOResponse.class);
  *
- * final Response&lt;Map&gt; deleteResponse = httpClient.delete("http://localhost/pojo/id",
- *                                                        Collections.emptyList(),
- *                                                        Collections.emptyMap());
+ * final Response&lt;Map&gt; deleteResponse = httpClient.delete("http://localhost/pojo/id");
  * </pre>
  */
 public class DefaultHttpClient implements HttpClient {

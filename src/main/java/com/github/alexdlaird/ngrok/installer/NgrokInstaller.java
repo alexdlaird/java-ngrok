@@ -49,6 +49,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import static com.github.alexdlaird.util.StringUtils.isBlank;
+import static java.util.Objects.isNull;
 
 /**
  * A helper for downloading and installing the <code>ngrok</code> for the current system.
@@ -68,6 +69,8 @@ public class NgrokInstaller {
     private static final List<String> VALID_LOG_LEVELS = List.of("info", "debug");
 
     private final Yaml yaml = new Yaml();
+
+    private Map<String, Object> configCache;
 
     /**
      * Get the <code>ngrok</code> executable for the current system.
@@ -98,7 +101,7 @@ public class NgrokInstaller {
                 Files.createFile(configPath);
             }
 
-            final Map<String, Object> config = getNgrokConfig(configPath);
+            final Map<String, Object> config = getNgrokConfig(configPath, false);
             config.putAll(data);
 
             validateConfig(config);
@@ -190,21 +193,32 @@ public class NgrokInstaller {
      * Get the <code>ngrok</code> config from the given path.
      *
      * @param configPath The <code>ngrok</code> config path to read.
+     * @param useCache   Use the cached version of the config (if populated).
      * @return A map of the <code>ngrok</code> config.
      */
-    public Map<String, Object> getNgrokConfig(final Path configPath) {
-        // TODO: implement a cache so we don't hit file IO every time we read the config
-        try {
-            final String config = Files.readString(configPath);
+    public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache) {
+        if (isNull(configCache) || !useCache) {
+            try {
+                final String config = Files.readString(configPath);
 
-            if (isBlank(config)) {
-                return new HashMap<>();
+                if (isBlank(config)) {
+                    configCache = new HashMap<>();
+                } else {
+                    configCache = yaml.load(config);
+                }
+            } catch (IOException | JsonParseException e) {
+                throw new JavaNgrokInstallerException(String.format("An error occurred while parsing the config file: %s", configPath), e);
             }
-
-            return yaml.load(config);
-        } catch (IOException | JsonParseException e) {
-            throw new JavaNgrokInstallerException(String.format("An error occurred while parsing the config file: %s", configPath), e);
         }
+
+        return configCache;
+    }
+
+    /**
+     * See {@link #getNgrokConfig(Path, boolean)}.
+     */
+    public Map<String, Object> getNgrokConfig(final Path configPath) {
+        return getNgrokConfig(configPath, true);
     }
 
     private void installNgrokZip(final Path zipPath, final Path ngrokPath) {
