@@ -179,7 +179,9 @@ public class NgrokProcessTest extends NgrokTestCase {
     @Test
     public void testStartNoBinary() throws IOException {
         // GIVEN
-        Files.delete(javaNgrokConfig.getNgrokPath());
+        if (Files.exists(javaNgrokConfig.getNgrokPath())) {
+            Files.delete(javaNgrokConfig.getNgrokPath());
+        }
 
         // WHEN
         final NgrokException exception = assertThrows(NgrokException.class, ngrokProcess::start);
