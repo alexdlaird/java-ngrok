@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.Collections;
 import java.util.function.Function;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.mockito.Mockito.mock;
 
 public class NgrokProcessTest extends NgrokTestCase {
@@ -38,18 +37,6 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testStop() {
-        // GIVEN
-        ngrokProcess.start();
-
-        // WHEN
-        ngrokProcess.stop();
-
-        // THEN
-        assertFalse(ngrokProcess.isRunning());
-    }
-
-    @Test
     public void testStartPortInUse() {
         // GIVEN
         assertFalse(ngrokProcess.isRunning());
@@ -61,7 +48,7 @@ public class NgrokProcessTest extends NgrokTestCase {
                 .withNgrokPath(ngrokPath2)
                 .withConfigPath(configPath2)
                 .build();
-        ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(), Map.of("web_addr", ngrokProcess.getApiUrl().substring(7)));
+        ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(), Collections.singletonMap("web_addr", ngrokProcess.getApiUrl().substring(7)));
 
         // WHEN
         ngrokProcess2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
@@ -80,42 +67,16 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testExternalKill() throws InterruptedException {
-        // GIVEN
-        ngrokProcess.start();
-        assertTrue(ngrokProcess.isRunning());
-
-        // WHEN
-        final ProcessHandle processHandle = ProcessHandle.allProcesses()
-                .filter(p -> p.info().command().orElse("").contains(javaNgrokConfig.getNgrokPath().toString()))
-                .findFirst().orElse(null);
-
-        // THEN
-        assertNotNull(processHandle);
-        processHandle.destroy();
-        long timeoutTime = System.currentTimeMillis() + 10 * 1000;
-        while (processHandle.isAlive() && System.currentTimeMillis() < timeoutTime) {
-            Thread.sleep(50);
-        }
-        assertFalse(processHandle.isAlive());
-        assertFalse(ngrokProcess.isRunning());
-
-        // THEN test we can successfully restart the process
-        ngrokProcess.start();
-        assertTrue(ngrokProcess.isRunning());
-    }
-
-    @Test
     public void testMultipleProcessesDifferentBinaries() {
         // GIVEN
-        ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Map.of("web_addr", "localhost:4040"));
+        ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Collections.singletonMap("web_addr", "localhost:4040"));
         final Path ngrokPath2 = Paths.get(javaNgrokConfig.getNgrokPath().getParent().toString(), "2", NgrokInstaller.getNgrokBin());
         final Path configPath2 = Paths.get(javaNgrokConfig.getConfigPath().getParent().toString(), "config2.yml");
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfig)
                 .withNgrokPath(ngrokPath2)
                 .withConfigPath(configPath2)
                 .build();
-        ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(), Map.of("web_addr", "localhost:4041"));
+        ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(), Collections.singletonMap("web_addr", "localhost:4041"));
         ngrokProcess2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
 
         // WHEN

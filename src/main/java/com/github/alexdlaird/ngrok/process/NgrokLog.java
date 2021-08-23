@@ -51,7 +51,7 @@ public class NgrokLog extends HashMap<String, String> {
      * @param line The raw log line from <code>ngrok</code>.
      */
     public NgrokLog(final String line) {
-        this.line = line.strip();
+        this.line = line.trim();
 
         for (final String i : shellSplit(this.line)) {
             final String[] split = i.split("=", 2);

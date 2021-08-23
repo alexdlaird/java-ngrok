@@ -43,6 +43,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.github.alexdlaird.util.StringUtils.isBlank;
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
@@ -91,10 +93,6 @@ public class NgrokProcess {
      * destroy tunnels.
      */
     public void start() {
-        start(0);
-    }
-
-    private void start(final int retries) {
         if (isRunning()) {
             return;
         }
@@ -131,7 +129,7 @@ public class NgrokProcess {
         processBuilder.command(command);
         try {
             process = processBuilder.start();
-            LOGGER.fine(String.format("ngrok process starting with PID: %s", process.pid()));
+            LOGGER.fine("ngrok process starting");
 
             processMonitor = new ProcessMonitor(process, javaNgrokConfig);
             new Thread(processMonitor).start();
@@ -142,33 +140,24 @@ public class NgrokProcess {
                 if (processMonitor.isHealthy()) {
                     LOGGER.info(String.format("ngrok process has started with API URL: %s", processMonitor.apiUrl));
 
+                    processMonitor.startupError = null;
+
+                    break;
+                } else if (!process.isAlive()) {
                     break;
                 }
             }
 
             if (!processMonitor.isHealthy()) {
-                // If the process did not come up in a healthy state, clean up the state
-                stop();
-
                 if (nonNull(processMonitor.startupError)) {
-                    final List<NgrokLog> logs = processMonitor.getLogs();
-                    final String lastLogMsg = logs.size() > 0 ? logs.get(logs.size() - 1).getMsg() : null;
-                    if (nonNull(lastLogMsg) && lastLogMsg.equals("failed to reconnect session")
-                            && retries < javaNgrokConfig.getReconnectSessionRetries()) {
-                        LOGGER.fine("ngrok reset our connection, retrying in 0.5 seconds ...");
-                        wait(500);
-
-                        start(retries + 1);
-                    } else {
-                        throw new NgrokException(String.format("The ngrok process errored on start: %s.", processMonitor.startupError),
-                                processMonitor.logs,
-                                processMonitor.startupError);
-                    }
+                    throw new NgrokException(String.format("The ngrok process errored on start: %s.", processMonitor.startupError),
+                            processMonitor.logs,
+                            processMonitor.startupError);
                 } else {
                     throw new NgrokException("The ngrok process was unable to start.", processMonitor.logs);
                 }
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             throw new NgrokException("An error occurred while starting ngrok.", e);
         }
     }
@@ -178,26 +167,6 @@ public class NgrokProcess {
      */
     public boolean isRunning() {
         return nonNull(process) && process.isAlive();
-    }
-
-    /**
-     * Terminate the <code>ngrok</code> processes, if running. This method will not block, it will
-     * just issue a kill request.
-     */
-    public void stop() {
-        if (!isRunning()) {
-            LOGGER.info(String.format("\"ngrokPath\" %s is not running a process", javaNgrokConfig.getNgrokPath()));
-
-            return;
-        }
-
-        LOGGER.info(String.format("Killing ngrok process: %s", process.pid()));
-
-        processMonitor.stop();
-        process.descendants().forEach(ProcessHandle::destroy);
-        process.destroy();
-
-        process = null;
     }
 
     /**
@@ -217,7 +186,7 @@ public class NgrokProcess {
      *         .build();
      * final Tunnel ngrokTunnel2 = ngrokClient.connect(createTunnel);
      * </pre>
-     *
+     * <p>
      * The auth token can also be set in the {@link JavaNgrokConfig} that is passed to the {@link NgrokClient.Builder}.
      *
      * @param authToken The auth token.
@@ -274,7 +243,7 @@ public class NgrokProcess {
         processBuilder.redirectErrorStream(true);
         processBuilder.inheritIO().redirectOutput(ProcessBuilder.Redirect.PIPE);
 
-        final List<String> command = List.of(javaNgrokConfig.getNgrokPath().toString(), "update", "--log=stdout");
+        final List<String> command = Stream.of(javaNgrokConfig.getNgrokPath().toString(), "update", "--log=stdout").collect(Collectors.toList());
 
         processBuilder.command(command);
         try {
@@ -295,7 +264,7 @@ public class NgrokProcess {
         processBuilder.redirectErrorStream(true);
         processBuilder.inheritIO().redirectOutput(ProcessBuilder.Redirect.PIPE);
 
-        final List<String> command = List.of(javaNgrokConfig.getNgrokPath().toString(), "--version");
+        final List<String> command = Stream.of(javaNgrokConfig.getNgrokPath().toString(), "--version").collect(Collectors.toList());
 
         processBuilder.command(command);
         try {
@@ -391,7 +360,7 @@ public class NgrokProcess {
          * Get the <code>ngrok</code> logs.
          */
         public List<NgrokLog> getLogs() {
-            return List.of(logs.toArray(new NgrokLog[]{}));
+            return Stream.of(logs.toArray(new NgrokLog[]{})).collect(Collectors.toList());
         }
 
         /**
@@ -399,10 +368,6 @@ public class NgrokProcess {
          */
         public boolean isMonitoring() {
             return alive;
-        }
-
-        private void stop() {
-            this.alive = false;
         }
 
         private boolean isHealthy() {
@@ -419,7 +384,7 @@ public class NgrokProcess {
                 return false;
             }
 
-            return process.isAlive() && isNull(startupError);
+            return process.isAlive();
         }
 
         private void logStartupLine(final String line) {

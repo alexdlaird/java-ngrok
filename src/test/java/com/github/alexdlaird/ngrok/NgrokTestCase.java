@@ -13,13 +13,10 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.UUID;
 
-import static java.util.Objects.nonNull;
-
 public class NgrokTestCase {
 
     protected JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
             .withConfigPath(Paths.get("build", ".ngrok2", "config.yml").toAbsolutePath())
-            .withReconnectSessionRetries(10)
             .build();
 
     protected NgrokInstaller ngrokInstaller = new NgrokInstaller();
@@ -34,11 +31,10 @@ public class NgrokTestCase {
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
-        ngrokProcess.stop();
-        if (nonNull(ngrokProcess2)) {
-            ngrokProcess2.stop();
-        }
+    public void tearDown() throws IOException, InterruptedException {
+        final ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command("killall", "9", "ngrok");
+        processBuilder.start().waitFor();
 
         Files.walk(javaNgrokConfig.getConfigPath().getParent())
                 .sorted(Comparator.reverseOrder())

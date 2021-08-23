@@ -62,7 +62,6 @@ public class JavaNgrokConfig {
     private final int maxLogs;
     private final Function<NgrokLog, Void> logEventCallback;
     private final int startupTimeout;
-    private final int reconnectSessionRetries;
 
     private JavaNgrokConfig(final Builder builder) {
         this.ngrokPath = builder.ngrokPath;
@@ -73,7 +72,6 @@ public class JavaNgrokConfig {
         this.maxLogs = builder.maxLogs;
         this.logEventCallback = builder.logEventCallback;
         this.startupTimeout = builder.startupTimeout;
-        this.reconnectSessionRetries = builder.reconnectSessionRetries;
     }
 
     /**
@@ -133,14 +131,6 @@ public class JavaNgrokConfig {
     }
 
     /**
-     * Get the max number of times to retry establishing a new session with <code>ngrok</code> if the connection
-     * fails on startup.
-     */
-    public int getReconnectSessionRetries() {
-        return reconnectSessionRetries;
-    }
-
-    /**
      * Builder for a {@link JavaNgrokConfig}, see docs for that class for example usage.
      */
     public static class Builder {
@@ -153,7 +143,6 @@ public class JavaNgrokConfig {
         private int maxLogs = 100;
         private Function<NgrokLog, Void> logEventCallback;
         private int startupTimeout = 15;
-        private int reconnectSessionRetries = 0;
 
         public Builder() {
         }
@@ -172,7 +161,6 @@ public class JavaNgrokConfig {
             this.maxLogs = javaNgrokConfig.maxLogs;
             this.logEventCallback = javaNgrokConfig.logEventCallback;
             this.startupTimeout = javaNgrokConfig.startupTimeout;
-            this.reconnectSessionRetries = javaNgrokConfig.reconnectSessionRetries;
         }
 
         /**
@@ -246,19 +234,6 @@ public class JavaNgrokConfig {
             }
 
             this.startupTimeout = startupTimeout;
-            return this;
-        }
-
-        /**
-         * The max number of times to retry establishing a new session with <code>ngrok</code> if the connection
-         * fails on startup.
-         */
-        public Builder withReconnectSessionRetries(final int reconnectSessionRetries) {
-            if (reconnectSessionRetries < 0) {
-                throw new IllegalArgumentException("\"reconnectSessionRetries\" cannot be less than 0.");
-            }
-
-            this.reconnectSessionRetries = reconnectSessionRetries;
             return this;
         }
 

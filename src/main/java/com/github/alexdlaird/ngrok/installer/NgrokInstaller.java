@@ -47,6 +47,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -74,11 +76,11 @@ public class NgrokInstaller {
     public static final String WINDOWS = "WINDOWS";
     public static final String LINUX = "LINUX";
     public static final String FREEBSD = "FREEBSD";
-    public static final List<String> UNIX_BINARIES = List.of(MAC, LINUX, FREEBSD);
+    public static final List<String> UNIX_BINARIES = Stream.of(MAC, LINUX, FREEBSD).collect(Collectors.toList());
     public static final Path DEFAULT_NGROK_PATH = Paths.get(System.getProperty("user.home"), ".ngrok2", NgrokInstaller.getNgrokBin());
     public static final Path DEFAULT_CONFIG_PATH = Paths.get(System.getProperty("user.home"), ".ngrok2", "config.yml");
 
-    private static final List<String> VALID_LOG_LEVELS = List.of("info", "debug");
+    private static final List<String> VALID_LOG_LEVELS = Stream.of("info", "debug").collect(Collectors.toList());
 
     private final Yaml yaml = new Yaml();
 
@@ -211,7 +213,7 @@ public class NgrokInstaller {
     public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache) {
         if (isNull(configCache) || !useCache) {
             try {
-                final String config = Files.readString(configPath);
+                final String config = Files.lines(configPath).collect(Collectors.joining("\n"));
 
                 if (isBlank(config)) {
                     configCache = new HashMap<>();

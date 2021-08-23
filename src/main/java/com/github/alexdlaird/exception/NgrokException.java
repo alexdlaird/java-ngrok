@@ -28,6 +28,8 @@ import com.github.alexdlaird.ngrok.process.NgrokProcess;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Thrown from {@link NgrokProcess} when an error occurs interacting directly with the <code>ngrok</code> binary.
@@ -71,7 +73,7 @@ public class NgrokException extends JavaNgrokException {
     public NgrokException(final String message, final List<NgrokLog> ngrokLogs) {
         super(message);
 
-        this.ngrokLogs = List.of(ngrokLogs.toArray(new NgrokLog[]{}));
+        this.ngrokLogs = Stream.of(ngrokLogs.toArray(new NgrokLog[]{})).collect(Collectors.toList());
         this.ngrokError = null;
     }
 
@@ -86,7 +88,7 @@ public class NgrokException extends JavaNgrokException {
     public NgrokException(final String message, final List<NgrokLog> ngrokLogs, final String ngrokError) {
         super(message);
 
-        this.ngrokLogs = List.of(ngrokLogs.toArray(new NgrokLog[]{}));
+        this.ngrokLogs = Stream.of(ngrokLogs.toArray(new NgrokLog[]{})).collect(Collectors.toList());
         this.ngrokError = ngrokError;
     }
 

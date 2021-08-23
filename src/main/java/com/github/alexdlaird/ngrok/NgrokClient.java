@@ -281,16 +281,6 @@ public class NgrokClient {
     }
 
     /**
-     * Terminate the <code>ngrok</code> processes, if running. This method will not block, it will
-     * just issue a kill request.
-     */
-    public void kill() {
-        ngrokProcess.stop();
-
-        currentTunnels.clear();
-    }
-
-    /**
      * Set the <code>ngrok</code> auth token in the config file, enabling authenticated features (for instance,
      * more concurrent tunnels, custom subdomains, etc.).
      *
