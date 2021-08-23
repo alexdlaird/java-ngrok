@@ -46,7 +46,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -103,6 +102,16 @@ import static java.util.Objects.nonNull;
  * // The Tunnel returned from methods like connect(), getTunnels(), etc. contains the public URL
  * ngrokClient.disconnect(publicUrl);
  * </pre>
+ *
+ * <h2>Integration Examples</h2>
+ * <code>java-ngrok</code> is useful in any number of integrations, for instance to test locally without having to
+ * deploy or configure. Here are some common usage examples.
+ * <p>
+ * <ul>
+ *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-sprint-boot">Spring Boot</a>
+ *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-play">Play!</a>
+ *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-dropwizard">Dropwizard</a>
+ * </ul>
  */
 public class NgrokClient {
 
