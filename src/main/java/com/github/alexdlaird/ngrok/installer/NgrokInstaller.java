@@ -25,6 +25,8 @@ package com.github.alexdlaird.ngrok.installer;
 
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokInstallerException;
+import com.github.alexdlaird.ngrok.NgrokClient;
+import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.google.gson.JsonParseException;
 import org.yaml.snakeyaml.Yaml;
 
@@ -53,6 +55,16 @@ import static java.util.Objects.isNull;
 
 /**
  * A helper for downloading and installing the <code>ngrok</code> for the current system.
+ *
+ * <h2>Config File</h2>
+ * By default, <a href="https://ngrok.com/docs#config"><code>ngrok</code> will look for its config file</a> in the home
+ * directory’s <code>.ngrok2</code> folder. We can override this behavior with
+ * {@link JavaNgrokConfig.Builder#withConfigPath(Path)}.
+ *
+ * <h2>Binary Path</h2>
+ * The <code>java-ngrok</code> package manages its own <code>ngrok</code> binary. We can use our <code>ngrok</code>
+ * binary if we want by setting it with {@link JavaNgrokConfig.Builder#withNgrokPath(Path)} and passing that config to
+ * {@link NgrokClient}.
  */
 public class NgrokInstaller {
 

@@ -28,6 +28,7 @@ import com.github.alexdlaird.exception.NgrokException;
 import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.http.Response;
+import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
@@ -202,6 +203,22 @@ public class NgrokProcess {
     /**
      * Set the <code>ngrok</code> auth token in the config file, enabling authenticated features (for instance,
      * more concurrent tunnels, custom subdomains, etc.).
+     *
+     * <pre>
+     * // Setting an auth token allows us to do things like open multiple tunnels at the same time
+     * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+     * ngrokClient.setAuthToken("<NGROK_AUTH_TOKEN>")
+     *
+     * // &lt;NgrokTunnel: "http://&lt;public_sub1&gt;.ngrok.io" -&gt; "http://localhost:80"&gt;
+     * final Tunnel ngrokTunnel1 = ngrokClient.connect();
+     * // &lt;NgrokTunnel: "http://&lt;public_sub2&gt;.ngrok.io" -&gt; "http://localhost:8000"&gt;
+     * final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder()
+     *         .withAddr(8000)
+     *         .build();
+     * final Tunnel ngrokTunnel2 = ngrokClient.connect(createTunnel);
+     * </pre>
+     *
+     * The auth token can also be set in the {@link JavaNgrokConfig} that is passed to the {@link NgrokClient.Builder}.
      *
      * @param authToken The auth token.
      */

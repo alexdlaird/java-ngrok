@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.github.alexdlaird.util.StringUtils.isBlank;
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 
 /**
@@ -275,7 +274,7 @@ public class DefaultHttpClient implements HttpClient {
     }
 
     /**
-     * Builder for a {@link DefaultHttpClient}.
+     * Builder for a {@link DefaultHttpClient}, see docs for that class for example usage.
      */
     public static class Builder {
         private String encoding = "UTF-8";

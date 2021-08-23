@@ -185,6 +185,7 @@ public class CreateTunnel {
     /**
      * Builder for a {@link CreateTunnel}, which can be used to construct a request that conforms to
      * <a href="https://ngrok.com/docs#tunnel-definitions"><code>ngrok</code>'s tunnel definition</a>.
+     * See docs for that class for example usage.
      */
     public static class Builder {
         private boolean setDefaults = false;

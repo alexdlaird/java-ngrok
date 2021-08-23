@@ -141,7 +141,7 @@ public class JavaNgrokConfig {
     }
 
     /**
-     * Builder for a {@link JavaNgrokConfig}.
+     * Builder for a {@link JavaNgrokConfig}, see docs for that class for example usage.
      */
     public static class Builder {
 
@@ -176,7 +176,7 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * The path to the <code>ngrok</code> binary, defaults to ~/.ngrok2/ngrok.
+         * The path to the <code>ngrok</code> binary, defaults to <code>~/.ngrok2/ngrok</code>.
          */
         public Builder withNgrokPath(final Path ngrokPath) {
             this.ngrokPath = ngrokPath;
@@ -184,7 +184,7 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * The path to the <code>ngrok</code> config file, defaults to ~/.ngrok2/config.yml.
+         * The path to the <code>ngrok</code> config file, defaults to <code>~/.ngrok2/config.yml</code>.
          */
         public Builder withConfigPath(final Path configPath) {
             this.configPath = configPath;
@@ -200,7 +200,8 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * The region in which <code>ngrok</code> should start
+         * The region in which <code>ngrok</code> should start.
+         * </pre>
          */
         public Builder withRegion(final Region region) {
             this.region = region;

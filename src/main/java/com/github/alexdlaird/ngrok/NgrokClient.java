@@ -73,6 +73,22 @@ import static java.util.Objects.nonNull;
  *         .withAddr(22)
  *         .build();
  * final Tunnel sshTunnel = ngrokClient.connect(sshCreateTunnel);
+ *
+ * // Open a tunnel to MySQL with a Reserved TCP Address
+ * // &lt;NgrokTunnel: "tcp://1.tcp.ngrok.io:12345" -&gt; "localhost:3306"&gt;
+ * final CreateTunnel mysqlCreateTunnel = new CreateTunnel.Builder()
+ *         .withProto(Proto.TCP)
+ *         .withAddr(3306)
+ *         .withRemoteAddr("1.tcp.ngrok.io:12345")
+ *         .build();
+ * final Tunnel mysqlTunnel = ngrokClient.connect(mysqlCreateTunnel);
+ *
+ * // Open a tunnel to a local file server
+ * // &lt;NgrokTunnel: "http://&lt;public_sub&gt;.ngrok.io" -&gt; "file:///"&gt;
+ * final CreateTunnel fileserverCreateTunnel = new CreateTunnel.Builder()
+ *         .withAddr("file:///)
+ *         .build();
+ * final Tunnel fileserverTunnel = ngrokClient.connect(fileserverCreateTunnel);
  * </pre>
  * <p>
  * The {@link NgrokClient#connect(CreateTunnel) NgrokClient.connect()} method can also take a {@link CreateTunnel}
@@ -111,6 +127,8 @@ import static java.util.Objects.nonNull;
  *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-sprint-boot">Spring Boot</a>
  *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-play">Play!</a>
  *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-dropwizard">Dropwizard</a>
+ *     <li><a href="https://gist.github.com/alexdlaird/522cba505b0a9f935f65036355c46f4a">Java HTTP Server</a></li>
+ *     <li><a href="https://gist.github.com/alexdlaird/8bea2446cefde6ed92abadc2e944120f">Java TCP Server and Client</a></li>
  * </ul>
  */
 public class NgrokClient {
@@ -348,7 +366,7 @@ public class NgrokClient {
     }
 
     /**
-     * Builder for a {@link NgrokClient}.
+     * Builder for a {@link NgrokClient}, see docs for that class for example usage.
      */
     public static class Builder {
 

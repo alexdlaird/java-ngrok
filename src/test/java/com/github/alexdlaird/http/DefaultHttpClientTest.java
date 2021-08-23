@@ -87,6 +87,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
 
         // THEN
         assertEquals(HTTP_OK, getResponse.getStatusCode());
+        assertEquals("/api/tunnels", getResponse.getBody().getUri());
         assertEquals(1, getResponse.getBody().getTunnels().size());
         assertEquals("my-tunnel", getResponse.getBody().getTunnels().get(0).getName());
     }
