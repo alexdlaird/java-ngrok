@@ -90,7 +90,7 @@ public interface HttpClient {
                            final Map<String, String> additionalHeaders, final Class<B> clazz);
 
     /**
-     * See {@link #put(String, R, List, Map, Class)}.
+     * See {@link #put(String, Object, List, Map, Class)}.
      */
     default <R, B> Response<B> put(final String url, final R request, final Class<B> clazz) {
         return put(url, request, Collections.emptyList(), Collections.emptyMap(), clazz);
