@@ -30,7 +30,6 @@ public class JavaNgrokConfigTest {
                 .withMaxLogs(50)
                 .withLogEventCallback(logEventCallback)
                 .withStartupTimeout(5)
-                .withReconnectSessionRetries(6)
                 .build();
 
         // THEN
@@ -42,7 +41,6 @@ public class JavaNgrokConfigTest {
         assertEquals(50, javaNgrokConfig.getMaxLogs());
         assertEquals(logEventCallback, javaNgrokConfig.getLogEventCallback());
         assertEquals(5, javaNgrokConfig.getStartupTime());
-        assertEquals(6, javaNgrokConfig.getReconnectSessionRetries());
     }
 
     @Test
@@ -55,11 +53,5 @@ public class JavaNgrokConfigTest {
     public void testJavaNgrokConfigWithInvalidStartupTimeout() {
         // WHEN
         assertThrows(IllegalArgumentException.class, () -> new JavaNgrokConfig.Builder().withStartupTimeout(0));
-    }
-
-    @Test
-    public void testJavaNgrokConfigWithInvalidReconnectSessionRetries() {
-        // WHEN
-        assertThrows(IllegalArgumentException.class, () -> new JavaNgrokConfig.Builder().withReconnectSessionRetries(-1));
     }
 }
