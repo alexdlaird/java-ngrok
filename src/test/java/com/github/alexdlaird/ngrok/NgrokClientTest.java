@@ -19,12 +19,16 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -69,14 +73,14 @@ class NgrokClientTest extends NgrokTestCase {
 
         // THEN
         assertTrue(ngrokClient.getNgrokProcess().isRunning());
-        assertTrue(tunnel.getName().startsWith("http-5000-"));
+        assertThat(tunnel.getName(), startsWith("http-5000-"));
         assertEquals("http", tunnel.getProto());
         assertEquals("http://localhost:5000", tunnel.getConfig().getAddr());
         assertTrue(tunnel.getConfig().isInspect());
         assertNotNull(tunnel.getPublicUrl());
-        assertTrue(tunnel.getPublicUrl().startsWith("http://"));
+        assertThat(tunnel.getPublicUrl(), startsWith("http://"));
         assertNotNull(tunnel.getMetrics());
-        assertTrue(tunnel.getMetrics().containsKey("conns"));
+        assertThat(tunnel.getMetrics(), hasKey("conns"));
         assertEquals(0, tunnel.getMetrics().get("conns").getCount());
         assertEquals(0, tunnel.getMetrics().get("conns").getGauge());
         assertEquals(0, tunnel.getMetrics().get("conns").getP50());
@@ -99,7 +103,7 @@ class NgrokClientTest extends NgrokTestCase {
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
 
         // THEN
-        assertTrue(tunnel.getName().startsWith("my-tunnel (http)"));
+        assertThat(tunnel.getName(), startsWith("my-tunnel (http)"));
         assertEquals("http", tunnel.getProto());
         assertEquals("http://localhost:80", tunnel.getConfig().getAddr());
     }
@@ -114,7 +118,7 @@ class NgrokClientTest extends NgrokTestCase {
         // THEN
         assertEquals(HTTP_BAD_GATEWAY, exception.getStatusCode());
         assertEquals(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), exception.getUrl());
-        assertTrue(exception.getBody().contains("account may not run more than 2 tunnels"));
+        assertThat(exception.getBody(), containsString("account may not run more than 2 tunnels"));
     }
 
     @Test
@@ -151,7 +155,7 @@ class NgrokClientTest extends NgrokTestCase {
 
         // THEN
         assertEquals(2, tunnels.size());
-        assertTrue(tunnel.getPublicUrl().startsWith("http://"));
+        assertThat(tunnel.getPublicUrl(), startsWith("http://"));
     }
 
     @Test
@@ -167,7 +171,7 @@ class NgrokClientTest extends NgrokTestCase {
 
         // THEN
         assertEquals(1, tunnels.size());
-        assertTrue(tunnel.getPublicUrl().startsWith("https://"));
+        assertThat(tunnel.getPublicUrl(), startsWith("https://"));
     }
 
     @Test
@@ -183,7 +187,7 @@ class NgrokClientTest extends NgrokTestCase {
 
         // THEN
         assertEquals(1, tunnels.size());
-        assertTrue(tunnel.getPublicUrl().startsWith("http://"));
+        assertThat(tunnel.getPublicUrl(), startsWith("http://"));
     }
 
     @Test
@@ -255,8 +259,8 @@ class NgrokClientTest extends NgrokTestCase {
         assertTrue(ngrokClient2.getNgrokProcess().isRunning());
         assertNotNull(tunnel.getPublicUrl());
         assertEquals("localhost:5000", tunnel.getConfig().getAddr());
-        assertTrue(tunnel.getPublicUrl().contains("tcp://"));
-        assertTrue(tunnel.getPublicUrl().contains(".au."));
+        assertThat(tunnel.getPublicUrl(), containsString("tcp://"));
+        assertThat(tunnel.getPublicUrl(), containsString(".au."));
     }
 
     @Test
@@ -286,9 +290,9 @@ class NgrokClientTest extends NgrokTestCase {
         // THEN
         assertTrue(ngrokClient2.getNgrokProcess().isRunning());
         assertNotNull(tunnel.getPublicUrl());
-        assertTrue(tunnel.getPublicUrl().contains("http://"));
-        assertTrue(tunnel.getPublicUrl().contains(".au."));
-        assertTrue(tunnel.getPublicUrl().contains(subdomain));
+        assertThat(tunnel.getPublicUrl(), containsString("http://"));
+        assertThat(tunnel.getPublicUrl(), containsString(".au."));
+        assertThat(tunnel.getPublicUrl(), containsString(subdomain));
     }
 
     @Test
@@ -308,11 +312,11 @@ class NgrokClientTest extends NgrokTestCase {
 
         // THEN
         assertTrue(ngrokClient.getNgrokProcess().isRunning());
-        assertTrue(tunnel.getName().startsWith("http-file-"));
+        assertThat(tunnel.getName(), startsWith("http-file-"));
         assertEquals("http", tunnel.getProto());
         assertEquals("file:///", tunnel.getConfig().getAddr());
         assertNotNull(tunnel.getPublicUrl());
-        assertTrue(tunnel.getPublicUrl().startsWith("http://"));
+        assertThat(tunnel.getPublicUrl(), startsWith("http://"));
     }
 
     @Test
@@ -360,7 +364,7 @@ class NgrokClientTest extends NgrokTestCase {
 
         // THEN
         assertEquals(tunnel.getName(), response.getBody().getName());
-        assertTrue(tunnel.getName().startsWith("http-file-"));
+        assertThat(tunnel.getName(), startsWith("http-file-"));
     }
 
     @Test
@@ -382,7 +386,7 @@ class NgrokClientTest extends NgrokTestCase {
 
         ngrokClient.refreshMetrics(tunnel);
 
-        assertTrue(tunnel.getMetrics().get("http").getCount() > 0);
+        assertThat(tunnel.getMetrics().get("http").getCount(), greaterThan(0));
     }
 
     @Test
@@ -427,7 +431,7 @@ class NgrokClientTest extends NgrokTestCase {
         assertEquals("tcp-tunnel", sshTunnel.getName());
         assertEquals("localhost:22", sshTunnel.getConfig().getAddr());
         assertEquals(Proto.TCP.toString(), sshTunnel.getProto());
-        assertTrue(sshTunnel.getPublicUrl().startsWith("tcp://"));
+        assertThat(sshTunnel.getPublicUrl(), startsWith("tcp://"));
     }
 
     @Test
@@ -480,6 +484,6 @@ class NgrokClientTest extends NgrokTestCase {
         final String contents = Files.readString(javaNgrokConfig.getConfigPath());
 
         // THEN
-        assertTrue(contents.contains("807ad30a-73be-48d8"));
+        assertThat(contents, containsString("807ad30a-73be-48d8"));
     }
 }
