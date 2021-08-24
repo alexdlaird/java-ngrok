@@ -143,7 +143,7 @@ public class NgrokProcess {
                     LOGGER.info(String.format("ngrok process has started with API URL: %s", processMonitor.apiUrl));
 
                     break;
-                } else if (!process.isAlive()) {
+                } else if (nonNull(processMonitor.startupError) || !process.isAlive()) {
                     break;
                 }
             }
