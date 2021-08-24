@@ -219,7 +219,7 @@ public class NgrokProcess {
      *         .build();
      * final Tunnel ngrokTunnel2 = ngrokClient.connect(createTunnel);
      * </pre>
-     *
+     * <p>
      * The auth token can also be set in the {@link JavaNgrokConfig} that is passed to the {@link NgrokClient.Builder}.
      *
      * @param authToken The auth token.
