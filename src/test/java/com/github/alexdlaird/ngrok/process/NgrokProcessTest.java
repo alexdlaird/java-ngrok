@@ -15,6 +15,9 @@ import java.util.Collections;
 import java.util.function.Function;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -56,13 +59,13 @@ public class NgrokProcessTest extends NgrokTestCase {
 
         // THEN
         if (NgrokInstaller.getSystem().equals(WINDOWS)) {
-            assertTrue(exception.getMessage().contains("bind: Only one usage of each socket address"));
-            assertTrue(exception.getNgrokError().contains("bind: Only one usage of each socket address"));
+            assertThat(exception.getMessage(), containsString("bind: Only one usage of each socket address"));
+            assertThat(exception.getNgrokError(), containsString("bind: Only one usage of each socket address"));
         } else {
-            assertTrue(exception.getMessage().contains("bind: address already in use"));
-            assertTrue(exception.getNgrokError().contains("bind: address already in use"));
+            assertThat(exception.getMessage(), containsString("bind: address already in use"));
+            assertThat(exception.getNgrokError(), containsString("bind: address already in use"));
         }
-        assertTrue(exception.getNgrokLogs().size() > 0);
+        assertThat(exception.getNgrokLogs().size(), greaterThan(0));
         assertFalse(ngrokProcess2.isRunning());
     }
 
@@ -118,12 +121,12 @@ public class NgrokProcessTest extends NgrokTestCase {
         Thread.sleep(1000);
 
         // THEN
-        assertTrue(Mockito.mockingDetails(logEventCallbackMock).getInvocations().size() > ngrokProcess2.getProcessMonitor().getLogs().size());
+        assertThat(Mockito.mockingDetails(logEventCallbackMock).getInvocations().size(), greaterThan(ngrokProcess2.getProcessMonitor().getLogs().size()));
         assertEquals(5, ngrokProcess2.getProcessMonitor().getLogs().size());
     }
 
     @Test
-    public void testNoMonitorThread() throws InterruptedException {
+    public void testNoMonitorThread() {
         // GIVEN
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfig)
                 .withoutMonitoring()
@@ -154,7 +157,7 @@ public class NgrokProcessTest extends NgrokTestCase {
         final NgrokException exception = assertThrows(NgrokException.class, ngrokProcess::start);
 
         // THEN
-        assertTrue(exception.getMessage().contains("ngrok binary was not found"));
+        assertThat(exception.getMessage(), containsString("ngrok binary was not found"));
         assertFalse(ngrokProcess.isRunning());
     }
 }

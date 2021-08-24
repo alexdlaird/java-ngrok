@@ -42,10 +42,11 @@ import java.util.stream.Stream;
 import static java.net.HttpURLConnection.HTTP_CREATED;
 import static java.net.HttpURLConnection.HTTP_NO_CONTENT;
 import static java.net.HttpURLConnection.HTTP_OK;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DefaultHttpClientTest extends NgrokTestCase {
 
@@ -133,9 +134,9 @@ class DefaultHttpClientTest extends NgrokTestCase {
 
         // THEN
         assertEquals(HTTP_OK, response1.getStatusCode());
-        assertTrue(response1.getBody().getRequests().size() > 0);
+        assertThat(response1.getBody().getRequests().size(), greaterThan(0));
         assertEquals(HTTP_OK, response2.getStatusCode());
-        assertTrue(response2.getBody().getRequests().size() > 0);
+        assertThat(response2.getBody().getRequests().size(), greaterThan(0));
         assertEquals(HTTP_OK, response3.getStatusCode());
         assertEquals(response3.getBody().getRequests().size(), 0);
         final CapturedRequests capturedRequests = response1.getBody();
