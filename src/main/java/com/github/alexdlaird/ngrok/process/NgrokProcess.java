@@ -170,6 +170,16 @@ public class NgrokProcess {
     }
 
     /**
+     * Stop the thread monitoring the <code>ngrok</code> processes, if running.
+     */
+    public void stopMonitorThread() {
+        if (!isRunning()) {
+            return;
+        }
+        processMonitor.stop();
+    }
+
+    /**
      * Set the <code>ngrok</code> auth token in the config file, enabling authenticated features (for instance,
      * more concurrent tunnels, custom subdomains, etc.).
      *
@@ -368,6 +378,10 @@ public class NgrokProcess {
          */
         public boolean isMonitoring() {
             return alive;
+        }
+
+        private void stop() {
+            this.alive = false;
         }
 
         private boolean isHealthy() {
