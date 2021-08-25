@@ -130,6 +130,8 @@ public class NgrokProcess {
         processBuilder.command(command);
         try {
             process = processBuilder.start();
+            Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
+
             LOGGER.fine(String.format("ngrok process starting with PID: %s", process.pid()));
 
             processMonitor = new ProcessMonitor(process, javaNgrokConfig);
