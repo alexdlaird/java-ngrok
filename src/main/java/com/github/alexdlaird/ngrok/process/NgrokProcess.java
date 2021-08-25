@@ -141,8 +141,10 @@ public class NgrokProcess {
                 if (processMonitor.isHealthy()) {
                     LOGGER.info(String.format("ngrok process has started with API URL: %s", processMonitor.apiUrl));
 
+                    processMonitor.startupError = null;
+
                     break;
-                } else if (nonNull(processMonitor.startupError) || !process.isAlive()) {
+                } else if (!process.isAlive()) {
                     break;
                 }
             }
@@ -152,24 +154,14 @@ public class NgrokProcess {
                 stop();
 
                 if (nonNull(processMonitor.startupError)) {
-                    final List<NgrokLog> logs = processMonitor.getLogs();
-                    final String lastLogMsg = logs.size() > 0 ? logs.get(logs.size() - 1).getMsg() : null;
-                    if (nonNull(lastLogMsg) && lastLogMsg.equals("failed to reconnect session")
-                            && retries < javaNgrokConfig.getReconnectSessionRetries()) {
-                        LOGGER.fine("ngrok reset our connection, retrying in 0.5 seconds ...");
-                        wait(500);
-
-                        start(retries + 1);
-                    } else {
-                        throw new NgrokException(String.format("The ngrok process errored on start: %s.", processMonitor.startupError),
-                                processMonitor.logs,
-                                processMonitor.startupError);
-                    }
+                    throw new NgrokException(String.format("The ngrok process errored on start: %s.", processMonitor.startupError),
+                            processMonitor.logs,
+                            processMonitor.startupError);
                 } else {
                     throw new NgrokException("The ngrok process was unable to start.", processMonitor.logs);
                 }
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             throw new NgrokException("An error occurred while starting ngrok.", e);
         }
     }
@@ -421,7 +413,7 @@ public class NgrokProcess {
                 return false;
             }
 
-            return process.isAlive() && isNull(startupError);
+            return process.isAlive();
         }
 
         private void logStartupLine(final String line) {
