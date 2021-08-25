@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.github.alexdlaird.util.StringUtils.isBlank;
-import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
