@@ -82,6 +82,24 @@ see [ngrok's official documentation](https://ngrok.com/docs).
 For more advanced usage, `java-ngrok`'s official documentation is available
 at [https://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok).
 
+## Java 8
+
+Java 8 support is not actively maintained, but a compatible build of this project does exist for Java 8. To use it,
+include the `java8-ngrok` dependency from
+[Maven Central]([Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/)) instead.
+
+```xml
+<dependency>
+    <groupId>com.github.alexdlaird</groupId>
+    <artifactId>java8-ngrok</artifactId>
+    <version>1.1.0</version>
+</dependency>
+```
+
+The [Process API](https://docs.oracle.com/javase/9/docs/api/java/lang/ProcessHandle.html) was introduced in Java 9, so
+certain convenience methods around managing the `ngrok` process (for instance, tearing it down) are not available in
+the Java 8 build.
+
 ## Contributing
 
 If you would like to get involved, be sure to review
