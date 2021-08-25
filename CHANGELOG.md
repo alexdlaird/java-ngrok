@@ -3,10 +3,17 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.1.0...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.2.0...HEAD)
+
+## [1.2.0](https://github.com/alexdlaird/pyngrok/compare/1.1.0...1.2.0) - 2021-08-25
+### Added
+- Java 8 support (but in separate Maven artifact, use `java8-ngrok` instead, [as shown in the README](https://github.com/alexdlaird/java-ngrok#java-8)) 
 - Build improvements.
 - Documentation improvements.
 - Test improvements.
+
+### Removed
+- `reconnectSessionRetries` from [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.2.0/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), instead relying on `ngrok`'s own built-in retry mechanism on startup fails.
 
 ## [1.1.0](https://github.com/alexdlaird/pyngrok/compare/1.0.0...1.1.0) - 2021-08-20
 ### Added
