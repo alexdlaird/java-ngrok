@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.function.Function;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
+import static java.util.Objects.isNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.StringContains.containsString;
@@ -40,7 +41,7 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testStartPortInUse() {
+    public void testStartPortInUse() throws InterruptedException {
         // GIVEN
         assertFalse(ngrokProcess.isRunning());
         ngrokProcess.start();
@@ -54,10 +55,19 @@ public class NgrokProcessTest extends NgrokTestCase {
         ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(), Collections.singletonMap("web_addr", ngrokProcess.getApiUrl().substring(7)));
 
         // WHEN
-        ngrokProcess2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
-        final NgrokException exception = assertThrows(NgrokException.class, ngrokProcess2::start);
+        NgrokException exception = null;
+        String error = null;
+        for (int i = 0; isNull(error) && i < 10; ++i) {
+            Thread.sleep(1000);
+
+            ngrokProcess2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+            exception = assertThrows(NgrokException.class, ngrokProcess2::start);
+            error = exception.getNgrokError();
+        }
 
         // THEN
+        assertNotNull(exception);
+        assertNotNull(error);
         if (NgrokInstaller.getSystem().equals(WINDOWS)) {
             assertThat(exception.getMessage(), containsString("bind: Only one usage of each socket address"));
             assertThat(exception.getNgrokError(), containsString("bind: Only one usage of each socket address"));
