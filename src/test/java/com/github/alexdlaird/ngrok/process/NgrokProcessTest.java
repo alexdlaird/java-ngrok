@@ -106,7 +106,7 @@ public class NgrokProcessTest extends NgrokTestCase {
         assertNotNull(processHandle);
         processHandle.destroy();
         long timeoutTime = System.currentTimeMillis() + 10 * 1000;
-        while (processHandle.isAlive() && System.currentTimeMillis() < timeoutTime) {
+        while (processHandle.isAlive() && ngrokProcess.isRunning() && System.currentTimeMillis() < timeoutTime) {
             Thread.sleep(50);
         }
         assertFalse(processHandle.isAlive());
