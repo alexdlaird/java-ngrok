@@ -45,7 +45,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.github.alexdlaird.util.StringUtils.isBlank;
-import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -366,8 +365,9 @@ public class NgrokProcess {
 
                     if (isHealthy()) {
                         break;
-                    } else if (isNotBlank(startupError)) {
-                        return;
+                    } else if (nonNull(startupError)) {
+                        alive = false;
+                        break;
                     }
                 }
 
