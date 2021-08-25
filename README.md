@@ -86,7 +86,7 @@ at [https://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/
 
 Java 8 support is not actively maintained, but a compatible build of this project does exist for Java 8. To use it,
 include the `java8-ngrok` dependency from
-[Maven Central]([Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/)) instead.
+[Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/) instead.
 
 ```xml
 <dependency>
