@@ -5,6 +5,16 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.2.0...HEAD)
 
+## [1.3.0](https://github.com/alexdlaird/java-ngrok/compare/1.1.0...1.3.0) - 2021-08-24
+### Added
+- Build improvements.
+- Documentation improvements.
+- Test improvements.
+
+### Removed
+- Java 8 support (will not be actively maintained, but any future patches will be made to `1.2.x` from the `java8-ngrok` branch).
+- `reconnectSessionRetries` from [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.2.0/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), instead relying on `ngrok`'s own built-in retry mechanism on startup fails.
+
 ## [1.2.0](https://github.com/alexdlaird/java-ngrok/compare/1.1.0...1.2.0) - 2021-08-24
 ### Added
 - Java 8 support (but in separate Maven artifact, use `java8-ngrok` instead, [as shown in the README](https://github.com/alexdlaird/java-ngrok#java-8)) 
