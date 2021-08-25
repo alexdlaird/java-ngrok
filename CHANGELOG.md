@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.2.0...HEAD)
 
-## [1.2.0](https://github.com/alexdlaird/pyngrok/compare/1.1.0...1.2.0) - 2021-08-24
+## [1.2.0](https://github.com/alexdlaird/pyngrok/compare/1.1.0...1.2.0) - 2021-08-25
 ### Added
 - Java 8 support (but in separate Maven artifact, use `java8-ngrok` instead, [as shown in the README](https://github.com/alexdlaird/java-ngrok#java-8)) 
 - Build improvements.
