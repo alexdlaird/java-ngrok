@@ -374,8 +374,9 @@ public class NgrokProcess {
 
                     if (isHealthy()) {
                         break;
-                    } else if (isNotBlank(startupError)) {
-                        return;
+                    } else if (nonNull(startupError)) {
+                        alive = false;
+                        break;
                     }
                 }
 
