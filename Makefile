@@ -41,4 +41,4 @@ validate-release:
 	@if [[ $$(grep "VERSION = \"${VERSION}\"" src/main/java/com/github/alexdlaird/ngrok/NgrokClient.java) == "" ]] ; then echo "Version not bumped in NgrokClient.java" & exit 1 ; fi
 
 upload:
-	$(GRADLE_BIN) publish
+	$(GRADLE_BIN) publishToSonatype closeAndReleaseSonatypeStagingRepository
