@@ -3,18 +3,17 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.3.0...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.5.0...HEAD)
+
+## [1.5.0](https://github.com/alexdlaird/java-ngrok/compare/1.1.0...1.5.0) - 2021-08-25
 ### Added
 - Shutdown hook, so running `ngrok` processes will clean themselves when the JVM shuts down.
-
-## [1.3.0](https://github.com/alexdlaird/java-ngrok/compare/1.1.0...1.3.0) - 2021-08-24
-### Added
 - Build improvements.
 - Documentation improvements.
 - Test improvements.
 
 ### Removed
-- `reconnectSessionRetries` from [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.3.0/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), instead relying on `ngrok`'s own built-in retry mechanism on startup fails.
+- `reconnectSessionRetries` from [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.5.0/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), instead relying on `ngrok`'s own built-in retry mechanism on startup fails.
 
 ## [1.1.0](https://github.com/alexdlaird/java-ngrok/compare/1.0.0...1.1.0) - 2021-08-20
 ### Added
