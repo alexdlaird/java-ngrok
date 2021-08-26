@@ -78,7 +78,7 @@ public class NgrokInstaller {
     public static final String FREEBSD = "FREEBSD";
     public static final List<String> UNIX_BINARIES = Stream.of(MAC, LINUX, FREEBSD).collect(Collectors.toList());
     public static final Path DEFAULT_NGROK_PATH = Paths.get(System.getProperty("user.home"), ".ngrok2", NgrokInstaller.getNgrokBin());
-    public static final Path DEFAULT_CONFIG_PATH = Paths.get(System.getProperty("user.home"), ".ngrok2", "config.yml");
+    public static final Path DEFAULT_CONFIG_PATH = Paths.get(System.getProperty("user.home"), ".ngrok2", "ngrok.yml");
 
     private static final List<String> VALID_LOG_LEVELS = Stream.of("info", "debug").collect(Collectors.toList());
 
