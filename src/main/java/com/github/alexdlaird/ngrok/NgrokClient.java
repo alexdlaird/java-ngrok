@@ -125,10 +125,10 @@ import static java.util.Objects.nonNull;
  * <p>
  * <ul>
  *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-sprint">Spring</a>
- *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-play">Play!</a>
  *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-dropwizard">Dropwizard</a>
+ *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-play">Play (Scala)</a>
  *     <li><a href="https://gist.github.com/alexdlaird/522cba505b0a9f935f65036355c46f4a">Java HTTP Server</a></li>
- *     <li><a href="https://gist.github.com/alexdlaird/8bea2446cefde6ed92abadc2e944120f">Java TCP Server and Client</a></li>
+ *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-tcp-server-and-client">Java TCP Server and Client</a></li>
  * </ul>
  */
 public class NgrokClient {
