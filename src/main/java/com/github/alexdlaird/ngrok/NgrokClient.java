@@ -124,7 +124,7 @@ import static java.util.Objects.nonNull;
  * deploy or configure. Here are some common usage examples.
  * <p>
  * <ul>
- *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-sprint-boot">Spring Boot</a>
+ *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-sprint">Spring</a>
  *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-play">Play!</a>
  *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-dropwizard">Dropwizard</a>
  *     <li><a href="https://gist.github.com/alexdlaird/522cba505b0a9f935f65036355c46f4a">Java HTTP Server</a></li>
