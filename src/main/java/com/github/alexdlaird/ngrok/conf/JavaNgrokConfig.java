@@ -172,7 +172,7 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * The path to the <code>ngrok</code> config file, defaults to <code>~/.ngrok2/config.yml</code>.
+         * The path to the <code>ngrok</code> config file, defaults to <code>~/.ngrok2/ngrok.yml</code>.
          */
         public Builder withConfigPath(final Path configPath) {
             this.configPath = configPath;

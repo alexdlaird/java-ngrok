@@ -3,12 +3,15 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.5.2...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.5.3...HEAD)
 
-## [1.5.2](https://github.com/alexdlaird/java-ngrok/compare/1.5.0...1.5.2) - 2021-08-26
+## [1.5.3](https://github.com/alexdlaird/java-ngrok/compare/1.5.0...1.5.3) - 2021-08-26
 ### Added
 - Build improvements.
 - Documentation improvements.
+
+### Fixed
+- If no `configPath` is set in `JavaNgrokConfig`, now properly defaults to `~/.ngrok2/ngrok.yml`.
 
 ## [1.5.0](https://github.com/alexdlaird/java-ngrok/compare/1.1.0...1.5.0) - 2021-08-25
 ### Added
@@ -30,7 +33,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
  
 ### Fixed
 - `JavaNgrokConfig.keepMonitoring` is now `true` by default (was already documented this way, so fixing bug where it defaulted it `false`).
-- Serialization of `ngrok`'s `config.yml` (can now properly parsed nested YAML to a nested Map).
+- Serialization of `ngrok`'s `ngrok.yml` (can now properly parsed nested YAML to a nested Map).
 - `Tunnel.Metrics` `rate` and `p` fields are now `double`s rather than `int`s, so they serialize correctly when populated.
 
 ## [1.0.0](https://github.com/alexdlaird/java-ngrok/releases/tag/1.0.0) - 2021-08-18
