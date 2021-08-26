@@ -51,7 +51,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 /**
- * A client for interacting with <a href="https://ngrok.com/docs">ngrok</a>, its binary, and its APIs.
+ * A client for interacting with <a href="https://ngrok.com/docs" target="_blank">ngrok</a>, its binary, and its APIs.
  * Can be configured with {@link JavaNgrokConfig}.
  *
  * <h2>Open a Tunnel</h2>
@@ -93,7 +93,7 @@ import static java.util.Objects.nonNull;
  * <p>
  * The {@link NgrokClient#connect(CreateTunnel) NgrokClient.connect()} method can also take a {@link CreateTunnel}
  * (which can be built through {@link CreateTunnel.Builder its Builder}) that allows us to pass additional properties
- * that are <a href="https://ngrok.com/docs#tunnel-definitions">supported by ngrok</a>.
+ * that are <a href="https://ngrok.com/docs#tunnel-definitions" target="_blank">supported by ngrok</a>.
  * <p>
  * <strong>Note:</strong> <code>ngrok</code>'s default behavior for <code>http</code> when no additional properties
  * are passed is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This method will
@@ -124,11 +124,11 @@ import static java.util.Objects.nonNull;
  * deploy or configure. Here are some common usage examples.
  * <p>
  * <ul>
- *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-sprint">Spring</a>
- *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-dropwizard">Dropwizard</a>
- *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-play">Play (Scala)</a>
- *     <li><a href="https://gist.github.com/alexdlaird/522cba505b0a9f935f65036355c46f4a">Java HTTP Server</a></li>
- *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-tcp-server-and-client">Java TCP Server and Client</a></li>
+ *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-spring" target="_blank">Spring</a>
+ *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-dropwizard" target="_blank">Dropwizard</a>
+ *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-play" target="_blank">Play (Scala)</a>
+ *     <li><a href="https://gist.github.com/alexdlaird/522cba505b0a9f935f65036355c46f4a" target="_blank">Java HTTP Server</a></li>
+ *     <li><a href="https://github.com/alexdlaird/java-ngrok-example-tcp-server-and-client" target="_blank">Java TCP Server and Client</a></li>
  * </ul>
  */
 public class NgrokClient {
