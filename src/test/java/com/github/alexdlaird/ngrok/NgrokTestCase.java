@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static java.util.Objects.nonNull;
@@ -49,6 +51,8 @@ public class NgrokTestCase {
     protected NgrokProcess ngrokProcess;
 
     protected NgrokProcess ngrokProcess2;
+
+    private Map<String, String> mockedSystemProperties = new HashMap<>();
 
     @BeforeEach
     public void setUp() {
@@ -71,9 +75,20 @@ public class NgrokTestCase {
                         throw new JavaNgrokException(String.format("An error occurred cleaning up file %s when testing.", path));
                     }
                 });
+
+        for (final Map.Entry<String, String> entry : mockedSystemProperties.entrySet()) {
+            System.setProperty(entry.getKey(), entry.getValue());
+        }
+        mockedSystemProperties.clear();
     }
 
     protected String createUniqueSubdomain() {
         return String.format("java-ngrok-%s-%s-%s-tcp", UUID.randomUUID(), System.getProperty("java.version").replaceAll("\\.", ""), NgrokInstaller.getSystem().toLowerCase());
+    }
+
+    protected void mockSystemProperty(final String key, final String value) {
+        mockedSystemProperties.put(key, System.getProperty(key));
+
+        System.setProperty(key, value);
     }
 }

@@ -106,7 +106,7 @@ class NgrokInstallerTest extends NgrokTestCase {
     @Test
     public void testGetNgrokBinaryMac() {
         // GIVEN
-        System.setProperty("os.name", "Mac OS X");
+        mockSystemProperty("os.name", "Mac OS X");
 
         // WHEN
         final String ngrokBin = NgrokInstaller.getNgrokBin();
@@ -118,7 +118,7 @@ class NgrokInstallerTest extends NgrokTestCase {
     @Test
     public void testGetNgrokBinaryFreeBSD() {
         // GIVEN
-        System.setProperty("os.name", "FreeBSD");
+        mockSystemProperty("os.name", "FreeBSD");
 
         // WHEN
         final String ngrokBin = NgrokInstaller.getNgrokBin();
@@ -130,7 +130,7 @@ class NgrokInstallerTest extends NgrokTestCase {
     @Test
     public void testGetNgrokBinaryWindows() {
         // GIVEN
-        System.setProperty("os.name", "Windows 10");
+        mockSystemProperty("os.name", "Windows 10");
 
         // WHEN
         final String ngrokBin = NgrokInstaller.getNgrokBin();
@@ -142,7 +142,7 @@ class NgrokInstallerTest extends NgrokTestCase {
     @Test
     public void testGetNgrokBinaryCygwin() {
         // GIVEN
-        System.setProperty("os.name", "Cygwin NT");
+        mockSystemProperty("os.name", "Cygwin NT");
 
         // WHEN
         final String ngrokBin = NgrokInstaller.getNgrokBin();
@@ -154,7 +154,7 @@ class NgrokInstallerTest extends NgrokTestCase {
     @Test
     public void testGetNgrokBinaryUnsupported() {
         // GIVEN
-        System.setProperty("os.name", "Solaris");
+        mockSystemProperty("os.name", "Solaris");
 
         // WHEN
         assertThrows(JavaNgrokInstallerException.class, NgrokInstaller::getNgrokBin);
@@ -163,8 +163,8 @@ class NgrokInstallerTest extends NgrokTestCase {
     @Test
     public void testGetNgrokCDNUrlWindowsi386() {
         // GIVEN
-        System.setProperty("os.name", "Windows 10");
-        System.setProperty("os.arch", "i386");
+        mockSystemProperty("os.name", "Windows 10");
+        mockSystemProperty("os.arch", "i386");
 
         // WHEN
         final NgrokCDNUrl ngrokCDNUrl = ngrokInstaller.getNgrokCDNUrl();
@@ -176,8 +176,8 @@ class NgrokInstallerTest extends NgrokTestCase {
     @Test
     public void testGetNgrokCDNUrlLinuxARM() {
         // GIVEN
-        System.setProperty("os.name", "Linux");
-        System.setProperty("os.arch", "arm x86_64");
+        mockSystemProperty("os.name", "Linux");
+        mockSystemProperty("os.arch", "arm x86_64");
 
         // WHEN
         final NgrokCDNUrl ngrokCDNUrl = ngrokInstaller.getNgrokCDNUrl();

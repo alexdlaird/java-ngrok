@@ -43,9 +43,11 @@ import static java.net.HttpURLConnection.HTTP_NO_CONTENT;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DefaultHttpClientTest extends NgrokTestCase {
 
@@ -92,6 +94,11 @@ class DefaultHttpClientTest extends NgrokTestCase {
         assertEquals("/api/tunnels", getResponse.getBody().getUri());
         assertEquals(1, getResponse.getBody().getTunnels().size());
         assertEquals("my-tunnel", getResponse.getBody().getTunnels().get(0).getName());
+        assertThat(getResponse.getBodyRaw(), containsString("my-tunnel"));
+        assertThat(getResponse.getBodyRaw(), containsString("/api/tunnels/"));
+        assertEquals(4, getResponse.getHeaderFields().size());
+        assertEquals(1, getResponse.getHeaderFields().get("Content-Type").size());
+        assertEquals("application/json", getResponse.getHeaderFields().get("Content-Type").get(0));
     }
 
     @Test
@@ -118,10 +125,10 @@ class DefaultHttpClientTest extends NgrokTestCase {
                 .build();
 
         // WHEN
-        final Response<Tunnels> getResponse = defaultHttpClient.put(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Tunnels.class);
+        final HttpClientException exception = assertThrows(HttpClientException.class, () -> defaultHttpClient.put(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Tunnels.class));
 
         // THEN
-        assertEquals(HTTP_BAD_METHOD, getResponse.getStatusCode());
+        assertEquals(HTTP_BAD_METHOD, exception.getStatusCode());
     }
 
     @Test
