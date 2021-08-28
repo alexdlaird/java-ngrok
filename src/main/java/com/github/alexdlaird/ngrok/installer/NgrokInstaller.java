@@ -137,12 +137,7 @@ public class NgrokInstaller {
      * @param ngrokPath The path to where the <code>ngrok</code> binary will be downloaded.
      */
     public void installNgrok(final Path ngrokPath) {
-        final String arch = getArch();
-        final String system = getSystem();
-        final String plat = String.format("%s_%s", system, arch);
-
-        LOGGER.fine(String.format("Platform to download: %s", plat));
-        final NgrokCDNUrl ngrokCDNUrl = NgrokCDNUrl.valueOf(plat);
+        final NgrokCDNUrl ngrokCDNUrl = getNgrokCDNUrl();
 
         LOGGER.fine(String.format("Installing ngrok to %s%s ...", ngrokPath, Files.exists(ngrokPath) ? ", overwriting" : ""));
 
@@ -150,6 +145,20 @@ public class NgrokInstaller {
         downloadFile(ngrokCDNUrl.getUrl(), ngrokZip);
 
         installNgrokZip(ngrokZip, ngrokPath);
+    }
+
+    /**
+     * Determine the <code>ngrok</code> CDN URL for the current OS and architecture.
+     *
+     * @return The <code>ngrok</code> CDN URL.
+     */
+    public NgrokCDNUrl getNgrokCDNUrl() {
+        final String arch = getArch();
+        final String system = getSystem();
+        final String plat = String.format("%s_%s", system, arch);
+
+        LOGGER.fine(String.format("Platform to download: %s", plat));
+        return NgrokCDNUrl.valueOf(plat);
     }
 
     /**

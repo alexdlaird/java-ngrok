@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -100,5 +101,88 @@ class NgrokInstallerTest extends NgrokTestCase {
     public void testLogLevelWarnNotAllowed() {
         // WHEN
         assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Map.of("log_level", "warn")));
+    }
+
+    @Test
+    public void testGetNgrokBinaryMac() {
+        // GIVEN
+        System.setProperty("os.name", "Mac OS X");
+
+        // WHEN
+        final String ngrokBin = NgrokInstaller.getNgrokBin();
+
+        // THEN
+        assertEquals("ngrok", ngrokBin);
+    }
+
+    @Test
+    public void testGetNgrokBinaryFreeBSD() {
+        // GIVEN
+        System.setProperty("os.name", "FreeBSD");
+
+        // WHEN
+        final String ngrokBin = NgrokInstaller.getNgrokBin();
+
+        // THEN
+        assertEquals("ngrok", ngrokBin);
+    }
+
+    @Test
+    public void testGetNgrokBinaryWindows() {
+        // GIVEN
+        System.setProperty("os.name", "Windows 10");
+
+        // WHEN
+        final String ngrokBin = NgrokInstaller.getNgrokBin();
+
+        // THEN
+        assertEquals("ngrok.exe", ngrokBin);
+    }
+
+    @Test
+    public void testGetNgrokBinaryCygwin() {
+        // GIVEN
+        System.setProperty("os.name", "Cygwin NT");
+
+        // WHEN
+        final String ngrokBin = NgrokInstaller.getNgrokBin();
+
+        // THEN
+        assertEquals("ngrok.exe", ngrokBin);
+    }
+
+    @Test
+    public void testGetNgrokBinaryUnsupported() {
+        // GIVEN
+        System.setProperty("os.name", "Solaris");
+
+        // WHEN
+        assertThrows(JavaNgrokInstallerException.class, NgrokInstaller::getNgrokBin);
+    }
+
+    @Test
+    public void testGetNgrokCDNUrlWindowsi386() {
+        // GIVEN
+        System.setProperty("os.name", "Windows 10");
+        System.setProperty("os.arch", "i386");
+
+        // WHEN
+        final NgrokCDNUrl ngrokCDNUrl = ngrokInstaller.getNgrokCDNUrl();
+
+        // THEN
+        assertEquals(NgrokCDNUrl.WINDOWS_i386, ngrokCDNUrl);
+    }
+
+    @Test
+    public void testGetNgrokCDNUrlLinuxARM() {
+        // GIVEN
+        System.setProperty("os.name", "Linux");
+        System.setProperty("os.arch", "arm x86_64");
+
+        // WHEN
+        final NgrokCDNUrl ngrokCDNUrl = ngrokInstaller.getNgrokCDNUrl();
+
+        // THEN
+        assertEquals(NgrokCDNUrl.LINUX_x86_64_arm, ngrokCDNUrl);
     }
 }

@@ -508,5 +508,15 @@ class NgrokClientTest extends NgrokTestCase {
 
         // THEN
         assertThat(contents, containsString("807ad30a-73be-48d8"));
+        assertFalse(ngrokClient.getNgrokProcess().isRunning());
+    }
+
+    @Test
+    public void testUpdate() {
+        // WHEN
+        ngrokClient.update();
+
+        // THEN
+        assertFalse(ngrokClient.getNgrokProcess().isRunning());
     }
 }

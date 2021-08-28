@@ -37,6 +37,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
+import static java.net.HttpURLConnection.HTTP_BAD_METHOD;
 import static java.net.HttpURLConnection.HTTP_CREATED;
 import static java.net.HttpURLConnection.HTTP_NO_CONTENT;
 import static java.net.HttpURLConnection.HTTP_OK;
@@ -106,6 +107,21 @@ class DefaultHttpClientTest extends NgrokTestCase {
         // THEN
         assertEquals(HTTP_NO_CONTENT, deleteResponse.getStatusCode());
         assertNull(deleteResponse.getBody());
+    }
+
+    @Test
+    public void testPut() {
+        // GIVEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
+                .withName("my-tunnel")
+                .withBindTls(true)
+                .build();
+
+        // WHEN
+        final Response<Tunnels> getResponse = defaultHttpClient.put(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Tunnels.class);
+
+        // THEN
+        assertEquals(HTTP_BAD_METHOD, getResponse.getStatusCode());
     }
 
     @Test
