@@ -419,9 +419,18 @@ class NgrokClientTest extends NgrokTestCase {
 
         // GIVEN
         final String subdomain = createUniqueSubdomain();
-        final Map<String, Object> httpTunnelConfig = Map.of("proto", "http", "addr", "8000", "subdomain", subdomain);
-        final Map<String, Object> tcpTunnelConfig = Map.of("proto", "tcp", "addr", "22");
-        final Map<String, Object> tunnelsConfig = Map.of("http-tunnel", httpTunnelConfig, "tcp-tunnel", tcpTunnelConfig);
+        final Map<String, Object> httpTunnelConfig = Map.of(
+                "proto", "http",
+                "addr", "8000",
+                "subdomain", subdomain,
+                "inspect", Boolean.FALSE,
+                "bind_tls", Boolean.TRUE);
+        final Map<String, Object> tcpTunnelConfig = Map.of(
+                "proto", "tcp",
+                "addr", "22");
+        final Map<String, Object> tunnelsConfig = Map.of(
+                "http-tunnel", httpTunnelConfig,
+                "tcp-tunnel", tcpTunnelConfig);
         final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfig.getConfigPath().getParent().toString(), "config2.yml");
@@ -445,15 +454,18 @@ class NgrokClientTest extends NgrokTestCase {
                 .withName("tcp-tunnel")
                 .build();
         final Tunnel sshTunnel = ngrokClient2.connect(createSshTunnel);
+        final List<Tunnel> tunnels = ngrokClient2.getTunnels();
 
         // THEN
-        assertEquals("http-tunnel (http)", httpTunnel.getName());
+        assertEquals(2, tunnels.size());
+        assertEquals("http-tunnel", httpTunnel.getName());
         assertEquals("http://localhost:8000", httpTunnel.getConfig().getAddr());
-        assertEquals(Proto.HTTP.toString(), httpTunnel.getProto());
-        assertEquals(String.format("http://%s.ngrok.io", subdomain), httpTunnel.getPublicUrl());
+        assertEquals("https", httpTunnel.getProto());
+        assertFalse(httpTunnel.getConfig().isInspect());
+        assertEquals(String.format("https://%s.ngrok.io", subdomain), httpTunnel.getPublicUrl());
         assertEquals("tcp-tunnel", sshTunnel.getName());
         assertEquals("localhost:22", sshTunnel.getConfig().getAddr());
-        assertEquals(Proto.TCP.toString(), sshTunnel.getProto());
+        assertEquals("tcp", sshTunnel.getProto());
         assertThat(sshTunnel.getPublicUrl(), startsWith("tcp://"));
     }
 
@@ -492,11 +504,11 @@ class NgrokClientTest extends NgrokTestCase {
         // THEN
         assertEquals("java-ngrok-default (http)", ngrokTunnel1.getName());
         assertEquals("http://localhost:8080", ngrokTunnel1.getConfig().getAddr());
-        assertEquals(Proto.HTTP.toString(), ngrokTunnel1.getProto());
+        assertEquals("http", ngrokTunnel1.getProto());
         assertEquals(String.format("http://%s.ngrok.io", subdomain1), ngrokTunnel1.getPublicUrl());
         assertEquals("java-ngrok-default (http)", ngrokTunnel2.getName());
         assertEquals("http://localhost:5000", ngrokTunnel2.getConfig().getAddr());
-        assertEquals(Proto.HTTP.toString(), ngrokTunnel2.getProto());
+        assertEquals("http", ngrokTunnel2.getProto());
         assertEquals(String.format("http://%s.ngrok.io", subdomain2), ngrokTunnel2.getPublicUrl());
     }
 

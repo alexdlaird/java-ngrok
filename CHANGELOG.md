@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.5.3...HEAD)
+### Added
+- Test improvements.
+
+### Fixed
+- Parse issue from `ngrok` config file with `inspect` and `bind_tls` in `tunnels` definitions.
 
 ## [1.5.3](https://github.com/alexdlaird/java-ngrok/compare/1.5.0...1.5.3) - 2021-08-26
 ### Added

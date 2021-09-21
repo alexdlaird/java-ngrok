@@ -392,10 +392,10 @@ public class CreateTunnel {
                 this.addr = (String) tunnelDefinition.get("addr");
             }
             if (isNull(this.inspect) && tunnelDefinition.containsKey("inspect")) {
-                this.inspect = Boolean.valueOf((String) tunnelDefinition.get("inspect"));
+                this.inspect = Boolean.valueOf(String.valueOf(tunnelDefinition.get("inspect")));
             }
             if (isNull(this.bindTls) && tunnelDefinition.containsKey("bind_tls")) {
-                this.bindTls = BindTls.valueOf(((String) tunnelDefinition.get("bind_tls")).toUpperCase());
+                this.bindTls = BindTls.valueOf((String.valueOf(tunnelDefinition.get("bind_tls"))).toUpperCase());
             }
             if (isNull(this.auth) && tunnelDefinition.containsKey("auth")) {
                 this.auth = (String) tunnelDefinition.get("auth");
