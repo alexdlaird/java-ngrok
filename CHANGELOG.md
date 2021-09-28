@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.4.4...java8-ngrok)
+
+## [1.4.4](https://github.com/alexdlaird/java-ngrok/compare/1.4.3...1.4.4) - 2021-09-28
+### Added
+- Test improvements.
+
+### Fixed
+- Parse issue from `ngrok` config file with `inspect` and `bind_tls` in `tunnels` definitions.
+- Full `ngrok` log line now passed to Java logger (was previously just the `msg` field).
+
 ## [1.4.3](https://github.com/alexdlaird/java-ngrok/compare/1.4.0...1.4.3) - 2021-08-26
 ### Added
 - Build improvements.

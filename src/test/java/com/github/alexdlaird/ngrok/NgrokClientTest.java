@@ -409,16 +409,18 @@ class NgrokClientTest extends NgrokTestCase {
 
         // GIVEN
         final String subdomain = createUniqueSubdomain();
-        final Map<String, Object> httpTunnelConfig = new HashMap<String, Object>() {{
+        final Map<String, Object> httpTunnelConfig = new HashMap<>() {{
             put("proto", "http");
             put("addr", "8000");
             put("subdomain", subdomain);
+            put("inspect", Boolean.FALSE);
+            put("bind_tls", Boolean.TRUE);
         }};
-        final Map<String, Object> tcpTunnelConfig = new HashMap<String, Object>() {{
+        final Map<String, Object> tcpTunnelConfig = new HashMap<>() {{
             put("proto", "tcp");
             put("addr", "22");
         }};
-        final Map<String, Object> tunnelsConfig = new HashMap<String, Object>() {{
+        final Map<String, Object> tunnelsConfig = new HashMap<>() {{
             put("http-tunnel", httpTunnelConfig);
             put("tcp-tunnel", tcpTunnelConfig);
         }};
@@ -445,15 +447,17 @@ class NgrokClientTest extends NgrokTestCase {
                 .withName("tcp-tunnel")
                 .build();
         final Tunnel sshTunnel = ngrokClient2.connect(createSshTunnel);
+        final List<Tunnel> tunnels = ngrokClient2.getTunnels();
 
         // THEN
-        assertEquals("http-tunnel (http)", httpTunnel.getName());
+        assertEquals(2, tunnels.size());
+        assertEquals("http-tunnel", httpTunnel.getName());
         assertEquals("http://localhost:8000", httpTunnel.getConfig().getAddr());
-        assertEquals(Proto.HTTP.toString(), httpTunnel.getProto());
-        assertEquals(String.format("http://%s.ngrok.io", subdomain), httpTunnel.getPublicUrl());
+        assertEquals("https", httpTunnel.getProto());
+        assertEquals(String.format("https://%s.ngrok.io", subdomain), httpTunnel.getPublicUrl());
         assertEquals("tcp-tunnel", sshTunnel.getName());
         assertEquals("localhost:22", sshTunnel.getConfig().getAddr());
-        assertEquals(Proto.TCP.toString(), sshTunnel.getProto());
+        assertEquals("tcp", sshTunnel.getProto());
         assertThat(sshTunnel.getPublicUrl(), startsWith("tcp://"));
     }
 
