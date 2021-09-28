@@ -409,18 +409,18 @@ class NgrokClientTest extends NgrokTestCase {
 
         // GIVEN
         final String subdomain = createUniqueSubdomain();
-        final Map<String, Object> httpTunnelConfig = new HashMap<>() {{
+        final Map<String, Object> httpTunnelConfig = new HashMap<String, Object>() {{
             put("proto", "http");
             put("addr", "8000");
             put("subdomain", subdomain);
             put("inspect", Boolean.FALSE);
             put("bind_tls", Boolean.TRUE);
         }};
-        final Map<String, Object> tcpTunnelConfig = new HashMap<>() {{
+        final Map<String, Object> tcpTunnelConfig = new HashMap<String, Object>() {{
             put("proto", "tcp");
             put("addr", "22");
         }};
-        final Map<String, Object> tunnelsConfig = new HashMap<>() {{
+        final Map<String, Object> tunnelsConfig = new HashMap<String, Object>() {{
             put("http-tunnel", httpTunnelConfig);
             put("tcp-tunnel", tcpTunnelConfig);
         }};
