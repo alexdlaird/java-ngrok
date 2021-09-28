@@ -446,7 +446,7 @@ public class NgrokProcess {
                 return null;
             }
 
-            LOGGER.log(Level.parse(ngrokLog.getLvl()), ngrokLog.getMsg());
+            LOGGER.log(Level.parse(ngrokLog.getLvl()), ngrokLog.getLine());
             logs.add(ngrokLog);
             if (logs.size() > javaNgrokConfig.getMaxLogs()) {
                 logs.remove(0);
