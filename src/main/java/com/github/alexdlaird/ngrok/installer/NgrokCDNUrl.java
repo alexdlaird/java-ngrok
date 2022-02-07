@@ -29,7 +29,7 @@ package com.github.alexdlaird.ngrok.installer;
 public enum NgrokCDNUrl {
 
     DARWIN_x86_64("ngrok-stable-darwin-amd64.zip"),
-    DARWIN_i386("ngrok-stable-darwin-386.zip"),
+    DARWIN_i386_arm("ngrok-stable-darwin-arm64.zip"),
     WINDOWS_x86_64("ngrok-stable-windows-amd64.zip"),
     WINDOWS_i386("ngrok-stable-windows-386.zip"),
     LINUX_x86_64_arm("ngrok-stable-linux-arm64.zip"),
