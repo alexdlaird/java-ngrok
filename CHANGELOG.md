@@ -3,7 +3,14 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.4.4...java8-ngrok)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.4.5...java8-ngrok)
+
+## [1.4.5](https://github.com/alexdlaird/java-ngrok/compare/1.4.4...1.4.5) - 2022-02-07
+### Added
+- Darwin 64-bit ARM support, as this was added to `ngrok` itself.
+
+### Removed
+- Darwin 386 support, as this was removed from `ngrok` itself.
 
 ## [1.4.4](https://github.com/alexdlaird/java-ngrok/compare/1.4.3...1.4.4) - 2021-09-28
 ### Added
