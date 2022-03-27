@@ -28,18 +28,18 @@ package com.github.alexdlaird.ngrok.installer;
  */
 public enum NgrokCDNUrl {
 
-    DARWIN_x86_64("ngrok-stable-darwin-amd64.zip"),
-    DARWIN_i386_arm("ngrok-stable-darwin-arm64.zip"),
-    WINDOWS_x86_64("ngrok-stable-windows-amd64.zip"),
-    WINDOWS_i386("ngrok-stable-windows-386.zip"),
-    LINUX_x86_64_arm("ngrok-stable-linux-arm64.zip"),
-    LINUX_i386_arm("ngrok-stable-linux-arm.zip"),
-    LINUX_i386("ngrok-stable-linux-386.zip"),
-    LINUX_x86_64("ngrok-stable-linux-amd64.zip"),
-    FREEBSD_x86_64("ngrok-stable-freebsd-amd64.zip"),
-    FREEBSD_i386("ngrok-stable-freebsd-386.zip");
+    DARWIN_x86_64("ngrok-v3-stable-darwin-amd64.zip"),
+    DARWIN_i386_arm("ngrok-v3-stable-darwin-arm64.zip"),
+    WINDOWS_x86_64("ngrok-v3-stable-windows-amd64.zip"),
+    WINDOWS_i386("ngrok-v3-stable-windows-386.zip"),
+    LINUX_x86_64_arm("ngrok-v3-stable-linux-arm64.zip"),
+    LINUX_i386_arm("ngrok-v3-stable-linux-arm.zip"),
+    LINUX_i386("ngrok-v3-stable-linux-386.zip"),
+    LINUX_x86_64("ngrok-v3-stable-linux-amd64.zip"),
+    FREEBSD_x86_64("ngrok-v3-stable-freebsd-amd64.zip"),
+    FREEBSD_i386("ngrok-v3-stable-freebsd-386.zip");
 
-    private static final String CDN_URL_PREFIX = "https://bin.equinox.io/c/4VmDzA7iaHb/";
+    private static final String CDN_URL_PREFIX = "https://bin.equinox.io/c/bNyj1mQVY4c/";
 
     private final String url;
 
