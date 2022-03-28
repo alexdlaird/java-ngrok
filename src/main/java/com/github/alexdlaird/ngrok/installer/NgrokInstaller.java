@@ -114,6 +114,14 @@ public class NgrokInstaller {
             }
 
             final Map<String, Object> config = getNgrokConfig(configPath, false);
+
+            if (!config.containsKey("version")) {
+                config.put("version", "2");
+            }
+            if (!config.containsKey("region")) {
+                config.put("region", "us");
+            }
+
             config.putAll(data);
 
             validateConfig(config);
