@@ -62,9 +62,9 @@ import static java.util.Objects.isNull;
  * {@link JavaNgrokConfig.Builder#withConfigPath(Path)}.
  *
  * <h2>Binary Path</h2>
- * The <code>java-ngrok</code> package manages its own <code>ngrok</code> binary, and is compatible with
- * <code>ngrok</code>> 2.x. We can use our <code>ngrok</code> binary if we want by setting it
- * with {@link JavaNgrokConfig.Builder#withNgrokPath(Path)} and passing that config to {@link NgrokClient}.
+ * The <code>java-ngrok</code> package manages its own <code>ngrok</code> binary. We can use our <code>ngrok</code>
+ * binary if we want by setting it with {@link JavaNgrokConfig.Builder#withNgrokPath(Path)} and passing that config
+ * to {@link NgrokClient}.
  */
 public class NgrokInstaller {
 
