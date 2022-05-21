@@ -82,6 +82,11 @@ see [ngrok's official documentation](https://ngrok.com/docs).
 For more advanced usage, `java-ngrok`'s official documentation is available
 at [https://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok).
 
+### `ngrok` Version Compatibility
+
+`java-ngrok` is compatible with `ngrok` 2.x. If you use `java-ngrok` to manage the `ngrok` binary, there will
+be no issues. But when providing your own binary, or when referencing `ngrok` documentation, ensure it is 2.x.
+
 ## Java 8
 
 Java 8 support is not actively maintained, but a compatible build of this project does exist for Java 8. To use it,
