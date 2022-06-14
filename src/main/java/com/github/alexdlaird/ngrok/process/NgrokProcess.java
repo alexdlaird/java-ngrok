@@ -32,7 +32,7 @@ import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
-import com.github.alexdlaird.util.StringUtils;
+import com.github.alexdlaird.util.NgrokUtils;
 import org.jutils.jprocesses.JProcess;
 import org.jutils.jprocesses.ProcessUtils;
 
@@ -133,14 +133,7 @@ public class NgrokProcess {
             process = processBuilder.start();
             Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
 
-            // Find ngrok process
-            JProcess ngrokProcess = null;
-            for (JProcess p : new ProcessUtils().getThisProcess().childProcesses) {
-                if(StringUtils.containsIgnoreCase(p.name, "ngrok")){
-                    ngrokProcess = p;
-                    break;
-                }
-            }
+            JProcess ngrokProcess = NgrokUtils.getRunningNgrokChildProcess();
             Objects.requireNonNull(ngrokProcess);
             processId = ngrokProcess.pid;
             LOGGER.fine(String.format("ngrok process starting with PID: %s", processId));

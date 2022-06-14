@@ -28,6 +28,7 @@ import com.github.alexdlaird.ngrok.NgrokTestCase;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.util.MapUtils;
+import com.github.alexdlaird.util.NgrokUtils;
 import org.junit.jupiter.api.Test;
 import org.jutils.jprocesses.JProcess;
 import org.jutils.jprocesses.ProcessUtils;
@@ -37,7 +38,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 import java.util.function.Function;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
@@ -120,32 +120,20 @@ public class NgrokProcessTest extends NgrokTestCase {
         assertTrue(ngrokProcess.isRunning());
 
         // WHEN
-        JProcess processHandle = null;
-        for (JProcess p : new ProcessUtils().getProcesses()) {
-            if(p.command != null && p.command.contains(javaNgrokConfig.getNgrokPath().toString())){
-                processHandle = p;
-                break;
-            }
-        }
+        JProcess processHandle = NgrokUtils.getRunningNgrokChildProcess();
 
         // THEN
         assertNotNull(processHandle);
         processHandle.kill();
         long timeoutTime = System.currentTimeMillis() + 10 * 1000;
-        while (ngrokProcess.isRunning() && System.currentTimeMillis() < timeoutTime) {
+        while (processHandle.getExtraInfo().isAlive && ngrokProcess.isRunning() && System.currentTimeMillis() < timeoutTime) {
             Thread.sleep(50);
         }
 
         assertFalse(ngrokProcess.isRunning());
 
         // Check if there is a processHandle for ngrok now
-        processHandle = null;
-        for (JProcess p : new ProcessUtils().getProcesses()) {
-            if(p.command != null && p.command.contains(javaNgrokConfig.getNgrokPath().toString())){
-                processHandle = p;
-                break;
-            }
-        }
+        processHandle = NgrokUtils.getRunningNgrokChildProcess();
         assertNull(processHandle);
 
         // THEN test we can successfully restart the process
