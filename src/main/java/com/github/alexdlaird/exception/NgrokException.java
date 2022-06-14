@@ -71,7 +71,7 @@ public class NgrokException extends JavaNgrokException {
     public NgrokException(final String message, final List<NgrokLog> ngrokLogs) {
         super(message);
 
-        this.ngrokLogs = List.of(ngrokLogs.toArray(new NgrokLog[]{}));
+        this.ngrokLogs = ngrokLogs;
         this.ngrokError = null;
     }
 
@@ -86,7 +86,7 @@ public class NgrokException extends JavaNgrokException {
     public NgrokException(final String message, final List<NgrokLog> ngrokLogs, final String ngrokError) {
         super(message);
 
-        this.ngrokLogs = List.of(ngrokLogs.toArray(new NgrokLog[]{}));
+        this.ngrokLogs = ngrokLogs;
         this.ngrokError = ngrokError;
     }
 

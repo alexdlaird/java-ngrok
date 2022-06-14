@@ -23,6 +23,8 @@
 
 package com.github.alexdlaird.ngrok.process;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,7 +53,7 @@ public class NgrokLog extends HashMap<String, String> {
      * @param line The raw log line from <code>ngrok</code>.
      */
     public NgrokLog(final String line) {
-        this.line = line.strip();
+        this.line = StringUtils.strip(line);
 
         for (final String i : shellSplit(this.line)) {
             final String[] split = i.split("=", 2);

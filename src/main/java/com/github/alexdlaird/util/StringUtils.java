@@ -93,4 +93,8 @@ public class StringUtils {
 
         return true;
     }
+
+    public static boolean containsIgnoreCase(String s, String query){
+        return s.toLowerCase().contains(query.toLowerCase());
+    }
 }

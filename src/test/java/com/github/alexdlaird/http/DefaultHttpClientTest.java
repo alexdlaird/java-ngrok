@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -150,8 +151,8 @@ class DefaultHttpClientTest extends NgrokTestCase {
 
         // WHEN
         final Response<CapturedRequests> response1 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), CapturedRequests.class);
-        final Response<CapturedRequests> response2 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), List.of(new Parameter("tunnel_name", "my-tunnel")), Collections.emptyMap(), CapturedRequests.class);
-        final Response<CapturedRequests> response3 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), List.of(new Parameter("tunnel_name", "my-tunnel (http)")), Collections.emptyMap(), CapturedRequests.class);
+        final Response<CapturedRequests> response2 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), Arrays.asList(new Parameter("tunnel_name", "my-tunnel")), Collections.emptyMap(), CapturedRequests.class);
+        final Response<CapturedRequests> response3 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), Arrays.asList(new Parameter("tunnel_name", "my-tunnel (http)")), Collections.emptyMap(), CapturedRequests.class);
 
         // THEN
         assertEquals(HTTP_OK, response1.getStatusCode());

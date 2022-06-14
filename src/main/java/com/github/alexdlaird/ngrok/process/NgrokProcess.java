@@ -32,15 +32,15 @@ import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
+import com.github.alexdlaird.util.StringUtils;
+import org.jutils.jprocesses.JProcess;
+import org.jutils.jprocesses.ProcessUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -61,6 +61,7 @@ public class NgrokProcess {
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokInstaller ngrokInstaller;
     private Process process;
+    private String processId;
     private ProcessMonitor processMonitor;
 
     /**
@@ -132,7 +133,17 @@ public class NgrokProcess {
             process = processBuilder.start();
             Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
 
-            LOGGER.fine(String.format("ngrok process starting with PID: %s", process.pid()));
+            // Find ngrok process
+            JProcess ngrokProcess = null;
+            for (JProcess p : new ProcessUtils().getThisProcess().childProcesses) {
+                if(StringUtils.containsIgnoreCase(p.name, "ngrok")){
+                    ngrokProcess = p;
+                    break;
+                }
+            }
+            Objects.requireNonNull(ngrokProcess);
+            processId = ngrokProcess.pid;
+            LOGGER.fine(String.format("ngrok process starting with PID: %s", processId));
 
             processMonitor = new ProcessMonitor(process, javaNgrokConfig);
             new Thread(processMonitor).start();
@@ -163,7 +174,7 @@ public class NgrokProcess {
                     throw new NgrokException("The ngrok process was unable to start.", processMonitor.logs);
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             throw new NgrokException("An error occurred while starting ngrok.", e);
         }
     }
@@ -186,10 +197,21 @@ public class NgrokProcess {
             return;
         }
 
-        LOGGER.info(String.format("Killing ngrok process: %s", process.pid()));
+        LOGGER.info(String.format("Killing ngrok process: %s", processId));
 
         processMonitor.stop();
-        process.descendants().forEach(ProcessHandle::destroy);
+        try {
+            for (JProcess p : new ProcessUtils().getProcesses()) {
+                if(p.pid.equals(processId)){
+                    for (JProcess pChild : p.childProcesses) {
+                        pChild.stop();
+                    }
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         process.destroy();
 
         process = null;
@@ -269,7 +291,7 @@ public class NgrokProcess {
         processBuilder.redirectErrorStream(true);
         processBuilder.inheritIO().redirectOutput(ProcessBuilder.Redirect.PIPE);
 
-        final List<String> command = List.of(javaNgrokConfig.getNgrokPath().toString(), "update", "--log=stdout");
+        final List<String> command = Arrays.asList(javaNgrokConfig.getNgrokPath().toString(), "update", "--log=stdout");
 
         processBuilder.command(command);
         try {
@@ -290,7 +312,7 @@ public class NgrokProcess {
         processBuilder.redirectErrorStream(true);
         processBuilder.inheritIO().redirectOutput(ProcessBuilder.Redirect.PIPE);
 
-        final List<String> command = List.of(javaNgrokConfig.getNgrokPath().toString(), "--version");
+        final List<String> command = Arrays.asList(javaNgrokConfig.getNgrokPath().toString(), "--version");
 
         processBuilder.command(command);
         try {
@@ -387,7 +409,7 @@ public class NgrokProcess {
          * Get the <code>ngrok</code> logs.
          */
         public List<NgrokLog> getLogs() {
-            return List.of(logs.toArray(new NgrokLog[]{}));
+            return Arrays.asList(logs.toArray(new NgrokLog[]{}));
         }
 
         /**

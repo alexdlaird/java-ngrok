@@ -36,16 +36,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -74,11 +72,11 @@ public class NgrokInstaller {
     public static final String WINDOWS = "WINDOWS";
     public static final String LINUX = "LINUX";
     public static final String FREEBSD = "FREEBSD";
-    public static final List<String> UNIX_BINARIES = List.of(MAC, LINUX, FREEBSD);
+    public static final List<String> UNIX_BINARIES = Arrays.asList(MAC, LINUX, FREEBSD);
     public static final Path DEFAULT_NGROK_PATH = Paths.get(System.getProperty("user.home"), ".ngrok2", NgrokInstaller.getNgrokBin());
     public static final Path DEFAULT_CONFIG_PATH = Paths.get(System.getProperty("user.home"), ".ngrok2", "ngrok.yml");
 
-    private static final List<String> VALID_LOG_LEVELS = List.of("info", "debug");
+    private static final List<String> VALID_LOG_LEVELS = Arrays.asList("info", "debug");
 
     private final Yaml yaml = new Yaml();
 
@@ -220,7 +218,7 @@ public class NgrokInstaller {
     public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache) {
         if (isNull(configCache) || !useCache) {
             try {
-                final String config = Files.readString(configPath);
+                final String config = new String(Files.readAllBytes(configPath), StandardCharsets.UTF_8);
 
                 if (isBlank(config)) {
                     configCache = new HashMap<>();

@@ -33,12 +33,14 @@ import com.github.alexdlaird.ngrok.protocol.Proto;
 import com.github.alexdlaird.ngrok.protocol.Region;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Version;
+import com.github.alexdlaird.util.MapUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -419,19 +421,19 @@ class NgrokClientTest extends NgrokTestCase {
 
         // GIVEN
         final String subdomain = createUniqueSubdomain();
-        final Map<String, Object> httpTunnelConfig = Map.of(
+        final Map<String, Object> httpTunnelConfig = MapUtils.of(
                 "proto", "http",
                 "addr", "8000",
                 "subdomain", subdomain,
                 "inspect", Boolean.FALSE,
                 "bind_tls", Boolean.TRUE);
-        final Map<String, Object> tcpTunnelConfig = Map.of(
+        final Map<String, Object> tcpTunnelConfig = MapUtils.of(
                 "proto", "tcp",
                 "addr", "22");
-        final Map<String, Object> tunnelsConfig = Map.of(
+        final Map<String, Object> tunnelsConfig = MapUtils.of(
                 "http-tunnel", httpTunnelConfig,
                 "tcp-tunnel", tcpTunnelConfig);
-        final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
+        final Map<String, Object> config = MapUtils.of("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfig.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config);
@@ -476,9 +478,9 @@ class NgrokClientTest extends NgrokTestCase {
 
         // GIVEN
         final String subdomain1 = createUniqueSubdomain();
-        final Map<String, Object> defaultTunnelConfig = Map.of("proto", "http", "addr", "8080", "subdomain", subdomain1);
-        final Map<String, Object> tunnelsConfig = Map.of("java-ngrok-default", defaultTunnelConfig);
-        final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
+        final Map<String, Object> defaultTunnelConfig = MapUtils.of("proto", "http", "addr", "8080", "subdomain", subdomain1);
+        final Map<String, Object> tunnelsConfig = MapUtils.of("java-ngrok-default", defaultTunnelConfig);
+        final Map<String, Object> config = MapUtils.of("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfig.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config);
@@ -516,7 +518,7 @@ class NgrokClientTest extends NgrokTestCase {
     public void testSetAuthToken() throws IOException {
         // WHEN
         ngrokClient.setAuthToken("807ad30a-73be-48d8");
-        final String contents = Files.readString(javaNgrokConfig.getConfigPath());
+        final String contents = new String(Files.readAllBytes(javaNgrokConfig.getConfigPath()), StandardCharsets.UTF_8);
 
         // THEN
         assertThat(contents, containsString("807ad30a-73be-48d8"));
