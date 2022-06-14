@@ -12,11 +12,13 @@ public class NgrokUtils {
         for (int i = 0; i < 10; i++) {
             Thread.sleep(500); // Timeout to ensure the process is shown if it was just created
             for (JProcess p : new ProcessUtils().getThisProcess().childProcesses) {
+                System.out.println(p.toPrintString());
                 if(StringUtils.containsIgnoreCase(p.name, "ngrok")){
                     process = p;
                     break;
                 }
             }
+            if(process!=null) break;
         }
         return process;
     }
