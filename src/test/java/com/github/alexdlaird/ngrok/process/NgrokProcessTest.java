@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.util.function.Function;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
@@ -114,13 +115,13 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testExternalKill() throws InterruptedException, IOException {
+    public void testExternalKill() throws InterruptedException, IOException, ParseException {
         // GIVEN
         ngrokProcess.start();
         assertTrue(ngrokProcess.isRunning());
 
         // WHEN
-        JProcess processHandle = NgrokUtils.getRunningNgrokChildProcess();
+        JProcess processHandle = NgrokUtils.getRunningNgrokChildProcess(System.currentTimeMillis());
 
         // THEN
         assertNotNull(processHandle);
@@ -133,7 +134,7 @@ public class NgrokProcessTest extends NgrokTestCase {
         assertFalse(ngrokProcess.isRunning());
 
         // Check if there is a processHandle for ngrok now
-        processHandle = NgrokUtils.getRunningNgrokChildProcess();
+        processHandle = NgrokUtils.getRunningNgrokChildProcess(System.currentTimeMillis());
         assertNull(processHandle);
 
         // THEN test we can successfully restart the process

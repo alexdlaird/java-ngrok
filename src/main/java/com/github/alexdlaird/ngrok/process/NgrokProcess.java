@@ -40,6 +40,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -136,9 +137,7 @@ public class NgrokProcess {
         processBuilder.command(command);
         try {
             process = processBuilder.start();
-            Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
-
-            JProcess ngrokProcess = NgrokUtils.getRunningNgrokChildProcess();
+            JProcess ngrokProcess = NgrokUtils.getRunningNgrokChildProcess(System.currentTimeMillis());
             Objects.requireNonNull(ngrokProcess);
             processId = ngrokProcess.pid;
             LOGGER.fine(String.format("ngrok process starting with PID: %s", processId));
@@ -172,9 +171,10 @@ public class NgrokProcess {
                     throw new NgrokException("The ngrok process was unable to start.", processMonitor.logs);
                 }
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ParseException e) {
             throw new NgrokException("An error occurred while starting ngrok.", e);
         }
+        Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
     }
 
     /**
