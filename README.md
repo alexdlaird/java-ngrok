@@ -7,7 +7,7 @@
 [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Check+out+java-ngrok%2C+a+Java+wrapper+for+%23ngrok+that+lets+you+programmatically+open+secure+%23tunnels+to+local+web+servers%2C+build+%23webhook+integrations%2C+enable+SSH+access%2C+test+chatbots%2C+demo+from+your+own+machine%2C+and+more.%0D%0A%0D%0A&url=https://github.com/alexdlaird/java-ngrok&via=alexdlaird)
 
 `java-ngrok` is a Java wrapper for `ngrok` that manages its own binary, making `ngrok` available via a convenient Java
-API.
+API. This is a fork of latest `java-ngrok` that supports Java 8.
 
 [ngrok](https://ngrok.com) is a reverse proxy tool that opens secure tunnels from public URLs to localhost, perfect for
 exposing local web servers, building webhook integrations, enabling SSH access, testing chatbots, demoing from your own
@@ -16,26 +16,7 @@ machine, and more, and its made even more powerful with native Java integration 
 ## Installation
 
 `java-ngrok` is available
-on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/).
-
-#### Maven
-
-```xml
-<dependency>
-    <groupId>com.github.alexdlaird</groupId>
-    <artifactId>java-ngrok</artifactId>
-    <version>1.5.6</version>
-</dependency>
-```
-
-#### Gradle
-
-```groovy
-implementation "com.github.alexdlaird:java-ngrok:1.5.6"
-```
-
-If we want `ngrok` to be available from the command line, [pyngrok](https://github.com/alexdlaird/pyngrok) can be
-installed using `pip` to manage that for us.
+on [JitPack](https://jitpack.io/#Osiris-Team/java-ngrok), for Java 8 or higher.
 
 ## Basic Usage
 
@@ -86,24 +67,6 @@ at [https://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/
 
 `java-ngrok` is compatible with `ngrok` 2.x. If you use `java-ngrok` to manage the `ngrok` binary, there will
 be no issues. But when providing your own binary, or when referencing `ngrok` documentation, ensure it is 2.x.
-
-## Java 8
-
-Java 8 support is not actively maintained, but a compatible build of this project does exist for Java 8. To use it,
-include the `java8-ngrok` dependency from
-[Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/) instead.
-
-```xml
-<dependency>
-    <groupId>com.github.alexdlaird</groupId>
-    <artifactId>java8-ngrok</artifactId>
-    <version>1.4.5</version>
-</dependency>
-```
-
-The [Process API](https://docs.oracle.com/javase/9/docs/api/java/lang/ProcessHandle.html) was introduced in Java 9, so
-certain convenience methods around managing the `ngrok` process (for instance, tearing it down) are not available in
-the Java 8 build.
 
 ## Contributing
 
