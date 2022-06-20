@@ -1,6 +1,6 @@
 <p align="center"><img alt="java-ngrok - a Java wrapper for ngrok" src="https://github.com/alexdlaird/java-ngrok/raw/main/logo.png" /></p>
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/)
+[![](https://jitpack.io/v/Osiris-Team/java-ngrok.svg)](https://jitpack.io/#Osiris-Team/java-ngrok)
 [![CI/CD](https://github.com/alexdlaird/java-ngrok/workflows/CI/CD/badge.svg)](https://github.com/alexdlaird/java-ngrok/actions?query=workflow%3ACI%2FCD)
 [![Codecov](https://codecov.io/gh/alexdlaird/java-ngrok/branch/main/graph/badge.svg)](https://codecov.io/gh/alexdlaird/java-ngrok)
 ![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)
