@@ -36,6 +36,7 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import static java.util.Objects.nonNull;
@@ -83,7 +84,8 @@ public class NgrokTestCase {
     }
 
     protected String createUniqueSubdomain() {
-        return String.format("java-ngrok-%s-%s-%s-tcp", UUID.randomUUID(), System.getProperty("java.version").replaceAll("\\.", ""), NgrokInstaller.getSystem().toLowerCase());
+        Random random = new Random();
+        return String.format("java-ngrok-%s-%s-%s-tcp", random.longs(1000000000000000L, 9999999999999999L).findFirst().getAsLong(), System.getProperty("java.version").replaceAll("\\.", ""), NgrokInstaller.getSystem().toLowerCase());
     }
 
     protected void mockSystemProperty(final String key, final String value) {
