@@ -139,13 +139,21 @@ public class NgrokInstaller {
     }
 
     /**
+     * See {@link #installNgrok(Path, NgrokVersion)}.
+     */
+    public void installNgrok(final Path ngrokPath) {
+        installNgrok(ngrokPath, NgrokVersion.V3);
+    }
+
+    /**
      * Download and install the latest <code>ngrok</code> for the current system, overwriting any existing contents
      * at the given path.
      *
-     * @param ngrokPath The path to where the <code>ngrok</code> binary will be downloaded.
+     * @param ngrokPath    The path to where the <code>ngrok</code> binary will be downloaded.
+     * @param ngrokVersion The major <code>ngrok</code> version to install.
      */
-    public void installNgrok(final Path ngrokPath) {
-        final NgrokCDNUrl ngrokCDNUrl = getNgrokCDNUrl();
+    public void installNgrok(final Path ngrokPath, final NgrokVersion ngrokVersion) {
+        final NgrokCDNUrl ngrokCDNUrl = getNgrokCDNUrl(ngrokVersion);
 
         LOGGER.fine(String.format("Installing ngrok to %s%s ...", ngrokPath, Files.exists(ngrokPath) ? ", overwriting" : ""));
 
@@ -156,17 +164,29 @@ public class NgrokInstaller {
     }
 
     /**
-     * Determine the <code>ngrok</code> CDN URL for the current OS and architecture.
-     *
-     * @return The <code>ngrok</code> CDN URL.
+     * See {@link #getNgrokCDNUrl}.
      */
     public NgrokCDNUrl getNgrokCDNUrl() {
+        return getNgrokCDNUrl(NgrokVersion.V3);
+    }
+
+    /**
+     * Determine the <code>ngrok</code> CDN URL for the current OS and architecture.
+     *
+     * @param ngrokVersion The major version of <code>ngrok</code> to install.
+     * @return The <code>ngrok</code> CDN URL.
+     */
+    public NgrokCDNUrl getNgrokCDNUrl(NgrokVersion ngrokVersion) {
         final String arch = getArch();
         final String system = getSystem();
         final String plat = String.format("%s_%s", system, arch);
 
         LOGGER.fine(String.format("Platform to download: %s", plat));
-        return NgrokCDNUrl.valueOf(plat);
+        if (ngrokVersion == NgrokVersion.V2) {
+            return NgrokV2CDNUrl.valueOf(plat);
+        } else {
+            return NgrokV3CDNUrl.valueOf(plat);
+        }
     }
 
     /**

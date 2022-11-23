@@ -46,14 +46,7 @@ class NgrokInstallerTest extends NgrokTestCase {
     @Test
     public void testInstallNgrok() throws IOException, InterruptedException {
         // GIVEN
-        if (Files.exists(javaNgrokConfig.getNgrokPath())) {
-            // Due to Windows file locking behavior, wait a beat
-            if (NgrokInstaller.getSystem().equals(WINDOWS)) {
-                Thread.sleep(1000);
-            }
-            Files.delete(javaNgrokConfig.getNgrokPath());
-        }
-        assertFalse(Files.exists(javaNgrokConfig.getNgrokPath()));
+        givenNgrokNotInstalled();
 
         // WHEN
         ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath());
@@ -170,7 +163,7 @@ class NgrokInstallerTest extends NgrokTestCase {
         final NgrokCDNUrl ngrokCDNUrl = ngrokInstaller.getNgrokCDNUrl();
 
         // THEN
-        assertEquals(NgrokCDNUrl.WINDOWS_i386, ngrokCDNUrl);
+        assertEquals(NgrokV3CDNUrl.WINDOWS_i386, ngrokCDNUrl);
     }
 
     @Test
@@ -183,6 +176,6 @@ class NgrokInstallerTest extends NgrokTestCase {
         final NgrokCDNUrl ngrokCDNUrl = ngrokInstaller.getNgrokCDNUrl();
 
         // THEN
-        assertEquals(NgrokCDNUrl.LINUX_x86_64_arm, ngrokCDNUrl);
+        assertEquals(NgrokV3CDNUrl.LINUX_x86_64_arm, ngrokCDNUrl);
     }
 }

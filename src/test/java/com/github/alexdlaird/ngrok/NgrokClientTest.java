@@ -26,6 +26,8 @@ package com.github.alexdlaird.ngrok;
 import com.github.alexdlaird.exception.JavaNgrokHTTPException;
 import com.github.alexdlaird.http.Response;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
+import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import com.github.alexdlaird.ngrok.protocol.BindTls;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
@@ -84,8 +86,52 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testConnect() {
+    public void testConnect_V2() throws IOException, InterruptedException {
         // GIVEN
+        givenNgrokNotInstalled();
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfig)
+                .withVersion(NgrokVersion.V2)
+                .build();
+        ngrokProcess2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+        final NgrokClient ngrokClient2 = new NgrokClient.Builder()
+                .withJavaNgrokConfig(javaNgrokConfig2)
+                .withNgrokProcess(ngrokProcess2)
+                .build();
+        assertFalse(ngrokProcess2.isRunning());
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withAddr(5000)
+                .build();
+
+        // WHEN
+        final Tunnel tunnel = ngrokClient2.connect(createTunnel);
+
+        // THEN
+        assertTrue(ngrokProcess2.getVersion().startsWith("2"));
+        assertTrue(ngrokClient2.getNgrokProcess().isRunning());
+        assertThat(tunnel.getName(), startsWith("http-5000-"));
+        assertEquals("http", tunnel.getProto());
+        assertEquals("http://localhost:5000", tunnel.getConfig().getAddr());
+        assertTrue(tunnel.getConfig().isInspect());
+        assertNotNull(tunnel.getPublicUrl());
+        assertThat(tunnel.getPublicUrl(), startsWith("http://"));
+        assertNotNull(tunnel.getMetrics());
+        assertThat(tunnel.getMetrics(), hasKey("conns"));
+        assertEquals(0, tunnel.getMetrics().get("conns").getCount());
+        assertEquals(0, tunnel.getMetrics().get("conns").getGauge());
+        assertEquals(0, tunnel.getMetrics().get("conns").getP50());
+        assertEquals(0, tunnel.getMetrics().get("conns").getP90());
+        assertEquals(0, tunnel.getMetrics().get("conns").getP95());
+        assertEquals(0, tunnel.getMetrics().get("conns").getP99());
+        assertEquals(0, tunnel.getMetrics().get("conns").getRate1());
+        assertEquals(0, tunnel.getMetrics().get("conns").getRate5());
+        assertEquals(0, tunnel.getMetrics().get("conns").getRate15());
+    }
+
+    @Test
+    public void testConnect() throws IOException, InterruptedException {
+        // GIVEN
+        givenNgrokNotInstalled();
+        ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath());
         assertFalse(ngrokClient.getNgrokProcess().isRunning());
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withAddr(5000)
@@ -95,6 +141,7 @@ class NgrokClientTest extends NgrokTestCase {
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
 
         // THEN
+        assertTrue(ngrokProcess.getVersion().startsWith("3"));
         assertTrue(ngrokClient.getNgrokProcess().isRunning());
         assertThat(tunnel.getName(), startsWith("http-5000-"));
         assertEquals("http", tunnel.getProto());

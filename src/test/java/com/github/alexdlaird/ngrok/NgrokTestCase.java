@@ -38,7 +38,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
 import static java.util.Objects.nonNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class NgrokTestCase {
 
@@ -80,6 +82,17 @@ public class NgrokTestCase {
             System.setProperty(entry.getKey(), entry.getValue());
         }
         mockedSystemProperties.clear();
+    }
+
+    protected void givenNgrokNotInstalled() throws InterruptedException, IOException {
+        if (Files.exists(javaNgrokConfig.getNgrokPath())) {
+            // Due to Windows file locking behavior, wait a beat
+            if (NgrokInstaller.getSystem().equals(WINDOWS)) {
+                Thread.sleep(1000);
+            }
+            Files.delete(javaNgrokConfig.getNgrokPath());
+        }
+        assertFalse(Files.exists(javaNgrokConfig.getNgrokPath()));
     }
 
     protected String createUniqueSubdomain() {

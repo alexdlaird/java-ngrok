@@ -77,7 +77,7 @@ public class NgrokProcess {
         this.ngrokInstaller = ngrokInstaller;
 
         if (!Files.exists(javaNgrokConfig.getNgrokPath())) {
-            ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath());
+            ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath(), javaNgrokConfig.getNgrokVersion());
         }
         if (!Files.exists(javaNgrokConfig.getConfigPath())) {
             ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Collections.emptyMap());
@@ -90,10 +90,6 @@ public class NgrokProcess {
      * destroy tunnels.
      */
     public void start() {
-        start(0);
-    }
-
-    private void start(final int retries) {
         if (isRunning()) {
             return;
         }

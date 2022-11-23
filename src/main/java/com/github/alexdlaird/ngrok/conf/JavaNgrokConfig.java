@@ -24,6 +24,7 @@
 package com.github.alexdlaird.ngrok.conf;
 
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokLog;
 import com.github.alexdlaird.ngrok.protocol.Region;
 
@@ -62,6 +63,7 @@ public class JavaNgrokConfig {
     private final int maxLogs;
     private final Function<NgrokLog, Void> logEventCallback;
     private final int startupTimeout;
+    private final NgrokVersion ngrokVersion;
 
     private JavaNgrokConfig(final Builder builder) {
         this.ngrokPath = builder.ngrokPath;
@@ -72,6 +74,7 @@ public class JavaNgrokConfig {
         this.maxLogs = builder.maxLogs;
         this.logEventCallback = builder.logEventCallback;
         this.startupTimeout = builder.startupTimeout;
+        this.ngrokVersion = builder.ngrokVersion;
     }
 
     /**
@@ -131,6 +134,13 @@ public class JavaNgrokConfig {
     }
 
     /**
+     * Get the major <code>ngrok</code> version to be used.
+     */
+    public NgrokVersion getNgrokVersion() {
+        return ngrokVersion;
+    }
+
+    /**
      * Builder for a {@link JavaNgrokConfig}, see docs for that class for example usage.
      */
     public static class Builder {
@@ -143,6 +153,7 @@ public class JavaNgrokConfig {
         private int maxLogs = 100;
         private Function<NgrokLog, Void> logEventCallback;
         private int startupTimeout = 15;
+        private NgrokVersion ngrokVersion = NgrokVersion.V3;
 
         public Builder() {
         }
@@ -161,6 +172,7 @@ public class JavaNgrokConfig {
             this.maxLogs = javaNgrokConfig.maxLogs;
             this.logEventCallback = javaNgrokConfig.logEventCallback;
             this.startupTimeout = javaNgrokConfig.startupTimeout;
+            this.ngrokVersion = javaNgrokConfig.ngrokVersion;
         }
 
         /**
@@ -234,6 +246,14 @@ public class JavaNgrokConfig {
             }
 
             this.startupTimeout = startupTimeout;
+            return this;
+        }
+
+        /**
+         * The major version of <code<ngrok</code> to be used.
+         */
+        public Builder withVersion(final NgrokVersion ngrokVersion) {
+            this.ngrokVersion = ngrokVersion;
             return this;
         }
 
