@@ -65,7 +65,7 @@ class NgrokInstallerTest extends NgrokTestCase {
         givenNgrokNotInstalled(javaNgrokConfigV3);
 
         // WHEN
-        ngrokInstaller.installNgrok(javaNgrokConfigV3.getNgrokPath());
+        ngrokInstaller.installNgrok(javaNgrokConfigV3.getNgrokPath(), javaNgrokConfigV3.getNgrokVersion());
         ngrokProcessV2 = new NgrokProcess(javaNgrokConfigV3, ngrokInstaller);
 
         // THEN

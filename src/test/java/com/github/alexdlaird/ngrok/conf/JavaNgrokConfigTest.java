@@ -23,6 +23,7 @@
 
 package com.github.alexdlaird.ngrok.conf;
 
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokLog;
 import com.github.alexdlaird.ngrok.protocol.Region;
 import org.junit.jupiter.api.Test;
@@ -53,6 +54,7 @@ public class JavaNgrokConfigTest {
                 .withMaxLogs(50)
                 .withLogEventCallback(logEventCallback)
                 .withStartupTimeout(5)
+                .withNgrokVersion(NgrokVersion.V2)
                 .build();
 
         // THEN
@@ -64,6 +66,7 @@ public class JavaNgrokConfigTest {
         assertEquals(50, javaNgrokConfig.getMaxLogs());
         assertEquals(logEventCallback, javaNgrokConfig.getLogEventCallback());
         assertEquals(5, javaNgrokConfig.getStartupTime());
+        assertEquals(NgrokVersion.V2, javaNgrokConfig.getNgrokVersion());
     }
 
     @Test

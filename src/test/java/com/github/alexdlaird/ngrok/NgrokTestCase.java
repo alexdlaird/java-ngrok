@@ -45,19 +45,19 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class NgrokTestCase {
 
-    protected JavaNgrokConfig javaNgrokConfigV2 = new JavaNgrokConfig.Builder()
+    protected final JavaNgrokConfig javaNgrokConfigV2 = new JavaNgrokConfig.Builder()
             .withConfigPath(Paths.get("build", ".ngrok2", "config_v2.yml").toAbsolutePath())
             .withNgrokPath(Paths.get("build", "bin", "v2", getNgrokBin()))
             .withNgrokVersion(NgrokVersion.V2)
             .build();
 
-    protected JavaNgrokConfig javaNgrokConfigV3 = new JavaNgrokConfig.Builder()
+    protected final JavaNgrokConfig javaNgrokConfigV3 = new JavaNgrokConfig.Builder()
             .withConfigPath(Paths.get("build", ".ngrok2", "config_v3.yml").toAbsolutePath())
             .withNgrokPath(Paths.get("build", "bin", "v3", getNgrokBin()))
             .withNgrokVersion(NgrokVersion.V3)
             .build();
 
-    protected NgrokInstaller ngrokInstaller = new NgrokInstaller();
+    protected final NgrokInstaller ngrokInstaller = new NgrokInstaller();
 
     protected NgrokProcess ngrokProcessV2;
 
@@ -67,7 +67,7 @@ public class NgrokTestCase {
 
     protected NgrokProcess ngrokProcessV3_2;
 
-    private Map<String, String> mockedSystemProperties = new HashMap<>();
+    private final Map<String, String> mockedSystemProperties = new HashMap<>();
 
     @BeforeEach
     public void setUp() {
@@ -87,16 +87,8 @@ public class NgrokTestCase {
             ngrokProcessV3_2.stop();
         }
 
+        // This deletes all v2 and v3 configs
         Files.walk(javaNgrokConfigV2.getConfigPath().getParent())
-                .sorted(Comparator.reverseOrder())
-                .forEach((path) -> {
-                    try {
-                        Files.delete(path);
-                    } catch (IOException e) {
-                        throw new JavaNgrokException(String.format("An error occurred cleaning up file %s when testing.", path));
-                    }
-                });
-        Files.walk(javaNgrokConfigV3.getConfigPath().getParent())
                 .sorted(Comparator.reverseOrder())
                 .forEach((path) -> {
                     try {

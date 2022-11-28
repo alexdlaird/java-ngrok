@@ -100,13 +100,20 @@ public class NgrokInstaller {
     }
 
     /**
+     * See {@link #installDefaultConfig(Path, Map, NgrokVersion)}.
+     */
+    public void installDefaultConfig(final Path configPath, final Map<String, Object> data) {
+        installDefaultConfig(configPath, data, NgrokVersion.V2);
+    }
+
+    /**
      * Install the default <code>ngrok</code> config. If a config is not already present for the given path,
      * create one.
      *
      * @param configPath The path to where the <code>ngrok</code> config should be installed.
      * @param data       A map of things to add to the default config.
      */
-    public void installDefaultConfig(final Path configPath, Map<String, Object> data) {
+    public void installDefaultConfig(final Path configPath, final Map<String, Object> data, final NgrokVersion ngrokVersion) {
         try {
             Files.createDirectories(configPath.getParent());
             if (!Files.exists(configPath)) {
@@ -115,11 +122,13 @@ public class NgrokInstaller {
 
             final Map<String, Object> config = getNgrokConfig(configPath, false);
 
-            if (!config.containsKey("version")) {
-                config.put("version", "2");
-            }
-            if (!config.containsKey("region")) {
-                config.put("region", "us");
+            if (ngrokVersion == NgrokVersion.V3) {
+                if (!config.containsKey("version")) {
+                    config.put("version", "2");
+                }
+                if (!config.containsKey("region")) {
+                    config.put("region", "us");
+                }
             }
 
             config.putAll(data);
@@ -142,7 +151,7 @@ public class NgrokInstaller {
      * See {@link #installNgrok(Path, NgrokVersion)}.
      */
     public void installNgrok(final Path ngrokPath) {
-        installNgrok(ngrokPath, NgrokVersion.V3);
+        installNgrok(ngrokPath, NgrokVersion.V2);
     }
 
     /**
@@ -155,7 +164,7 @@ public class NgrokInstaller {
     public void installNgrok(final Path ngrokPath, final NgrokVersion ngrokVersion) {
         final NgrokCDNUrl ngrokCDNUrl = getNgrokCDNUrl(ngrokVersion);
 
-        LOGGER.fine(String.format("Installing ngrok to %s%s ...", ngrokPath, Files.exists(ngrokPath) ? ", overwriting" : ""));
+        LOGGER.fine(String.format("Installing ngrok %s to %s%s ...", ngrokVersion, ngrokPath, Files.exists(ngrokPath) ? ", overwriting" : ""));
 
         final Path ngrokZip = Paths.get(ngrokPath.getParent().toString(), "ngrok.zip");
         downloadFile(ngrokCDNUrl.getUrl(), ngrokZip);
