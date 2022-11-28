@@ -23,8 +23,6 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
-import com.github.alexdlaird.exception.JavaNgrokHTTPException;
-import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

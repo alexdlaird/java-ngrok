@@ -38,7 +38,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.UUID;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.*;
 import static java.util.Objects.nonNull;

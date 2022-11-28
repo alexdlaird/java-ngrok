@@ -26,7 +26,6 @@ package com.github.alexdlaird.ngrok.installer;
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokInstallerException;
 import com.github.alexdlaird.ngrok.NgrokTestCase;
-import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import org.junit.jupiter.api.Test;
 
