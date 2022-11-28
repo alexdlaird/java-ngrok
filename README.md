@@ -24,14 +24,14 @@ on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.a
 <dependency>
     <groupId>com.github.alexdlaird</groupId>
     <artifactId>java-ngrok</artifactId>
-    <version>1.5.6</version>
+    <version>1.6.0</version>
 </dependency>
 ```
 
 #### Gradle
 
 ```groovy
-implementation "com.github.alexdlaird:java-ngrok:1.5.6"
+implementation "com.github.alexdlaird:java-ngrok:1.6.0"
 ```
 
 If we want `ngrok` to be available from the command line, [pyngrok](https://github.com/alexdlaird/pyngrok) can be
@@ -81,11 +81,6 @@ see [ngrok's official documentation](https://ngrok.com/docs).
 
 For more advanced usage, `java-ngrok`'s official documentation is available
 at [https://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok).
-
-### `ngrok` Version Compatibility
-
-`java-ngrok` is compatible with `ngrok` 2.x. If you use `java-ngrok` to manage the `ngrok` binary, there will
-be no issues. But when providing your own binary, or when referencing `ngrok` documentation, ensure it is 2.x.
 
 ## Java 8
 

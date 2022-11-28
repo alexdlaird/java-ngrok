@@ -62,9 +62,9 @@ import static java.util.Objects.isNull;
  * {@link JavaNgrokConfig.Builder#withConfigPath(Path)}.
  *
  * <h2>Binary Path</h2>
- * The <code>java-ngrok</code> package manages its own <code>ngrok</code> binary, and is compatible with
- * <code>ngrok</code>> 2.x. We can use our <code>ngrok</code> binary if we want by setting it
- * with {@link JavaNgrokConfig.Builder#withNgrokPath(Path)} and passing that config to {@link NgrokClient}.
+ * The <code>java-ngrok</code> package manages its own <code>ngrok</code> binary. We can use our <code>ngrok</code>
+ * binary if we want by setting it with {@link JavaNgrokConfig.Builder#withNgrokPath(Path)} and passing that config
+ * to {@link NgrokClient}.
  */
 public class NgrokInstaller {
 
@@ -82,7 +82,7 @@ public class NgrokInstaller {
 
     private final Yaml yaml = new Yaml();
 
-    private Map<String, Object> configCache;
+    private final Map<String, Map<String, Object>> configCache = new HashMap<>();
 
     /**
      * Get the <code>ngrok</code> executable for the current system.
@@ -100,20 +100,30 @@ public class NgrokInstaller {
     }
 
     /**
+     * See {@link #installDefaultConfig(Path, Map, NgrokVersion)}.
+     */
+    public void installDefaultConfig(final Path configPath, final Map<String, Object> data) {
+        installDefaultConfig(configPath, data, NgrokVersion.V2);
+    }
+
+    /**
      * Install the default <code>ngrok</code> config. If a config is not already present for the given path,
      * create one.
      *
      * @param configPath The path to where the <code>ngrok</code> config should be installed.
      * @param data       A map of things to add to the default config.
      */
-    public void installDefaultConfig(final Path configPath, Map<String, Object> data) {
+    public void installDefaultConfig(final Path configPath, final Map<String, Object> data, final NgrokVersion ngrokVersion) {
         try {
             Files.createDirectories(configPath.getParent());
             if (!Files.exists(configPath)) {
                 Files.createFile(configPath);
             }
 
-            final Map<String, Object> config = getNgrokConfig(configPath, false);
+            final Map<String, Object> config = getNgrokConfig(configPath, false, ngrokVersion);
+
+            config.putAll(getDefaultConfig(ngrokVersion));
+
             config.putAll(data);
 
             validateConfig(config);
@@ -131,15 +141,23 @@ public class NgrokInstaller {
     }
 
     /**
+     * See {@link #installNgrok(Path, NgrokVersion)}.
+     */
+    public void installNgrok(final Path ngrokPath) {
+        installNgrok(ngrokPath, NgrokVersion.V2);
+    }
+
+    /**
      * Download and install the latest <code>ngrok</code> for the current system, overwriting any existing contents
      * at the given path.
      *
-     * @param ngrokPath The path to where the <code>ngrok</code> binary will be downloaded.
+     * @param ngrokPath    The path to where the <code>ngrok</code> binary will be downloaded.
+     * @param ngrokVersion The major <code>ngrok</code> version to install.
      */
-    public void installNgrok(final Path ngrokPath) {
-        final NgrokCDNUrl ngrokCDNUrl = getNgrokCDNUrl();
+    public void installNgrok(final Path ngrokPath, final NgrokVersion ngrokVersion) {
+        final NgrokCDNUrl ngrokCDNUrl = getNgrokCDNUrl(ngrokVersion);
 
-        LOGGER.fine(String.format("Installing ngrok to %s%s ...", ngrokPath, Files.exists(ngrokPath) ? ", overwriting" : ""));
+        LOGGER.fine(String.format("Installing ngrok %s to %s%s ...", ngrokVersion, ngrokPath, Files.exists(ngrokPath) ? ", overwriting" : ""));
 
         final Path ngrokZip = Paths.get(ngrokPath.getParent().toString(), "ngrok.zip");
         downloadFile(ngrokCDNUrl.getUrl(), ngrokZip);
@@ -148,17 +166,29 @@ public class NgrokInstaller {
     }
 
     /**
-     * Determine the <code>ngrok</code> CDN URL for the current OS and architecture.
-     *
-     * @return The <code>ngrok</code> CDN URL.
+     * See {@link #getNgrokCDNUrl}.
      */
     public NgrokCDNUrl getNgrokCDNUrl() {
+        return getNgrokCDNUrl(NgrokVersion.V3);
+    }
+
+    /**
+     * Determine the <code>ngrok</code> CDN URL for the current OS and architecture.
+     *
+     * @param ngrokVersion The major version of <code>ngrok</code> to install.
+     * @return The <code>ngrok</code> CDN URL.
+     */
+    public NgrokCDNUrl getNgrokCDNUrl(NgrokVersion ngrokVersion) {
         final String arch = getArch();
         final String system = getSystem();
         final String plat = String.format("%s_%s", system, arch);
 
         LOGGER.fine(String.format("Platform to download: %s", plat));
-        return NgrokCDNUrl.valueOf(plat);
+        if (ngrokVersion == NgrokVersion.V2) {
+            return NgrokV2CDNUrl.valueOf(plat);
+        } else {
+            return NgrokV3CDNUrl.valueOf(plat);
+        }
     }
 
     /**
@@ -217,29 +247,54 @@ public class NgrokInstaller {
      * @param useCache   Use the cached version of the config (if populated).
      * @return A map of the <code>ngrok</code> config.
      */
-    public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache) {
-        if (isNull(configCache) || !useCache) {
+    public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache, final NgrokVersion ngrokVersion) {
+        final String key = configPath.toString();
+        if (configCache.containsKey(key) || !useCache) {
             try {
                 final String config = Files.readString(configPath);
 
                 if (isBlank(config)) {
-                    configCache = new HashMap<>();
+                    configCache.put(key, getDefaultConfig(ngrokVersion));
                 } else {
-                    configCache = yaml.load(config);
+                    configCache.put(key, yaml.load(config));
                 }
             } catch (IOException | JsonParseException e) {
                 throw new JavaNgrokInstallerException(String.format("An error occurred while parsing the config file: %s", configPath), e);
             }
         }
 
-        return configCache;
+        return configCache.get(key);
     }
 
     /**
-     * See {@link #getNgrokConfig(Path, boolean)}.
+     * Get the default config params for the given major version of <code>ngrok</code>.
+     *
+     * @param ngrokVersion The major version of <code>ngrok</code> installed.
+     * @return The default config.
+     */
+    public Map<String, Object> getDefaultConfig(final NgrokVersion ngrokVersion) {
+        if (ngrokVersion == NgrokVersion.V2) {
+            return new HashMap<>();
+        } else {
+            final HashMap<String, Object> config = new HashMap<>();
+            config.put("version", "2");
+            config.put("region", "us");
+            return config;
+        }
+    }
+
+    /**
+     * See {@link #getNgrokConfig(Path, boolean, NgrokVersion)}.
      */
     public Map<String, Object> getNgrokConfig(final Path configPath) {
         return getNgrokConfig(configPath, true);
+    }
+
+    /**
+     * See {@link #getNgrokConfig(Path, boolean, NgrokVersion)}.
+     */
+    public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache) {
+        return getNgrokConfig(configPath, useCache, NgrokVersion.V2);
     }
 
     private void installNgrokZip(final Path zipPath, final Path ngrokPath) {

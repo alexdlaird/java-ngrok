@@ -23,15 +23,21 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
+import com.github.alexdlaird.exception.JavaNgrokHTTPException;
+import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CreateTunnelTest {
 
     @Test
-    public void testCreateTunnel() {
+    public void testCreateTunnelBindTls() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withName("name")
@@ -65,5 +71,31 @@ public class CreateTunnelTest {
         assertEquals("clientCas", createTunnel.getClientCas());
         assertEquals("remoteAddr", createTunnel.getRemoteAddr());
         assertEquals("metadata", createTunnel.getMetadata());
+        assertNull(createTunnel.getSchemes());
+    }
+
+    @Test
+    public void testCreateTunnelSchemes() {
+        // WHEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withSchemes(List.of("http", "https"))
+                .build();
+
+        // THEN
+        assertNull(createTunnel.getBindTls());
+        assertEquals(2, createTunnel.getSchemes().size());
+        assertEquals("http", createTunnel.getSchemes().get(0));
+        assertEquals("https", createTunnel.getSchemes().get(1));
+    }
+
+    @Test
+    public void testCreateTunnelBindTlsAndSchemesFails() {
+        assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
+                .withBindTls(BindTls.TRUE)
+                .withSchemes(List.of("http", "https")));
+
+        assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
+                .withSchemes(List.of("http", "https"))
+                .withBindTls(BindTls.TRUE));
     }
 }

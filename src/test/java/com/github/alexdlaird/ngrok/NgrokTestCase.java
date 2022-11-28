@@ -26,6 +26,7 @@ package com.github.alexdlaird.ngrok;
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,35 +40,56 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
+import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.*;
 import static java.util.Objects.nonNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class NgrokTestCase {
 
-    protected JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-            .withConfigPath(Paths.get("build", ".ngrok2", "config.yml").toAbsolutePath())
+    protected final JavaNgrokConfig javaNgrokConfigV2 = new JavaNgrokConfig.Builder()
+            .withConfigPath(Paths.get("build", ".ngrok2", "config_v2.yml").toAbsolutePath())
+            .withNgrokPath(Paths.get("build", "bin", "v2", getNgrokBin()))
+            .withNgrokVersion(NgrokVersion.V2)
             .build();
 
-    protected NgrokInstaller ngrokInstaller = new NgrokInstaller();
+    protected final JavaNgrokConfig javaNgrokConfigV3 = new JavaNgrokConfig.Builder()
+            .withConfigPath(Paths.get("build", ".ngrok2", "config_v3.yml").toAbsolutePath())
+            .withNgrokPath(Paths.get("build", "bin", "v3", getNgrokBin()))
+            .withNgrokVersion(NgrokVersion.V3)
+            .build();
 
-    protected NgrokProcess ngrokProcess;
+    protected final NgrokInstaller ngrokInstaller = new NgrokInstaller();
 
-    protected NgrokProcess ngrokProcess2;
+    protected NgrokProcess ngrokProcessV2;
 
-    private Map<String, String> mockedSystemProperties = new HashMap<>();
+    protected NgrokProcess ngrokProcessV2_2;
+
+    protected NgrokProcess ngrokProcessV3;
+
+    protected NgrokProcess ngrokProcessV3_2;
+
+    private final Map<String, String> mockedSystemProperties = new HashMap<>();
 
     @BeforeEach
     public void setUp() {
-        ngrokProcess = new NgrokProcess(javaNgrokConfig, ngrokInstaller);
+        ngrokProcessV2 = new NgrokProcess(javaNgrokConfigV2, ngrokInstaller);
+        ngrokProcessV3 = new NgrokProcess(javaNgrokConfigV3, ngrokInstaller);
     }
 
     @AfterEach
     public void tearDown() throws IOException {
-        ngrokProcess.stop();
-        if (nonNull(ngrokProcess2)) {
-            ngrokProcess2.stop();
+        ngrokProcessV2.stop();
+        ngrokProcessV3.stop();
+
+        if (nonNull(ngrokProcessV2_2)) {
+            ngrokProcessV2_2.stop();
+        }
+        if (nonNull(ngrokProcessV3_2)) {
+            ngrokProcessV3_2.stop();
         }
 
-        Files.walk(javaNgrokConfig.getConfigPath().getParent())
+        // This deletes all v2 and v3 configs
+        Files.walk(javaNgrokConfigV2.getConfigPath().getParent())
                 .sorted(Comparator.reverseOrder())
                 .forEach((path) -> {
                     try {
@@ -81,6 +103,17 @@ public class NgrokTestCase {
             System.setProperty(entry.getKey(), entry.getValue());
         }
         mockedSystemProperties.clear();
+    }
+
+    protected void givenNgrokNotInstalled(final JavaNgrokConfig javaNgrokConfig) throws InterruptedException, IOException {
+        if (Files.exists(javaNgrokConfig.getNgrokPath())) {
+            // Due to Windows file locking behavior, wait a beat
+            if (NgrokInstaller.getSystem().equals(WINDOWS)) {
+                Thread.sleep(1000);
+            }
+            Files.delete(javaNgrokConfig.getNgrokPath());
+        }
+        assertFalse(Files.exists(javaNgrokConfig.getNgrokPath()));
     }
 
     protected String createUniqueSubdomain() {

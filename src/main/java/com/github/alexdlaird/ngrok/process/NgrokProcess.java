@@ -31,6 +31,7 @@ import com.github.alexdlaird.http.Response;
 import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
 
 import java.io.BufferedReader;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -77,10 +79,10 @@ public class NgrokProcess {
         this.ngrokInstaller = ngrokInstaller;
 
         if (!Files.exists(javaNgrokConfig.getNgrokPath())) {
-            ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath());
+            ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath(), javaNgrokConfig.getNgrokVersion());
         }
         if (!Files.exists(javaNgrokConfig.getConfigPath())) {
-            ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Collections.emptyMap());
+            ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Collections.emptyMap(), javaNgrokConfig.getNgrokVersion());
         }
     }
 
@@ -90,10 +92,6 @@ public class NgrokProcess {
      * destroy tunnels.
      */
     public void start() {
-        start(0);
-    }
-
-    private void start(final int retries) {
         if (isRunning()) {
             return;
         }
@@ -224,8 +222,15 @@ public class NgrokProcess {
 
         final List<String> command = new ArrayList<>();
         command.add(javaNgrokConfig.getNgrokPath().toString());
-        command.add("authtoken");
-        command.add(authToken);
+        if (javaNgrokConfig.getNgrokVersion() == NgrokVersion.V2) {
+            command.add("authtoken");
+            command.add(authToken);
+        }
+        else {
+            command.add("config");
+            command.add("add-authtoken");
+            command.add(authToken);
+        }
         command.add("--log=stdout");
 
         if (nonNull(javaNgrokConfig.getConfigPath())) {

@@ -25,11 +25,14 @@ package com.github.alexdlaird.ngrok.protocol;
 
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokClient;
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * An object that represents a <code>ngrok</code> Tunnel creation request. This object can be serialized
@@ -65,6 +68,7 @@ public class CreateTunnel {
     private final String clientCas;
     private final String remoteAddr;
     private final String metadata;
+    private final List<String> schemes;
 
     private CreateTunnel(final Builder builder) {
         this.name = builder.name;
@@ -81,6 +85,7 @@ public class CreateTunnel {
         this.clientCas = builder.clientCas;
         this.remoteAddr = builder.remoteAddr;
         this.metadata = builder.metadata;
+        this.schemes = builder.schemes;
     }
 
     /**
@@ -183,6 +188,13 @@ public class CreateTunnel {
     }
 
     /**
+     * Get the schemes to be bound.
+     */
+    public List<String> getSchemes() {
+        return schemes;
+    }
+
+    /**
      * Builder for a {@link CreateTunnel}, which can be used to construct a request that conforms to
      * <a href="https://ngrok.com/docs#tunnel-definitions" target="_blank"><code>ngrok</code>'s tunnel definition</a>.
      * See docs for that class for example usage.
@@ -204,6 +216,7 @@ public class CreateTunnel {
         private String clientCas;
         private String remoteAddr;
         private String metadata;
+        private List<String> schemes;
 
         /**
          * Use this constructor if default values should not be populated in required attributes when {@link #build()}
@@ -248,6 +261,7 @@ public class CreateTunnel {
             this.clientCas = createTunnel.clientCas;
             this.remoteAddr = createTunnel.remoteAddr;
             this.metadata = createTunnel.metadata;
+            this.schemes = createTunnel.schemes;
         }
 
         /**
@@ -311,6 +325,10 @@ public class CreateTunnel {
          * to {@link BindTls#BOTH}.
          */
         public Builder withBindTls(final BindTls bindTls) {
+            if (nonNull(schemes)) {
+                throw new IllegalArgumentException("Cannot set both 'schemes' and 'bindTls'.");
+            }
+
             this.bindTls = bindTls;
             return this;
         }
@@ -379,6 +397,18 @@ public class CreateTunnel {
         }
 
         /**
+         * The schemes to be bound.
+         */
+        public Builder withSchemes(final List<String> schemes) {
+            if (nonNull(bindTls)) {
+                throw new IllegalArgumentException("Cannot set both 'schemes' and 'bindTls'.");
+            }
+
+            this.schemes = schemes;
+            return this;
+        }
+
+        /**
          * Populate any <code>null</code> attributes (with the exception of <code>name</code>) in this Builder with
          * values from the given <code>tunnelDefinition</code>.
          *
@@ -424,9 +454,16 @@ public class CreateTunnel {
             if (isNull(this.metadata) && tunnelDefinition.containsKey("metadata")) {
                 this.metadata = (String) tunnelDefinition.get("metadata");
             }
+            if (isNull(this.schemes) && tunnelDefinition.containsKey("schemes")) {
+                this.schemes = (List<String>) tunnelDefinition.get("schemes");
+            }
         }
 
         public CreateTunnel build() {
+            return build(NgrokVersion.V2);
+        }
+
+        public CreateTunnel build(final NgrokVersion ngrokVersion) {
             if (setDefaults) {
                 if (isNull(proto)) {
                     proto = Proto.HTTP;
@@ -441,8 +478,19 @@ public class CreateTunnel {
                         name = String.format("%s-file-%s", proto, UUID.randomUUID());
                     }
                 }
-                if (isNull(bindTls)) {
+                if (isNull(bindTls) && ngrokVersion == NgrokVersion.V2) {
                     bindTls = BindTls.BOTH;
+                }
+                if (ngrokVersion == NgrokVersion.V3 && nonNull(bindTls)) {
+                    if (bindTls == BindTls.TRUE) {
+                        schemes = List.of("https");
+                    } else if (bindTls == BindTls.FALSE) {
+                        schemes = List.of("http");
+                    } else {
+                        schemes = List.of("http", "https");
+                    }
+
+                    bindTls = null;
                 }
             }
 

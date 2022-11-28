@@ -31,6 +31,7 @@ import com.github.alexdlaird.http.HttpClientException;
 import com.github.alexdlaird.http.Response;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import com.github.alexdlaird.ngrok.protocol.BindTls;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
@@ -135,7 +136,7 @@ public class NgrokClient {
 
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokClient.class));
 
-    private static final String VERSION = "1.5.6";
+    private static final String VERSION = "1.6.0";
 
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokProcess ngrokProcess;
@@ -181,7 +182,9 @@ public class NgrokClient {
         }
 
         final Tunnel tunnel;
-        if (finalTunnel.getProto() == Proto.HTTP && finalTunnel.getBindTls() == BindTls.BOTH) {
+        if (javaNgrokConfig.getNgrokVersion() == NgrokVersion.V2 &&
+                finalTunnel.getProto() == Proto.HTTP &&
+                finalTunnel.getBindTls() == BindTls.BOTH) {
             try {
                 final Response<Tunnel> getResponse = httpClient.get(ngrokProcess.getApiUrl() + response.getBody().getUri() + "%20%28http%29", Tunnel.class);
                 tunnel = getResponse.getBody();
@@ -202,7 +205,7 @@ public class NgrokClient {
      * See {@link #connect(CreateTunnel)}.
      */
     public Tunnel connect() {
-        return connect(new CreateTunnel.Builder().build());
+        return connect(new CreateTunnel.Builder().build(javaNgrokConfig.getNgrokVersion()));
     }
 
     /**
@@ -346,7 +349,7 @@ public class NgrokClient {
         if (Files.exists(javaNgrokConfig.getConfigPath())) {
             config = ngrokProcess.getNgrokInstaller().getNgrokConfig(javaNgrokConfig.getConfigPath());
         } else {
-            config = Collections.emptyMap();
+            config = ngrokProcess.getNgrokInstaller().getDefaultConfig(javaNgrokConfig.getNgrokVersion());
         }
 
         final String name;
@@ -362,7 +365,7 @@ public class NgrokClient {
             createTunnelBuilder.withTunnelDefinition((Map<String, Object>) tunnelDefinitions.get(name));
         }
 
-        return createTunnelBuilder.build();
+        return createTunnelBuilder.build(javaNgrokConfig.getNgrokVersion());
     }
 
     /**
