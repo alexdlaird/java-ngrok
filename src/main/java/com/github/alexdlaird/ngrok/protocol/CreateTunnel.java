@@ -481,6 +481,17 @@ public class CreateTunnel {
                 if (isNull(bindTls) && ngrokVersion == NgrokVersion.V2) {
                     bindTls = BindTls.BOTH;
                 }
+                if (ngrokVersion == NgrokVersion.V3 && nonNull(bindTls)) {
+                    if (bindTls == BindTls.TRUE) {
+                        schemes = List.of("https");
+                    } else if (bindTls == BindTls.FALSE) {
+                        schemes = List.of("http");
+                    } else {
+                        schemes = List.of("http", "https");
+                    }
+
+                    bindTls = null;
+                }
             }
 
             return new CreateTunnel(this);

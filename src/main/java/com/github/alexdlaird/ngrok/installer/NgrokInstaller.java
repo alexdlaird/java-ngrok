@@ -82,7 +82,7 @@ public class NgrokInstaller {
 
     private final Yaml yaml = new Yaml();
 
-    private Map<String, Object> configCache;
+    private final Map<String, Map<String, Object>> configCache = new HashMap<>();
 
     /**
      * Get the <code>ngrok</code> executable for the current system.
@@ -120,16 +120,9 @@ public class NgrokInstaller {
                 Files.createFile(configPath);
             }
 
-            final Map<String, Object> config = getNgrokConfig(configPath, false);
+            final Map<String, Object> config = getNgrokConfig(configPath, false, ngrokVersion);
 
-            if (ngrokVersion == NgrokVersion.V3) {
-                if (!config.containsKey("version")) {
-                    config.put("version", "2");
-                }
-                if (!config.containsKey("region")) {
-                    config.put("region", "us");
-                }
-            }
+            config.putAll(getDefaultConfig(ngrokVersion));
 
             config.putAll(data);
 
@@ -254,29 +247,54 @@ public class NgrokInstaller {
      * @param useCache   Use the cached version of the config (if populated).
      * @return A map of the <code>ngrok</code> config.
      */
-    public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache) {
-        if (isNull(configCache) || !useCache) {
+    public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache, final NgrokVersion ngrokVersion) {
+        final String key = configPath.toString();
+        if (configCache.containsKey(key) || !useCache) {
             try {
                 final String config = Files.readString(configPath);
 
                 if (isBlank(config)) {
-                    configCache = new HashMap<>();
+                    configCache.put(key, getDefaultConfig(ngrokVersion));
                 } else {
-                    configCache = yaml.load(config);
+                    configCache.put(key, yaml.load(config));
                 }
             } catch (IOException | JsonParseException e) {
                 throw new JavaNgrokInstallerException(String.format("An error occurred while parsing the config file: %s", configPath), e);
             }
         }
 
-        return configCache;
+        return configCache.get(key);
     }
 
     /**
-     * See {@link #getNgrokConfig(Path, boolean)}.
+     * Get the default config params for the given major version of <code>ngrok</code>.
+     *
+     * @param ngrokVersion The major version of <code>ngrok</code> installed.
+     * @return The default config.
+     */
+    public Map<String, Object> getDefaultConfig(final NgrokVersion ngrokVersion) {
+        if (ngrokVersion == NgrokVersion.V2) {
+            return new HashMap<>();
+        } else {
+            final HashMap<String, Object> config = new HashMap<>();
+            config.put("version", "2");
+            config.put("region", "us");
+            return config;
+        }
+    }
+
+    /**
+     * See {@link #getNgrokConfig(Path, boolean, NgrokVersion)}.
      */
     public Map<String, Object> getNgrokConfig(final Path configPath) {
         return getNgrokConfig(configPath, true);
+    }
+
+    /**
+     * See {@link #getNgrokConfig(Path, boolean, NgrokVersion)}.
+     */
+    public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache) {
+        return getNgrokConfig(configPath, useCache, NgrokVersion.V2);
     }
 
     private void installNgrokZip(final Path zipPath, final Path ngrokPath) {

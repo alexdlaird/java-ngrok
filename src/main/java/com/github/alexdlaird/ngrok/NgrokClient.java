@@ -349,7 +349,7 @@ public class NgrokClient {
         if (Files.exists(javaNgrokConfig.getConfigPath())) {
             config = ngrokProcess.getNgrokInstaller().getNgrokConfig(javaNgrokConfig.getConfigPath());
         } else {
-            config = Collections.emptyMap();
+            config = ngrokProcess.getNgrokInstaller().getDefaultConfig(javaNgrokConfig.getNgrokVersion());
         }
 
         final String name;

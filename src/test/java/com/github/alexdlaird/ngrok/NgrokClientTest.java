@@ -206,7 +206,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testConnectBindTlsBoth() {
+    public void testConnectBindTlsBothV2() {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withBindTls(BindTls.BOTH)
@@ -222,7 +222,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testConnectBindTlsHttpsOnly() {
+    public void testConnectBindTlsHttpsOnlyV2() {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withBindTls(true)
@@ -238,7 +238,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testConnectBindTlsHttpOnly() {
+    public void testConnectBindTlsHttpOnlyV2() {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withBindTls(false)
@@ -251,6 +251,70 @@ class NgrokClientTest extends NgrokTestCase {
         // THEN
         assertEquals(1, tunnels.size());
         assertThat(tunnel.getPublicUrl(), startsWith("http://"));
+    }
+
+    @Test
+    public void testConnectSchemesHttpV3() {
+        // GIVEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withSchemes(List.of("http"))
+                .build();
+        final Tunnel tunnel = ngrokClientV2.connect(createTunnel);
+
+        // WHEN
+        final List<Tunnel> tunnels = ngrokClientV2.getTunnels();
+
+        // THEN
+        assertEquals(1, tunnels.size());
+        assertThat(tunnel.getPublicUrl(), startsWith("http://"));
+    }
+
+    @Test
+    public void testConnectSchemesHttpsV3() {
+        // GIVEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withSchemes(List.of("https"))
+                .build();
+        final Tunnel tunnel = ngrokClientV3.connect(createTunnel);
+
+        // WHEN
+        final List<Tunnel> tunnels = ngrokClientV3.getTunnels();
+
+        // THEN
+        assertEquals(1, tunnels.size());
+        assertThat(tunnel.getPublicUrl(), startsWith("https://"));
+    }
+
+    @Test
+    public void testConnectSchemesHttpHttpsV3() {
+        // GIVEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withSchemes(List.of("http", "https"))
+                .build();
+        final Tunnel tunnel = ngrokClientV3.connect(createTunnel);
+
+        // WHEN
+        final List<Tunnel> tunnels = ngrokClientV3.getTunnels();
+
+        // THEN
+        assertEquals(2, tunnels.size());
+        assertThat(tunnel.getPublicUrl(), startsWith("https://"));
+    }
+
+    @Test
+    public void testBindTlsUpgradedToSchemesV3() {
+        // GIVEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withBindTls(BindTls.BOTH)
+                .build();
+        final Tunnel tunnel = ngrokClientV3.connect(createTunnel);
+
+        // WHEN
+        final List<Tunnel> tunnels = ngrokClientV3.getTunnels();
+
+        // THEN
+        assertEquals(2, tunnels.size());
+        assertThat(tunnel.getPublicUrl(), startsWith("https://"));
     }
 
     @Test
