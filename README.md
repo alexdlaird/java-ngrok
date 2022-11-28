@@ -82,7 +82,21 @@ see [ngrok's official documentation](https://ngrok.com/docs).
 For more advanced usage, `java-ngrok`'s official documentation is available
 at [https://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok).
 
-## Java 8
+### `ngrok` Version Compatibility
+
+`java-ngrok` is compatible with `ngrok` v2 and v3, but by default it will install v2. To install v3 instead,
+set the version with [`JavaNgrokConfig.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html#withNgrokVersion(com.github.alexdlaird.ngrok.installer.NgrokVersion)):
+
+```java
+final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+        .withNgrokVersion(NgrokVersion.V3);
+
+final NgrokClient = new NgrokClient.Builder()
+        .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
+```
+
+### Java 8
 
 Java 8 support is not actively maintained, but a compatible build of this project does exist for Java 8. To use it,
 include the `java8-ngrok` dependency from

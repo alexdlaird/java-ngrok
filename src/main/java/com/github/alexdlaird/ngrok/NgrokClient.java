@@ -96,7 +96,11 @@ import static java.util.Objects.nonNull;
  * (which can be built through {@link CreateTunnel.Builder its Builder}) that allows us to pass additional properties
  * that are <a href="https://ngrok.com/docs#tunnel-definitions" target="_blank">supported by ngrok</a>.
  * <p>
- * <strong>Note:</strong> <code>ngrok</code>'s default behavior for <code>http</code> when no additional properties
+ * <p>
+ * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v2. To
+ * install v3 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}.
+ * <p>
+ * <strong>Note:</strong> <code>ngrok</code> v2's default behavior for <code>http</code> when no additional properties
  * are passed is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This method will
  * return a reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed, call
  * {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
