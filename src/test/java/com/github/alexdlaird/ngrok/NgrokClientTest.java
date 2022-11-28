@@ -259,10 +259,10 @@ class NgrokClientTest extends NgrokTestCase {
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withSchemes(List.of("http"))
                 .build();
-        final Tunnel tunnel = ngrokClientV2.connect(createTunnel);
+        final Tunnel tunnel = ngrokClientV3.connect(createTunnel);
 
         // WHEN
-        final List<Tunnel> tunnels = ngrokClientV2.getTunnels();
+        final List<Tunnel> tunnels = ngrokClientV3.getTunnels();
 
         // THEN
         assertEquals(1, tunnels.size());
