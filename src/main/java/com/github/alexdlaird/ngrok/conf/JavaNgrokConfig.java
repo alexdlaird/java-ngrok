@@ -252,7 +252,7 @@ public class JavaNgrokConfig {
         /**
          * The major version of <code<ngrok</code> to be used.
          */
-        public Builder withVersion(final NgrokVersion ngrokVersion) {
+        public Builder withNgrokVersion(final NgrokVersion ngrokVersion) {
             this.ngrokVersion = ngrokVersion;
             return this;
         }
