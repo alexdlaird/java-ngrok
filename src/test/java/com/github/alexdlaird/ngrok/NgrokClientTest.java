@@ -137,11 +137,11 @@ class NgrokClientTest extends NgrokTestCase {
         assertTrue(ngrokClientV3.getNgrokProcess().getVersion().startsWith("3"));
         assertTrue(ngrokClientV3.getNgrokProcess().isRunning());
         assertThat(tunnel.getName(), startsWith("http-5000-"));
-        assertEquals("http", tunnel.getProto());
+        assertEquals("https", tunnel.getProto());
         assertEquals("http://localhost:5000", tunnel.getConfig().getAddr());
         assertTrue(tunnel.getConfig().isInspect());
         assertNotNull(tunnel.getPublicUrl());
-        assertThat(tunnel.getPublicUrl(), startsWith("http://"));
+        assertThat(tunnel.getPublicUrl(), startsWith("https://"));
         assertNotNull(tunnel.getMetrics());
         assertThat(tunnel.getMetrics(), hasKey("conns"));
         assertEquals(0, tunnel.getMetrics().get("conns").getCount());
