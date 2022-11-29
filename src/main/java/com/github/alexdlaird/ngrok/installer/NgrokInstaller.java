@@ -249,7 +249,7 @@ public class NgrokInstaller {
      */
     public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache, final NgrokVersion ngrokVersion) {
         final String key = configPath.toString();
-        if (configCache.containsKey(key) || !useCache) {
+        if (!configCache.containsKey(key) || !useCache) {
             try {
                 final String config = Files.readString(configPath);
 

@@ -26,6 +26,7 @@ package com.github.alexdlaird.ngrok.installer;
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokInstallerException;
 import com.github.alexdlaird.ngrok.NgrokTestCase;
+import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import org.junit.jupiter.api.Test;
 
@@ -36,8 +37,10 @@ import java.util.Collections;
 import java.util.Map;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
+import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.getNgrokBin;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
@@ -85,6 +88,25 @@ class NgrokInstallerTest extends NgrokTestCase {
 
         // THEN
         assertTrue(Files.exists(javaNgrokConfigV2.getConfigPath()));
+    }
+
+    @Test
+    public void testGetDefaultNgrokConfig() {
+        // GIVEN
+        final JavaNgrokConfig javaNgrokConfigV2Tmp = new JavaNgrokConfig.Builder()
+                .withConfigPath(Paths.get("build", ".ngrok2", "config_v2_tmp.yml").toAbsolutePath())
+                .withNgrokPath(Paths.get("build", "bin", "v2", getNgrokBin()))
+                .withNgrokVersion(NgrokVersion.V2)
+                .build();
+        ngrokInstaller.installDefaultConfig(javaNgrokConfigV2Tmp.getConfigPath(), Collections.emptyMap(), javaNgrokConfigV2Tmp.getNgrokVersion());
+
+        // WHEN
+        final Map<String, Object> ngrokConfig = ngrokInstaller.getNgrokConfig(javaNgrokConfigV2Tmp.getConfigPath(), true, javaNgrokConfigV2Tmp.getNgrokVersion());
+
+        // THEN
+        assertNotNull(ngrokConfig);
+        assertEquals(0, ngrokConfig.size());
+        assertTrue(Files.exists(javaNgrokConfigV2Tmp.getConfigPath()));
     }
 
     @Test

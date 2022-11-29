@@ -3,9 +3,13 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.6.0...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.6.1...HEAD)
 
-## [1.6.0](https://github.com/alexdlaird/java-ngrok/compare/1.5.6...1.6.0) - 2022-11-29
+## [1.6.1](https://github.com/alexdlaird/java-ngrok/compare/1.6.0...1.6.1) - 2022-11-29
+### Fixed
+- Stability improvements.
+
+## [1.6.0](https://github.com/alexdlaird/java-ngrok/compare/1.5.6...1.6.0) - 2022-11-28
 ### Added
 - Support for [`ngrok` v3](https://ngrok.com/docs/guides/upgrade-v2-v3) (v2 is still used by default).
 - Documentation and examples for using `java-ngrok` with `ngrok` v3.
