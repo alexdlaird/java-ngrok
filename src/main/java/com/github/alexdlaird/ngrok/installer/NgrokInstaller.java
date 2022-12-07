@@ -57,7 +57,7 @@ import static java.util.Objects.isNull;
  * A helper for downloading and installing the <code>ngrok</code> for the current system.
  *
  * <h2>Config File</h2>
- * By default, <a href="https://ngrok.com/docs#config" target="_blank"><code>ngrok</code> will look for its config file</a> in the home
+ * By default, <a href="https://ngrok.com/docs/ngrok-agent/config" target="_blank"><code>ngrok</code> will look for its config file</a> in the home
  * directory’s <code>.ngrok2</code> folder. We can override this behavior with
  * {@link JavaNgrokConfig.Builder#withConfigPath(Path)}.
  *

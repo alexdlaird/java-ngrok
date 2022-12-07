@@ -65,7 +65,7 @@ The [`connect`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/c
 method can also take
 a [`CreateTunnel`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html) (which can be built
 through [its Builder](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html))
-that allows us to pass additional properties that are [supported by ngrok](https://ngrok.com/docs#tunnel-definitions).
+that allows us to pass additional properties that are [supported by ngrok](https://ngrok.com/docs/ngrok-agent/api#start-tunnel).
 
 Assuming we have also installed [pyngrok](https://github.com/alexdlaird/pyngrok), all features of `ngrok` are available
 on the command line.

@@ -94,7 +94,7 @@ import static java.util.Objects.nonNull;
  * <p>
  * The {@link NgrokClient#connect(CreateTunnel) NgrokClient.connect()} method can also take a {@link CreateTunnel}
  * (which can be built through {@link CreateTunnel.Builder its Builder}) that allows us to pass additional properties
- * that are <a href="https://ngrok.com/docs#tunnel-definitions" target="_blank">supported by ngrok</a>.
+ * that are <a href="https://ngrok.com/docs/ngrok-agent/api#start-tunnel" target="_blank">supported by ngrok</a>.
  * <p>
  * <p>
  * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v2. To
