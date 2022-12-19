@@ -161,7 +161,7 @@ public class NgrokClient {
      * If <code>ngrok</code> is not running, calling this method will first start a process with
      * {@link JavaNgrokConfig}.
      * <p>
-     * <strong>Note:</strong> <code>ngrok</code>'s default behavior for <code>http</code> when no additional properties
+     * <strong>Note:</strong> <code>ngrok</code> v2's default behavior for <code>http</code> when no additional properties
      * are passed is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This method will
      * return a reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed, call
      * {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
