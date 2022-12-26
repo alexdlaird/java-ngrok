@@ -112,8 +112,6 @@ public class NgrokProcess {
         ngrokInstaller.validateConfig(javaNgrokConfig.getConfigPath());
 
         final ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.redirectErrorStream(true);
-        processBuilder.inheritIO().redirectOutput(ProcessBuilder.Redirect.PIPE);
 
         final List<String> command = new ArrayList<>();
         command.add(javaNgrokConfig.getNgrokPath().toString());
