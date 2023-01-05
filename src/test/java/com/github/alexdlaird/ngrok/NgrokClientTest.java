@@ -46,6 +46,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
 
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;

@@ -31,7 +31,6 @@ import com.github.alexdlaird.util.MapUtils;
 import com.github.alexdlaird.util.NgrokUtils;
 import org.junit.jupiter.api.Test;
 import org.jutils.jprocesses.JProcess;
-import org.jutils.jprocesses.ProcessUtils;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -121,7 +120,7 @@ public class NgrokProcessTest extends NgrokTestCase {
         assertTrue(ngrokProcess.isRunning());
 
         // WHEN
-        JProcess processHandle = NgrokUtils.getRunningNgrokChildProcess(System.currentTimeMillis());
+        JProcess processHandle = NgrokUtils.getRunningNgrokProcess(System.currentTimeMillis());
 
         // THEN
         assertNotNull(processHandle);
@@ -134,7 +133,7 @@ public class NgrokProcessTest extends NgrokTestCase {
         assertFalse(ngrokProcess.isRunning());
 
         // Check if there is a processHandle for ngrok now
-        processHandle = NgrokUtils.getRunningNgrokChildProcess(System.currentTimeMillis());
+        processHandle = NgrokUtils.getRunningNgrokProcess(System.currentTimeMillis());
         assertNull(processHandle);
 
         // THEN test we can successfully restart the process

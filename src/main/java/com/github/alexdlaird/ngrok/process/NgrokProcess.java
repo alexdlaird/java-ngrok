@@ -135,7 +135,7 @@ public class NgrokProcess {
         processBuilder.command(command);
         try {
             process = processBuilder.start();
-            JProcess ngrokProcess = NgrokUtils.getRunningNgrokChildProcess(System.currentTimeMillis());
+            JProcess ngrokProcess = NgrokUtils.getRunningNgrokProcess(System.currentTimeMillis());
             Objects.requireNonNull(ngrokProcess);
             processId = ngrokProcess.pid;
             LOGGER.fine(String.format("ngrok process starting with PID: %s", processId));

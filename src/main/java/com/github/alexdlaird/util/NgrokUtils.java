@@ -18,14 +18,16 @@ public class NgrokUtils {
      *                              If there are, the process closer to this time
      *                              aka with a smaller difference will be returned.
      */
-    public static JProcess getRunningNgrokChildProcess(long timeCreated) throws IOException, InterruptedException, ParseException {
+    public static JProcess getRunningNgrokProcess(long timeCreated) throws IOException, InterruptedException, ParseException {
 
         // Fetch child-processes that contain ngrok in their file name
         // and add them to the list below.
+        // ProcessUtils().getThisProcess().childProcesses
+        // Somehow ngrok can be started NOT as child processes, so search all processes instead
         List<JProcess> list = new ArrayList<>(1);
         for (int i = 0; i < 10; i++) {
             Thread.sleep(500); // Timeout to ensure the process is shown if it was just created
-            for (JProcess p : new ProcessUtils().getThisProcess().childProcesses) {
+            for (JProcess p : new ProcessUtils().getProcesses()) {
                 //System.out.println(p.toPrintString() + p.getTimestampStart());
                 if(StringUtils.containsIgnoreCase(p.name, "ngrok")){
                     //System.out.println("FOUND: "+p.toPrintString()+ p.getTimestampStart());
