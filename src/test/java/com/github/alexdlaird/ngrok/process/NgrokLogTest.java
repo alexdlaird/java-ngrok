@@ -52,7 +52,7 @@ public class NgrokLogTest {
     @Test
     public void testNgrokLogMsgWithPossessiveQuote() {
         // WHEN
-        final NgrokLog ngrokLog = new NgrokLog("lvl=WARN msg=\"Test=This is Tom's test");
+        final NgrokLog ngrokLog = new NgrokLog("lvl=WARN msg=\"Test=This is Tom's test\"");
 
         // THEN
         assertEquals("WARNING", ngrokLog.getLvl());
@@ -62,7 +62,7 @@ public class NgrokLogTest {
     @Test
     public void testNgrokLogMsgWithSpaces() {
         // WHEN
-        final NgrokLog ngrokLog = new NgrokLog("lvl=WARN msg=\"Test=Test with spaces");
+        final NgrokLog ngrokLog = new NgrokLog("lvl=WARN msg=\"Test=Test with spaces\"");
 
         // THEN
         assertEquals("WARNING", ngrokLog.getLvl());
