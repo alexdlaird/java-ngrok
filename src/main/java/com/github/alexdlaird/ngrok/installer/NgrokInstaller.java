@@ -25,6 +25,7 @@ package com.github.alexdlaird.ngrok.installer;
 
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokInstallerException;
+import com.github.alexdlaird.exception.JavaNgrokSecurityException;
 import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.google.gson.JsonParseException;
@@ -310,6 +311,9 @@ public class NgrokInstaller {
             ZipEntry zipEntry;
             while ((zipEntry = in.getNextEntry()) != null) {
                 final Path file = Paths.get(dir.toString(), zipEntry.getName());
+                if (!file.normalize().startsWith(dir)) {
+                    throw new JavaNgrokSecurityException("Bad zip entry, paths don't match");
+                }
                 if (zipEntry.isDirectory()) {
                     if (!Files.isDirectory(file)) {
                         Files.createDirectories(file);
