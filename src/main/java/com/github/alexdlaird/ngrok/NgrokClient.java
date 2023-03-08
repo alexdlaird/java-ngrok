@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Alex Laird
+ * Copyright (c) 2023 Alex Laird
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -140,7 +140,7 @@ public class NgrokClient {
 
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokClient.class));
 
-    private static final String VERSION = "1.6.1";
+    private static final String VERSION = "1.6.2";
 
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokProcess ngrokProcess;
