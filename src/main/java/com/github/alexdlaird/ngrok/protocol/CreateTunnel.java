@@ -460,7 +460,7 @@ public class CreateTunnel {
         }
 
         public CreateTunnel build() {
-            return build(NgrokVersion.V2);
+            return build(NgrokVersion.V3);
         }
 
         public CreateTunnel build(final NgrokVersion ngrokVersion) {

@@ -194,6 +194,7 @@ class NgrokClientTest extends NgrokTestCase {
 
         // THEN
         assertEquals(2, tunnels.size());
+        int i = 0;
         for (final Tunnel t : tunnels) {
             if (t.getProto().equals("http")) {
                 assertEquals(tunnel.getPublicUrl(), t.getPublicUrl());
@@ -202,7 +203,9 @@ class NgrokClientTest extends NgrokTestCase {
                 assertEquals(tunnel.getPublicUrl().replace("http", "https"), t.getPublicUrl());
             }
             assertEquals("http://localhost:80", t.getConfig().getAddr());
+            ++i;
         }
+        assertTrue(i > 0);
     }
 
     @Test

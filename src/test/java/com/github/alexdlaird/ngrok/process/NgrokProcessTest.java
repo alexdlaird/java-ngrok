@@ -225,11 +225,14 @@ public class NgrokProcessTest extends NgrokTestCase {
         ngrokProcessV2.start();
 
         // THEN
+        int i = 0;
         for (final NgrokLog log : ngrokProcessV2.getProcessMonitor().getLogs()) {
             assertNotNull(log.getT());
             assertNotNull(log.getLvl());
             assertNotNull(log.getMsg());
+            ++i;
         }
+        assertTrue(i > 0);
     }
 
     @Test

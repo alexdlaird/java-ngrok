@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.6.3...HEAD)
+### Changed
+- Changed default installer behavior to download `ngrok` v3 when no version is specified.
+- Documentation updates.
+- Test updates.
 
 ## [1.6.3](https://github.com/alexdlaird/java-ngrok/compare/1.6.2...1.6.3) - TBD
 - Inconsistency with default installation of `ngrok` v2.

@@ -154,7 +154,7 @@ public class JavaNgrokConfig {
         private int maxLogs = 100;
         private Function<NgrokLog, Void> logEventCallback;
         private int startupTimeout = 15;
-        private NgrokVersion ngrokVersion = NgrokVersion.V2;
+        private NgrokVersion ngrokVersion = NgrokVersion.V3;
 
         public Builder() {
         }

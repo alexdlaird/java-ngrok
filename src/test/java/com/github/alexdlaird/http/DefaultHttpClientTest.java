@@ -44,10 +44,7 @@ import static java.net.HttpURLConnection.HTTP_OK;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DefaultHttpClientTest extends NgrokTestCase {
 
@@ -92,13 +89,24 @@ class DefaultHttpClientTest extends NgrokTestCase {
         // THEN
         assertEquals(HTTP_OK, getResponse.getStatusCode());
         assertEquals("/api/tunnels", getResponse.getBody().getUri());
-        assertEquals(1, getResponse.getBody().getTunnels().size());
-        assertEquals("my-tunnel", getResponse.getBody().getTunnels().get(0).getName());
-        assertThat(getResponse.getBodyRaw(), containsString("my-tunnel"));
-        assertThat(getResponse.getBodyRaw(), containsString("/api/tunnels/"));
-        assertEquals(4, getResponse.getHeaderFields().size());
-        assertEquals(1, getResponse.getHeaderFields().get("Content-Type").size());
-        assertEquals("application/json", getResponse.getHeaderFields().get("Content-Type").get(0));
+        assertEquals(2, getResponse.getBody().getTunnels().size());
+        int i = 0;
+        for (final Tunnel t : getResponse.getBody().getTunnels()) {
+            if (t.getName().contains("http")) {
+                assertEquals("my-tunnel (http)", t.getName());
+                assertThat(getResponse.getBodyRaw(), containsString("my-tunnel (http)"));
+            } else {
+                assertEquals("my-tunnel", t.getName());
+                assertThat(getResponse.getBodyRaw(), containsString("my-tunnel"));
+            }
+            assertThat(getResponse.getBodyRaw(), containsString("/api/tunnels/"));
+            assertEquals(4, getResponse.getHeaderFields().size());
+            assertEquals(1, getResponse.getHeaderFields().get("Content-Type").size());
+            assertEquals("application/json", getResponse.getHeaderFields().get("Content-Type").get(0));
+            ++i;
+        }
+        assertTrue(i > 0);
+
     }
 
     @Test
