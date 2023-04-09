@@ -68,11 +68,29 @@ class NgrokInstallerTest extends NgrokTestCase {
 
         // WHEN
         ngrokInstaller.installNgrok(javaNgrokConfigV3.getNgrokPath(), javaNgrokConfigV3.getNgrokVersion());
-        ngrokProcessV2 = new NgrokProcess(javaNgrokConfigV3, ngrokInstaller);
+        ngrokProcessV3 = new NgrokProcess(javaNgrokConfigV3, ngrokInstaller);
 
         // THEN
         assertTrue(Files.exists(javaNgrokConfigV3.getNgrokPath()));
-        assertTrue(ngrokProcessV2.getVersion().startsWith("3"));
+        assertTrue(ngrokProcessV3.getVersion().startsWith("3"));
+    }
+
+    @Test
+    public void testInstallNgrokDefault() throws IOException, InterruptedException {
+        // GIVEN
+        JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+                .withConfigPath(Paths.get("build", ".ngrok2", "config_default.yml").toAbsolutePath())
+                .withNgrokPath(Paths.get("build", "bin", "default", getNgrokBin()))
+                .build();
+        givenNgrokNotInstalled(javaNgrokConfig);
+
+        // WHEN
+        ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath(), javaNgrokConfig.getNgrokVersion());
+        ngrokProcessV2 = new NgrokProcess(javaNgrokConfig, ngrokInstaller);
+
+        // THEN
+        assertTrue(Files.exists(javaNgrokConfig.getNgrokPath()));
+        assertTrue(ngrokProcessV2.getVersion().startsWith("2"));
     }
 
     @Test
