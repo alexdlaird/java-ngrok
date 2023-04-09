@@ -106,7 +106,6 @@ class DefaultHttpClientTest extends NgrokTestCase {
             ++i;
         }
         assertTrue(i > 0);
-
     }
 
     @Test
