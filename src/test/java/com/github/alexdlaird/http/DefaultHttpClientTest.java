@@ -120,7 +120,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
                 .withName("my-tunnel")
                 .withBindTls(true)
-                .build();
+                .build(NgrokVersion.V2);
 
         // WHEN
         final HttpClientException exception = assertThrows(HttpClientException.class, () -> defaultHttpClient.put(String.format("%s/api/tunnels", ngrokProcessV2.getApiUrl()), createTunnel, Tunnels.class));
@@ -136,7 +136,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
                 .withName("my-tunnel")
                 .withAddr(new URL(ngrokProcessV2.getApiUrl()).getPort())
                 .withBindTls(true)
-                .build();
+                .build(NgrokVersion.V2);
         final Response<Tunnel> createResponse = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcessV2.getApiUrl()), request, Tunnel.class);
         final String publicUrl = createResponse.getBody().getPublicUrl();
 
