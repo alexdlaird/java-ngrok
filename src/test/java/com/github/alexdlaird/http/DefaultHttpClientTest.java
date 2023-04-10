@@ -24,6 +24,7 @@
 package com.github.alexdlaird.http;
 
 import com.github.alexdlaird.ngrok.NgrokTestCase;
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.protocol.CapturedRequest;
 import com.github.alexdlaird.ngrok.protocol.CapturedRequests;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
@@ -80,7 +81,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
                 .withName("my-tunnel")
                 .withBindTls(true)
-                .build();
+                .build(NgrokVersion.V2);
         defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcessV2.getApiUrl()), createTunnel, Tunnel.class);
 
         // WHEN
