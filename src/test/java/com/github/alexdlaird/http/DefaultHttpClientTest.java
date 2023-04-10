@@ -89,23 +89,13 @@ class DefaultHttpClientTest extends NgrokTestCase {
         // THEN
         assertEquals(HTTP_OK, getResponse.getStatusCode());
         assertEquals("/api/tunnels", getResponse.getBody().getUri());
-        assertEquals(2, getResponse.getBody().getTunnels().size());
-        int i = 0;
-        for (final Tunnel t : getResponse.getBody().getTunnels()) {
-            if (t.getName().contains("http")) {
-                assertEquals("my-tunnel (http)", t.getName());
-                assertThat(getResponse.getBodyRaw(), containsString("my-tunnel (http)"));
-            } else {
-                assertEquals("my-tunnel", t.getName());
-                assertThat(getResponse.getBodyRaw(), containsString("my-tunnel"));
-            }
-            assertThat(getResponse.getBodyRaw(), containsString("/api/tunnels/"));
-            assertEquals(4, getResponse.getHeaderFields().size());
-            assertEquals(1, getResponse.getHeaderFields().get("Content-Type").size());
-            assertEquals("application/json", getResponse.getHeaderFields().get("Content-Type").get(0));
-            ++i;
-        }
-        assertTrue(i > 0);
+        assertEquals(1, getResponse.getBody().getTunnels().size());
+        assertEquals("my-tunnel", getResponse.getBody().getTunnels().get(0).getName());
+        assertThat(getResponse.getBodyRaw(), containsString("my-tunnel"));
+        assertThat(getResponse.getBodyRaw(), containsString("/api/tunnels/"));
+        assertEquals(4, getResponse.getHeaderFields().size());
+        assertEquals(1, getResponse.getHeaderFields().get("Content-Type").size());
+        assertEquals("application/json", getResponse.getHeaderFields().get("Content-Type").get(0));
     }
 
     @Test
