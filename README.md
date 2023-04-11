@@ -91,7 +91,7 @@ set the version with [`JavaNgrokConfig.Builder.withNgrokVersion(NgrokVersion)`](
 final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
         .withNgrokVersion(NgrokVersion.V3);
 
-final NgrokClient = new NgrokClient.Builder()
+final NgrokClient ngrokClient = new NgrokClient.Builder()
         .withJavaNgrokConfig(javaNgrokConfig)
         .build();
 ```
