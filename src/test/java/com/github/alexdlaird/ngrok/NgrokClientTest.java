@@ -230,7 +230,7 @@ class NgrokClientTest extends NgrokTestCase {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withBindTls(true)
-                .build(NgrokVersion.V2);
+                .build(ngrokClientV2.getJavaNgrokConfig());
         final Tunnel tunnel = ngrokClientV2.connect(createTunnel);
 
         // WHEN
@@ -246,7 +246,7 @@ class NgrokClientTest extends NgrokTestCase {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withBindTls(false)
-                .build(NgrokVersion.V2);
+                .build(javaNgrokConfigV2);
         final Tunnel tunnel = ngrokClientV2.connect(createTunnel);
 
         // WHEN
@@ -556,7 +556,7 @@ class NgrokClientTest extends NgrokTestCase {
                 .withName("my-tunnel")
                 .withAddr(new URL(ngrokClientV2.getNgrokProcess().getApiUrl()).getPort())
                 .withBindTls(true)
-                .build(NgrokVersion.V2);
+                .build(ngrokClientV2.getJavaNgrokConfig());
         final Tunnel tunnel = ngrokClientV2.connect(createTunnel);
         Thread.sleep(1000);
         assertEquals(0, tunnel.getMetrics().get("http").getCount());
