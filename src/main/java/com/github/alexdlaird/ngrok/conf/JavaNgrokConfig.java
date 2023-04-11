@@ -49,7 +49,7 @@ import static java.util.Objects.isNull;
  *         .withMaxLogs(10)
  *         .withNgrokVersion(NgrokVersion.V2);
  *
- * final NgrokClient = new NgrokClient.Builder()
+ * final NgrokClient ngrokClient = new NgrokClient.Builder()
  *         .withJavaNgrokConfig(javaNgrokConfig)
  *         .build();
  * </pre>

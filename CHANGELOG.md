@@ -10,7 +10,12 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Test updates.
 
 ## [1.6.3](https://github.com/alexdlaird/java-ngrok/compare/1.6.2...1.6.3) - TBD
+### Changed
+- `build()` in [CreateTunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html) requires a parameter so the `ngrok` version can be inferred.
+
+### Fixed
 - Inconsistency with default installation of `ngrok` v2.
+- Documentation improvements.
 - Test improvements.
 
 ## [1.6.2](https://github.com/alexdlaird/java-ngrok/compare/1.6.1...1.6.2) - 2023-03-08
