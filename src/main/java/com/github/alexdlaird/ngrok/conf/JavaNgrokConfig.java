@@ -47,7 +47,7 @@ import static java.util.Objects.isNull;
  *         .withLogEventCallback(logEventCallback)
  *         .withMaxLogs(10);
  *
- * final NgrokClient = new NgrokClient.Builder()
+ * final NgrokClient ngrokClient = new NgrokClient.Builder()
  *         .withJavaNgrokConfig(javaNgrokConfig)
  *         .build();
  * </pre>
