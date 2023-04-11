@@ -46,8 +46,7 @@ import static java.util.Objects.isNull;
  *         .withAuthToken("&lt;NGROK_AUTH_TOKEN&gt;")
  *         .withRegion(Region.AU)
  *         .withLogEventCallback(logEventCallback)
- *         .withMaxLogs(10)
- *         .withNgrokVersion(NgrokVersion.V2);
+ *         .withMaxLogs(10);
  *
  * final NgrokClient ngrokClient = new NgrokClient.Builder()
  *         .withJavaNgrokConfig(javaNgrokConfig)
