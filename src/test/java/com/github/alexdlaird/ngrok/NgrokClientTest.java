@@ -26,7 +26,6 @@ package com.github.alexdlaird.ngrok;
 import com.github.alexdlaird.exception.JavaNgrokHTTPException;
 import com.github.alexdlaird.http.Response;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
-import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import com.github.alexdlaird.ngrok.protocol.BindTls;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
