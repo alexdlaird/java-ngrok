@@ -14,7 +14,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [1.7.1](https://github.com/alexdlaird/java-ngrok/compare/1.7.0...1.7.1) - 2023-04-11
 ### Fixed
 - Inconsistencies with default installation of `ngrok` v2.
->>>>>>> main
 
 ## [1.7.0](https://github.com/alexdlaird/java-ngrok/compare/1.6.2...1.7.0) - 2023-04-11
 ### Added
