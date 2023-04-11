@@ -24,6 +24,7 @@
 package com.github.alexdlaird.ngrok.protocol;
 
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -56,9 +57,10 @@ public class CreateTunnelTest {
                 .withClientCas("clientCas")
                 .withRemoteAddr("remoteAddr")
                 .withMetadata("metadata")
-                .build(javaNgrokConfig);
+                .build();
 
         // THEN
+        assertEquals(NgrokVersion.V2, createTunnel.getNgrokVersion());
         assertEquals("name", createTunnel.getName());
         assertEquals(Proto.TCP, createTunnel.getProto());
         assertEquals("5000", createTunnel.getAddr());
@@ -78,14 +80,10 @@ public class CreateTunnelTest {
 
     @Test
     public void testCreateTunnelSchemes() {
-        // GIVEN
-        final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder().build();
-
-
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withSchemes(List.of("http", "https"))
-                .build(javaNgrokConfig);
+                .build();
 
         // THEN
         assertNull(createTunnel.getBindTls());

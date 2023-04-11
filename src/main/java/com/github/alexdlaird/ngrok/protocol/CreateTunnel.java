@@ -25,7 +25,6 @@ package com.github.alexdlaird.ngrok.protocol;
 
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokClient;
-import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 
 import java.util.List;
@@ -47,7 +46,7 @@ import static java.util.Objects.nonNull;
  *         .withName("my-tunnel")
  *         .withProto(Proto.TCP)
  *         .withAddr(5000)
- *         .build(ngrokClient.getJavaNgrokConfig());
+ *         .build();
  *
  * final HttpClient httpClient = new DefaultHttpClient.Builder().build()
  * final Response&lt;SomePOJOResponse&gt; postResponse = httpClient.post("http://localhost:4040/api/tunnels",
@@ -56,7 +55,7 @@ import static java.util.Objects.nonNull;
  * </pre>
  */
 public class CreateTunnel {
-
+    private transient final NgrokVersion ngrokVersion;
     private final String name;
     private final Proto proto;
     private final String addr;
@@ -74,6 +73,7 @@ public class CreateTunnel {
     private final List<String> schemes;
 
     private CreateTunnel(final Builder builder) {
+        this.ngrokVersion = builder.ngrokVersion;
         this.name = builder.name;
         this.proto = builder.proto;
         this.addr = builder.addr;
@@ -89,6 +89,13 @@ public class CreateTunnel {
         this.remoteAddr = builder.remoteAddr;
         this.metadata = builder.metadata;
         this.schemes = builder.schemes;
+    }
+
+    /**
+     * Get the version of <code>ngrok</code> for which the tunnel was created.
+     */
+    public NgrokVersion getNgrokVersion() {
+        return ngrokVersion;
     }
 
     /**
@@ -205,6 +212,7 @@ public class CreateTunnel {
     public static class Builder {
         private boolean setDefaults = false;
 
+        private NgrokVersion ngrokVersion;
         private String name;
         private Proto proto;
         private String addr;
@@ -222,7 +230,7 @@ public class CreateTunnel {
         private List<String> schemes;
 
         /**
-         * Use this constructor if default values should not be populated in required attributes when {@link #build(JavaNgrokConfig)}
+         * Use this constructor if default values should not be populated in required attributes when {@link #build()}
          * is called.
          * <p>
          * If required attributes are not set in the built {@link CreateTunnel}, default values will be used in methods
@@ -232,7 +240,7 @@ public class CreateTunnel {
         }
 
         /**
-         * Use this constructor if default values should be populated in required attributes when {@link #build(JavaNgrokConfig)}
+         * Use this constructor if default values should be populated in required attributes when {@link #build()}
          * is called.
          *
          * @param setDefaults <code>true</code> to populate defaults.
@@ -250,6 +258,7 @@ public class CreateTunnel {
         public Builder(final CreateTunnel createTunnel) {
             this.setDefaults = true;
 
+            this.ngrokVersion = createTunnel.ngrokVersion;
             this.name = createTunnel.name;
             this.proto = createTunnel.proto;
             this.addr = createTunnel.addr;
@@ -265,6 +274,14 @@ public class CreateTunnel {
             this.remoteAddr = createTunnel.remoteAddr;
             this.metadata = createTunnel.metadata;
             this.schemes = createTunnel.schemes;
+        }
+
+        /**
+         * The major version of <code>ngrok</code> for which the tunnel will be created.
+         */
+        public Builder withNgrokVersion(final NgrokVersion ngrokVersion) {
+            this.ngrokVersion = ngrokVersion;
+            return this;
         }
 
         /**
@@ -461,12 +478,12 @@ public class CreateTunnel {
                 this.schemes = (List<String>) tunnelDefinition.get("schemes");
             }
         }
-        
-        public CreateTunnel build(final JavaNgrokConfig javaNgrokConfig) {
-            return build(javaNgrokConfig.getNgrokVersion());
-        }
 
-        public CreateTunnel build(final NgrokVersion ngrokVersion) {
+        public CreateTunnel build() {
+            if (isNull(ngrokVersion)) {
+                ngrokVersion = NgrokVersion.V2;
+            }
+
             if (setDefaults) {
                 if (isNull(proto)) {
                     proto = Proto.HTTP;

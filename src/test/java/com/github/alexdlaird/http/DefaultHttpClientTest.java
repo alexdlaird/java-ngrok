@@ -68,7 +68,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
                 .withName("my-tunnel")
-                .build(NgrokVersion.V2);
+                .build();
 
         // WHEN
         final Response<Tunnel> postResponse = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcessV2.getApiUrl()), createTunnel, Tunnel.class);
@@ -84,7 +84,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
                 .withName("my-tunnel")
                 .withBindTls(true)
-                .build(NgrokVersion.V2);
+                .build();
         defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcessV2.getApiUrl()), createTunnel, Tunnel.class);
 
         // WHEN
@@ -106,7 +106,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
     public void testDelete() {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
-                .build(NgrokVersion.V2);
+                .build();
         final Tunnel tunnel = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcessV2.getApiUrl()), createTunnel, Tunnel.class).getBody();
 
         // WHEN
@@ -123,7 +123,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
                 .withName("my-tunnel")
                 .withBindTls(true)
-                .build(NgrokVersion.V2);
+                .build();
 
         // WHEN
         final HttpClientException exception = assertThrows(HttpClientException.class, () -> defaultHttpClient.put(String.format("%s/api/tunnels", ngrokProcessV2.getApiUrl()), createTunnel, Tunnels.class));
@@ -139,7 +139,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
                 .withName("my-tunnel")
                 .withAddr(new URL(ngrokProcessV2.getApiUrl()).getPort())
                 .withBindTls(true)
-                .build(NgrokVersion.V2);
+                .build();
         final Response<Tunnel> createResponse = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcessV2.getApiUrl()), request, Tunnel.class);
         final String publicUrl = createResponse.getBody().getPublicUrl();
 
