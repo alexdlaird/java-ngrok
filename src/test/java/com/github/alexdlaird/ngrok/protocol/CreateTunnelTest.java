@@ -39,6 +39,7 @@ public class CreateTunnelTest {
     public void testCreateTunnelBindTls() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withNgrokVersion(NgrokVersion.V2)
                 .withName("name")
                 .withProto(Proto.TCP)
                 .withAddr(5000)
