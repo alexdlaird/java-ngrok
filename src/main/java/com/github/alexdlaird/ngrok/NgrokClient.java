@@ -209,7 +209,7 @@ public class NgrokClient {
      * See {@link #connect(CreateTunnel)}.
      */
     public Tunnel connect() {
-        return connect(new CreateTunnel.Builder().build());
+        return connect(new CreateTunnel.Builder().withNgrokVersion(javaNgrokConfig.getNgrokVersion()).build());
     }
 
     /**
