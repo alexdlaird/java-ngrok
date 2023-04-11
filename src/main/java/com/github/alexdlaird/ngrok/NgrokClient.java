@@ -97,8 +97,8 @@ import static java.util.Objects.nonNull;
  * that are <a href="https://ngrok.com/docs/ngrok-agent/api#start-tunnel" target="_blank">supported by ngrok</a>.
  * <p>
  * <p>
- * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v2. To
- * install v3 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}.
+ * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
+ * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}.
  * <p>
  * <strong>Note:</strong> <code>ngrok</code> v2's default behavior for <code>http</code> when no additional properties
  * are passed is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This method will

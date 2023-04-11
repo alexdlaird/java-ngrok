@@ -84,15 +84,19 @@ at [https://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/
 
 ### `ngrok` Version Compatibility
 
-`java-ngrok` is compatible with `ngrok` v2 and v3, but by default it will install v2. To install v3 instead,
+`java-ngrok` is compatible with `ngrok` v2 and v3, but by default it will install v3. To install v2 instead,
 set the version with [`JavaNgrokConfig.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html#withNgrokVersion(com.github.alexdlaird.ngrok.installer.NgrokVersion)):
 
 ```java
 final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-        .withNgrokVersion(NgrokVersion.V3);
+        .withNgrokVersion(NgrokVersion.V2);
 
-final NgrokClient = new NgrokClient.Builder()
+final NgrokClient ngrokClient = new NgrokClient.Builder()
         .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
+
+final CreateTunnel createTunnel = new CreateTunnel.Builder()
+        .withNgrokVersion(NgrokVersion.V2)
         .build();
 ```
 
