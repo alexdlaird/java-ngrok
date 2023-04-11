@@ -461,6 +461,7 @@ public class CreateTunnel {
                 this.schemes = (List<String>) tunnelDefinition.get("schemes");
             }
         }
+        
         public CreateTunnel build(final JavaNgrokConfig javaNgrokConfig) {
             return build(javaNgrokConfig.getNgrokVersion());
         }
