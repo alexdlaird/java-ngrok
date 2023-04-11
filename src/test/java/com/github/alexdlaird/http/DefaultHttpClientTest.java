@@ -67,6 +67,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
     public void testPost() {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
+                .withNgrokVersion(NgrokVersion.V2)
                 .withName("my-tunnel")
                 .build();
 
@@ -82,6 +83,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
     public void testGet() {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
+                .withNgrokVersion(NgrokVersion.V2)
                 .withName("my-tunnel")
                 .withBindTls(true)
                 .build();
@@ -106,6 +108,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
     public void testDelete() {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
+                .withNgrokVersion(NgrokVersion.V2)
                 .build();
         final Tunnel tunnel = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcessV2.getApiUrl()), createTunnel, Tunnel.class).getBody();
 
@@ -121,6 +124,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
     public void testPut() {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
+                .withNgrokVersion(NgrokVersion.V2)
                 .withName("my-tunnel")
                 .withBindTls(true)
                 .build();
@@ -136,6 +140,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
     public void testGetWithQueryParameters() throws InterruptedException, MalformedURLException {
         // GIVEN
         final CreateTunnel request = new CreateTunnel.Builder(true)
+                .withNgrokVersion(NgrokVersion.V2)
                 .withName("my-tunnel")
                 .withAddr(new URL(ngrokProcessV2.getApiUrl()).getPort())
                 .withBindTls(true)
