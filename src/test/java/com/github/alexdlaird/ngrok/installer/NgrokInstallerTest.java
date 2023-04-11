@@ -220,7 +220,7 @@ class NgrokInstallerTest extends NgrokTestCase {
         final NgrokCDNUrl ngrokCDNUrl = ngrokInstaller.getNgrokCDNUrl();
 
         // THEN
-        assertEquals(NgrokV2CDNUrl.WINDOWS_i386, ngrokCDNUrl);
+        assertEquals(NgrokV3CDNUrl.WINDOWS_i386, ngrokCDNUrl);
     }
 
     @Test
@@ -233,6 +233,6 @@ class NgrokInstallerTest extends NgrokTestCase {
         final NgrokCDNUrl ngrokCDNUrl = ngrokInstaller.getNgrokCDNUrl();
 
         // THEN
-        assertEquals(NgrokV2CDNUrl.LINUX_x86_64_arm, ngrokCDNUrl);
+        assertEquals(NgrokV3CDNUrl.LINUX_x86_64_arm, ngrokCDNUrl);
     }
 }

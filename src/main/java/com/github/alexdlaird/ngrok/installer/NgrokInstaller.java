@@ -169,7 +169,7 @@ public class NgrokInstaller {
      * See {@link #getNgrokCDNUrl}.
      */
     public NgrokCDNUrl getNgrokCDNUrl() {
-        return getNgrokCDNUrl(NgrokVersion.V2);
+        return getNgrokCDNUrl(NgrokVersion.V3);
     }
 
     /**
