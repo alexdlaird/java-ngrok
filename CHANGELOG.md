@@ -5,11 +5,16 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.0.0...HEAD)
 
-## [2.0.0](https://github.com/alexdlaird/java-ngrok/compare/1.7.0...2.0.0) - TBD
+## [2.0.0](https://github.com/alexdlaird/java-ngrok/compare/1.7.1...2.0.0) - TBD
 ### Changed
 - Default installer behavior downloads `ngrok` v3 when no version is specified.
 - Documentation updates.
 - Test updates.
+
+## [1.7.1](https://github.com/alexdlaird/java-ngrok/compare/1.7.0...1.7.1) - 2023-04-11
+### Fixed
+- Inconsistencies with default installation of `ngrok` v2.
+>>>>>>> main
 
 ## [1.7.0](https://github.com/alexdlaird/java-ngrok/compare/1.6.2...1.7.0) - 2023-04-11
 ### Added
