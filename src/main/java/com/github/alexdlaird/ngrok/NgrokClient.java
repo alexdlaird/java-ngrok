@@ -72,7 +72,7 @@ import static java.util.Objects.nonNull;
  * final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder()
  *         .withProto(Proto.TCP)
  *         .withAddr(22)
- *         .build(ngrokClient.getJavaNgrokConfig());
+ *         .build();
  * final Tunnel sshTunnel = ngrokClient.connect(sshCreateTunnel);
  *
  * // Open a tunnel to MySQL with a Reserved TCP Address
@@ -81,14 +81,14 @@ import static java.util.Objects.nonNull;
  *         .withProto(Proto.TCP)
  *         .withAddr(3306)
  *         .withRemoteAddr("1.tcp.ngrok.io:12345")
- *         .build(ngrokClient.getJavaNgrokConfig());
+ *         .build();
  * final Tunnel mysqlTunnel = ngrokClient.connect(mysqlCreateTunnel);
  *
  * // Open a tunnel to a local file server
  * // &lt;NgrokTunnel: "http://&lt;public_sub&gt;.ngrok.io" -&gt; "file:///"&gt;
  * final CreateTunnel fileserverCreateTunnel = new CreateTunnel.Builder()
  *         .withAddr("file:///)
- *         .build(ngrokClient.getJavaNgrokConfig());
+ *         .build();
  * final Tunnel fileserverTunnel = ngrokClient.connect(fileserverCreateTunnel);
  * </pre>
  * <p>
