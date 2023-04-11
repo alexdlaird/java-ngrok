@@ -23,7 +23,6 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
-import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import org.junit.jupiter.api.Test;
 
@@ -38,9 +37,6 @@ public class CreateTunnelTest {
 
     @Test
     public void testCreateTunnelBindTls() {
-        // GIVEN
-        final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder().build();
-
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withName("name")

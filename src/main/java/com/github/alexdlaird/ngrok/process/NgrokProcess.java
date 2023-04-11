@@ -206,7 +206,7 @@ public class NgrokProcess {
      * // &lt;NgrokTunnel: "http://&lt;public_sub2&gt;.ngrok.io" -&gt; "http://localhost:8000"&gt;
      * final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder()
      *         .withAddr(8000)
-     *         .build(ngrokClient.getJavaNgrokConfig());
+     *         .build();
      * final Tunnel ngrokTunnel2 = ngrokClient.connect(createTunnel);
      * </pre>
      * <p>
