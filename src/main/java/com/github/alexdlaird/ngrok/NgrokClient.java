@@ -140,7 +140,7 @@ public class NgrokClient {
 
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokClient.class));
 
-    private static final String VERSION = "1.6.3";
+    private static final String VERSION = "1.7.0";
 
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokProcess ngrokProcess;
@@ -209,7 +209,7 @@ public class NgrokClient {
      * See {@link #connect(CreateTunnel)}.
      */
     public Tunnel connect() {
-        return connect(new CreateTunnel.Builder().build(javaNgrokConfig.getNgrokVersion()));
+        return connect(new CreateTunnel.Builder().build());
     }
 
     /**
@@ -369,7 +369,7 @@ public class NgrokClient {
             createTunnelBuilder.withTunnelDefinition((Map<String, Object>) tunnelDefinitions.get(name));
         }
 
-        return createTunnelBuilder.build(javaNgrokConfig.getNgrokVersion());
+        return createTunnelBuilder.build();
     }
 
     /**

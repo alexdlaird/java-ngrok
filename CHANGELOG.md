@@ -5,15 +5,15 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.0.0...HEAD)
 
-## [2.0.0](https://github.com/alexdlaird/java-ngrok/compare/1.6.3...2.0.0) - TBD
+## [2.0.0](https://github.com/alexdlaird/java-ngrok/compare/1.7.0...2.0.0) - TBD
 ### Changed
 - Default installer behavior downloads `ngrok` v3 when no version is specified.
 - Documentation updates.
 - Test updates.
 
-## [1.6.3](https://github.com/alexdlaird/java-ngrok/compare/1.6.2...1.6.3) - 2023-04-11
-### Changed
-- `build()` in [CreateTunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.6.3/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html) requires a parameter so the `ngrok` version can be inferred. This may break builds, but passing `JavaNgrokConfig` resolves it, and the change is necessary to resolve a bug in previous 1.6.x versions of `java-ngrok`.
+## [1.7.0](https://github.com/alexdlaird/java-ngrok/compare/1.6.2...1.7.0) - 2023-04-11
+### Added
+- `ngrokVersion` to [CreateTunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.7.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html) so parameter details can be properly inferred when necessary.
 
 ### Fixed
 - Inconsistencies with default installation of `ngrok` v2.
