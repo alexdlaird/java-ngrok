@@ -162,6 +162,7 @@ class NgrokClientTest extends NgrokTestCase {
     public void testConnectName() {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withNgrokVersion(NgrokVersion.V2)
                 .withName("my-tunnel")
                 .build();
 
