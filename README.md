@@ -57,7 +57,7 @@ final Tunnel httpTunnel = ngrokClient.connect();
 final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder()
         .withProto(Proto.TCP)
         .withAddr(22)
-        .build();
+        .build(ngrokClient.getJavaNgrokConfig());
 final Tunnel sshTunnel = ngrokClient.connect(sshCreateTunnel);
 ```
 

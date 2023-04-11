@@ -95,7 +95,7 @@ class NgrokClientTest extends NgrokTestCase {
         assertFalse(ngrokProcessV2.isRunning());
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withAddr(5000)
-                .build();
+                .build(javaNgrokConfigV2);
 
         // WHEN
         final Tunnel tunnel = ngrokClientV2.connect(createTunnel);
@@ -128,7 +128,7 @@ class NgrokClientTest extends NgrokTestCase {
         assertFalse(ngrokClientV3.getNgrokProcess().isRunning());
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withAddr(5000)
-                .build();
+                .build(javaNgrokConfigV3);
 
         // WHEN
         final Tunnel tunnel = ngrokClientV3.connect(createTunnel);
@@ -160,7 +160,7 @@ class NgrokClientTest extends NgrokTestCase {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withName("my-tunnel")
-                .build();
+                .build(javaNgrokConfigV2);
 
         // WHEN
         final Tunnel tunnel = ngrokClientV2.connect(createTunnel);
@@ -174,9 +174,9 @@ class NgrokClientTest extends NgrokTestCase {
     @Test
     public void testMultipleConnectionsNoTokenFailsV2() throws InterruptedException {
         // WHEN
-        ngrokClientV2.connect(new CreateTunnel.Builder().withAddr(5000).build());
+        ngrokClientV2.connect(new CreateTunnel.Builder().withAddr(5000).build(javaNgrokConfigV2));
         Thread.sleep(1000);
-        final JavaNgrokHTTPException exception = assertThrows(JavaNgrokHTTPException.class, () -> ngrokClientV2.connect(new CreateTunnel.Builder().withAddr(5001).build()));
+        final JavaNgrokHTTPException exception = assertThrows(JavaNgrokHTTPException.class, () -> ngrokClientV2.connect(new CreateTunnel.Builder().withAddr(5001).build(javaNgrokConfigV2)));
 
         // THEN
         assertEquals(HTTP_BAD_GATEWAY, exception.getStatusCode());
@@ -210,7 +210,7 @@ class NgrokClientTest extends NgrokTestCase {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withBindTls(BindTls.BOTH)
-                .build();
+                .build(javaNgrokConfigV2);
         final Tunnel tunnel = ngrokClientV2.connect(createTunnel);
 
         // WHEN
@@ -258,7 +258,7 @@ class NgrokClientTest extends NgrokTestCase {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withSchemes(List.of("http"))
-                .build();
+                .build(javaNgrokConfigV3);
         final Tunnel tunnel = ngrokClientV3.connect(createTunnel);
 
         // WHEN
@@ -274,7 +274,7 @@ class NgrokClientTest extends NgrokTestCase {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withSchemes(List.of("https"))
-                .build();
+                .build(javaNgrokConfigV3);
         final Tunnel tunnel = ngrokClientV3.connect(createTunnel);
 
         // WHEN
@@ -290,7 +290,7 @@ class NgrokClientTest extends NgrokTestCase {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withSchemes(List.of("http", "https"))
-                .build();
+                .build(javaNgrokConfigV3);
         final Tunnel tunnel = ngrokClientV3.connect(createTunnel);
 
         // WHEN
@@ -306,7 +306,7 @@ class NgrokClientTest extends NgrokTestCase {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withBindTls(BindTls.BOTH)
-                .build();
+                .build(javaNgrokConfigV3);
         final Tunnel tunnel = ngrokClientV3.connect(createTunnel);
 
         // WHEN
@@ -322,7 +322,7 @@ class NgrokClientTest extends NgrokTestCase {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withName("my-tunnel")
-                .build();
+                .build(javaNgrokConfigV2);
         final Tunnel tunnel = ngrokClientV2.connect(createTunnel);
         assertTrue(ngrokClientV2.getNgrokProcess().isRunning());
         final List<Tunnel> tunnels1 = ngrokClientV2.getTunnels();
@@ -341,7 +341,7 @@ class NgrokClientTest extends NgrokTestCase {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withName("my-tunnel")
-                .build();
+                .build(javaNgrokConfigV3);
         final Tunnel tunnel = ngrokClientV3.connect(createTunnel);
         assertTrue(ngrokClientV3.getNgrokProcess().isRunning());
 
@@ -356,7 +356,7 @@ class NgrokClientTest extends NgrokTestCase {
     @Test
     public void testKill() {
         // GIVEN
-        final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build();
+        final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build(javaNgrokConfigV2);
         ngrokClientV2.connect(createTunnel);
 
         // WHEN
@@ -395,7 +395,7 @@ class NgrokClientTest extends NgrokTestCase {
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withProto(Proto.TCP)
                 .withAddr(5000)
-                .build();
+                .build(javaNgrokConfigV2);
 
         // WHEN
         final Tunnel tunnel = ngrokClient2.connect(createTunnel);
@@ -427,7 +427,7 @@ class NgrokClientTest extends NgrokTestCase {
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withProto(Proto.TCP)
                 .withAddr(5000)
-                .build();
+                .build(javaNgrokConfigV2);
 
         // WHEN
         final Tunnel tunnel = ngrokClient2.connect(createTunnel);
@@ -459,7 +459,7 @@ class NgrokClientTest extends NgrokTestCase {
         final String subdomain = createUniqueSubdomain();
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withSubdomain(subdomain)
-                .build();
+                .build(javaNgrokConfigV2);
 
         // WHEN
         final Tunnel tunnel = ngrokClient2.connect(createTunnel);
@@ -482,7 +482,7 @@ class NgrokClientTest extends NgrokTestCase {
         assertFalse(ngrokClientV2.getNgrokProcess().isRunning());
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withAddr("file:///")
-                .build();
+                .build(javaNgrokConfigV2);
 
         // WHEN
         final Tunnel tunnel = ngrokClientV2.connect(createTunnel);
@@ -506,7 +506,7 @@ class NgrokClientTest extends NgrokTestCase {
         assertFalse(ngrokClientV2.getNgrokProcess().isRunning());
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withAddr("file:///")
-                .build();
+                .build(javaNgrokConfigV2);
         final String publicUrl = ngrokClientV2.connect(createTunnel).getPublicUrl();
         Thread.sleep(1000);
 
@@ -531,7 +531,7 @@ class NgrokClientTest extends NgrokTestCase {
         assertFalse(ngrokClientV2.getNgrokProcess().isRunning());
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withAddr("file:///")
-                .build();
+                .build(javaNgrokConfigV2);
         final Tunnel tunnel = ngrokClientV2.connect(createTunnel);
         Thread.sleep(1000);
         final String apiUrl = ngrokClientV2.getNgrokProcess().getApiUrl();
@@ -602,11 +602,11 @@ class NgrokClientTest extends NgrokTestCase {
         // WHEN
         final CreateTunnel createHttpTunnel = new CreateTunnel.Builder()
                 .withName("http-tunnel")
-                .build();
+                .build(javaNgrokConfigV2);
         final Tunnel httpTunnel = ngrokClient2.connect(createHttpTunnel);
         final CreateTunnel createSshTunnel = new CreateTunnel.Builder()
                 .withName("tcp-tunnel")
-                .build();
+                .build(javaNgrokConfigV2);
         final Tunnel sshTunnel = ngrokClient2.connect(createSshTunnel);
         final List<Tunnel> tunnels = ngrokClient2.getTunnels();
 
@@ -659,11 +659,11 @@ class NgrokClientTest extends NgrokTestCase {
         // WHEN
         final CreateTunnel createHttpTunnel = new CreateTunnel.Builder()
                 .withName("http-tunnel")
-                .build();
+                .build(javaNgrokConfigV3);
         final Tunnel httpTunnel = ngrokClient2.connect(createHttpTunnel);
         final CreateTunnel createSshTunnel = new CreateTunnel.Builder()
                 .withName("tcp-tunnel")
-                .build();
+                .build(javaNgrokConfigV3);
         final Tunnel sshTunnel = ngrokClient2.connect(createSshTunnel);
         final List<Tunnel> tunnels = ngrokClient2.getTunnels();
 
@@ -709,7 +709,7 @@ class NgrokClientTest extends NgrokTestCase {
         final CreateTunnel createTunnelSubdomain = new CreateTunnel.Builder()
                 .withSubdomain(subdomain2)
                 .withAddr(5000)
-                .build();
+                .build(javaNgrokConfigV2);
         final Tunnel ngrokTunnel2 = ngrokClient2.connect(createTunnelSubdomain);
 
         // THEN

@@ -64,7 +64,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
                 .withName("my-tunnel")
-                .build();
+                .build(NgrokVersion.V2);
 
         // WHEN
         final Response<Tunnel> postResponse = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcessV2.getApiUrl()), createTunnel, Tunnel.class);
@@ -102,7 +102,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
     public void testDelete() {
         // GIVEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
-                .build();
+                .build(NgrokVersion.V2);
         final Tunnel tunnel = defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcessV2.getApiUrl()), createTunnel, Tunnel.class).getBody();
 
         // WHEN
