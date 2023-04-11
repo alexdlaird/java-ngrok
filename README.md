@@ -94,6 +94,10 @@ final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
 final NgrokClient ngrokClient = new NgrokClient.Builder()
         .withJavaNgrokConfig(javaNgrokConfig)
         .build();
+
+final CreateTunnel createTunnel = new CreateTunnel.Builder()
+        .withNgrokVersion(NgrokVersion.V3)
+        .build();
 ```
 
 ### Java 8
