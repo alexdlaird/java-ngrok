@@ -52,7 +52,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import static com.github.alexdlaird.util.StringUtils.isBlank;
-import static java.util.Objects.isNull;
 
 /**
  * A helper for downloading and installing the <code>ngrok</code> for the current system.

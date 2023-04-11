@@ -39,7 +39,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.*;
+import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
+import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.getNgrokBin;
 import static java.util.Objects.nonNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
