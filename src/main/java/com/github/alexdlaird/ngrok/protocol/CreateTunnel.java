@@ -25,6 +25,7 @@ package com.github.alexdlaird.ngrok.protocol;
 
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokClient;
+import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 
 import java.util.List;
@@ -53,6 +54,10 @@ import static java.util.Objects.nonNull;
  *                                                                 createTunnel,
  *                                                                 Tunnel.class);
  * </pre>
+ * <h2><code>ngrok</code> Version Compatibility</h2>
+ * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
+ * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}
+ * and {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
  */
 public class CreateTunnel {
     private transient final NgrokVersion ngrokVersion;

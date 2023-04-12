@@ -26,6 +26,7 @@ package com.github.alexdlaird.ngrok.conf;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokLog;
+import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Region;
 
 import java.nio.file.Path;
@@ -52,6 +53,10 @@ import static java.util.Objects.isNull;
  *         .withJavaNgrokConfig(javaNgrokConfig)
  *         .build();
  * </pre>
+ * <h2><code>ngrok</code> Version Compatibility</h2>
+ * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
+ * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}
+ * and {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
  */
 public class JavaNgrokConfig {
 
