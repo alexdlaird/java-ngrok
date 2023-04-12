@@ -98,7 +98,8 @@ import static java.util.Objects.nonNull;
  * <p>
  * <p>
  * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v2. To
- * install v3 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}.
+ * install v3 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}
+ * and {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
  * <p>
  * <strong>Note:</strong> <code>ngrok</code> v2's default behavior for <code>http</code> when no additional properties
  * are passed is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This method will
@@ -157,6 +158,13 @@ public class NgrokClient {
     /**
      * Establish a new <code>ngrok</code> tunnel for the tunnel definition, returning an object representing
      * the connected tunnel.
+     * <p>
+     * If <code>ngrok</code> is not installed at {@link JavaNgrokConfig}'s <code>ngrokPath</code>, calling this method
+     * will first download and install <code>ngrok</code>.
+     * <p>
+     * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v2. To
+     * install v3 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}
+     * and {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
      * <p>
      * If <code>ngrok</code> is not running, calling this method will first start a process with
      * {@link JavaNgrokConfig}.
