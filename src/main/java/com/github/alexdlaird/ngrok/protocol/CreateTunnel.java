@@ -71,6 +71,7 @@ public class CreateTunnel {
     private final String remoteAddr;
     private final String metadata;
     private final List<String> schemes;
+    private final List<String> basicAuth;
 
     private CreateTunnel(final Builder builder) {
         this.ngrokVersion = builder.ngrokVersion;
@@ -89,6 +90,7 @@ public class CreateTunnel {
         this.remoteAddr = builder.remoteAddr;
         this.metadata = builder.metadata;
         this.schemes = builder.schemes;
+        this.basicAuth = builder.basicAuth;
     }
 
     /**
@@ -228,6 +230,7 @@ public class CreateTunnel {
         private String remoteAddr;
         private String metadata;
         private List<String> schemes;
+        private List<String> basicAuth;
 
         /**
          * Use this constructor if default values should not be populated in required attributes when {@link #build()}
@@ -274,6 +277,7 @@ public class CreateTunnel {
             this.remoteAddr = createTunnel.remoteAddr;
             this.metadata = createTunnel.metadata;
             this.schemes = createTunnel.schemes;
+            this.basicAuth = createTunnel.basicAuth;
         }
 
         /**
@@ -325,9 +329,13 @@ public class CreateTunnel {
         }
 
         /**
-         * HTTP basic authentication credentials to enforce on tunneled requests
+         * HTTP basic authentication credentials to enforce on tunneled requests.
          */
         public Builder withAuth(final String auth) {
+            if (nonNull(basicAuth)) {
+                throw new IllegalArgumentException("Cannot set both 'auth' and 'basicAuth'.");
+            }
+
             this.auth = auth;
             return this;
         }
@@ -429,6 +437,18 @@ public class CreateTunnel {
         }
 
         /**
+         * List of HTTP basic authentication credentials to enforce on tunneled requests.
+         */
+        public Builder withBasicAuth(final List<String> basicAuth) {
+            if (nonNull(auth)) {
+                throw new IllegalArgumentException("Cannot set both 'auth' and 'basicAuth'.");
+            }
+
+            this.basicAuth = basicAuth;
+            return this;
+        }
+
+        /**
          * Populate any <code>null</code> attributes (with the exception of <code>name</code>) in this Builder with
          * values from the given <code>tunnelDefinition</code>.
          *
@@ -477,6 +497,9 @@ public class CreateTunnel {
             if (isNull(this.schemes) && tunnelDefinition.containsKey("schemes")) {
                 this.schemes = (List<String>) tunnelDefinition.get("schemes");
             }
+            if (isNull(this.schemes) && tunnelDefinition.containsKey("schemes")) {
+                this.basicAuth = (List<String>) tunnelDefinition.get("basic_auth");
+            }
         }
 
         public CreateTunnel build() {
@@ -498,19 +521,26 @@ public class CreateTunnel {
                         name = String.format("%s-file-%s", proto, UUID.randomUUID());
                     }
                 }
-                if (isNull(bindTls) && ngrokVersion == NgrokVersion.V2) {
+                if (ngrokVersion == NgrokVersion.V2 && isNull(bindTls)) {
                     bindTls = BindTls.BOTH;
                 }
-                if (ngrokVersion == NgrokVersion.V3 && nonNull(bindTls)) {
-                    if (bindTls == BindTls.TRUE) {
-                        schemes = List.of("https");
-                    } else if (bindTls == BindTls.FALSE) {
-                        schemes = List.of("http");
-                    } else {
-                        schemes = List.of("http", "https");
-                    }
+                if (ngrokVersion == NgrokVersion.V3) {
+                    if (nonNull(bindTls)) {
+                        if (bindTls == BindTls.TRUE) {
+                            schemes = List.of("https");
+                        } else if (bindTls == BindTls.FALSE) {
+                            schemes = List.of("http");
+                        } else {
+                            schemes = List.of("http", "https");
+                        }
 
-                    bindTls = null;
+                        bindTls = null;
+                    }
+                    if (nonNull(auth)) {
+                        basicAuth = List.of(auth);
+
+                        auth = null;
+                    }
                 }
             }
 

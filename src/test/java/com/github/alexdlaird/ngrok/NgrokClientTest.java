@@ -392,6 +392,7 @@ class NgrokClientTest extends NgrokTestCase {
     @Test
     public void testRegionalTcpV2() {
         final String ngrokAuthToken = System.getenv("NGROK_AUTHTOKEN");
+        final String subdomain = createUniqueSubdomain();
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
 
         // GIVEN
@@ -409,6 +410,7 @@ class NgrokClientTest extends NgrokTestCase {
                 .withNgrokVersion(NgrokVersion.V2)
                 .withProto(Proto.TCP)
                 .withAddr(5000)
+                .withSubdomain(subdomain)
                 .build();
 
         // WHEN
@@ -453,6 +455,64 @@ class NgrokClientTest extends NgrokTestCase {
         assertEquals("localhost:5000", tunnel.getConfig().getAddr());
         assertThat(tunnel.getPublicUrl(), containsString("tcp://"));
         assertThat(tunnel.getPublicUrl(), containsString(".au."));
+    }
+
+    @Test
+    public void testAuthV2() {
+        final String ngrokAuthToken = System.getenv("NGROK_AUTHTOKEN");
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+
+        // GIVEN
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV2)
+                .withAuthToken(ngrokAuthToken)
+                .build();
+        ngrokProcessV2_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+        final NgrokClient ngrokClient2 = new NgrokClient.Builder()
+                .withJavaNgrokConfig(javaNgrokConfig2)
+                .withNgrokProcess(ngrokProcessV2_2)
+                .build();
+        assertFalse(ngrokClient2.getNgrokProcess().isRunning());
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withNgrokVersion(NgrokVersion.V2)
+                .withAddr(5000)
+                .withAuth("username:password")
+                .build();
+
+        // WHEN
+        final Tunnel tunnel = ngrokClient2.connect(createTunnel);
+
+        // THEN
+        assertTrue(ngrokClient2.getNgrokProcess().isRunning());
+        assertNotNull(tunnel.getPublicUrl());
+    }
+
+    @Test
+    public void testAuthV3() {
+        final String ngrokAuthToken = System.getenv("NGROK_AUTHTOKEN");
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+
+        // GIVEN
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
+                .withAuthToken(ngrokAuthToken)
+                .build();
+        ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+        final NgrokClient ngrokClient2 = new NgrokClient.Builder()
+                .withJavaNgrokConfig(javaNgrokConfig2)
+                .withNgrokProcess(ngrokProcessV3_2)
+                .build();
+        assertFalse(ngrokClient2.getNgrokProcess().isRunning());
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withNgrokVersion(NgrokVersion.V3)
+                .withAddr(5000)
+                .withAuth("username:password")
+                .build();
+
+        // WHEN
+        final Tunnel tunnel = ngrokClient2.connect(createTunnel);
+
+        // THEN
+        assertTrue(ngrokClient2.getNgrokProcess().isRunning());
+        assertNotNull(tunnel.getPublicUrl());
     }
 
     @Test
