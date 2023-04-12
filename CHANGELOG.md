@@ -5,11 +5,19 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.0.0...HEAD)
 
-## [2.0.0](https://github.com/alexdlaird/java-ngrok/compare/1.7.1...2.0.0) - TBD
+## [2.0.0](https://github.com/alexdlaird/java-ngrok/compare/1.7.2...2.0.0) - TBD
 ### Changed
 - Default installer behavior downloads `ngrok` v3 when no version is specified.
 - Documentation updates.
 - Test updates.
+
+## [1.7.2](https://github.com/alexdlaird/java-ngrok/compare/1.7.1...1.7.2) - 2023-04-11
+### Added
+- Support for `basic_auth` parameter in `ngrok` v3.
+- Test improvements.
+
+### Fixed
+- Documentation improvements.
 
 ## [1.7.1](https://github.com/alexdlaird/java-ngrok/compare/1.7.0...1.7.1) - 2023-04-11
 ### Fixed
