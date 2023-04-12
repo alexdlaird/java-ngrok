@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [2.0.0](https://github.com/alexdlaird/java-ngrok/compare/1.7.2...2.0.0) - 2023-04-12
 ### Changed
-- Default installer behavior downloads `ngrok` v3 when no version is specified.
+- Default installer behavior downloads `ngrok` v3 by default.
 - Documentation updates.
 - Test updates.
 
