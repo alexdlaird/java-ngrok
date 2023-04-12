@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.7.2...HEAD)
 
-## [1.7.2](https://github.com/alexdlaird/java-ngrok/compare/1.7.1...1.7.2) - 2023-04-11
+## [1.7.2](https://github.com/alexdlaird/java-ngrok/compare/1.7.1...1.7.2) - 2023-04-12
 ### Added
 - Support for `basic_auth` parameter in `ngrok` v3.
 - Test improvements.
