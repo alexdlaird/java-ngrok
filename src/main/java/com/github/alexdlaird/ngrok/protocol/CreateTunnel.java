@@ -71,12 +71,11 @@ public class CreateTunnel {
     private final String remoteAddr;
     private final String metadata;
     private final List<String> schemes;
-	
-	private OAuth oauth;
+    private OAuth oauth;
 
     public OAuth getOauth() {
-		return oauth;
-	}
+        return oauth;
+    }
 
 	private CreateTunnel(final Builder builder) {
         this.name = builder.name;
@@ -95,11 +94,11 @@ public class CreateTunnel {
         this.metadata = builder.metadata;
         this.schemes = builder.schemes;
         if(!isNull(builder.provider)) {
-        	this.oauth = new OAuth();
-        	oauth.setProvider(builder.provider);
-        	oauth.setAllowEmails(builder.allowEmails);
-        	oauth.setAllowDomains(builder.allowDomains);
-        	oauth.setScopes(builder.scopes);	
+            this.oauth = new OAuth();
+            oauth.setProvider(builder.provider);
+            oauth.setAllowEmails(builder.allowEmails);
+            oauth.setAllowDomains(builder.allowDomains);
+            oauth.setScopes(builder.scopes);	
         }
     }
 
@@ -144,7 +143,7 @@ public class CreateTunnel {
     public String getHostHeader() {
         return hostHeader;
     }
-	/**
+    /**
      * Get <code>ngrok</code>'s <code>bind_tls</code> value.
      */
     public BindTls getBindTls() {
