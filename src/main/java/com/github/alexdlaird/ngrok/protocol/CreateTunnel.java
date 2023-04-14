@@ -23,16 +23,17 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
-import com.github.alexdlaird.http.HttpClient;
-import com.github.alexdlaird.ngrok.NgrokClient;
-import com.github.alexdlaird.ngrok.installer.NgrokVersion;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
+import com.github.alexdlaird.http.HttpClient;
+import com.github.alexdlaird.ngrok.NgrokClient;
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 
 /**
  * An object that represents a <code>ngrok</code> Tunnel creation request. This object can be serialized
@@ -69,8 +70,14 @@ public class CreateTunnel {
     private final String remoteAddr;
     private final String metadata;
     private final List<String> schemes;
+	
+	private OAuth oauth;
 
-    private CreateTunnel(final Builder builder) {
+    public OAuth getOauth() {
+		return oauth;
+	}
+
+	private CreateTunnel(final Builder builder) {
         this.name = builder.name;
         this.proto = builder.proto;
         this.addr = builder.addr;
@@ -86,6 +93,13 @@ public class CreateTunnel {
         this.remoteAddr = builder.remoteAddr;
         this.metadata = builder.metadata;
         this.schemes = builder.schemes;
+        if(!isNull(builder.provider)) {
+        	this.oauth = new OAuth();
+        	oauth.setProvider(builder.provider);
+        	oauth.setAllowEmails(builder.allowEmails);
+        	oauth.setAllowDomains(builder.allowDomains);
+        	oauth.setScopes(builder.scopes);	
+        }
     }
 
     /**
@@ -129,8 +143,7 @@ public class CreateTunnel {
     public String getHostHeader() {
         return hostHeader;
     }
-
-    /**
+	/**
      * Get <code>ngrok</code>'s <code>bind_tls</code> value.
      */
     public BindTls getBindTls() {
@@ -217,6 +230,10 @@ public class CreateTunnel {
         private String remoteAddr;
         private String metadata;
         private List<String> schemes;
+    	private String provider;
+    	private List<String> scopes;
+    	private List<String> allowEmails;
+    	private List<String> allowDomains;
 
         /**
          * Use this constructor if default values should not be populated in required attributes when {@link #build()}
@@ -262,6 +279,12 @@ public class CreateTunnel {
             this.remoteAddr = createTunnel.remoteAddr;
             this.metadata = createTunnel.metadata;
             this.schemes = createTunnel.schemes;
+            if(createTunnel.oauth != null) {
+            	this.provider = createTunnel.oauth.getProvider();
+                this.allowDomains = createTunnel.oauth.getAllowDomains();
+                this.allowEmails = createTunnel.oauth.getAllowEmails();
+                this.scopes = createTunnel.oauth.getScopes();
+            }
         }
 
         /**
@@ -269,6 +292,38 @@ public class CreateTunnel {
          */
         public Builder withName(final String name) {
             this.name = name;
+            return this;
+        }
+        
+        /**
+         * The OAuth Provider
+         */
+        public Builder withOAuthProvider(final String provider) {
+            this.provider = provider;
+            return this;
+        }
+        
+        /**
+         * The OAuth Scopes
+         */
+        public Builder withOAuthScopes(final String... scopes) {
+            this.scopes = Arrays.asList(scopes);
+            return this;
+        }
+        
+        /**
+         * The OAuth Emails
+         */
+        public Builder withOAuthAllowEmails(final String... emails) {
+            this.allowEmails = Arrays.asList(emails);
+            return this;
+        }
+        
+        /**
+         * The OAuth Domains
+         */
+        public Builder withOAuthAllowDomains(final String... domains) {
+        	this.allowDomains = Arrays.asList(domains);
             return this;
         }
 
@@ -456,6 +511,18 @@ public class CreateTunnel {
             }
             if (isNull(this.schemes) && tunnelDefinition.containsKey("schemes")) {
                 this.schemes = (List<String>) tunnelDefinition.get("schemes");
+            }
+            if (isNull(this.provider) && tunnelDefinition.containsKey("oauth.provider")) {
+                this.provider = (String) tunnelDefinition.get("oauth.provider");
+            }
+            if (isNull(this.provider) && tunnelDefinition.containsKey("oauth.oauth_scopes")) {
+                this.scopes = (List<String>) tunnelDefinition.get("oauth.oauth_scopes");
+            }
+            if (isNull(this.provider) && tunnelDefinition.containsKey("oauth.allow_domains")) {
+                this.allowDomains = (List<String>) tunnelDefinition.get("oauth.allow_domains");
+            }
+            if (isNull(this.provider) && tunnelDefinition.containsKey("oauth.allow_emails")) {
+                this.allowEmails = (List<String>) tunnelDefinition.get("oauth.allow_emails");
             }
         }
 
