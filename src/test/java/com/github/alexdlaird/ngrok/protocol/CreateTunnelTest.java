@@ -28,10 +28,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreateTunnelTest {
 
@@ -98,5 +101,39 @@ public class CreateTunnelTest {
         assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
                 .withSchemes(List.of("http", "https"))
                 .withBindTls(BindTls.TRUE));
+    }
+    
+    @Test
+    public void testCreateTunnelOAuth() {
+        // WHEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                  .withOAuth(new OAuth.Builder().withProvider("testcase")
+                  .withAllowDomains("one.domain", "two.domain")
+                  .withAllowEmails("one@email", "two@email")
+                  .withScopes("ascope", "bscope")
+                .build()).build();
+
+        // THEN
+        assertNotNull(createTunnel.getOauth());
+        assertEquals("testcase", createTunnel.getOauth().getProvider());
+        assertTrue(createTunnel.getOauth().getAllowDomains().contains("one.domain"));
+        assertTrue(createTunnel.getOauth().getAllowEmails().contains("two@email"));
+        assertTrue(createTunnel.getOauth().getScopes().contains("ascope"));
+    }
+    
+    @Test
+    public void testCreateTunnelNoOAuthWithoutProvider() throws Exception {
+        // WHEN
+        try {
+          new CreateTunnel.Builder()
+                  .withOAuth(new OAuth.Builder()
+                    .withAllowDomains("one.domain", "two.domain")
+                    .withAllowEmails("one@email", "two@email")
+                    .withScopes("ascope", "bscope").build())
+                  .build();
+          fail("no provider should throw an exception");
+        } catch(IllegalArgumentException iae) {
+          //This is correct.
+        }        
     }
 }
