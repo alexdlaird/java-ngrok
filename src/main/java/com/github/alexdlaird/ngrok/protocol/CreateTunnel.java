@@ -71,11 +71,7 @@ public class CreateTunnel {
     private final String remoteAddr;
     private final String metadata;
     private final List<String> schemes;
-    private OAuth oauth;
-
-    public OAuth getOauth() {
-        return oauth;
-    }
+    private final OAuth oauth;
 
     private CreateTunnel(final Builder builder) {
         this.name = builder.name;
@@ -199,6 +195,13 @@ public class CreateTunnel {
      */
     public List<String> getSchemes() {
         return schemes;
+    }
+    
+    /**
+     * Get the OAuth settings to be activated on the tunnel
+     */
+    public OAuth getOauth() {
+      return oauth;
     }
 
     /**
