@@ -93,13 +93,7 @@ public class CreateTunnel {
         this.remoteAddr = builder.remoteAddr;
         this.metadata = builder.metadata;
         this.schemes = builder.schemes;
-        if(!isNull(builder.provider)) {
-            this.oauth = new OAuth();
-            oauth.setProvider(builder.provider);
-            oauth.setAllowEmails(builder.allowEmails);
-            oauth.setAllowDomains(builder.allowDomains);
-            oauth.setScopes(builder.scopes);	
-        }
+        this.oauth = builder.oauth;
     }
 
     /**
@@ -230,10 +224,7 @@ public class CreateTunnel {
         private String remoteAddr;
         private String metadata;
         private List<String> schemes;
-    	private String provider;
-    	private List<String> scopes;
-    	private List<String> allowEmails;
-    	private List<String> allowDomains;
+        private OAuth oauth;
 
         /**
          * Use this constructor if default values should not be populated in required attributes when {@link #build()}
@@ -279,12 +270,7 @@ public class CreateTunnel {
             this.remoteAddr = createTunnel.remoteAddr;
             this.metadata = createTunnel.metadata;
             this.schemes = createTunnel.schemes;
-            if(createTunnel.oauth != null) {
-            	this.provider = createTunnel.oauth.getProvider();
-                this.allowDomains = createTunnel.oauth.getAllowDomains();
-                this.allowEmails = createTunnel.oauth.getAllowEmails();
-                this.scopes = createTunnel.oauth.getScopes();
-            }
+            this.oauth = createTunnel.oauth;
         }
 
         /**
@@ -295,37 +281,7 @@ public class CreateTunnel {
             return this;
         }
         
-        /**
-         * The OAuth Provider
-         */
-        public Builder withOAuthProvider(final String provider) {
-            this.provider = provider;
-            return this;
-        }
         
-        /**
-         * The OAuth Scopes
-         */
-        public Builder withOAuthScopes(final String... scopes) {
-            this.scopes = Arrays.asList(scopes);
-            return this;
-        }
-        
-        /**
-         * The OAuth Emails
-         */
-        public Builder withOAuthAllowEmails(final String... emails) {
-            this.allowEmails = Arrays.asList(emails);
-            return this;
-        }
-        
-        /**
-         * The OAuth Domains
-         */
-        public Builder withOAuthAllowDomains(final String... domains) {
-        	this.allowDomains = Arrays.asList(domains);
-            return this;
-        }
 
         /**
          * The tunnel protocol, defaults to {@link Proto#HTTP}.
@@ -462,6 +418,11 @@ public class CreateTunnel {
             this.schemes = schemes;
             return this;
         }
+        
+        public Builder withOAuth(OAuth oauth) {
+          this.oauth = oauth;
+          return this;
+        }
 
         /**
          * Populate any <code>null</code> attributes (with the exception of <code>name</code>) in this Builder with
@@ -512,18 +473,9 @@ public class CreateTunnel {
             if (isNull(this.schemes) && tunnelDefinition.containsKey("schemes")) {
                 this.schemes = (List<String>) tunnelDefinition.get("schemes");
             }
-            if (isNull(this.provider) && tunnelDefinition.containsKey("oauth.provider")) {
-                this.provider = (String) tunnelDefinition.get("oauth.provider");
-            }
-            if (isNull(this.provider) && tunnelDefinition.containsKey("oauth.oauth_scopes")) {
-                this.scopes = (List<String>) tunnelDefinition.get("oauth.oauth_scopes");
-            }
-            if (isNull(this.provider) && tunnelDefinition.containsKey("oauth.allow_domains")) {
-                this.allowDomains = (List<String>) tunnelDefinition.get("oauth.allow_domains");
-            }
-            if (isNull(this.provider) && tunnelDefinition.containsKey("oauth.allow_emails")) {
-                this.allowEmails = (List<String>) tunnelDefinition.get("oauth.allow_emails");
-            }
+            if (isNull(this.oauth) && tunnelDefinition.containsKey("oauth")) {
+                this.oauth = (OAuth) tunnelDefinition.get("oauth");
+            }           
         }
 
         public CreateTunnel build() {
