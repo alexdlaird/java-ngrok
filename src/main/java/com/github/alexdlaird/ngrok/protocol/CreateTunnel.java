@@ -478,7 +478,7 @@ public class CreateTunnel {
          *
          * @param tunnelDefinition The map from which <code>null</code> attributes will be populated.
          */
-        public void withTunnelDefinition(Map<String, Object> tunnelDefinition) {
+        public Builder withTunnelDefinition(Map<String, Object> tunnelDefinition) {
             if (isNull(this.proto) && tunnelDefinition.containsKey("proto")) {
                 this.proto = Proto.valueOf(((String) tunnelDefinition.get("proto")).toUpperCase());
             }
@@ -524,9 +524,9 @@ public class CreateTunnel {
             if (isNull(this.schemes) && tunnelDefinition.containsKey("schemes")) {
                 this.basicAuth = (List<String>) tunnelDefinition.get("basic_auth");
             }
-			if (isNull(this.oauth) && tunnelDefinition.containsKey("oauth")) {
-                this.oauth = (OAuth) tunnelDefinition.get("oauth");
-            }
+            //Returning this to allow chained configuration of
+            //properties not visible in ngrok's GET /api/tunnels endpoint 
+            return this;
         }
 
         public CreateTunnel build() {
