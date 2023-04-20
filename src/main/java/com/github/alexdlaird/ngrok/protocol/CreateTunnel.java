@@ -77,7 +77,7 @@ public class CreateTunnel {
     private final String metadata;
     private final List<String> schemes;
     private final List<String> basicAuth;
-	private final OAuth oauth;
+    private final OAuth oauth;
 
     private CreateTunnel(final Builder builder) {
         this.ngrokVersion = builder.ngrokVersion;
@@ -97,7 +97,7 @@ public class CreateTunnel {
         this.metadata = builder.metadata;
         this.schemes = builder.schemes;
         this.basicAuth = builder.basicAuth;
-		this.oauth = builder.oauth;
+        this.oauth = builder.oauth;
     }
 
     /**
@@ -212,12 +212,12 @@ public class CreateTunnel {
     public List<String> getSchemes() {
         return schemes;
     }
-	
-	/**
+
+    /**
      * Get the OAuth settings to be activated on the tunnel
      */
     public OAuth getOauth() {
-      return oauth;
+        return oauth;
     }
 
     /**
@@ -245,7 +245,7 @@ public class CreateTunnel {
         private String metadata;
         private List<String> schemes;
         private List<String> basicAuth;
-		private OAuth oauth;
+        private OAuth oauth;
 
         /**
          * Use this constructor if default values should not be populated in required attributes when {@link #build()}
@@ -293,7 +293,7 @@ public class CreateTunnel {
             this.metadata = createTunnel.metadata;
             this.schemes = createTunnel.schemes;
             this.basicAuth = createTunnel.basicAuth;
-			this.oauth = createTunnel.oauth;
+            this.oauth = createTunnel.oauth;
         }
 
         /**
@@ -463,13 +463,13 @@ public class CreateTunnel {
             this.basicAuth = basicAuth;
             return this;
         }
-		
-		/**
-		 * Set of OAuth settings to enable OAuth authentication on the tunnel endpoint
-		 */
-		public Builder withOAuth(OAuth oauth) {
-          this.oauth = oauth;
-          return this;
+
+        /**
+         * Set of OAuth settings to enable OAuth authentication on the tunnel endpoint
+         */
+        public Builder withOAuth(OAuth oauth) {
+            this.oauth = oauth;
+            return this;
         }
 
         /**
@@ -523,6 +523,9 @@ public class CreateTunnel {
             }
             if (isNull(this.schemes) && tunnelDefinition.containsKey("schemes")) {
                 this.basicAuth = (List<String>) tunnelDefinition.get("basic_auth");
+            }
+            if (isNull(this.oauth) && tunnelDefinition.containsKey("oauth")) {
+                this.oauth = new OAuth.Builder((Map<String, Object>) tunnelDefinition.get("oauth")).build();
             }
             //Returning this to allow chained configuration of
             //properties not visible in ngrok's GET /api/tunnels endpoint 

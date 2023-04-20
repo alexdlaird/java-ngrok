@@ -763,6 +763,56 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
+    public void testTunnelDefinitionsV3OAuth() {
+        final String ngrokAuthToken = System.getenv("NGROK_AUTHTOKEN");
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+
+        // GIVEN
+        final String subdomain = createUniqueSubdomain();
+        final Map<String, Object> httpTunnelConfig = Map.of(
+                "proto", "http",
+                "addr", "8000",
+                "subdomain", subdomain,
+                "oauth", Map.of(
+                        "provider", "google",
+                        "allow_domains", List.of("pyngrok.com"),
+                        "allow_emails", List.of("email@pyngrok.com")
+                ));
+        final Map<String, Object> tunnelsConfig = Map.of(
+                "http-tunnel", httpTunnelConfig);
+        final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
+
+        final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
+        ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
+                .withConfigPath(configPath2)
+                .withAuthToken(ngrokAuthToken)
+                .build();
+        ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+        final NgrokClient ngrokClient2 = new NgrokClient.Builder()
+                .withJavaNgrokConfig(javaNgrokConfig2)
+                .withNgrokProcess(ngrokProcessV3_2)
+                .build();
+
+        // WHEN
+        final CreateTunnel createHttpTunnel = new CreateTunnel.Builder()
+                .withName("http-tunnel")
+                .build();
+        final Tunnel httpTunnel = ngrokClient2.connect(createHttpTunnel);
+        final List<Tunnel> tunnels = ngrokClient2.getTunnels();
+
+        final Response<Object> response = ngrokClientV3.getHttpClient().get(String.format(httpTunnel.getPublicUrl()), Object.class);
+
+        // THEN
+        assertEquals(1, tunnels.size());
+        assertEquals("http-tunnel", httpTunnel.getName());
+        assertEquals("http://localhost:8000", httpTunnel.getConfig().getAddr());
+        assertEquals("https", httpTunnel.getProto());
+        assertEquals(String.format("https://%s.ngrok.io", subdomain), httpTunnel.getPublicUrl());
+        assertTrue(response.getBodyRaw().contains("Sign in - Google Accounts"));
+    }
+
+    @Test
     public void testTunnelDefinitionsJavaNgrokDefaultWithOverrides() {
         final String ngrokAuthToken = System.getenv("NGROK_AUTHTOKEN");
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");

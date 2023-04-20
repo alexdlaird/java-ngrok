@@ -28,13 +28,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class CreateTunnelTest {
 
@@ -102,16 +102,16 @@ public class CreateTunnelTest {
                 .withSchemes(List.of("http", "https"))
                 .withBindTls(BindTls.TRUE));
     }
-    
+
     @Test
     public void testCreateTunnelOAuth() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                  .withOAuth(new OAuth.Builder().withProvider("testcase")
-                  .withAllowDomains("one.domain", "two.domain")
-                  .withAllowEmails("one@email", "two@email")
-                  .withScopes("ascope", "bscope")
-                .build()).build();
+                .withOAuth(new OAuth.Builder().withProvider("testcase")
+                        .withAllowDomains(List.of("one.domain", "two.domain"))
+                        .withAllowEmails(List.of("one@email", "two@email"))
+                        .withScopes(List.of("ascope", "bscope"))
+                        .build()).build();
 
         // THEN
         assertNotNull(createTunnel.getOauth());
@@ -120,20 +120,21 @@ public class CreateTunnelTest {
         assertTrue(createTunnel.getOauth().getAllowEmails().contains("two@email"));
         assertTrue(createTunnel.getOauth().getScopes().contains("ascope"));
     }
-    
+
     @Test
-    public void testCreateTunnelNoOAuthWithoutProvider() throws Exception {
+    public void testCreateTunnelNoOAuthWithoutProvider() {
         // WHEN
         try {
-          new CreateTunnel.Builder()
-                  .withOAuth(new OAuth.Builder()
-                    .withAllowDomains("one.domain", "two.domain")
-                    .withAllowEmails("one@email", "two@email")
-                    .withScopes("ascope", "bscope").build())
-                  .build();
-          fail("no provider should throw an exception");
-        } catch(IllegalArgumentException iae) {
-          //This is correct.
-        }        
+            new CreateTunnel.Builder()
+                    .withOAuth(new OAuth.Builder()
+                            .withAllowDomains(List.of("one.domain", "two.domain"))
+                            .withAllowEmails(List.of("one@email", "two@email"))
+                            .withScopes(List.of("ascope", "bscope"))
+                            .build())
+                    .build();
+            fail("no provider should throw an exception");
+        } catch (IllegalArgumentException iae) {
+            //This is correct.
+        }
     }
 }
