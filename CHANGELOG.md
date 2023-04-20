@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.0.0...HEAD)
+### Added
+- Support for `oauth` configuration when building [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.1.0/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html).
+- Documentation improvements.
+- Test improvements.
 
 ## [2.0.0](https://github.com/alexdlaird/java-ngrok/compare/1.7.2...2.0.0) - 2023-04-12
 ### Changed

@@ -28,8 +28,53 @@ import java.util.Map;
 
 import static java.util.Objects.isNull;
 
+/**
+ * An object that represents the OAuth configuration for a {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel}.
+ */
 public class OAuth {
+    private final String provider;
+    private final List<String> scopes;
+    private final List<String> allowEmails;
+    private final List<String> allowDomains;
 
+    private OAuth(final Builder builder) {
+        this.provider = builder.provider;
+        this.scopes = builder.scopes;
+        this.allowDomains = builder.allowDomains;
+        this.allowEmails = builder.allowEmails;
+    }
+
+    /**
+     * Get the OAuth provider.
+     */
+    public String getProvider() {
+        return provider;
+    }
+
+    /**
+     * Get the list of OAuth scopes.
+     */
+    public List<String> getScopes() {
+        return scopes;
+    }
+
+    /**
+     * Get the list of OAuth allowed emails.
+     */
+    public List<String> getAllowEmails() {
+        return allowEmails;
+    }
+
+    /**
+     * Get the list of OAuth allowed domains.
+     */
+    public List<String> getAllowDomains() {
+        return allowDomains;
+    }
+
+    /**
+     * Builder for TODO add docs link.
+     */
     public static class Builder {
         private String provider;
         private List<String> scopes;
@@ -55,8 +100,8 @@ public class OAuth {
         }
 
         /**
-         * The OAuth Provider. This setting is <b>required</b>. Valid examples for
-         * provider are: amazon, facebook, github, gitlab, google, linkedin, microsoft, twitch
+         * The OAuth provider. This setting is <b>required</b>. For a list of valid providers, see
+         * <a href="https://ngrok.com/docs/cloud-edge/modules/oauth/"><code>ngrok</code>'s docs</a>.
          */
         public Builder withProvider(final String provider) {
             this.provider = provider;
@@ -64,7 +109,7 @@ public class OAuth {
         }
 
         /**
-         * The OAuth Scopes
+         * The list of allowed OAuth scopes.
          */
         public Builder withScopes(final List<String> scopes) {
             this.scopes = scopes;
@@ -72,7 +117,7 @@ public class OAuth {
         }
 
         /**
-         * The OAuth Emails
+         * The list of allowed OAuth emails.
          */
         public Builder withAllowEmails(final List<String> emails) {
             this.allowEmails = emails;
@@ -80,7 +125,7 @@ public class OAuth {
         }
 
         /**
-         * The OAuth Domains
+         * The list of allowed OAuth domains.
          */
         public Builder withAllowDomains(final List<String> domains) {
             this.allowDomains = domains;
@@ -94,36 +139,4 @@ public class OAuth {
             return new OAuth(this);
         }
     }
-
-    private final String provider;
-
-    private final List<String> scopes;
-
-    private final List<String> allowEmails;
-
-    private final List<String> allowDomains;
-
-    private OAuth(Builder builder) {
-        this.provider = builder.provider;
-        this.scopes = builder.scopes;
-        this.allowDomains = builder.allowDomains;
-        this.allowEmails = builder.allowEmails;
-    }
-
-    public String getProvider() {
-        return provider;
-    }
-
-    public List<String> getScopes() {
-        return scopes;
-    }
-
-    public List<String> getAllowEmails() {
-        return allowEmails;
-    }
-
-    public List<String> getAllowDomains() {
-        return allowDomains;
-    }
-
 }
