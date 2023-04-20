@@ -77,6 +77,7 @@ public class CreateTunnel {
     private final String metadata;
     private final List<String> schemes;
     private final List<String> basicAuth;
+	private final OAuth oauth;
 
     private CreateTunnel(final Builder builder) {
         this.ngrokVersion = builder.ngrokVersion;
@@ -96,6 +97,7 @@ public class CreateTunnel {
         this.metadata = builder.metadata;
         this.schemes = builder.schemes;
         this.basicAuth = builder.basicAuth;
+		this.oauth = builder.oauth;
     }
 
     /**
@@ -210,6 +212,13 @@ public class CreateTunnel {
     public List<String> getSchemes() {
         return schemes;
     }
+	
+	/**
+     * Get the OAuth settings to be activated on the tunnel
+     */
+    public OAuth getOauth() {
+      return oauth;
+    }
 
     /**
      * Builder for a {@link CreateTunnel}, which can be used to construct a request that conforms to
@@ -236,6 +245,7 @@ public class CreateTunnel {
         private String metadata;
         private List<String> schemes;
         private List<String> basicAuth;
+		private OAuth oauth;
 
         /**
          * Use this constructor if default values should not be populated in required attributes when {@link #build()}
@@ -283,6 +293,7 @@ public class CreateTunnel {
             this.metadata = createTunnel.metadata;
             this.schemes = createTunnel.schemes;
             this.basicAuth = createTunnel.basicAuth;
+			this.oauth = createTunnel.oauth;
         }
 
         /**
@@ -452,6 +463,14 @@ public class CreateTunnel {
             this.basicAuth = basicAuth;
             return this;
         }
+		
+		/**
+		 * Set of OAuth settings to enable OAuth authentication on the tunnel endpoint
+		 */
+		public Builder withOAuth(OAuth oauth) {
+          this.oauth = oauth;
+          return this;
+        }
 
         /**
          * Populate any <code>null</code> attributes (with the exception of <code>name</code>) in this Builder with
@@ -459,7 +478,7 @@ public class CreateTunnel {
          *
          * @param tunnelDefinition The map from which <code>null</code> attributes will be populated.
          */
-        public void withTunnelDefinition(Map<String, Object> tunnelDefinition) {
+        public Builder withTunnelDefinition(Map<String, Object> tunnelDefinition) {
             if (isNull(this.proto) && tunnelDefinition.containsKey("proto")) {
                 this.proto = Proto.valueOf(((String) tunnelDefinition.get("proto")).toUpperCase());
             }
@@ -505,6 +524,9 @@ public class CreateTunnel {
             if (isNull(this.schemes) && tunnelDefinition.containsKey("schemes")) {
                 this.basicAuth = (List<String>) tunnelDefinition.get("basic_auth");
             }
+            //Returning this to allow chained configuration of
+            //properties not visible in ngrok's GET /api/tunnels endpoint 
+            return this;
         }
 
         public CreateTunnel build() {
