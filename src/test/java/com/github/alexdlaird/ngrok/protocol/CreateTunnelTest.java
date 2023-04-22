@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class CreateTunnelTest {
 
     @Test
-    public void testCreateTunnelBindTls() {
+    public void testCreateTunnelParams() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withNgrokVersion(NgrokVersion.V2)
@@ -57,6 +57,12 @@ public class CreateTunnelTest {
                 .withClientCas("clientCas")
                 .withRemoteAddr("remoteAddr")
                 .withMetadata("metadata")
+                .withCircuitBreaker(1000f)
+                .withCompression(false)
+                .withMutualTlsCas("mutualTlsCas")
+                .withProxyProto("proxyProto")
+                .withWebsocketTcpConverter(false)
+                .withTerminateAt("provider")
                 .build();
 
         // THEN
@@ -75,7 +81,19 @@ public class CreateTunnelTest {
         assertEquals("clientCas", createTunnel.getClientCas());
         assertEquals("remoteAddr", createTunnel.getRemoteAddr());
         assertEquals("metadata", createTunnel.getMetadata());
+        assertEquals(1000, createTunnel.getCircuitBreaker());
+        assertFalse(createTunnel.isCompression());
+        assertEquals("mutualTlsCas", createTunnel.getMutualTlsCas());
+        assertEquals("proxyProto", createTunnel.getProxyProto());
+        assertFalse(createTunnel.isWebsocketTcpConverter());
+        assertEquals("provider", createTunnel.getTerminateAt());
+
         assertNull(createTunnel.getSchemes());
+        assertNull(createTunnel.getOauth());
+        assertNull(createTunnel.getRequestHeader());
+        assertNull(createTunnel.getResponseHeader());
+        assertNull(createTunnel.getIpRestrictions());
+        assertNull(createTunnel.getVerifyWebhook());
     }
 
     @Test
