@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.0.0...HEAD)
 ### Added
 - Support for `oauth` configuration when building [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.1.0/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html).
+- Support for other new `ngrok` v3 [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.1.0/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html) parameters, including `circuit_breaker`, `compression`, `mutual_tls_cas`, `proxy_proto`, `websocket_tcp_converter`, `terminate_at`, `request_header`, `response_header`, `ip_restrictions`, and `verify_webhook`.
 - Documentation improvements.
 - Test improvements.
 

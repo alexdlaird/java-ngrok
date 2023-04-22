@@ -31,13 +31,13 @@ import static java.util.Objects.isNull;
 /**
  * An object that represents the OAuth configuration for a {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel}.
  */
-public class OAuth {
+public class TunnelOAuth {
     private final String provider;
     private final List<String> scopes;
     private final List<String> allowEmails;
     private final List<String> allowDomains;
 
-    private OAuth(final Builder builder) {
+    private TunnelOAuth(final Builder builder) {
         this.provider = builder.provider;
         this.scopes = builder.scopes;
         this.allowDomains = builder.allowDomains;
@@ -73,7 +73,9 @@ public class OAuth {
     }
 
     /**
-     * Builder for TODO add docs link.
+     * Builder for OAuth configuration that conforms to
+     * <a href="https://ngrok.com/docs/ngrok-agent/config/#tunnel-definitions" target="_blank"><code>ngrok</code>'s tunnel definition</a>.
+     * See docs for that class for example usage.
      */
     public static class Builder {
         private String provider;
@@ -109,7 +111,7 @@ public class OAuth {
         }
 
         /**
-         * The list of allowed OAuth scopes.
+         * The list of OAuth scopes.
          */
         public Builder withScopes(final List<String> scopes) {
             this.scopes = scopes;
@@ -132,11 +134,11 @@ public class OAuth {
             return this;
         }
 
-        public OAuth build() {
+        public TunnelOAuth build() {
             if (isNull(provider)) {
                 throw new IllegalArgumentException("OAuth needs a provider set");
             }
-            return new OAuth(this);
+            return new TunnelOAuth(this);
         }
     }
 }

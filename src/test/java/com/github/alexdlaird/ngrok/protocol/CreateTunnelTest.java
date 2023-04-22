@@ -107,7 +107,7 @@ public class CreateTunnelTest {
     public void testCreateTunnelOAuth() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withOAuth(new OAuth.Builder().withProvider("testcase")
+                .withOAuth(new TunnelOAuth.Builder().withProvider("testcase")
                         .withAllowDomains(List.of("one.domain", "two.domain"))
                         .withAllowEmails(List.of("one@email", "two@email"))
                         .withScopes(List.of("ascope", "bscope"))
@@ -126,7 +126,7 @@ public class CreateTunnelTest {
         // WHEN
         try {
             new CreateTunnel.Builder()
-                    .withOAuth(new OAuth.Builder()
+                    .withOAuth(new TunnelOAuth.Builder()
                             .withAllowDomains(List.of("one.domain", "two.domain"))
                             .withAllowEmails(List.of("one@email", "two@email"))
                             .withScopes(List.of("ascope", "bscope"))

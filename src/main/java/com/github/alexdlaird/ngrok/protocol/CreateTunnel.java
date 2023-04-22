@@ -77,7 +77,17 @@ public class CreateTunnel {
     private final String metadata;
     private final List<String> schemes;
     private final List<String> basicAuth;
-    private final OAuth oauth;
+    private final TunnelOAuth oauth;
+    private final Float circuitBreaker;
+    private final Boolean compression;
+    private final String mutualTlsCas;
+    private final String proxyProto;
+    private final Boolean websocketTcpConverter;
+    private final String terminateAt;
+    private final TunnelHeader requestHeader;
+    private final TunnelHeader responseHeader;
+    private final TunnelIPRestrictions ipRestrictions;
+    private final TunnelVerifyWebhook verifyWebhook;
 
     private CreateTunnel(final Builder builder) {
         this.ngrokVersion = builder.ngrokVersion;
@@ -98,6 +108,16 @@ public class CreateTunnel {
         this.schemes = builder.schemes;
         this.basicAuth = builder.basicAuth;
         this.oauth = builder.oauth;
+        this.circuitBreaker = builder.circuitBreaker;
+        this.compression = builder.compression;
+        this.mutualTlsCas = builder.mutualTlsCas;
+        this.proxyProto = builder.proxyProto;
+        this.websocketTcpConverter = builder.websocketTcpConverter;
+        this.terminateAt = builder.terminateAt;
+        this.requestHeader = builder.requestHeader;
+        this.responseHeader = builder.responseHeader;
+        this.ipRestrictions = builder.ipRestrictions;
+        this.verifyWebhook = builder.verifyWebhook;
     }
 
     /**
@@ -214,10 +234,80 @@ public class CreateTunnel {
     }
 
     /**
-     * Get the OAuth settings to be activated on the tunnel
+     * Get the OAuth settings to be setup on the tunnel.
      */
-    public OAuth getOauth() {
+    public TunnelOAuth getOauth() {
         return oauth;
+    }
+
+    /**
+     * Get the circuit breaker trigger.
+     */
+    public Float getCircuitBreaker() {
+        return circuitBreaker;
+    }
+
+    /**
+     * Whether compression is enabled on this tunnel.
+     */
+    public Boolean isCompression() {
+        return compression;
+    }
+
+    /**
+     * Get the path to the TLS certificate authority to verify client certs.
+     */
+    public String getMutualTlsCas() {
+        return mutualTlsCas;
+    }
+
+    /**
+     * Get the proxy proto.
+     */
+    public String getProxyProto() {
+        return proxyProto;
+    }
+
+    /**
+     * Whether ingress connections are converted to TCP upstream.
+     */
+    public Boolean isWebsocketTcpConverter() {
+        return websocketTcpConverter;
+    }
+
+    /**
+     * Get the termination point.
+     */
+    public String getTerminateAt() {
+        return terminateAt;
+    }
+
+    /**
+     * Get the Headers to be added or removed from requests.
+     */
+    public TunnelHeader getRequestHeader() {
+        return requestHeader;
+    }
+
+    /**
+     * Get the Headers to be added or removed from responses.
+     */
+    public TunnelHeader getResponseHeader() {
+        return responseHeader;
+    }
+
+    /**
+     * Get the IP restrictions for the tunnel.
+     */
+    public TunnelIPRestrictions getIpRestrictions() {
+        return ipRestrictions;
+    }
+
+    /**
+     * Get the signature for webhooks.
+     */
+    public TunnelVerifyWebhook getVerifyWebhook() {
+        return verifyWebhook;
     }
 
     /**
@@ -245,7 +335,17 @@ public class CreateTunnel {
         private String metadata;
         private List<String> schemes;
         private List<String> basicAuth;
-        private OAuth oauth;
+        private TunnelOAuth oauth;
+        private Float circuitBreaker;
+        private Boolean compression;
+        private String mutualTlsCas;
+        private String proxyProto;
+        private Boolean websocketTcpConverter;
+        private String terminateAt;
+        private TunnelHeader requestHeader;
+        private TunnelHeader responseHeader;
+        private TunnelIPRestrictions ipRestrictions;
+        private TunnelVerifyWebhook verifyWebhook;
 
         /**
          * Use this constructor if default values should not be populated in required attributes when {@link #build()}
@@ -294,6 +394,16 @@ public class CreateTunnel {
             this.schemes = createTunnel.schemes;
             this.basicAuth = createTunnel.basicAuth;
             this.oauth = createTunnel.oauth;
+            this.circuitBreaker = createTunnel.circuitBreaker;
+            this.compression = createTunnel.compression;
+            this.mutualTlsCas = createTunnel.mutualTlsCas;
+            this.proxyProto = createTunnel.proxyProto;
+            this.websocketTcpConverter = createTunnel.websocketTcpConverter;
+            this.terminateAt = createTunnel.terminateAt;
+            this.requestHeader = createTunnel.requestHeader;
+            this.responseHeader = createTunnel.responseHeader;
+            this.ipRestrictions = createTunnel.ipRestrictions;
+            this.verifyWebhook = createTunnel.verifyWebhook;
         }
 
         /**
@@ -465,10 +575,90 @@ public class CreateTunnel {
         }
 
         /**
-         * Set of OAuth settings to enable OAuth authentication on the tunnel endpoint
+         * Set of OAuth settings to enable OAuth authentication on the tunnel endpoint.
          */
-        public Builder withOAuth(OAuth oauth) {
+        public Builder withOAuth(TunnelOAuth oauth) {
             this.oauth = oauth;
+            return this;
+        }
+
+        /**
+         * The circuit breaker trigger.
+         */
+        public Builder withCircuitBreaker(Float circuitBreaker) {
+            this.circuitBreaker = circuitBreaker;
+            return this;
+        }
+
+        /**
+         * Whether compression is enabled on this tunnel.
+         */
+        public Builder withCompression(Boolean compression) {
+            this.compression = compression;
+            return this;
+        }
+
+        /**
+         * The path to the TLS certificate authority to verify client certs.
+         */
+        public Builder withMutualTlsCas(String mutualTlsCas) {
+            this.mutualTlsCas = mutualTlsCas;
+            return this;
+        }
+
+        /**
+         * The proxy proto.
+         */
+        public Builder withProxyProto(String proxyProto) {
+            this.proxyProto = proxyProto;
+            return this;
+        }
+
+        /**
+         * Whether ingress connections are converted to TCP upstream.
+         */
+        public Builder withWebsocketTcpConverter(Boolean websocketTcpConverter) {
+            this.websocketTcpConverter = websocketTcpConverter;
+            return this;
+        }
+
+        /**
+         * The termination point.
+         */
+        public Builder withTerminateAt(String terminateAt) {
+            this.terminateAt = terminateAt;
+            return this;
+        }
+
+        /**
+         * The Headers to be added or removed from requests.
+         */
+        public Builder withRequestHeader(TunnelHeader requestHeader) {
+            this.requestHeader = requestHeader;
+            return this;
+        }
+
+        /**
+         * The Headers to be added or removed from responses.
+         */
+        public Builder withResponseHeader(TunnelHeader responseHeader) {
+            this.responseHeader = responseHeader;
+            return this;
+        }
+
+        /**
+         * The IP restrictions for the tunnel.
+         */
+        public Builder withIpRestrictions(TunnelIPRestrictions ipRestrictions) {
+            this.ipRestrictions = ipRestrictions;
+            return this;
+        }
+
+        /**
+         * The signature for webhooks.
+         */
+        public Builder withVerifyWebhook(TunnelVerifyWebhook verifyWebhook) {
+            this.verifyWebhook = verifyWebhook;
             return this;
         }
 
@@ -525,10 +715,11 @@ public class CreateTunnel {
                 this.basicAuth = (List<String>) tunnelDefinition.get("basic_auth");
             }
             if (isNull(this.oauth) && tunnelDefinition.containsKey("oauth")) {
-                this.oauth = new OAuth.Builder((Map<String, Object>) tunnelDefinition.get("oauth")).build();
+                this.oauth = new TunnelOAuth.Builder((Map<String, Object>) tunnelDefinition.get("oauth")).build();
             }
-            //Returning this to allow chained configuration of
-            //properties not visible in ngrok's GET /api/tunnels endpoint 
+            // TODO: add new params parsed here
+            // Returning this to allow chained configuration of
+            // properties not visible in ngrok's GET /api/tunnels endpoint
             return this;
         }
 
