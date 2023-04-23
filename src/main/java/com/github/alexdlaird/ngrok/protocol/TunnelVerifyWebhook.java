@@ -1,5 +1,7 @@
 package com.github.alexdlaird.ngrok.protocol;
 
+import java.util.Map;
+
 /**
  * An object that represents webhook signature verification for a {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel}.
  */
@@ -31,6 +33,15 @@ public class TunnelVerifyWebhook {
         public String secret;
 
         public Builder() {
+        }
+
+        public Builder(Map<String, Object> tunnelDefinitions) {
+            if (tunnelDefinitions.containsKey("provider")) {
+                this.provider = (String) tunnelDefinitions.get("provider");
+            }
+            if (tunnelDefinitions.containsKey("secret")) {
+                this.secret = (String) tunnelDefinitions.get("secret");
+            }
         }
 
         /**

@@ -1,6 +1,7 @@
 package com.github.alexdlaird.ngrok.protocol;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * An object that represents header configuration for a {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel}.
@@ -34,6 +35,15 @@ public class TunnelHeader {
         private List<String> remove;
 
         public Builder() {
+        }
+
+        public Builder(Map<String, Object> tunnelDefinitions) {
+            if (tunnelDefinitions.containsKey("add")) {
+                this.add = (List<String>) tunnelDefinitions.get("add");
+            }
+            if (tunnelDefinitions.containsKey("remove")) {
+                this.remove = (List<String>) tunnelDefinitions.get("remove");
+            }
         }
 
         /**

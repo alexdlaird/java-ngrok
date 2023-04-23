@@ -1,6 +1,7 @@
 package com.github.alexdlaird.ngrok.protocol;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * An object that represents IP restrictions for a {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel}.
@@ -33,6 +34,15 @@ public class TunnelIPRestrictions {
         public List<String> denyCidrs;
 
         public Builder() {
+        }
+
+        public Builder(Map<String, Object> tunnelDefinitions) {
+            if (tunnelDefinitions.containsKey("allow_cidrs")) {
+                this.allowCidrs = (List<String>) tunnelDefinitions.get("allow_cidrs");
+            }
+            if (tunnelDefinitions.containsKey("deny_cidrs")) {
+                this.denyCidrs = (List<String>) tunnelDefinitions.get("deny_cidrs");
+            }
         }
 
         /**

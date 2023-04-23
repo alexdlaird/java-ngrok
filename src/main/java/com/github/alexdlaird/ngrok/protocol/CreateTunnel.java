@@ -718,13 +718,42 @@ public class CreateTunnel {
             if (isNull(this.schemes) && tunnelDefinition.containsKey("schemes")) {
                 this.schemes = (List<String>) tunnelDefinition.get("schemes");
             }
-            if (isNull(this.schemes) && tunnelDefinition.containsKey("schemes")) {
+            if (isNull(this.basicAuth) && tunnelDefinition.containsKey("basic_auth")) {
                 this.basicAuth = (List<String>) tunnelDefinition.get("basic_auth");
             }
             if (isNull(this.oauth) && tunnelDefinition.containsKey("oauth")) {
                 this.oauth = new TunnelOAuth.Builder((Map<String, Object>) tunnelDefinition.get("oauth")).build();
             }
-            // TODO: add new params parsed here
+            if (isNull(this.circuitBreaker) && tunnelDefinition.containsKey("circuit_breaker")) {
+                this.circuitBreaker = Float.valueOf(String.valueOf(tunnelDefinition.get("circuit_breaker")));
+            }
+            if (isNull(this.compression) && tunnelDefinition.containsKey("compression")) {
+                this.compression = Boolean.valueOf(String.valueOf(tunnelDefinition.get("compression")));
+            }
+            if (isNull(this.mutualTlsCas) && tunnelDefinition.containsKey("mutual_tls_cas")) {
+                this.mutualTlsCas = (String) tunnelDefinition.get("mutual_tls_cas");
+            }
+            if (isNull(this.proxyProto) && tunnelDefinition.containsKey("proxy_proto")) {
+                this.proxyProto = (String) tunnelDefinition.get("proxy_proto");
+            }
+            if (isNull(this.websocketTcpConverter) && tunnelDefinition.containsKey("websocket_tcp_converter")) {
+                this.websocketTcpConverter = Boolean.valueOf(String.valueOf(tunnelDefinition.get("websocket_tcp_converter")));
+            }
+            if (isNull(this.terminateAt) && tunnelDefinition.containsKey("terminate_at")) {
+                this.terminateAt = (String) tunnelDefinition.get("terminate_at");
+            }
+            if (isNull(this.requestHeader) && tunnelDefinition.containsKey("request_header")) {
+                this.requestHeader = new TunnelHeader.Builder((Map<String, Object>) tunnelDefinition.get("request_header")).build();
+            }
+            if (isNull(this.responseHeader) && tunnelDefinition.containsKey("response_header")) {
+                this.responseHeader = new TunnelHeader.Builder((Map<String, Object>) tunnelDefinition.get("response_header")).build();
+            }
+            if (isNull(this.ipRestrictions) && tunnelDefinition.containsKey("ip_restrictions")) {
+                this.ipRestrictions = new TunnelIPRestrictions.Builder((Map<String, Object>) tunnelDefinition.get("ip_restrictions")).build();
+            }
+            if (isNull(this.verifyWebhook) && tunnelDefinition.containsKey("verify_webhook")) {
+                this.verifyWebhook = new TunnelVerifyWebhook.Builder((Map<String, Object>) tunnelDefinition.get("verify_webhook")).build();
+            }
             // Returning this to allow chained configuration of
             // properties not visible in ngrok's GET /api/tunnels endpoint
             return this;

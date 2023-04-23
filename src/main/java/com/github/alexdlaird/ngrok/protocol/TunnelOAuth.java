@@ -26,8 +26,6 @@ package com.github.alexdlaird.ngrok.protocol;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Objects.isNull;
-
 /**
  * An object that represents the OAuth configuration for a {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel}.
  */
@@ -86,18 +84,18 @@ public class TunnelOAuth {
         public Builder() {
         }
 
-        public Builder(Map<String, Object> oAuth) {
-            if (oAuth.containsKey("provider")) {
-                this.provider = (String) oAuth.get("provider");
+        public Builder(Map<String, Object> tunnelDefinitions) {
+            if (tunnelDefinitions.containsKey("provider")) {
+                this.provider = (String) tunnelDefinitions.get("provider");
             }
-            if (oAuth.containsKey("scopes")) {
-                this.scopes = (List<String>) oAuth.get("scopes");
+            if (tunnelDefinitions.containsKey("scopes")) {
+                this.scopes = (List<String>) tunnelDefinitions.get("scopes");
             }
-            if (oAuth.containsKey("allow_emails")) {
-                this.allowEmails = (List<String>) oAuth.get("allow_emails");
+            if (tunnelDefinitions.containsKey("allow_emails")) {
+                this.allowEmails = (List<String>) tunnelDefinitions.get("allow_emails");
             }
-            if (oAuth.containsKey("allow_domains")) {
-                this.allowDomains = (List<String>) oAuth.get("allow_domains");
+            if (tunnelDefinitions.containsKey("allow_domains")) {
+                this.allowDomains = (List<String>) tunnelDefinitions.get("allow_domains");
             }
         }
 
