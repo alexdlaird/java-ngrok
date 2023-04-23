@@ -716,7 +716,7 @@ class NgrokClientTest extends NgrokTestCase {
                 "subdomain", subdomain,
                 "inspect", Boolean.FALSE,
                 "schemes", List.of("http"),
-                "circuit_breaker", 1000);
+                "circuit_breaker", 0.5f);
         final Map<String, Object> tcpTunnelConfig = Map.of(
                 "proto", "tcp",
                 "addr", "22");

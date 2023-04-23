@@ -60,7 +60,7 @@ public class CreateTunnelTest {
                         .withAllowEmails(List.of("one@email", "two@email"))
                         .withScopes(List.of("ascope", "bscope"))
                         .build())
-                .withCircuitBreaker(1000f)
+                .withCircuitBreaker(0.5f)
                 .withCompression(false)
                 .withMutualTlsCas("mutualTlsCas")
                 .withProxyProto("proxyProto")
@@ -100,7 +100,7 @@ public class CreateTunnelTest {
         assertTrue(createTunnel.getOauth().getAllowDomains().contains("one.domain"));
         assertTrue(createTunnel.getOauth().getAllowEmails().contains("two@email"));
         assertTrue(createTunnel.getOauth().getScopes().contains("ascope"));
-        assertEquals(1000, createTunnel.getCircuitBreaker());
+        assertEquals(0.5f, createTunnel.getCircuitBreaker());
         assertFalse(createTunnel.isCompression());
         assertEquals("mutualTlsCas", createTunnel.getMutualTlsCas());
         assertEquals("proxyProto", createTunnel.getProxyProto());
