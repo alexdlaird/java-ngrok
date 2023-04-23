@@ -234,6 +234,13 @@ public class CreateTunnel {
     }
 
     /**
+     * Get the list of HTTP basic authentication credentials to enforce on tunneled requests.
+     */
+    public List<String> getBasicAuth() {
+        return basicAuth;
+    }
+
+    /**
      * Get the OAuth settings to be setup on the tunnel.
      */
     public TunnelOAuth getOauth() {

@@ -135,9 +135,6 @@ public class TunnelOAuth {
         }
 
         public TunnelOAuth build() {
-            if (isNull(provider)) {
-                throw new IllegalArgumentException("OAuth needs a provider set");
-            }
             return new TunnelOAuth(this);
         }
     }

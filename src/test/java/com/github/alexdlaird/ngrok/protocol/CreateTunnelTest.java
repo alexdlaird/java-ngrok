@@ -30,11 +30,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CreateTunnelTest {
 
@@ -57,12 +55,29 @@ public class CreateTunnelTest {
                 .withClientCas("clientCas")
                 .withRemoteAddr("remoteAddr")
                 .withMetadata("metadata")
+                .withOAuth(new TunnelOAuth.Builder().withProvider("testcase")
+                        .withAllowDomains(List.of("one.domain", "two.domain"))
+                        .withAllowEmails(List.of("one@email", "two@email"))
+                        .withScopes(List.of("ascope", "bscope"))
+                        .build())
                 .withCircuitBreaker(1000f)
                 .withCompression(false)
                 .withMutualTlsCas("mutualTlsCas")
                 .withProxyProto("proxyProto")
                 .withWebsocketTcpConverter(false)
                 .withTerminateAt("provider")
+                .withRequestHeader(new TunnelHeader.Builder().withAdd(List.of("req-addition"))
+                        .withRemove(List.of("req-subtraction"))
+                        .build())
+                .withResponseHeader(new TunnelHeader.Builder().withAdd(List.of("res-addition"))
+                        .withRemove(List.of("res-subtraction"))
+                        .build())
+                .withIpRestrictions(new TunnelIPRestrictions.Builder().withAllowCidrs(List.of("allowed"))
+                        .withDenyCidrs(List.of("denied"))
+                        .build())
+                .withVerifyWebhook(new TunnelVerifyWebhook.Builder().withProvider("provider")
+                        .withSecret("secret")
+                        .build())
                 .build();
 
         // THEN
@@ -81,19 +96,26 @@ public class CreateTunnelTest {
         assertEquals("clientCas", createTunnel.getClientCas());
         assertEquals("remoteAddr", createTunnel.getRemoteAddr());
         assertEquals("metadata", createTunnel.getMetadata());
+        assertEquals("testcase", createTunnel.getOauth().getProvider());
+        assertTrue(createTunnel.getOauth().getAllowDomains().contains("one.domain"));
+        assertTrue(createTunnel.getOauth().getAllowEmails().contains("two@email"));
+        assertTrue(createTunnel.getOauth().getScopes().contains("ascope"));
         assertEquals(1000, createTunnel.getCircuitBreaker());
         assertFalse(createTunnel.isCompression());
         assertEquals("mutualTlsCas", createTunnel.getMutualTlsCas());
         assertEquals("proxyProto", createTunnel.getProxyProto());
         assertFalse(createTunnel.isWebsocketTcpConverter());
         assertEquals("provider", createTunnel.getTerminateAt());
+        assertTrue(createTunnel.getRequestHeader().getAdd().contains("req-addition"));
+        assertTrue(createTunnel.getRequestHeader().getRemove().contains("req-subtraction"));
+        assertTrue(createTunnel.getResponseHeader().getAdd().contains("res-addition"));
+        assertTrue(createTunnel.getResponseHeader().getRemove().contains("res-subtraction"));
+        assertTrue(createTunnel.getIpRestrictions().getAllowCidrs().contains("allowed"));
+        assertTrue(createTunnel.getIpRestrictions().getDenyCidrs().contains("denied"));
+        assertEquals("provider", createTunnel.getVerifyWebhook().getProvider());
+        assertEquals("secret", createTunnel.getVerifyWebhook().getSecret());
 
         assertNull(createTunnel.getSchemes());
-        assertNull(createTunnel.getOauth());
-        assertNull(createTunnel.getRequestHeader());
-        assertNull(createTunnel.getResponseHeader());
-        assertNull(createTunnel.getIpRestrictions());
-        assertNull(createTunnel.getVerifyWebhook());
     }
 
     @Test
@@ -122,37 +144,24 @@ public class CreateTunnelTest {
     }
 
     @Test
-    public void testCreateTunnelOAuth() {
-        // WHEN
+    public void testCreateTunnelBasicAuth() {
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withOAuth(new TunnelOAuth.Builder().withProvider("testcase")
-                        .withAllowDomains(List.of("one.domain", "two.domain"))
-                        .withAllowEmails(List.of("one@email", "two@email"))
-                        .withScopes(List.of("ascope", "bscope"))
-                        .build()).build();
+                .withBasicAuth(List.of("token-1", "token-2"))
+                .build();
 
-        // THEN
-        assertNotNull(createTunnel.getOauth());
-        assertEquals("testcase", createTunnel.getOauth().getProvider());
-        assertTrue(createTunnel.getOauth().getAllowDomains().contains("one.domain"));
-        assertTrue(createTunnel.getOauth().getAllowEmails().contains("two@email"));
-        assertTrue(createTunnel.getOauth().getScopes().contains("ascope"));
+        assertEquals(2, createTunnel.getBasicAuth().size());
+        assertEquals("token-1", createTunnel.getBasicAuth().get(0));
+        assertEquals("token-2", createTunnel.getBasicAuth().get(1));
     }
 
     @Test
-    public void testCreateTunnelNoOAuthWithoutProvider() {
-        // WHEN
-        try {
-            new CreateTunnel.Builder()
-                    .withOAuth(new TunnelOAuth.Builder()
-                            .withAllowDomains(List.of("one.domain", "two.domain"))
-                            .withAllowEmails(List.of("one@email", "two@email"))
-                            .withScopes(List.of("ascope", "bscope"))
-                            .build())
-                    .build();
-            fail("no provider should throw an exception");
-        } catch (IllegalArgumentException iae) {
-            //This is correct.
-        }
+    public void testCreateTunnelAuthAndBasicAuthFails() {
+        assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
+                .withAuth("auth-token")
+                .withBasicAuth(List.of("auth-token")));
+
+        assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
+                .withBasicAuth(List.of("auth-token"))
+                .withAuth("auth-token"));
     }
 }
