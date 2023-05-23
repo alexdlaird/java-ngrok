@@ -96,35 +96,35 @@ class NgrokInstallerTest extends NgrokTestCase {
     @Test
     public void testInstallDefaultConfig() throws IOException {
         // GIVEN
-        if (Files.exists(javaNgrokConfigV2.getConfigPath())) {
-            Files.delete(javaNgrokConfigV2.getConfigPath());
+        if (Files.exists(javaNgrokConfigV3.getConfigPath())) {
+            Files.delete(javaNgrokConfigV3.getConfigPath());
         }
-        assertFalse(Files.exists(javaNgrokConfigV2.getConfigPath()));
+        assertFalse(Files.exists(javaNgrokConfigV3.getConfigPath()));
 
         // WHEN
-        ngrokInstaller.installDefaultConfig(javaNgrokConfigV2.getConfigPath(), Collections.emptyMap());
+        ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(), Collections.emptyMap());
 
         // THEN
-        assertTrue(Files.exists(javaNgrokConfigV2.getConfigPath()));
+        assertTrue(Files.exists(javaNgrokConfigV3.getConfigPath()));
     }
 
     @Test
     public void testGetDefaultNgrokConfig() {
         // GIVEN
-        final JavaNgrokConfig javaNgrokConfigV2Tmp = new JavaNgrokConfig.Builder()
+        final JavaNgrokConfig javaNgrokConfigV3Tmp = new JavaNgrokConfig.Builder()
                 .withConfigPath(Paths.get("build", ".ngrok2", "config_v2_tmp.yml").toAbsolutePath())
                 .withNgrokPath(Paths.get("build", "bin", "v2", getNgrokBin()))
-                .withNgrokVersion(NgrokVersion.V2)
+                .withNgrokVersion(NgrokVersion.V3)
                 .build();
-        ngrokInstaller.installDefaultConfig(javaNgrokConfigV2Tmp.getConfigPath(), Collections.emptyMap(), javaNgrokConfigV2Tmp.getNgrokVersion());
+        ngrokInstaller.installDefaultConfig(javaNgrokConfigV3Tmp.getConfigPath(), Collections.emptyMap(), javaNgrokConfigV3Tmp.getNgrokVersion());
 
         // WHEN
-        final Map<String, Object> ngrokConfig = ngrokInstaller.getNgrokConfig(javaNgrokConfigV2Tmp.getConfigPath(), true, javaNgrokConfigV2Tmp.getNgrokVersion());
+        final Map<String, Object> ngrokConfig = ngrokInstaller.getNgrokConfig(javaNgrokConfigV3Tmp.getConfigPath(), true, javaNgrokConfigV3Tmp.getNgrokVersion());
 
         // THEN
         assertNotNull(ngrokConfig);
-        assertEquals(0, ngrokConfig.size());
-        assertTrue(Files.exists(javaNgrokConfigV2Tmp.getConfigPath()));
+        assertEquals(2, ngrokConfig.size());
+        assertTrue(Files.exists(javaNgrokConfigV3Tmp.getConfigPath()));
     }
 
     @Test
@@ -138,19 +138,19 @@ class NgrokInstallerTest extends NgrokTestCase {
     @Test
     public void testWebAddrFalseNotAllowed() {
         // WHEN
-        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfigV2.getConfigPath(), Map.of("web_addr", "false")));
+        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(), Map.of("web_addr", "false")));
     }
 
     @Test
     public void testLogFormatJsonNotAllowed() {
         // WHEN
-        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfigV2.getConfigPath(), Map.of("log_format", "json")));
+        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(), Map.of("log_format", "json")));
     }
 
     @Test
     public void testLogLevelWarnNotAllowed() {
         // WHEN
-        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfigV2.getConfigPath(), Map.of("log_level", "warn")));
+        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(), Map.of("log_level", "warn")));
     }
 
     @Test
