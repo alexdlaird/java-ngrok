@@ -265,7 +265,7 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testNoMonitorThread() {
+    public void testNoMonitorThread() throws InterruptedException {
         // GIVEN
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
                 .withoutMonitoring()
@@ -274,6 +274,7 @@ public class NgrokProcessTest extends NgrokTestCase {
 
         // WHEN
         ngrokProcessV3_2.start();
+        Thread.sleep(1000);
 
         // THEN
         assertTrue(ngrokProcessV3_2.isRunning());
