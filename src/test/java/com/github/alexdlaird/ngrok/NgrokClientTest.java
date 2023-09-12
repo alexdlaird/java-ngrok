@@ -57,6 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -107,6 +108,7 @@ class NgrokClientTest extends NgrokTestCase {
         // THEN
         assertTrue(ngrokClientV2.getNgrokProcess().getVersion().startsWith("2"));
         assertTrue(ngrokClientV2.getNgrokProcess().isRunning());
+        assertNull(tunnel.getId());
         assertThat(tunnel.getName(), startsWith("http-5000-"));
         assertEquals("http", tunnel.getProto());
         assertEquals("http://localhost:5000", tunnel.getConfig().getAddr());
@@ -141,6 +143,7 @@ class NgrokClientTest extends NgrokTestCase {
         // THEN
         assertTrue(ngrokClientV3.getNgrokProcess().getVersion().startsWith("3"));
         assertTrue(ngrokClientV3.getNgrokProcess().isRunning());
+        assertNotNull(tunnel.getId());
         assertThat(tunnel.getName(), startsWith("http-5000-"));
         assertEquals("https", tunnel.getProto());
         assertEquals("http://localhost:5000", tunnel.getConfig().getAddr());
@@ -800,11 +803,11 @@ class NgrokClientTest extends NgrokTestCase {
                 .withNgrokVersion(NgrokVersion.V3)
                 .withName("edge-http-tunnel")
                 .build();
-        final Tunnel httpEdgeTunnel = ngrokClient2.connect(createHttpEdgeTunnel);
         final CreateTunnel createTcpEdgeTunnel = new CreateTunnel.Builder()
                 .withNgrokVersion(NgrokVersion.V3)
                 .withName("edge-tcp-tunnel")
                 .build();
+        final Tunnel httpEdgeTunnel = ngrokClient2.connect(createHttpEdgeTunnel);
         final Tunnel tcpEdgeTunnel = ngrokClient2.connect(createTcpEdgeTunnel);
         final List<Tunnel> tunnels = ngrokClient2.getTunnels();
         tunnels.sort(Comparator.comparing(Tunnel::getProto));
@@ -817,12 +820,12 @@ class NgrokClientTest extends NgrokTestCase {
         assertEquals("edge-tcp-tunnel", tcpEdgeTunnel.getName());
         assertEquals("tcp://localhost:22", tcpEdgeTunnel.getConfig().getAddr());
         assertEquals("tcp", tcpEdgeTunnel.getProto());
-        assertEquals(ngrokHttpEdgeEndpoint, tcpEdgeTunnel.getPublicUrl());
+        assertEquals(ngrokTcpEdgeEndpoint, tcpEdgeTunnel.getPublicUrl());
         assertEquals(2, tunnels.size());
         assertEquals("edge-http-tunnel", tunnels.get(0).getName());
         assertEquals("http://localhost:80", tunnels.get(0).getConfig().getAddr());
-        assertEquals("http", tunnels.get(0).getProto());
-        assertEquals(ngrokTcpEdgeEndpoint, tunnels.get(0).getPublicUrl());
+        assertEquals("https", tunnels.get(0).getProto());
+        assertEquals(ngrokHttpEdgeEndpoint, tunnels.get(0).getPublicUrl());
         assertEquals("edge-tcp-tunnel", tunnels.get(1).getName());
         assertEquals("tcp://localhost:22", tunnels.get(1).getConfig().getAddr());
         assertEquals("tcp", tunnels.get(1).getProto());

@@ -23,6 +23,7 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
+import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
@@ -88,6 +89,7 @@ public class CreateTunnel {
     private final TunnelHeader responseHeader;
     private final TunnelIPRestrictions ipRestrictions;
     private final TunnelVerifyWebhook verifyWebhook;
+    private final List<String> labels;
 
     private CreateTunnel(final Builder builder) {
         this.ngrokVersion = builder.ngrokVersion;
@@ -118,6 +120,7 @@ public class CreateTunnel {
         this.responseHeader = builder.responseHeader;
         this.ipRestrictions = builder.ipRestrictions;
         this.verifyWebhook = builder.verifyWebhook;
+        this.labels = builder.labels;
     }
 
     /**
@@ -318,6 +321,13 @@ public class CreateTunnel {
     }
 
     /**
+     * Get the labels.
+     */
+    public List<String> getLabels() {
+        return labels;
+    }
+
+    /**
      * Builder for a {@link CreateTunnel}, which can be used to construct a request that conforms to
      * <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions" target="_blank"><code>ngrok</code>'s tunnel definition</a>.
      * See docs for that class for example usage.
@@ -353,6 +363,7 @@ public class CreateTunnel {
         private TunnelHeader responseHeader;
         private TunnelIPRestrictions ipRestrictions;
         private TunnelVerifyWebhook verifyWebhook;
+        private List<String> labels;
 
         /**
          * Use this constructor if default values should not be populated in required attributes when {@link #build()}
@@ -754,6 +765,13 @@ public class CreateTunnel {
             if (isNull(this.verifyWebhook) && tunnelDefinition.containsKey("verify_webhook")) {
                 this.verifyWebhook = new TunnelVerifyWebhook.Builder((Map<String, Object>) tunnelDefinition.get("verify_webhook")).build();
             }
+            if (tunnelDefinition.containsKey("labels")) {
+                if (nonNull(bindTls)) {
+                    throw new IllegalArgumentException("'bindTls' cannot be set when 'labels' is also on the tunnel definition.");
+                }
+                this.labels = (List<String>) tunnelDefinition.get("labels");
+            }
+
             // Returning this to allow chained configuration of
             // properties not visible in ngrok's GET /api/tunnels endpoint
             return this;
@@ -765,7 +783,7 @@ public class CreateTunnel {
             }
 
             if (setDefaults) {
-                if (isNull(proto)) {
+                if (isNull(proto) && isNull(labels)) {
                     proto = Proto.HTTP;
                 }
                 if (isNull(addr)) {
