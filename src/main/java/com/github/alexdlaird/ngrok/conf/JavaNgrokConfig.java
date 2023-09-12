@@ -69,6 +69,7 @@ public class JavaNgrokConfig {
     private final Function<NgrokLog, Void> logEventCallback;
     private final int startupTimeout;
     private final NgrokVersion ngrokVersion;
+    private final String apiKey;
 
     private JavaNgrokConfig(final Builder builder) {
         this.ngrokPath = builder.ngrokPath;
@@ -80,6 +81,7 @@ public class JavaNgrokConfig {
         this.logEventCallback = builder.logEventCallback;
         this.startupTimeout = builder.startupTimeout;
         this.ngrokVersion = builder.ngrokVersion;
+        this.apiKey = builder.apiKey;
     }
 
     /**
@@ -97,7 +99,7 @@ public class JavaNgrokConfig {
     }
 
     /**
-     * Get the authtoken that will be passed to commands.
+     * Get the <code>ngrok</code> authtoken that will be passed to commands.
      */
     public String getAuthToken() {
         return authToken;
@@ -146,6 +148,13 @@ public class JavaNgrokConfig {
     }
 
     /**
+     * A <code>ngrok</code> API key.
+     */
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    /**
      * Builder for a {@link JavaNgrokConfig}, see docs for that class for example usage.
      */
     public static class Builder {
@@ -159,6 +168,7 @@ public class JavaNgrokConfig {
         private Function<NgrokLog, Void> logEventCallback;
         private int startupTimeout = 15;
         private NgrokVersion ngrokVersion = NgrokVersion.V3;
+        private String apiKey;
 
         public Builder() {
         }
@@ -178,6 +188,7 @@ public class JavaNgrokConfig {
             this.logEventCallback = javaNgrokConfig.logEventCallback;
             this.startupTimeout = javaNgrokConfig.startupTimeout;
             this.ngrokVersion = javaNgrokConfig.ngrokVersion;
+            this.apiKey = javaNgrokConfig.apiKey;
         }
 
         /**
@@ -197,7 +208,7 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * An authtoken to pass to commands (overrides what is in the config).
+         * A <code>ngrok</code> authtoken to pass to commands (overrides what is in the config).
          */
         public Builder withAuthToken(final String authToken) {
             this.authToken = authToken;
@@ -259,6 +270,14 @@ public class JavaNgrokConfig {
          */
         public Builder withNgrokVersion(final NgrokVersion ngrokVersion) {
             this.ngrokVersion = ngrokVersion;
+            return this;
+        }
+
+        /**
+         * A <code>ngrok</code> API key.
+         */
+        public Builder withApiKey(final String apiKey) {
+            this.apiKey = apiKey;
             return this;
         }
 

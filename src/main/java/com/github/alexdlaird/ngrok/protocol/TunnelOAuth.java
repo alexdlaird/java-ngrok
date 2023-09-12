@@ -72,7 +72,7 @@ public class TunnelOAuth {
 
     /**
      * Builder for OAuth configuration that conforms to
-     * <a href="https://ngrok.com/docs/ngrok-agent/config/#tunnel-definitions" target="_blank"><code>ngrok</code>'s tunnel definition</a>.
+     * <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions" target="_blank"><code>ngrok</code>'s tunnel definition</a>.
      * See docs for that class for example usage.
      */
     public static class Builder {
