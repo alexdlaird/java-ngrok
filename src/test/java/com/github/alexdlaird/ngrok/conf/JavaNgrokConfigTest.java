@@ -55,6 +55,7 @@ public class JavaNgrokConfigTest {
                 .withLogEventCallback(logEventCallback)
                 .withStartupTimeout(5)
                 .withNgrokVersion(NgrokVersion.V2)
+                .withApiKey("api-key")
                 .build();
 
         // THEN
@@ -67,6 +68,7 @@ public class JavaNgrokConfigTest {
         assertEquals(logEventCallback, javaNgrokConfig.getLogEventCallback());
         assertEquals(5, javaNgrokConfig.getStartupTime());
         assertEquals(NgrokVersion.V2, javaNgrokConfig.getNgrokVersion());
+        assertEquals("api-key", javaNgrokConfig.getApiKey());
     }
 
     @Test
