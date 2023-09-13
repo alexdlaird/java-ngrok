@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.0...HEAD)
 
-## [2.2.0](https://github.com/alexdlaird/java-ngrok/compare/2.1.0...2.2.0) - TBD
+## [2.2.0](https://github.com/alexdlaird/java-ngrok/compare/2.1.0...2.2.0) - 2023-09-12
 ### Added
 - Support for `labels`, so [`ngrok`'s Labeled Tunnel Configuration](https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#labeled-tunnel-configuration-properties) is now supported, which enables basic support for [`ngrok`'s Cloud Edge](https://ngrok.com/docs/cloud-edge/).
 - `apiKey` to [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.0/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), which can be set so `java-ngrok` can interface with Cloud Edge `labels`.
