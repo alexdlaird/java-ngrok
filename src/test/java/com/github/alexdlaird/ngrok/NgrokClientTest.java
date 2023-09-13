@@ -23,6 +23,7 @@
 
 package com.github.alexdlaird.ngrok;
 
+import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.http.Response;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
@@ -57,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -832,6 +834,41 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
+    public void testLabelsNoApiKeyFails() {
+        final String ngrokAuthToken = System.getenv("NGROK_AUTHTOKEN");
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+        final String ngrokHttpEdge = System.getenv("NGROK_HTTP_EDGE");
+        assumeTrue(isNotBlank(System.getenv("NGROK_HTTP_EDGE")), "NGROK_HTTP_EDGE environment variable not set");
+
+        // GIVEN
+        final Map<String, Object> edgeHttpTunnelConfig = Map.of(
+                "addr", "80",
+                "labels", List.of(String.format("edge=%s", ngrokHttpEdge)));
+        final Map<String, Object> tunnelsConfig = Map.of(
+                "edge-tunnel", edgeHttpTunnelConfig);
+        final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
+
+        final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
+        ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
+                .withConfigPath(configPath2)
+                .withAuthToken(ngrokAuthToken)
+                .build();
+        ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+        final NgrokClient ngrokClient2 = new NgrokClient.Builder()
+                .withJavaNgrokConfig(javaNgrokConfig2)
+                .withNgrokProcess(ngrokProcessV3_2)
+                .build();
+
+        // WHEN
+        final CreateTunnel createEdgeTunnel = new CreateTunnel.Builder()
+                .withNgrokVersion(NgrokVersion.V3)
+                .withName("edge-tunnel")
+                .build();
+        assertThrows(JavaNgrokException.class, () -> ngrokClient2.connect(createEdgeTunnel));
+    }
+
+    @Test
     public void testTunnelDefinitionsV3OAuth() {
         final String ngrokAuthToken = System.getenv("NGROK_AUTHTOKEN");
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
@@ -925,7 +962,18 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testSetAuthToken() throws IOException {
+    public void testSetAuthTokenV2() throws IOException {
+        // WHEN
+        ngrokClientV2.setAuthToken("807ad30a-73be-48d8");
+        final String contents = Files.readString(javaNgrokConfigV2.getConfigPath());
+
+        // THEN
+        assertThat(contents, containsString("807ad30a-73be-48d8"));
+        assertFalse(ngrokClientV2.getNgrokProcess().isRunning());
+    }
+
+    @Test
+    public void testSetAuthTokenV3() throws IOException {
         // WHEN
         ngrokClientV3.setAuthToken("807ad30a-73be-48d8");
         final String contents = Files.readString(javaNgrokConfigV3.getConfigPath());
