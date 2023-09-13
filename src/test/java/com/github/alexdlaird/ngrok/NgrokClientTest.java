@@ -569,26 +569,26 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testDisconnectFileserver() throws InterruptedException {
+    public void testDisconnectFileserverV2() throws InterruptedException {
         final String ngrokAuthToken = System.getenv("NGROK_AUTHTOKEN");
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
 
         // GIVEN
-        ngrokClientV3.getNgrokProcess().setAuthToken(ngrokAuthToken);
-        assertFalse(ngrokClientV3.getNgrokProcess().isRunning());
+        ngrokClientV2.getNgrokProcess().setAuthToken(ngrokAuthToken);
+        assertFalse(ngrokClientV2.getNgrokProcess().isRunning());
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withAddr("file:///")
                 .build();
-        final String publicUrl = ngrokClientV3.connect(createTunnel).getPublicUrl();
+        final String publicUrl = ngrokClientV2.connect(createTunnel).getPublicUrl();
         Thread.sleep(1000);
 
         // WHEN
-        ngrokClientV3.disconnect(publicUrl);
+        ngrokClientV2.disconnect(publicUrl);
         Thread.sleep(1000);
-        final List<Tunnel> tunnels = ngrokClientV3.getTunnels();
+        final List<Tunnel> tunnels = ngrokClientV2.getTunnels();
 
         // THEN
-        assertTrue(ngrokClientV3.getNgrokProcess().isRunning());
+        assertTrue(ngrokClientV2.getNgrokProcess().isRunning());
         // There is still one tunnel left, as we only disconnected the http tunnel
         assertEquals(1, tunnels.size());
     }
