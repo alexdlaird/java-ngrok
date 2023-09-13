@@ -83,10 +83,10 @@ class NgrokClientTest extends NgrokTestCase {
     @Test
     public void testGetters() {
         // THEN
-        assertEquals(javaNgrokConfigV2, ngrokClientV2.getJavaNgrokConfig());
-        assertEquals(ngrokProcessV2, ngrokClientV2.getNgrokProcess());
-        assertEquals(ngrokInstaller, ngrokClientV2.getNgrokProcess().getNgrokInstaller());
-        assertNotNull(ngrokClientV2.getHttpClient());
+        assertEquals(javaNgrokConfigV3, ngrokClientV3.getJavaNgrokConfig());
+        assertEquals(ngrokProcessV3, ngrokClientV3.getNgrokProcess());
+        assertEquals(ngrokInstaller, ngrokClientV3.getNgrokProcess().getNgrokInstaller());
+        assertNotNull(ngrokClientV3.getHttpClient());
     }
 
     @Test
@@ -565,7 +565,7 @@ class NgrokClientTest extends NgrokTestCase {
         assertEquals("https", tunnel.getProto());
         assertEquals("file:///", tunnel.getConfig().getAddr());
         assertNotNull(tunnel.getPublicUrl());
-        assertThat(tunnel.getPublicUrl(), startsWith("http://"));
+        assertThat(tunnel.getPublicUrl(), startsWith("https://"));
     }
 
     @Test
@@ -914,14 +914,14 @@ class NgrokClientTest extends NgrokTestCase {
         final Tunnel ngrokTunnel2 = ngrokClient2.connect(createTunnelSubdomain);
 
         // THEN
-        assertEquals("java-ngrok-default (http)", ngrokTunnel1.getName());
+        assertEquals("java-ngrok-default", ngrokTunnel1.getName());
         assertEquals("http://localhost:8080", ngrokTunnel1.getConfig().getAddr());
-        assertEquals("http", ngrokTunnel1.getProto());
-        assertEquals(String.format("http://%s.ngrok.io", subdomain1), ngrokTunnel1.getPublicUrl());
-        assertEquals("java-ngrok-default (http)", ngrokTunnel2.getName());
+        assertEquals("https", ngrokTunnel1.getProto());
+        assertEquals(String.format("https://%s.ngrok.io", subdomain1), ngrokTunnel1.getPublicUrl());
+        assertEquals("java-ngrok-default", ngrokTunnel2.getName());
         assertEquals("http://localhost:5000", ngrokTunnel2.getConfig().getAddr());
-        assertEquals("http", ngrokTunnel2.getProto());
-        assertEquals(String.format("http://%s.ngrok.io", subdomain2), ngrokTunnel2.getPublicUrl());
+        assertEquals("https", ngrokTunnel2.getProto());
+        assertEquals(String.format("https://%s.ngrok.io", subdomain2), ngrokTunnel2.getPublicUrl());
     }
 
     @Test
