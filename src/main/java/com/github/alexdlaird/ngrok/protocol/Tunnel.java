@@ -70,10 +70,28 @@ public class Tunnel {
     }
 
     /**
+     * Set the tunnel's public URL.
+     *
+     * @param publicUrl The updated public URL.
+     */
+    public void setPublicUrl(final String publicUrl) {
+        this.publicUrl = publicUrl;
+    }
+
+    /**
      * Get the proto of the tunnel.
      */
     public String getProto() {
         return proto;
+    }
+
+    /**
+     * Set tunnel proto.
+     *
+     * @param proto The updated proto.
+     */
+    public void setProto(final String proto) {
+        this.proto = proto;
     }
 
     /**
@@ -97,11 +115,6 @@ public class Tunnel {
      */
     public void setMetrics(final Map<String, Metrics> metrics) {
         this.metrics = metrics;
-    }
-
-    public void appleCloudEdge(final String publicUrl, final String proto) {
-        this.publicUrl = publicUrl;
-        this.proto = proto;
     }
 
     public static class TunnelConfig {

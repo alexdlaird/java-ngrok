@@ -245,7 +245,8 @@ public class NgrokClient {
                 throw new JavaNgrokException(String.format("No Endpoint is attached to your Cloud Edge %s, login to the ngrok dashboard to attach an Endpoint to your Edge first.", edge));
             }
 
-            tunnel.appleCloudEdge(String.format("%s://%s", edgesPrefix, ((List) edgeResponse.getBody().get("hostports")).get(0)), edgesPrefix);
+            tunnel.setPublicUrl(String.format("%s://%s", edgesPrefix, ((List) edgeResponse.getBody().get("hostports")).get(0)));
+            tunnel.setProto(edgesPrefix);
         }
     }
 
