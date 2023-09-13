@@ -27,6 +27,7 @@ import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -163,5 +164,25 @@ public class CreateTunnelTest {
         assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
                 .withBasicAuth(List.of("auth-token"))
                 .withAuth("auth-token"));
+    }
+
+    @Test
+    public void testCreateLabelsWithTunnelDefinitions() {
+        // WHEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withTunnelDefinition(Map.of("labels", List.of("edge=some-edge-id")))
+                .build();
+
+        // THEN
+        assertNull(createTunnel.getBindTls());
+        assertEquals(1, createTunnel.getLabels().size());
+        assertEquals("edge=some-edge-id", createTunnel.getLabels().get(0));
+    }
+
+    @Test
+    public void testCreateBindTlsLabelsFails() {
+        // WHEN
+        assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
+                .withTunnelDefinition(Map.of("bind_tls", true, "labels", List.of("edge=some-edge-id"))));
     }
 }

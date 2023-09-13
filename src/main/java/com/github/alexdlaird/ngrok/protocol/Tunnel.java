@@ -23,6 +23,8 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Map;
 
 /**
@@ -30,12 +32,21 @@ import java.util.Map;
  */
 public class Tunnel {
 
+    @SerializedName("ID")
+    private String id;
     private String name;
     private String uri;
     private String publicUrl;
     private String proto;
     private TunnelConfig config;
     private Map<String, Metrics> metrics;
+
+    /**
+     * Get the ID of the tunnel.
+     */
+    public String getId() {
+        return id;
+    }
 
     /**
      * Get the name of the tunnel.
@@ -86,6 +97,11 @@ public class Tunnel {
      */
     public void setMetrics(final Map<String, Metrics> metrics) {
         this.metrics = metrics;
+    }
+
+    public void appleCloudEdge(final String publicUrl, final String proto) {
+        this.publicUrl = publicUrl;
+        this.proto = proto;
     }
 
     public static class TunnelConfig {

@@ -9,7 +9,7 @@
 `java-ngrok` is a Java wrapper for `ngrok` that manages its own binary, making `ngrok` available via a convenient Java
 API.
 
-[ngrok](https://ngrok.com) is a reverse proxy tool that opens secure tunnels from public URLs to localhost, perfect for
+[`ngrok`](https://ngrok.com) is a reverse proxy tool that opens secure tunnels from public URLs to localhost, perfect for
 exposing local web servers, building webhook integrations, enabling SSH access, testing chatbots, demoing from your own
 machine, and more, and its made even more powerful with native Java integration through `java-ngrok`.
 
@@ -24,14 +24,14 @@ on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.a
 <dependency>
     <groupId>com.github.alexdlaird</groupId>
     <artifactId>java-ngrok</artifactId>
-    <version>2.1.0</version>
+    <version>2.2.0</version>
 </dependency>
 ```
 
 #### Gradle
 
 ```groovy
-implementation "com.github.alexdlaird:java-ngrok:2.1.0"
+implementation "com.github.alexdlaird:java-ngrok:2.2.0"
 ```
 
 If we want `ngrok` to be available from the command line, [pyngrok](https://github.com/alexdlaird/pyngrok) can be
@@ -65,7 +65,7 @@ The [`connect`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/c
 method can also take
 a [`CreateTunnel`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html) (which can be built
 through [its Builder](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html))
-that allows us to pass additional properties that are [supported by ngrok](https://ngrok.com/docs/ngrok-agent/api#start-tunnel).
+that allows us to pass additional properties that are [supported by `ngrok`](https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions).
 
 Assuming we have also installed [pyngrok](https://github.com/alexdlaird/pyngrok), all features of `ngrok` are available
 on the command line.
@@ -75,7 +75,7 @@ ngrok http 80
 ```
 
 For details on how to fully leverage `ngrok` from the command line,
-see [ngrok's official documentation](https://ngrok.com/docs).
+see [`ngrok`'s official documentation](https://ngrok.com/docs).
 
 ## Documentation
 

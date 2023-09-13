@@ -185,7 +185,7 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testMultipleProcessesDifferentBinaries() {
+    public void testMultipleProcessesDifferentBinariesV2() {
         // GIVEN
         ngrokInstaller.installDefaultConfig(javaNgrokConfigV2.getConfigPath(), Map.of("web_addr", "localhost:4040"), javaNgrokConfigV2.getNgrokVersion());
         final Path ngrokPathV2_2 = Paths.get(javaNgrokConfigV2.getNgrokPath().getParent().toString(), "2", NgrokInstaller.getNgrokBin());
@@ -282,22 +282,22 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testStartNoBinary() throws IOException, InterruptedException {
+    public void testStartProcessNoBinary() throws IOException, InterruptedException {
         // Due to Windows file locking behavior, wait a beat
         if (NgrokInstaller.getSystem().equals(WINDOWS)) {
             Thread.sleep(1000);
         }
 
         // GIVEN
-        if (Files.exists(javaNgrokConfigV2.getNgrokPath())) {
-            Files.delete(javaNgrokConfigV2.getNgrokPath());
+        if (Files.exists(javaNgrokConfigV3.getNgrokPath())) {
+            Files.delete(javaNgrokConfigV3.getNgrokPath());
         }
 
         // WHEN
-        final NgrokException exception = assertThrows(NgrokException.class, ngrokProcessV2::start);
+        final NgrokException exception = assertThrows(NgrokException.class, ngrokProcessV3::start);
 
         // THEN
         assertThat(exception.getMessage(), containsString("ngrok binary was not found"));
-        assertFalse(ngrokProcessV2.isRunning());
+        assertFalse(ngrokProcessV3.isRunning());
     }
 }

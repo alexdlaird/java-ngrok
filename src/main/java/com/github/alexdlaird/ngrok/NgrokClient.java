@@ -94,7 +94,7 @@ import static java.util.Objects.nonNull;
  * <p>
  * The {@link NgrokClient#connect(CreateTunnel) NgrokClient.connect()} method can also take a {@link CreateTunnel}
  * (which can be built through {@link CreateTunnel.Builder its Builder}) that allows us to pass additional properties
- * that are <a href="https://ngrok.com/docs/ngrok-agent/api#start-tunnel" target="_blank">supported by ngrok</a>.
+ * that are <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions" target="_blank">supported by ngrok</a>.
  * <p>
  * <p>
  * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
@@ -141,7 +141,7 @@ public class NgrokClient {
 
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokClient.class));
 
-    private static final String VERSION = "2.1.0";
+    private static final String VERSION = "2.2.0";
 
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokProcess ngrokProcess;
@@ -208,9 +208,45 @@ public class NgrokClient {
             tunnel = response.getBody();
         }
 
+        applyCloudEdgeToTunnel(tunnel);
+
         currentTunnels.put(tunnel.getPublicUrl(), tunnel);
 
         return tunnel;
+    }
+
+    private void applyCloudEdgeToTunnel(final Tunnel tunnel) {
+        if ((isNull(tunnel.getPublicUrl()) || tunnel.getPublicUrl().isEmpty())
+                && nonNull(javaNgrokConfig.getApiKey()) && nonNull(tunnel.getId())) {
+            final Map<String, String> ngrokApiHeaders = Map.of(
+                    "Authorization", String.format("Bearer %s", javaNgrokConfig.getApiKey()),
+                    "Ngrok-Version", "2");
+            final Response<Map> tunnelResponse = httpClient.get(String.format("https://api.ngrok.com/tunnels/%s", tunnel.getId()), List.of(), ngrokApiHeaders, Map.class);
+
+            if (!tunnelResponse.getBody().containsKey("labels") || !(tunnelResponse.getBody().get("labels") instanceof Map) || !((Map) tunnelResponse.getBody().get("labels")).containsKey("edge")) {
+                throw new JavaNgrokException(String.format("Tunnel %s does not have 'labels', use a Tunnel configured on Cloud Edge.", tunnel.getId()));
+            }
+
+            final String edge = (String) ((Map) tunnelResponse.getBody().get("labels")).get("edge");
+            final String edgesPrefix;
+            if (edge.startsWith("edghts_")) {
+                edgesPrefix = "https";
+            } else if (edge.startsWith("edgtcp")) {
+                edgesPrefix = "tcp";
+            } else if (edge.startsWith("edgtls")) {
+                edgesPrefix = "tls";
+            } else {
+                throw new JavaNgrokException(String.format("Unknown Edge prefix: %s.", edge));
+            }
+
+            final Response<Map> edgeResponse = httpClient.get(String.format("https://api.ngrok.com/edges/%s/%s", edgesPrefix, edge), List.of(), ngrokApiHeaders, Map.class);
+
+            if (!edgeResponse.getBody().containsKey("hostports") || !(edgeResponse.getBody().get("hostports") instanceof List) || ((List) edgeResponse.getBody().get("hostports")).isEmpty()) {
+                throw new JavaNgrokException(String.format("No Endpoint is attached to your Cloud Edge %s, login to the ngrok dashboard to attach an Endpoint to your Edge first.", edge));
+            }
+
+            tunnel.appleCloudEdge(String.format("%s://%s", edgesPrefix, ((List) edgeResponse.getBody().get("hostports")).get(0)), edgesPrefix);
+        }
     }
 
     /**
@@ -270,6 +306,7 @@ public class NgrokClient {
 
             currentTunnels.clear();
             for (final Tunnel tunnel : response.getBody().getTunnels()) {
+                applyCloudEdgeToTunnel(tunnel);
                 currentTunnels.put(tunnel.getPublicUrl(), tunnel);
             }
 
@@ -374,6 +411,10 @@ public class NgrokClient {
         }
 
         if (nonNull(name) && tunnelDefinitions.containsKey(name)) {
+            if (((Map<String, Object>) tunnelDefinitions.get(name)).containsKey("labels") && isNull(javaNgrokConfig.getApiKey())) {
+                throw new JavaNgrokException("'JavaNgrokConfig.apiKey' must be set when 'labels' is on the tunnel definition.");
+            }
+
             createTunnelBuilder.withTunnelDefinition((Map<String, Object>) tunnelDefinitions.get(name));
         }
 

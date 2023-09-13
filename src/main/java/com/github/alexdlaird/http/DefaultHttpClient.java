@@ -74,10 +74,12 @@ public class DefaultHttpClient implements HttpClient {
     private final Gson gson;
     private final String encoding;
     private final String contentType;
+    private final int timeout;
 
     private DefaultHttpClient(final Builder builder) {
         this.encoding = builder.encoding;
         this.contentType = builder.contentType;
+        this.timeout = builder.timeout;
         this.gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
@@ -216,6 +218,8 @@ public class DefaultHttpClient implements HttpClient {
         try {
             httpUrlConnection = createHttpUrlConnection(url);
             httpUrlConnection.setRequestMethod(method);
+            httpUrlConnection.setConnectTimeout(timeout);
+            httpUrlConnection.setReadTimeout(timeout);
 
             appendDefaultsToConnection(httpUrlConnection, additionalHeaders);
             modifyConnection(httpUrlConnection);
@@ -279,6 +283,7 @@ public class DefaultHttpClient implements HttpClient {
     public static class Builder {
         private String encoding = "UTF-8";
         private String contentType = "application/json";
+        public int timeout = 4000;
 
         /**
          * Default encoding for requests.
@@ -293,6 +298,14 @@ public class DefaultHttpClient implements HttpClient {
          */
         public Builder withContentType(final String contentType) {
             this.contentType = contentType;
+            return this;
+        }
+
+        /**
+         * Default timeout for requests.
+         */
+        public Builder withTimeout(final int timeout) {
+            this.timeout = timeout;
             return this;
         }
 

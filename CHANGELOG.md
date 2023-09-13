@@ -3,8 +3,15 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.1.0...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.0...HEAD)
+
+## [2.2.0](https://github.com/alexdlaird/java-ngrok/compare/2.1.0...2.2.0) - TBD
 ### Added
+- Support for `labels`, so [`ngrok`'s Labeled Tunnel Configuration](https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#labeled-tunnel-configuration-properties) is now supported, which enables basic support for [`ngrok`'s Cloud Edge](https://ngrok.com/docs/cloud-edge/).
+- `apiKey` to [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.0/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), which can be set so `java-ngrok` can interface with Cloud Edge `labels`.
+- `id` to [Tunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/Tunnel.html).
+- `timeout` to [DefaultHttpClient](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html).
+- Documentation improvements.
 - Test improvements.
 
 ## [2.1.0](https://github.com/alexdlaird/java-ngrok/compare/2.0.0...2.1.0) - 2023-04-22
@@ -97,8 +104,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [1.1.0](https://github.com/alexdlaird/java-ngrok/compare/1.0.0...1.1.0) - 2021-08-20
 ### Added
-- Support for [`ngrok`'s tunnel definitions](https://ngrok.com/docs#tunnel-definitions) when calling [NgrokClient.connect()](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/1.1.0/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)). If a tunnel definition in `ngrok`'s config matches the given `name`, it will be used to start the tunnel.
-- Support for a [`ngrok` tunnel definition](https://ngrok.com/docs#tunnel-definitions) named "java-ngrok-default" when calling [NgrokClient.connect()](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/1.1.0/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)). When `name` is `None` and a "java-ngrok-default" tunnel definition exists it `ngrok`'s config, it will be used.
+- Support for [`ngrok`'s tunnel definitions](https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions) when calling [NgrokClient.connect()](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/1.1.0/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)). If a tunnel definition in `ngrok`'s config matches the given `name`, it will be used to start the tunnel.
+- Support for a [`ngrok` tunnel definition](https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions) named "java-ngrok-default" when calling [NgrokClient.connect()](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/1.1.0/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)). When `name` is `None` and a "java-ngrok-default" tunnel definition exists it `ngrok`'s config, it will be used.
 - `refreshMetrics()` to [NgrokClient](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.1.0/com/github/alexdlaird/ngrok/NgrokClient.html).
 - Documentation improvements.
 - Test improvements.
