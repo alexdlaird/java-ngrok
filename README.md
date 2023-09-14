@@ -86,16 +86,7 @@ at [https://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/
 
 `java-ngrok` is compatible with `ngrok` v2 and v3, but by default it will install v3. To install v2 instead,
 set the version with [`JavaNgrokConfig.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html#withNgrokVersion(com.github.alexdlaird.ngrok.installer.NgrokVersion))
-and [`CreateTunnel.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withNgrokVersion(com.github.alexdlaird.ngrok.installer.NgrokVersion)),
-or more simply use the version of `java-ngrok` that defaults to `ngrok` v2.
-
-```xml
-<dependency>
-    <groupId>com.github.alexdlaird</groupId>
-    <artifactId>java-ngrok</artifactId>
-    <version>1.7.2</version>
-</dependency>
-```
+and [`CreateTunnel.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withNgrokVersion(com.github.alexdlaird.ngrok.installer.NgrokVersion)).
 
 ### Java 8
 
