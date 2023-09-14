@@ -4,10 +4,12 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.1...HEAD)
+### Added
+- Documentation improvements.
 
 ## [2.2.1](https://github.com/alexdlaird/java-ngrok/compare/2.2.0...2.2.1) - 2023-09-13
 ### Fixed
-- Bug in [Tunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.1/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/Tunnel.html), a misspelled method was committed instead of using `setters` for update `publicUrl` and `proto`.
+- Bug in [Tunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.1/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/Tunnel.html), a misspelled method was committed instead of using `setters` to update `publicUrl` and `proto`.
 
 ## [2.2.0](https://github.com/alexdlaird/java-ngrok/compare/2.1.0...2.2.0) - 2023-09-12
 ### Added

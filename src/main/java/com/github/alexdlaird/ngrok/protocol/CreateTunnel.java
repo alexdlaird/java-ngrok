@@ -433,7 +433,8 @@ public class CreateTunnel {
         }
 
         /**
-         * The name of the tunnel.
+         * A friendly name for the tunnel, or the name of a <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions">ngrok tunnel definition</a>
+         * to be used.
          */
         public Builder withName(final String name) {
             this.name = name;
