@@ -95,6 +95,31 @@ import static java.util.Objects.nonNull;
  * return a reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed, call
  * {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
  * <code>https</code> tunnel will be returned.
+ * <h3><code>ngrok</code>'s Cloud Edge</h3>
+ * To use <a href="https://ngrok.com/docs/cloud-edge/" target="_blank"><code>ngrok</code>'s Cloud Edge</a> with
+ * <code>java-ngrok</code>, first <a href="https://dashboard.ngrok.com/cloud-edge/edges" target="_blank">configure an Edge on <code>ngrok</code>'s dashboard</a>
+ * (with at least one Endpoint mapped to the Edge), and define a labeled tunnel in <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#define-two-labeled-tunnels" target="_blank">the <code>ngrok</code> config file</a>.
+ * that points to the Edge.
+ * <p>
+ * <pre>
+ * tunnels:
+ *   some-edge-tunnel:
+ *     labels:
+ *       - edge=my_edge_id
+ *     addr: http://localhost:80
+ * </pre>
+ * To start a labeled tunnel in <code>java-ngrok</code>, set {@link CreateTunnel.Builder#withName(String)}.
+ * <p>
+ * <pre>
+ * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+ *
+ * // Open a named tunnel from the config file
+ * final CreateTunnel createNamedTunnel = new CreateTunnel.Builder()
+ *         .withName("some-edge-tunnel")
+ *         .build();
+ * final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
+ * </pre>
+ * Once a Cloud Edge tunnel is started, it can be managed through <a href="https://dashboard.ngrok.com/cloud-edge/edges" target=_"blank"><code>ngrok</code>'s dashboard</a>.
  * <h2>Get Active Tunnels</h2>
  * It can be useful to ask the <code>ngrok</code> client what tunnels are currently open. This can be accomplished
  * with the {@link NgrokClient#getTunnels()} method, which returns a list of {@link Tunnel} objects.
