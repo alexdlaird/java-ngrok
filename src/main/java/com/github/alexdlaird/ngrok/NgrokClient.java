@@ -141,6 +141,8 @@ import static java.util.Objects.nonNull;
  * This can be accomplished by using <code>java-ngrok</code> to open a <code>tcp</code> tunnel to the desired service.
  * <p>
  * <pre>
+ * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+ *
  * // Open a tunnel to MySQL with a Reserved TCP Address
  * // &lt;NgrokTunnel: "tcp://1.tcp.ngrok.io:12345" -&gt; "localhost:3306"&gt;
  * final CreateTunnel mysqlCreateTunnel = new CreateTunnel.Builder()
@@ -154,6 +156,8 @@ import static java.util.Objects.nonNull;
  * We can also serve up local directories via <a href="https://ngrok.com/docs/secure-tunnels/tunnels/http-tunnels/#file-url" target="_blank">ngrok’s built-in fileserver</a>.
  * <p>
  * <pre>
+ * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+ *
  * // Open a tunnel to a local file server
  * // &lt;NgrokTunnel: "https://&lt;public_sub&gt;.ngrok.io" -&gt; "file:///"&gt;
  * final CreateTunnel fileserverCreateTunnel = new CreateTunnel.Builder()
