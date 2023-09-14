@@ -451,7 +451,7 @@ public class CreateTunnel {
 
         /**
          * The local port to which the tunnel will forward traffic, or a
-         * <a href="https://ngrok.com/docs#http-file-urls">local directory or network address</a>, defaults to "80"
+         * <a href="https://ngrok.com/docs#http-file-urls">local directory or network address</a>, defaults to "80".
          */
         public Builder withAddr(final String addr) {
             this.addr = addr;
