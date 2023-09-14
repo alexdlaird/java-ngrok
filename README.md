@@ -49,7 +49,7 @@ can be retrieved with [`getPublicUrl()`](https://javadoc.io/doc/com.github.alexd
 final NgrokClient ngrokClient = new NgrokClient.Builder().build();
 
 // Open a HTTP tunnel on the default port 80
-// <Tunnel: "http://<public_sub>.ngrok.io" -> "http://localhost:80">
+// <Tunnel: "https://<public_sub>.ngrok.io" -> "http://localhost:80">
 final Tunnel httpTunnel = ngrokClient.connect();
 
 // Open a SSH tunnel
@@ -59,6 +59,12 @@ final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder()
         .withAddr(22)
         .build();
 final Tunnel sshTunnel = ngrokClient.connect(sshCreateTunnel);
+
+// Open a named tunnel from the config file
+final CreateTunnel createNamedTunnel = new CreateTunnel.Builder()
+        .withName("my_tunnel_name")
+        .build();
+final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
 ```
 
 The [`connect`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel))
