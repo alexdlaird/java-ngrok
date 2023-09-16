@@ -24,6 +24,7 @@
 package com.github.alexdlaird.http;
 
 import java.net.HttpURLConnection;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,17 @@ public interface HttpClient {
     default <B> Response<B> get(final String url, final Class<B> clazz) {
         return get(url, Collections.emptyList(), Collections.emptyMap(), clazz);
     }
+
+    /**
+     * Perform GET operation that downloads a file to given path.
+     *
+     * @param url               The URL on which to perform the operation.
+     * @param parameters        An arbitrary number of parameters to add to the URL.
+     * @param additionalHeaders Additional headers for the request.
+     * @param dest              The destination for the file download.
+     */
+    void get(final String url, final List<Parameter> parameters,
+             final Map<String, String> additionalHeaders, final Path dest);
 
     /**
      * Perform POST operation against an endpoint.

@@ -25,13 +25,16 @@ package com.github.alexdlaird.ngrok.installer;
 
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokInstallerException;
+import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokTestCase;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
@@ -44,6 +47,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 
 class NgrokInstallerTest extends NgrokTestCase {
 
@@ -234,5 +240,22 @@ class NgrokInstallerTest extends NgrokTestCase {
 
         // THEN
         assertEquals(NgrokV3CDNUrl.LINUX_x86_64_arm, ngrokCDNUrl);
+    }
+
+    @Test
+    public void testDownloadFails() throws IOException, InterruptedException {
+        // GIVEN
+        final HttpClient mockHttpClient = mock(HttpClient.class);
+        final NgrokInstaller ngrokInstaller_2 = new NgrokInstaller(mockHttpClient);
+        givenNgrokNotInstalled(javaNgrokConfigV3);
+        doAnswer(invocation -> {
+            throw new SocketTimeoutException("Download failed");
+        }).when(mockHttpClient).get(any(), any(), any(), any(Path.class));
+
+        // WHEN
+        assertThrows(JavaNgrokInstallerException.class, () -> ngrokInstaller_2.installNgrok(javaNgrokConfigV3.getNgrokPath(), javaNgrokConfigV3.getNgrokVersion()));
+
+        // THEN
+        assertFalse(Files.exists(javaNgrokConfigV3.getNgrokPath()));
     }
 }

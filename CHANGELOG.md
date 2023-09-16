@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.2...HEAD)
 ### Added
 - Documentation improvements.
+- Test improvements.
+
+### Changed
+- `NgrokInstaller` now uses the `DefaultHttpClient` to download `ngrok` binaries.
 
 ## [2.2.2](https://github.com/alexdlaird/java-ngrok/compare/2.2.1...2.2.2) - TBD
 ### Added

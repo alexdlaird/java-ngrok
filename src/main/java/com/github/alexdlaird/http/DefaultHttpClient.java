@@ -37,6 +37,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -95,6 +98,46 @@ public class DefaultHttpClient implements HttpClient {
                     additionalHeaders, clazz);
         } catch (IOException e) {
             throw new HttpClientException("HTTP GET error", e);
+        }
+    }
+
+    @Override
+    public void get(String url, List<Parameter> parameters, Map<String, String> additionalHeaders, Path dest) {
+        HttpURLConnection httpUrlConnection = null;
+        InputStream inputStream = null;
+
+        try {
+            httpUrlConnection = createHttpUrlConnection(urlWithParameters(url, parameters));
+
+            inputStream = getInputStream(httpUrlConnection, null, "GET", additionalHeaders);
+            Files.copy(inputStream, dest, StandardCopyOption.REPLACE_EXISTING);
+        } catch (Exception ex) {
+            String msg = "An unknown error occurred when download the file";
+
+            int statusCode = -1;
+            String errorResponse = null;
+            if (httpUrlConnection != null) {
+                try {
+                    statusCode = httpUrlConnection.getResponseCode();
+                    errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(), Charset.forName(encoding));
+
+                    msg = "An error occurred when download the file (" + httpUrlConnection.getResponseCode() + "): " + errorResponse;
+                } catch (IOException | NullPointerException ignored) {
+                }
+            }
+
+            throw new HttpClientException(msg, ex, url, statusCode, errorResponse);
+        } finally {
+            if (httpUrlConnection != null) {
+                httpUrlConnection.disconnect();
+            }
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException ex) {
+                LOGGER.log(Level.INFO, "Unable to close connection", ex);
+            }
         }
     }
 
@@ -206,17 +249,13 @@ public class DefaultHttpClient implements HttpClient {
         return stringBuilder.toString();
     }
 
-    private <B> Response<B> execute(final String url,
-                                    final String body,
-                                    final String method,
-                                    final Map<String, String> additionalHeaders,
-                                    final Class<B> clazz) throws IOException {
-        HttpURLConnection httpUrlConnection = null;
+    private InputStream getInputStream(final HttpURLConnection httpUrlConnection,
+                                       final String body,
+                                       final String method,
+                                       final Map<String, String> additionalHeaders) throws IOException {
         OutputStream outputStream = null;
-        InputStream inputStream = null;
 
         try {
-            httpUrlConnection = createHttpUrlConnection(url);
             httpUrlConnection.setRequestMethod(method);
             httpUrlConnection.setConnectTimeout(timeout);
             httpUrlConnection.setReadTimeout(timeout);
@@ -236,8 +275,30 @@ public class DefaultHttpClient implements HttpClient {
                 httpUrlConnection.connect();
             }
 
-            inputStream = httpUrlConnection.getInputStream();
+            return httpUrlConnection.getInputStream();
+        } finally {
+            try {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (IOException ex) {
+                LOGGER.log(Level.INFO, "Unable to close connection", ex);
+            }
+        }
+    }
 
+    private <B> Response<B> execute(final String url,
+                                    final String body,
+                                    final String method,
+                                    final Map<String, String> additionalHeaders,
+                                    final Class<B> clazz) throws IOException {
+        HttpURLConnection httpUrlConnection = null;
+        InputStream inputStream = null;
+
+        try {
+            httpUrlConnection = createHttpUrlConnection(url);
+
+            inputStream = getInputStream(httpUrlConnection, body, method, additionalHeaders);
             final String responseBody = StringUtils.streamToString(inputStream, Charset.forName(encoding));
 
             return new Response<>(httpUrlConnection.getResponseCode(),
@@ -265,9 +326,6 @@ public class DefaultHttpClient implements HttpClient {
                 httpUrlConnection.disconnect();
             }
             try {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
                 if (inputStream != null) {
                     inputStream.close();
                 }

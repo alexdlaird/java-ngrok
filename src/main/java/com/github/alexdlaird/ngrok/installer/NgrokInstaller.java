@@ -26,6 +26,8 @@ package com.github.alexdlaird.ngrok.installer;
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokInstallerException;
 import com.github.alexdlaird.exception.JavaNgrokSecurityException;
+import com.github.alexdlaird.http.DefaultHttpClient;
+import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.google.gson.JsonParseException;
@@ -34,13 +36,10 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashMap;
@@ -83,6 +82,18 @@ public class NgrokInstaller {
     private final Yaml yaml = new Yaml();
 
     private final Map<String, Map<String, Object>> configCache = new HashMap<>();
+
+    private final HttpClient httpClient;
+
+    public NgrokInstaller() {
+        this(new DefaultHttpClient.Builder()
+                .withTimeout(6000)
+                .build());
+    }
+
+    public NgrokInstaller(final HttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
 
     /**
      * Get the <code>ngrok</code> executable for the current system.
@@ -352,10 +363,9 @@ public class NgrokInstaller {
 
             LOGGER.fine(String.format("Download ngrok from %s ...", url));
 
-            final InputStream in = new URL(url).openStream();
-            Files.copy(in, dest, StandardCopyOption.REPLACE_EXISTING);
+            httpClient.get(url, List.of(), Map.of(), dest);
         } catch (IOException e) {
-            throw new JavaNgrokInstallerException(String.format("An error occurred while downloading the file from %s.", url), e);
+            throw new JavaNgrokInstallerException(String.format("An error occurred while downloading ngrok from %s.", url), e);
         }
     }
 
