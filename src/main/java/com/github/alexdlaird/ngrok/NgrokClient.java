@@ -119,7 +119,8 @@ import static java.util.Objects.nonNull;
  *         .build();
  * final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
  * </pre>
- * Once a Cloud Edge tunnel is started, it can be managed through <a href="https://dashboard.ngrok.com/cloud-edge/edges" target=_"blank"><code>ngrok</code>'s dashboard</a>.
+ * Once a Cloud Edge tunnel is started, it can be managed through
+ * <a href="https://dashboard.ngrok.com/cloud-edge/edges" target="_blank"><code>ngrok</code>'s dashboard</a>.
  * <h2>Get Active Tunnels</h2>
  * It can be useful to ask the <code>ngrok</code> client what tunnels are currently open. This can be accomplished
  * with the {@link NgrokClient#getTunnels()} method, which returns a list of {@link Tunnel} objects.

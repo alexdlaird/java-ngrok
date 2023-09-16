@@ -22,7 +22,7 @@ clean:
 	$(GRADLE_BIN) clean
 
 test:
-	$(GRADLE_BIN) test
+	$(GRADLE_BIN) test --console=plain
 
 docs:
 	$(GRADLE_BIN) javadoc
