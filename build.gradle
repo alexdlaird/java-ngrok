@@ -32,11 +32,11 @@ dependencies {
 test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
-}
 
-testLogger {
-    showFullStackTraces true
-    showStandardStreams true
+    testlogger {
+        showFullStackTraces true
+        showStandardStreams true
+    }
 }
 
 
