@@ -3,7 +3,9 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.2...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.3...HEAD)
+
+## [2.2.3](https://github.com/alexdlaird/java-ngrok/compare/2.2.2...2.2.3) - 2023-09-16
 ### Added
 - `retryCount` added to [`DefaultHttpClient`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html), so `GET` options can now support retries.
 - Documentation improvements.
@@ -12,7 +14,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Changed
 - `NgrokInstaller` now uses the `DefaultHttpClient` to download `ngrok` binaries.
 
-## [2.2.2](https://github.com/alexdlaird/java-ngrok/compare/2.2.1...2.2.2) - TBD
+## [2.2.2](https://github.com/alexdlaird/java-ngrok/compare/2.2.1...2.2.2) - 2023-09-14
 ### Added
 - Documentation improvements.
 
