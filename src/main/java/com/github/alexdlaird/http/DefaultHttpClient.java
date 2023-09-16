@@ -47,6 +47,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
+import static java.util.Objects.nonNull;
 
 /**
  * A default client for executing JSON-based HTTP requests.
@@ -125,7 +126,9 @@ public class DefaultHttpClient implements HttpClient {
             if (httpUrlConnection != null) {
                 try {
                     statusCode = httpUrlConnection.getResponseCode();
-                    errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(), Charset.forName(encoding));
+                    if (nonNull(httpUrlConnection.getErrorStream())) {
+                        errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(), Charset.forName(encoding));
+                    }
 
                     msg = "An error occurred when download the file (" + httpUrlConnection.getResponseCode() + "): " + errorResponse;
                 } catch (IOException | NullPointerException ignored) {
@@ -255,11 +258,11 @@ public class DefaultHttpClient implements HttpClient {
         return stringBuilder.toString();
     }
 
-    private InputStream getInputStream(final HttpURLConnection httpUrlConnection,
-                                       final String body,
-                                       final String method,
-                                       final Map<String, String> additionalHeaders,
-                                       final int retries) throws IOException, InterruptedException {
+    protected InputStream getInputStream(final HttpURLConnection httpUrlConnection,
+                                         final String body,
+                                         final String method,
+                                         final Map<String, String> additionalHeaders,
+                                         final int retries) throws IOException, InterruptedException {
         OutputStream outputStream = null;
 
         try {

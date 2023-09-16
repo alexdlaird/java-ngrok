@@ -23,7 +23,9 @@
 
 package com.github.alexdlaird.http;
 
+import com.github.alexdlaird.exception.JavaNgrokInstallerException;
 import com.github.alexdlaird.ngrok.NgrokTestCase;
+import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.protocol.CapturedRequest;
 import com.github.alexdlaird.ngrok.protocol.CapturedRequests;
@@ -32,9 +34,15 @@ import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,9 +54,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 class DefaultHttpClientTest extends NgrokTestCase {
 
@@ -188,5 +206,28 @@ class DefaultHttpClientTest extends NgrokTestCase {
         assertNotNull(capturedRequest.getRemoteAddr());
         assertNotNull(capturedRequest.getStart());
         assertNotNull(capturedRequest.getTunnelName());
+    }
+
+    @Test
+    public void testGetRetries() throws IOException, InterruptedException, NoSuchFieldException, IllegalAccessException {
+        // GIVEN
+        final DefaultHttpClient defaultHttpClient_2 = new DefaultHttpClient.Builder()
+                .withRetryCount(3)
+                .build();
+        final DefaultHttpClient mockHttpClient = spy(defaultHttpClient_2);
+        final HttpURLConnection mockHttpUrlConnection = mock(HttpURLConnection.class);
+        final NgrokInstaller ngrokInstaller_2 = new NgrokInstaller(mockHttpClient);
+        givenNgrokNotInstalled(javaNgrokConfigV3);
+        doReturn(mockHttpUrlConnection).when(mockHttpClient).createHttpUrlConnection(any());
+        doAnswer(invocation -> {
+            throw new SocketTimeoutException("Download failed");
+        }).when(mockHttpUrlConnection).getInputStream();
+
+        // WHEN
+        assertThrows(JavaNgrokInstallerException.class, () -> ngrokInstaller_2.installNgrok(javaNgrokConfigV3.getNgrokPath(), javaNgrokConfigV3.getNgrokVersion()));
+
+        // THEN
+        verify(mockHttpClient, times(4)).getInputStream(any(), any(), any(), any(), anyInt());
+        assertFalse(Files.exists(javaNgrokConfigV3.getNgrokPath()));
     }
 }
