@@ -34,6 +34,12 @@ test {
     finalizedBy jacocoTestReport
 }
 
+testLogger {
+    showFullStackTraces true
+    showStandardStreams true
+}
+
+
 jacoco {
     toolVersion = "0.8.6"
 }

@@ -46,6 +46,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
+import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
 import static java.net.HttpURLConnection.HTTP_BAD_METHOD;
 import static java.net.HttpURLConnection.HTTP_CREATED;
 import static java.net.HttpURLConnection.HTTP_NO_CONTENT;
@@ -58,6 +59,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doAnswer;
@@ -209,7 +211,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testGetRetries() throws IOException, InterruptedException, NoSuchFieldException, IllegalAccessException {
+    public void testGetRetries() throws IOException, InterruptedException {
         // GIVEN
         final DefaultHttpClient defaultHttpClient_2 = new DefaultHttpClient.Builder()
                 .withRetryCount(3)
