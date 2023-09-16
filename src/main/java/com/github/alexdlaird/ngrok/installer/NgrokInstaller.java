@@ -28,6 +28,7 @@ import com.github.alexdlaird.exception.JavaNgrokInstallerException;
 import com.github.alexdlaird.exception.JavaNgrokSecurityException;
 import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.http.HttpClient;
+import com.github.alexdlaird.http.HttpClientException;
 import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.google.gson.JsonParseException;
@@ -364,7 +365,7 @@ public class NgrokInstaller {
             LOGGER.fine(String.format("Download ngrok from %s ...", url));
 
             httpClient.get(url, List.of(), Map.of(), dest);
-        } catch (IOException e) {
+        } catch (IOException | HttpClientException e) {
             throw new JavaNgrokInstallerException(String.format("An error occurred while downloading ngrok from %s.", url), e);
         }
     }
