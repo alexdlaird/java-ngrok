@@ -54,12 +54,12 @@ public interface HttpClient {
     }
 
     /**
-     * Perform GET operation that downloads a file to given path.
+     * Perform GET operation that downloads a file to the given path.
      *
      * @param url               The URL on which to perform the operation.
      * @param parameters        An arbitrary number of parameters to add to the URL.
      * @param additionalHeaders Additional headers for the request.
-     * @param dest              The destination for the file download.
+     * @param dest              The destination to which the file will be downloaded.
      */
     void get(final String url, final List<Parameter> parameters,
              final Map<String, String> additionalHeaders, final Path dest);

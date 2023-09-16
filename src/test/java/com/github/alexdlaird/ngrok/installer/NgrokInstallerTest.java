@@ -25,6 +25,7 @@ package com.github.alexdlaird.ngrok.installer;
 
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokInstallerException;
+import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokTestCase;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
@@ -50,6 +51,8 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 class NgrokInstallerTest extends NgrokTestCase {
 

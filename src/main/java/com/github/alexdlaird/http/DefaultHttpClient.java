@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -78,11 +79,13 @@ public class DefaultHttpClient implements HttpClient {
     private final String encoding;
     private final String contentType;
     private final int timeout;
+    private final int retryCount;
 
     private DefaultHttpClient(final Builder builder) {
         this.encoding = builder.encoding;
         this.contentType = builder.contentType;
         this.timeout = builder.timeout;
+        this.retryCount = builder.retryCount;
         this.gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
@@ -102,14 +105,17 @@ public class DefaultHttpClient implements HttpClient {
     }
 
     @Override
-    public void get(String url, List<Parameter> parameters, Map<String, String> additionalHeaders, Path dest) {
+    public void get(final String url,
+                    final List<Parameter> parameters,
+                    final Map<String, String> additionalHeaders,
+                    final Path dest) {
         HttpURLConnection httpUrlConnection = null;
         InputStream inputStream = null;
 
         try {
             httpUrlConnection = createHttpUrlConnection(urlWithParameters(url, parameters));
 
-            inputStream = getInputStream(httpUrlConnection, null, "GET", additionalHeaders);
+            inputStream = getInputStream(httpUrlConnection, null, "GET", additionalHeaders, 0);
             Files.copy(inputStream, dest, StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception ex) {
             String msg = "An unknown error occurred when download the file";
@@ -252,7 +258,8 @@ public class DefaultHttpClient implements HttpClient {
     private InputStream getInputStream(final HttpURLConnection httpUrlConnection,
                                        final String body,
                                        final String method,
-                                       final Map<String, String> additionalHeaders) throws IOException {
+                                       final Map<String, String> additionalHeaders,
+                                       final int retries) throws IOException, InterruptedException {
         OutputStream outputStream = null;
 
         try {
@@ -276,6 +283,15 @@ public class DefaultHttpClient implements HttpClient {
             }
 
             return httpUrlConnection.getInputStream();
+        } catch (SocketTimeoutException ex) {
+            if (method.equals("GET") && retries < retryCount) {
+                LOGGER.warning("ngrok download failed, retrying in 0.5 seconds ...");
+                Thread.sleep(500);
+
+                return getInputStream(httpUrlConnection, body, method, additionalHeaders, retries + 1);
+            } else {
+                throw ex;
+            }
         } finally {
             try {
                 if (outputStream != null) {
@@ -298,7 +314,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             httpUrlConnection = createHttpUrlConnection(url);
 
-            inputStream = getInputStream(httpUrlConnection, body, method, additionalHeaders);
+            inputStream = getInputStream(httpUrlConnection, body, method, additionalHeaders, 0);
             final String responseBody = StringUtils.streamToString(inputStream, Charset.forName(encoding));
 
             return new Response<>(httpUrlConnection.getResponseCode(),
@@ -342,6 +358,7 @@ public class DefaultHttpClient implements HttpClient {
         private String encoding = "UTF-8";
         private String contentType = "application/json";
         public int timeout = 4000;
+        public int retryCount = 0;
 
         /**
          * Default encoding for requests.
@@ -364,6 +381,14 @@ public class DefaultHttpClient implements HttpClient {
          */
         public Builder withTimeout(final int timeout) {
             this.timeout = timeout;
+            return this;
+        }
+
+        /**
+         * Default retry count for GET requests.
+         */
+        public Builder withRetryCount(final int retryCount) {
+            this.retryCount = retryCount;
             return this;
         }
 

@@ -24,6 +24,7 @@
 package com.github.alexdlaird.ngrok;
 
 import com.github.alexdlaird.exception.JavaNgrokException;
+import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
@@ -58,7 +59,9 @@ public class NgrokTestCase {
             .withNgrokVersion(NgrokVersion.V3)
             .build();
 
-    protected final NgrokInstaller ngrokInstaller = new NgrokInstaller();
+    protected final NgrokInstaller ngrokInstaller = new NgrokInstaller(new DefaultHttpClient.Builder()
+            .withRetryCount(3)
+            .build());
 
     protected NgrokProcess ngrokProcessV2;
 
