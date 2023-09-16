@@ -248,9 +248,9 @@ class NgrokInstallerTest extends NgrokTestCase {
     @Test
     public void testDownloadFails() throws IOException, InterruptedException {
         // GIVEN
+        givenNgrokNotInstalled(javaNgrokConfigV3);
         final HttpClient mockHttpClient = mock(HttpClient.class);
         final NgrokInstaller ngrokInstaller_2 = new NgrokInstaller(mockHttpClient);
-        givenNgrokNotInstalled(javaNgrokConfigV3);
         doAnswer(invocation -> {
             throw new SocketTimeoutException("Download failed");
         }).when(mockHttpClient).get(any(), any(), any(), any(Path.class));

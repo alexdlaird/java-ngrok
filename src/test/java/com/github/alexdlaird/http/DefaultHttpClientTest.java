@@ -213,13 +213,13 @@ class DefaultHttpClientTest extends NgrokTestCase {
     @Test
     public void testGetRetries() throws IOException, InterruptedException {
         // GIVEN
+        givenNgrokNotInstalled(javaNgrokConfigV3);
         final DefaultHttpClient defaultHttpClient_2 = new DefaultHttpClient.Builder()
                 .withRetryCount(3)
                 .build();
         final DefaultHttpClient mockHttpClient = spy(defaultHttpClient_2);
         final HttpURLConnection mockHttpUrlConnection = mock(HttpURLConnection.class);
         final NgrokInstaller ngrokInstaller_2 = new NgrokInstaller(mockHttpClient);
-        givenNgrokNotInstalled(javaNgrokConfigV3);
         doReturn(mockHttpUrlConnection).when(mockHttpClient).createHttpUrlConnection(any());
         doAnswer(invocation -> {
             throw new SocketTimeoutException("Download failed");
