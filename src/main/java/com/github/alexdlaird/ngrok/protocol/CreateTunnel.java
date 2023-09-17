@@ -23,7 +23,6 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
-import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
