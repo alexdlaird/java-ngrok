@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.3...HEAD)
 
-## [2.2.3](https://github.com/alexdlaird/java-ngrok/compare/2.2.2...2.2.3) - 2023-09-16
+## [2.2.3](https://github.com/alexdlaird/java-ngrok/compare/2.2.2...2.2.3) - 2023-09-17
 ### Added
 - `retryCount` added to [`DefaultHttpClient`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html), so `GET` options can now support retries.
 - Documentation improvements.
