@@ -27,8 +27,10 @@ jobs:
       max-parallel: 3
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
-        java-version: [ 11 ]
+        java-version: [ 17 ]
         include:
+          - java-version: 11
+            os: ubuntu-latest
           - java-version: 15
             os: ubuntu-latest
 
@@ -46,7 +48,7 @@ jobs:
       - name: Run tests
         run: make test
       - name: Upload coverage
-        if: matrix.os == 'ubuntu-latest' && matrix.java-version == '11'
+        if: matrix.os == 'ubuntu-latest' && matrix.java-version == '17'
         uses: codecov/codecov-action@v1
         with:
           file: ./build/reports/jacoco/report.xml
