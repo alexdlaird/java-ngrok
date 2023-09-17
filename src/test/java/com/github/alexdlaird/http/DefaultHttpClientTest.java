@@ -213,6 +213,7 @@ class DefaultHttpClientTest extends NgrokTestCase {
     @Test
     public void testGetRetries() throws IOException, InterruptedException {
         // GIVEN
+        ngrokProcessV3.stop();
         givenNgrokNotInstalled(javaNgrokConfigV3);
         final DefaultHttpClient defaultHttpClient_2 = new DefaultHttpClient.Builder()
                 .withRetryCount(3)

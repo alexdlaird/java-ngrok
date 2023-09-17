@@ -112,7 +112,7 @@ public class NgrokTestCase {
         if (Files.exists(javaNgrokConfig.getNgrokPath())) {
             // Due to Windows file locking behavior, wait a beat
             if (NgrokInstaller.getSystem().equals(WINDOWS)) {
-                Thread.sleep(5000);
+                Thread.sleep(1000);
             }
             Files.delete(javaNgrokConfig.getNgrokPath());
         }
