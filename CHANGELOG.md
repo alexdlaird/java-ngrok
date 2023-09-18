@@ -6,6 +6,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.4.5...java8-ngrok)
 
 ## [1.4.5](https://github.com/alexdlaird/java-ngrok/compare/1.4.4...1.4.5) - 2022-02-07
+**Note:** 1.4.x is a special release that added Java 8 support, which will not be actively maintained. It is available through the `java8-ngrok` artifact on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
+
 ### Added
 - Darwin 64-bit ARM support, as this was added to `ngrok` itself.
 
@@ -29,4 +31,5 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - If no `configPath` is set in `JavaNgrokConfig`, now properly defaults to `~/.ngrok2/ngrok.yml`.
 
 ## [1.4.0](https://github.com/alexdlaird/java-ngrok/releases/tag/1.4.0) - 2021-08-25
-- Java 8 support, which will not be actively maintained, is available through the `java8-ngrok` artifact on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
+### Added
+- Java 8 support, which will not be actively maintained. It is available through the `java8-ngrok` artifact on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
