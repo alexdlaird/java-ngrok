@@ -25,7 +25,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [2.2.0](https://github.com/alexdlaird/java-ngrok/compare/2.1.0...2.2.0) - 2023-09-12
 ### Added
 - Support for `labels`, so [`ngrok`'s Labeled Tunnel Configuration](https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#labeled-tunnel-configuration-properties) is now supported, which enables basic support for [`ngrok`'s Cloud Edge](https://ngrok.com/docs/cloud-edge/).
-- `apiKey` to [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.0/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), which can be set so `java-ngrok` can interface with Cloud Edge `labels`.
+- `apiKey` to [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), which can be set so `java-ngrok` can interface with Cloud Edge `labels`.
 - `id` to [Tunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/Tunnel.html).
 - `timeout` to [DefaultHttpClient](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html).
 - Documentation improvements.
@@ -33,8 +33,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [2.1.0](https://github.com/alexdlaird/java-ngrok/compare/2.0.0...2.1.0) - 2023-04-22
 ### Added
-- Support for `oauth` configuration when building [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.1.0/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html).
-- Support for other new `ngrok` v3 [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.1.0/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html) parameters, including `circuit_breaker`, `compression`, `mutual_tls_cas`, `proxy_proto`, `websocket_tcp_converter`, `terminate_at`, `request_header`, `response_header`, `ip_restrictions`, and `verify_webhook`.
+- Support for `oauth` configuration when building [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.1.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html).
+- Support for other new `ngrok` v3 [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.1.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html) parameters, including `circuit_breaker`, `compression`, `mutual_tls_cas`, `proxy_proto`, `websocket_tcp_converter`, `terminate_at`, `request_header`, `response_header`, `ip_restrictions`, and `verify_webhook`.
 - Documentation improvements.
 - Test improvements.
 
@@ -56,7 +56,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [1.7.0](https://github.com/alexdlaird/java-ngrok/compare/1.6.2...1.7.0) - 2023-04-11
 ### Added
-- `ngrokVersion` to [CreateTunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.7.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html) so parameter details can be properly inferred when necessary.
+- `ngrokVersion` to [CreateTunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.7.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html) so parameter details can be properly inferred when necessary.
 
 ### Fixed
 - Inconsistencies with default installation of `ngrok` v2.
