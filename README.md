@@ -116,5 +116,5 @@ the Java 8 build.
 If you would like to get involved, be sure to review
 the [Contribution Guide](https://github.com/alexdlaird/java-ngrok/blob/main/CONTRIBUTING.md).
 
-Want to contribute financially? If you've found `java-ngrok` useful, [a donation](https://www.paypal.me/alexdlaird)
+Want to contribute financially? If you've found `java-ngrok` useful, [sponsorship](https://github.com/sponsors/alexdlaird)
 would also be greatly appreciated!
