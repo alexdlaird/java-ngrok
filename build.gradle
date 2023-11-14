@@ -9,7 +9,7 @@ plugins {
 }
 
 group "com.github.alexdlaird"
-version "2.2.3"
+version "2.2.4"
 
 java {
     withJavadocJar()
