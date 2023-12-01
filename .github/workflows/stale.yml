@@ -1,4 +1,4 @@
-name: "Stale Check""
+name: "Stale Check"
 
 on:
   schedule:
