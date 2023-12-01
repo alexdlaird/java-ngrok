@@ -192,7 +192,8 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * The path to the <code>ngrok</code> binary, defaults to <code>~/.ngrok2/ngrok</code>.
+         * The path to the <code>ngrok</code> binary, defaults to being placed in the same directory as
+         * <a href="https://ngrok.com/docs/ngrok-agent/config" target="_blank"><code>ngrok's</code> configs</a>.
          */
         public Builder withNgrokPath(final Path ngrokPath) {
             this.ngrokPath = ngrokPath;
@@ -200,7 +201,7 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * The path to the <code>ngrok</code> config file, defaults to <code>~/.ngrok2/ngrok.yml</code>.
+         * The path to the <code>ngrok</code> config file, defaults to <a href="https://ngrok.com/docs/ngrok-agent/config" target="_blank"><code>ngrok's</code> default config location</a>.
          */
         public Builder withConfigPath(final Path configPath) {
             this.configPath = configPath;

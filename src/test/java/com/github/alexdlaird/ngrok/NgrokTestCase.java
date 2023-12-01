@@ -48,13 +48,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class NgrokTestCase {
 
     protected final JavaNgrokConfig javaNgrokConfigV2 = new JavaNgrokConfig.Builder()
-            .withConfigPath(Paths.get("build", ".ngrok2", "config_v2.yml").toAbsolutePath())
+            .withConfigPath(Paths.get("build", ".ngrok", "config_v2.yml").toAbsolutePath())
             .withNgrokPath(Paths.get("build", "bin", "v2", getNgrokBin()))
             .withNgrokVersion(NgrokVersion.V2)
             .build();
 
     protected final JavaNgrokConfig javaNgrokConfigV3 = new JavaNgrokConfig.Builder()
-            .withConfigPath(Paths.get("build", ".ngrok2", "config_v3.yml").toAbsolutePath())
+            .withConfigPath(Paths.get("build", ".ngrok", "config_v3.yml").toAbsolutePath())
             .withNgrokPath(Paths.get("build", "bin", "v3", getNgrokBin()))
             .withNgrokVersion(NgrokVersion.V3)
             .build();

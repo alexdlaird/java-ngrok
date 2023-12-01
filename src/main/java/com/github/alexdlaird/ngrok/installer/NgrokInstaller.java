@@ -57,9 +57,8 @@ import static com.github.alexdlaird.util.StringUtils.isBlank;
  * A helper for downloading and installing the <code>ngrok</code> for the current system.
  *
  * <h2>Config File</h2>
- * By default, <a href="https://ngrok.com/docs/ngrok-agent/config" target="_blank"><code>ngrok</code> will look for its config file</a> in the home
- * directory’s <code>.ngrok2</code> folder. We can override this behavior with
- * {@link JavaNgrokConfig.Builder#withConfigPath(Path)}.
+ * By default, <code>ngrok</code> will look for its config file in <a href="https://ngrok.com/docs/ngrok-agent/config" target="_blank">the default location</a>.
+ * We can override this behavior with {@link JavaNgrokConfig.Builder#withConfigPath(Path)}.
  *
  * <h2>Binary Path</h2>
  * The <code>java-ngrok</code> package manages its own <code>ngrok</code> binary. We can use our <code>ngrok</code>
@@ -75,8 +74,8 @@ public class NgrokInstaller {
     public static final String LINUX = "LINUX";
     public static final String FREEBSD = "FREEBSD";
     public static final List<String> UNIX_BINARIES = List.of(MAC, LINUX, FREEBSD);
-    public static final Path DEFAULT_NGROK_PATH = Paths.get(System.getProperty("user.home"), ".ngrok2", NgrokInstaller.getNgrokBin());
-    public static final Path DEFAULT_CONFIG_PATH = Paths.get(System.getProperty("user.home"), ".ngrok2", "ngrok.yml");
+    public static final Path DEFAULT_NGROK_PATH = Paths.get(getDefaultNgrokDir().toString(), NgrokInstaller.getNgrokBin());
+    public static final Path DEFAULT_CONFIG_PATH = Paths.get(getDefaultNgrokDir().toString(), "ngrok.yml");
 
     private static final List<String> VALID_LOG_LEVELS = List.of("info", "debug");
 
@@ -249,6 +248,18 @@ public class NgrokInstaller {
             return FREEBSD;
         } else {
             throw new JavaNgrokInstallerException(String.format("Unknown os.name: %s", os));
+        }
+    }
+
+    private static Path getDefaultNgrokDir() {
+        final String system = getSystem();
+        final String userHome = System.getProperty("user.home");
+        if (system.equals(MAC)) {
+            return Paths.get(userHome, "Library", "Application Support", "ngrok");
+        } else if (system.equals(WINDOWS)) {
+            return Paths.get(userHome, "AppData", "Local", "ngrok");
+        } else {
+            return Paths.get(userHome, ".config", "ngrok");
         }
     }
 

@@ -85,7 +85,7 @@ class NgrokInstallerTest extends NgrokTestCase {
     public void testInstallNgrokDefault() throws IOException, InterruptedException {
         // GIVEN
         JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-                .withConfigPath(Paths.get("build", ".ngrok2", "config_default.yml").toAbsolutePath())
+                .withConfigPath(Paths.get("build", ".ngrok", "config_default.yml").toAbsolutePath())
                 .withNgrokPath(Paths.get("build", "bin", "default", getNgrokBin()))
                 .build();
         givenNgrokNotInstalled(javaNgrokConfig);
@@ -118,7 +118,7 @@ class NgrokInstallerTest extends NgrokTestCase {
     public void testGetDefaultNgrokConfig() {
         // GIVEN
         final JavaNgrokConfig javaNgrokConfigV3Tmp = new JavaNgrokConfig.Builder()
-                .withConfigPath(Paths.get("build", ".ngrok2", "config_v2_tmp.yml").toAbsolutePath())
+                .withConfigPath(Paths.get("build", ".ngrok", "config_v2_tmp.yml").toAbsolutePath())
                 .withNgrokPath(Paths.get("build", "bin", "v2", getNgrokBin()))
                 .withNgrokVersion(NgrokVersion.V3)
                 .build();
