@@ -1,7 +1,7 @@
 <p align="center"><img alt="java-ngrok - a Java wrapper for ngrok" src="https://github.com/alexdlaird/java-ngrok/raw/main/logo.png" /></p>
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/)
-[![CI Tests](https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yaml/badge.svg)](https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yaml)
+[![Build](https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml/badge.svg)](https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml)
 [![Codecov](https://codecov.io/gh/alexdlaird/java-ngrok/branch/main/graph/badge.svg)](https://codecov.io/gh/alexdlaird/java-ngrok)
 ![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)
 
