@@ -43,6 +43,9 @@ jobs:
         run: |
           make docs
           make local
+      - name: Test Downstream Dependency
+        run:
+          make test-downstream-dependency VERSION=${{ steps.get_version.outputs.VERSION }}
       - name: Publish
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}

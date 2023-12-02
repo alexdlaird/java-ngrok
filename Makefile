@@ -1,4 +1,4 @@
-.PHONY: all build install clean test docs local validate-release upload
+.PHONY: all build install clean test docs local validate-release test-downstream-dependency upload
 
 SHELL := /usr/bin/env bash
 ifeq ($(OS),Windows_NT)
@@ -20,6 +20,7 @@ build:
 
 clean:
 	$(GRADLE_BIN) clean
+	@rm -rf java-ngrok-example-dropwizard
 
 test:
 	$(GRADLE_BIN) test
@@ -39,6 +40,17 @@ validate-release:
 	@if [[ $$(grep "&lt;version&gt;${VERSION}&lt;/version&gt;" src/main/java/overview.html) == "" ]] ; then echo "Version not bumped in overview.html" & exit 1 ; fi
 	@if [[ $$(grep "com.github.alexdlaird:java-ngrok:${VERSION}" src/main/java/overview.html) == "" ]] ; then echo "Version not bumped in overview.html" & exit 1 ; fi
 	@if [[ $$(grep "VERSION = \"${VERSION}\"" src/main/java/com/github/alexdlaird/ngrok/NgrokClient.java) == "" ]] ; then echo "Version not bumped in NgrokClient.java" & exit 1 ; fi
+
+test-downstream-dependency:
+	@if [[ "${VERSION}" == "" ]]; then echo "VERSION is not set" & exit 1 ; fi
+	@( \
+		git clone https://github.com/alexdlaird/java-ngrok-example-dropwizard.git; \
+		make local; \
+		mvn -f java-ngrok-example-dropwizard/pom.xml versions:set-property -Dproperty=java-ngrok.version -DnewVersion=${VERSION}; \
+		make -C java-ngrok-example-dropwizard build; \
+		make -C java-ngrok-example-dropwizard test; \
+		rm -rf java-ngrok-example-dropwizard; \
+	)
 
 upload:
 	$(GRADLE_BIN) publishToSonatype closeAndReleaseSonatypeStagingRepository
