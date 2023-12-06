@@ -76,6 +76,7 @@ public class NgrokLog extends HashMap<String, String> {
                     case "WARN":
                         value = WARNING.getName();
                         break;
+                    default:
                 }
             }
 
@@ -95,6 +96,7 @@ public class NgrokLog extends HashMap<String, String> {
                 case "addr":
                     this.addr = value;
                     break;
+                default:
             }
 
             put(key, value);
