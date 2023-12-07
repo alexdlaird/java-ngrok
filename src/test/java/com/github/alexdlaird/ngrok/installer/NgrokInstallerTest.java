@@ -40,7 +40,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
-import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.getNgrokBin;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -86,7 +85,7 @@ class NgrokInstallerTest extends NgrokTestCase {
         // GIVEN
         JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
                 .withConfigPath(Paths.get("build", ".ngrok", "config_default.yml").toAbsolutePath())
-                .withNgrokPath(Paths.get("build", "bin", "default", getNgrokBin()))
+                .withNgrokPath(Paths.get("build", "bin", "default", NgrokInstaller.getNgrokBin()))
                 .build();
         givenNgrokNotInstalled(javaNgrokConfig);
 
@@ -119,7 +118,7 @@ class NgrokInstallerTest extends NgrokTestCase {
         // GIVEN
         final JavaNgrokConfig javaNgrokConfigV3Tmp = new JavaNgrokConfig.Builder()
                 .withConfigPath(Paths.get("build", ".ngrok", "config_v2_tmp.yml").toAbsolutePath())
-                .withNgrokPath(Paths.get("build", "bin", "v2", getNgrokBin()))
+                .withNgrokPath(Paths.get("build", "bin", "v2", NgrokInstaller.getNgrokBin()))
                 .withNgrokVersion(NgrokVersion.V3)
                 .build();
         ngrokInstaller.installDefaultConfig(javaNgrokConfigV3Tmp.getConfigPath(), Collections.emptyMap(), javaNgrokConfigV3Tmp.getNgrokVersion());
