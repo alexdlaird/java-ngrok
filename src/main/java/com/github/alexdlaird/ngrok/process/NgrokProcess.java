@@ -199,7 +199,7 @@ public class NgrokProcess {
      * <pre>
      * // Setting an auth token allows us to do things like open multiple tunnels at the same time
      * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
-     * ngrokClient.setAuthToken("<NGROK_AUTH_TOKEN>")
+     * ngrokClient.setAuthToken("<NGROK_AUTHTOKEN>")
      *
      * // &lt;NgrokTunnel: "http://&lt;public_sub1&gt;.ngrok.io" -&gt; "http://localhost:80"&gt;
      * final Tunnel ngrokTunnel1 = ngrokClient.connect();

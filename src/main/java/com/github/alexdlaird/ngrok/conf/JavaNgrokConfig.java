@@ -44,7 +44,7 @@ import static java.util.Objects.isNull;
  *     return null;
  * };
  * final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
- *         .withAuthToken("&lt;NGROK_AUTH_TOKEN&gt;")
+ *         .withAuthToken("&lt;NGROK_AUTHTOKEN&gt;")
  *         .withRegion(Region.AU)
  *         .withLogEventCallback(logEventCallback)
  *         .withMaxLogs(10);
