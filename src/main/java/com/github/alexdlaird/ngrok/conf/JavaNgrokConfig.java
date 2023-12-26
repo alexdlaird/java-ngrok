@@ -210,7 +210,8 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * A <code>ngrok</code> authtoken to pass to commands (overrides what is in the config).
+         * A <code>ngrok</code> authtoken to pass to commands (overrides what is in the config). If not set here, the
+         * {@link Builder} will attempt to use the environment variable <code>NGROK_AUTHTOKEN</code> if it is set.
          */
         public Builder withAuthToken(final String authToken) {
             this.authToken = authToken;
