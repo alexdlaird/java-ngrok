@@ -27,30 +27,23 @@ jobs:
         with:
           java-version: 11
           distribution: adopt
-      - name: Install dependencies
-        run:
-          make install
+      - name: Build
+        run: make build
       - name: Get version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
       - name: Validate version
-        run:
-          make validate-release VERSION=${{ steps.get_version.outputs.VERSION }}
-      - name: Run tests
-        run:
-          make test
-      - name: Build
-        run: |
-          make docs
-          make local
-      - name: Test Downstream Dependency
-        run:
-          make test-downstream-dependency VERSION=${{ steps.get_version.outputs.VERSION }}
+        run: make validate-release VERSION=${{ steps.get_version.outputs.VERSION }}
+      - name: Test
+        run: make test
+      - name: Validate package
+        run: make local
+      - name: Test downstream dependency
+        run: make test-downstream-dependency VERSION=${{ steps.get_version.outputs.VERSION }}
       - name: Publish
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run:
-          make upload
+        run: make upload

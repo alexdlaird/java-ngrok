@@ -44,10 +44,12 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
           distribution: adopt
-      - name: Install dependencies
-        run: make install
-      - name: Run tests
+      - name: Build
+        run: make build
+      - name: Test
         run: make test
+      - name: Validate package
+        run: make local
       - name: Upload coverage
         if: matrix.os == 'ubuntu-latest' && matrix.java-version == '17'
         uses: codecov/codecov-action@v1

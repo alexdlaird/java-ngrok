@@ -16,7 +16,7 @@ all: build
 install: local
 
 build:
-	$(GRADLE_BIN) build
+	$(GRADLE_BIN) build -x test
 
 clean:
 	$(GRADLE_BIN) clean
