@@ -3,7 +3,9 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.5...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.6...HEAD)
+
+## [2.2.6](https://github.com/alexdlaird/java-ngrok/compare/2.2.5...2.2.6) - 2023-12-27
 ### Added
 - If a value for `authToken` is not set in [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.5/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), it will attempt to use the environment variable `NGROK_AUTHTOKEN` if it is set.
 - Build improvements.
