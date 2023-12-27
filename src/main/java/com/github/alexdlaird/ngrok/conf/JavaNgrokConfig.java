@@ -33,6 +33,7 @@ import java.nio.file.Path;
 import java.util.function.Function;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * An object for managing <code>java-ngrok</code>'s configuration to interact the <code>ngrok</code> binary.
@@ -209,7 +210,8 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * A <code>ngrok</code> authtoken to pass to commands (overrides what is in the config).
+         * A <code>ngrok</code> authtoken to pass to commands (overrides what is in the config). If not set here, the
+         * {@link Builder} will attempt to use the environment variable <code>NGROK_AUTHTOKEN</code> if it is set.
          */
         public Builder withAuthToken(final String authToken) {
             this.authToken = authToken;
@@ -288,6 +290,10 @@ public class JavaNgrokConfig {
             }
             if (isNull(configPath)) {
                 configPath = NgrokInstaller.DEFAULT_CONFIG_PATH;
+            }
+            final String envAuthToken = System.getenv("NGROK_AUTHTOKEN");
+            if (isNull(authToken) && nonNull(envAuthToken)) {
+                authToken = envAuthToken;
             }
 
             return new JavaNgrokConfig(this);
