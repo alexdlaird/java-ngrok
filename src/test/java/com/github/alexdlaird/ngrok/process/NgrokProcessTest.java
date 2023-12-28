@@ -123,6 +123,7 @@ public class NgrokProcessTest extends NgrokTestCase {
     public void testStartPortInUseV3() throws InterruptedException {
         // GIVEN
         assertFalse(ngrokProcessV3.isRunning());
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
         ngrokProcessV3.start();
         assertTrue(ngrokProcessV3.isRunning());
         final Path ngrokPath2 = Paths.get(javaNgrokConfigV3.getNgrokPath().getParent().toString(), "2", NgrokInstaller.getNgrokBin());

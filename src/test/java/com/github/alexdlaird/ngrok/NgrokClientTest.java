@@ -132,6 +132,7 @@ class NgrokClientTest extends NgrokTestCase {
     @Test
     public void testConnectV3() {
         // GIVEN
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
         assertFalse(ngrokClientV3.getNgrokProcess().isRunning());
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withNgrokVersion(NgrokVersion.V3)
@@ -350,6 +351,7 @@ class NgrokClientTest extends NgrokTestCase {
     @Test
     public void testDisconnectV3() {
         // GIVEN
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withNgrokVersion(NgrokVersion.V3)
                 .withName("my-tunnel")
