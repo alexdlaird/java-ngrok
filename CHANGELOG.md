@@ -3,7 +3,11 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.6...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.7...HEAD)
+
+## [2.2.7](https://github.com/alexdlaird/java-ngrok/compare/2.2.6...2.2.7) - TBD
+### Fixed
+- Test improvements, suite now respects `NGROK_AUTHTOKEN` for all necessary tests (skipped if not set, rather than tests failing).
 
 ## [2.2.6](https://github.com/alexdlaird/java-ngrok/compare/2.2.5...2.2.6) - 2023-12-27
 ### Added
