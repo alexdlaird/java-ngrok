@@ -28,11 +28,13 @@ jobs:
       max-parallel: 3
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
-        java-version: [ 17 ]
+        java-version: [ 21 ]
         include:
           - java-version: 11
             os: ubuntu-latest
           - java-version: 15
+            os: ubuntu-latest
+          - java-version: 17
             os: ubuntu-latest
 
     runs-on: ${{ matrix.os }}
