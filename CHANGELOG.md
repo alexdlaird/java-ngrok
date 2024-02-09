@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [2.2.8](https://github.com/alexdlaird/java-ngrok/compare/2.2.7...2.2.8) - 2024-01-08
 ### Added
+- Support for Java 21.
 - Build improvements.
 
 ## [2.2.7](https://github.com/alexdlaird/java-ngrok/compare/2.2.6...2.2.7) - 2023-12-30
