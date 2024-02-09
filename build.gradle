@@ -35,15 +35,13 @@ test {
 }
 
 jacoco {
-    toolVersion = "0.8.10"
+    toolVersion = "0.8.11"
 }
 
 jacocoTestReport {
     reports {
-        html.enabled true
-        xml.enabled true
-        csv.enabled false
-        xml.destination = file("build/reports/jacoco/report.xml")
+        xml.required = true
+        xml.destination file("build/reports/jacoco/report.xml")
     }
 }
 
