@@ -119,7 +119,7 @@ public class DefaultHttpClient implements HttpClient {
             inputStream = getInputStream(httpUrlConnection, null, "GET", additionalHeaders, 0);
             Files.copy(inputStream, dest, StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception ex) {
-            String msg = "An unknown error occurred when download the file";
+            String msg = "An unknown error occurred when downloading the file";
 
             int statusCode = -1;
             String errorResponse = null;
@@ -130,7 +130,7 @@ public class DefaultHttpClient implements HttpClient {
                         errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(), Charset.forName(encoding));
                     }
 
-                    msg = "An error occurred when download the file (" + httpUrlConnection.getResponseCode() + "): " + errorResponse;
+                    msg = "An error occurred when downloading the file (" + httpUrlConnection.getResponseCode() + "): " + errorResponse;
                 } catch (IOException | NullPointerException ignored) {
                 }
             }
