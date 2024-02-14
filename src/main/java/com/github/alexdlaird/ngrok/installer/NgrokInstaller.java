@@ -379,6 +379,14 @@ public class NgrokInstaller {
         } catch (IOException | HttpClientException e) {
             throw new JavaNgrokInstallerException(String.format("An error occurred while downloading ngrok from %s.", url), e);
         }
+
+//        if retries < DEFAULT_RETRY_COUNT:
+//        logger.warning("ngrok download failed, retrying in 0.5 seconds ...")
+//        time.sleep(0.5)
+//
+//        return _download_file(url, retries + 1, **kwargs)
+//        else:
+//        raise e
     }
 
     private String getArch() {

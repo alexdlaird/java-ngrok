@@ -79,7 +79,9 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
         ngrokProcessV3.start();
 
-        defaultHttpClient = new DefaultHttpClient.Builder().build();
+        defaultHttpClient = new DefaultHttpClient.Builder()
+                .withRetryCount(3)
+                .build();
     }
 
     @Test

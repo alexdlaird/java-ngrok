@@ -286,9 +286,9 @@ public class DefaultHttpClient implements HttpClient {
             }
 
             return httpUrlConnection.getInputStream();
-        } catch (SocketTimeoutException ex) {
+        } catch (HttpClientException | SocketTimeoutException | IllegalStateException ex) {
             if (method.equals("GET") && retries < retryCount) {
-                LOGGER.warning("ngrok download failed, retrying in 0.5 seconds ...");
+                LOGGER.warning("GET failed, retrying in 0.5 seconds ...");
                 Thread.sleep(500);
 
                 return getInputStream(httpUrlConnection, body, method, additionalHeaders, retries + 1);
