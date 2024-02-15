@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Comparator;
+import java.util.Random;
 import java.util.UUID;
 
 public class NgrokTestCase {
@@ -71,6 +72,7 @@ public class NgrokTestCase {
     }
 
     protected String createUniqueSubdomain() {
-        return String.format("java-ngrok-%s-%s-%s-tcp", UUID.randomUUID(), System.getProperty("java.version").replaceAll("\\.", ""), NgrokInstaller.getSystem().toLowerCase());
+        Random random = new Random();
+        return String.format("java-ngrok-%s-%s-%s-tcp", random.longs(1000000000000000L, 9999999999999999L).findFirst().getAsLong(), System.getProperty("java.version").replaceAll("\\.", ""), NgrokInstaller.getSystem().toLowerCase());
     }
 }
