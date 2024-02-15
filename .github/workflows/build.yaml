@@ -1,13 +1,13 @@
 name: "CI/CD"
 
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - "**"
+    branches: [ main, develop, java8-ngrok ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, develop, java8-ngrok ]
   schedule:
-    - cron: "0 9 * * *"
+    - cron: "0 10 * * *"
 
 jobs:
   build:
