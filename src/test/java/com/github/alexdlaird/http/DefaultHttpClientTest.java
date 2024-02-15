@@ -231,7 +231,8 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         assertThrows(JavaNgrokInstallerException.class, () -> ngrokInstaller_2.installNgrok(javaNgrokConfigV3.getNgrokPath(), javaNgrokConfigV3.getNgrokVersion()));
 
         // THEN
-        verify(mockHttpClient, times(4)).getInputStream(any(), any(), any(), any(), anyInt());
+        verify(mockHttpClient, times(4)).get(any(), any(), any(), any(), anyInt());
+        verify(mockHttpClient, times(4)).getInputStream(any(), any(), any(), any());
         assertFalse(Files.exists(javaNgrokConfigV3.getNgrokPath()));
     }
 }

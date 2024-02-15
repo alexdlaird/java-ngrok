@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.9...HEAD)
+### Changed
+- Moved evaluation of HTTP `GET` retry logic from `DefaultHttpClient`'s [`getInputStream()`](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.2.10/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html#getInputStream(java.net.HttpURLConnection,java.lang.String,java.lang.String,java.util.Map)) to [`get()`](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.2.10/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html#get(java.lang.String,java.util.List,java.util.Map,java.nio.file.Path,int)).
 
 ## [2.2.9](https://github.com/alexdlaird/java-ngrok/compare/2.2.8...2.2.9) - 2024-02-14
 ### Added

@@ -376,7 +376,7 @@ public class NgrokInstaller {
             LOGGER.fine(String.format("Download ngrok from %s ...", url));
 
             httpClient.get(url, List.of(), Map.of(), dest);
-        } catch (IOException | HttpClientException e) {
+        } catch (IOException | HttpClientException | InterruptedException e) {
             throw new JavaNgrokInstallerException(String.format("An error occurred while downloading ngrok from %s.", url), e);
         }
     }

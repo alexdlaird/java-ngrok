@@ -34,7 +34,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -109,33 +108,41 @@ public class DefaultHttpClient implements HttpClient {
     public void get(final String url,
                     final List<Parameter> parameters,
                     final Map<String, String> additionalHeaders,
-                    final Path dest) {
+                    final Path dest,
+                    final int retries) throws InterruptedException {
         HttpURLConnection httpUrlConnection = null;
         InputStream inputStream = null;
 
         try {
             httpUrlConnection = createHttpUrlConnection(urlWithParameters(url, parameters));
 
-            inputStream = getInputStream(httpUrlConnection, null, "GET", additionalHeaders, 0);
+            inputStream = getInputStream(httpUrlConnection, null, "GET", additionalHeaders);
             Files.copy(inputStream, dest, StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception ex) {
-            String msg = "An unknown error occurred when downloading the file";
+            if (retries < retryCount) {
+                LOGGER.warning("GET failed, retrying in 0.5 seconds ...");
+                Thread.sleep(500);
 
-            int statusCode = -1;
-            String errorResponse = null;
-            if (httpUrlConnection != null) {
-                try {
-                    statusCode = httpUrlConnection.getResponseCode();
-                    if (nonNull(httpUrlConnection.getErrorStream())) {
-                        errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(), Charset.forName(encoding));
+                get(url, parameters, additionalHeaders, dest, retries + 1);
+            } else {
+                String msg = "An unknown error occurred when downloading the file";
+
+                int statusCode = -1;
+                String errorResponse = null;
+                if (httpUrlConnection != null) {
+                    try {
+                        statusCode = httpUrlConnection.getResponseCode();
+                        if (nonNull(httpUrlConnection.getErrorStream())) {
+                            errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(), Charset.forName(encoding));
+                        }
+
+                        msg = "An error occurred when downloading the file (" + httpUrlConnection.getResponseCode() + "): " + errorResponse;
+                    } catch (IOException | NullPointerException ignored) {
                     }
-
-                    msg = "An error occurred when downloading the file (" + httpUrlConnection.getResponseCode() + "): " + errorResponse;
-                } catch (IOException | NullPointerException ignored) {
                 }
-            }
 
-            throw new HttpClientException(msg, ex, url, statusCode, errorResponse);
+                throw new HttpClientException(msg, ex, url, statusCode, errorResponse);
+            }
         } finally {
             if (httpUrlConnection != null) {
                 httpUrlConnection.disconnect();
@@ -261,49 +268,27 @@ public class DefaultHttpClient implements HttpClient {
     protected InputStream getInputStream(final HttpURLConnection httpUrlConnection,
                                          final String body,
                                          final String method,
-                                         final Map<String, String> additionalHeaders,
-                                         final int retries) throws IOException, InterruptedException {
-        OutputStream outputStream = null;
+                                         final Map<String, String> additionalHeaders) throws IOException {
+        httpUrlConnection.setRequestMethod(method);
+        httpUrlConnection.setConnectTimeout(timeout);
+        httpUrlConnection.setReadTimeout(timeout);
 
-        try {
-            httpUrlConnection.setRequestMethod(method);
-            httpUrlConnection.setConnectTimeout(timeout);
-            httpUrlConnection.setReadTimeout(timeout);
+        appendDefaultsToConnection(httpUrlConnection, additionalHeaders);
+        modifyConnection(httpUrlConnection);
 
-            appendDefaultsToConnection(httpUrlConnection, additionalHeaders);
-            modifyConnection(httpUrlConnection);
+        if (isNotBlank(body)) {
+            httpUrlConnection.setDoOutput(true);
+            httpUrlConnection.connect();
 
-            if (isNotBlank(body)) {
-                httpUrlConnection.setDoOutput(true);
-                httpUrlConnection.connect();
-
-                outputStream = httpUrlConnection.getOutputStream();
-
-                outputStream.write(body.getBytes(Charset.forName(encoding)));
-            } else {
-                httpUrlConnection.setRequestProperty("Content-Length", "0");
-                httpUrlConnection.connect();
-            }
-
-            return httpUrlConnection.getInputStream();
-        } catch (HttpClientException | SocketTimeoutException | IllegalStateException ex) {
-            if (method.equals("GET") && retries < retryCount) {
-                LOGGER.warning("GET failed, retrying in 0.5 seconds ...");
-                Thread.sleep(500);
-
-                return getInputStream(httpUrlConnection, body, method, additionalHeaders, retries + 1);
-            } else {
-                throw ex;
-            }
-        } finally {
-            try {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-            } catch (IOException ex) {
-                LOGGER.log(Level.INFO, "Unable to close connection", ex);
-            }
+            final OutputStream outputStream = httpUrlConnection.getOutputStream();
+            outputStream.write(body.getBytes(Charset.forName(encoding)));
+            outputStream.close();
+        } else {
+            httpUrlConnection.setRequestProperty("Content-Length", "0");
+            httpUrlConnection.connect();
         }
+
+        return httpUrlConnection.getInputStream();
     }
 
     private <B> Response<B> execute(final String url,
@@ -317,7 +302,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             httpUrlConnection = createHttpUrlConnection(url);
 
-            inputStream = getInputStream(httpUrlConnection, body, method, additionalHeaders, 0);
+            inputStream = getInputStream(httpUrlConnection, body, method, additionalHeaders);
             final String responseBody = StringUtils.streamToString(inputStream, Charset.forName(encoding));
 
             return new Response<>(httpUrlConnection.getResponseCode(),
