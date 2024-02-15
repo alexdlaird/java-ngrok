@@ -6,16 +6,17 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.4.6...java8-ngrok)
 
 ## [1.4.6](https://github.com/alexdlaird/java-ngrok/compare/1.4.5...1.4.6) - 2024-02-15
+**Note:** 1.4.x is a special release that added Java 8 support, which will not be actively maintained. It is available through the `java8-ngrok` artifact on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
+
 ### Added
 - If a value for `authToken` is not set in [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.4.6/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), it will attempt to use the environment variable `NGROK_AUTHTOKEN` if it is set.
 - Test improvements, suite now respects `NGROK_AUTHTOKEN` for all necessary tests (skipped if not set, rather than tests failing).
+- Build and stability improvements.
 
 ### Fixed
 - Issue where zip file paths were not normalized before they were read.
 
 ## [1.4.5](https://github.com/alexdlaird/java-ngrok/compare/1.4.4...1.4.5) - 2022-02-07
-**Note:** 1.4.x is a special release that added Java 8 support, which will not be actively maintained. It is available through the `java8-ngrok` artifact on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
-
 ### Added
 - Darwin 64-bit ARM support, as this was added to `ngrok` itself.
 

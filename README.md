@@ -92,7 +92,7 @@ include the `java8-ngrok` dependency from
 <dependency>
     <groupId>com.github.alexdlaird</groupId>
     <artifactId>java8-ngrok</artifactId>
-    <version>1.4.5</version>
+    <version>1.4.6</version>
 </dependency>
 ```
 
