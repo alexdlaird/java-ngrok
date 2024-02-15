@@ -73,6 +73,6 @@ public class NgrokTestCase {
 
     protected String createUniqueSubdomain() {
         Random random = new Random();
-        return String.format("java-ngrok-%s-%s-%s-tcp", random.longs(1000000000000000L, 9999999999999999L).findFirst().getAsLong(), System.getProperty("java.version").replaceAll("\\.", ""), NgrokInstaller.getSystem().toLowerCase());
+        return String.format("java-ngrok-%s-%s-%s-tcp", random.longs(1000000000000000L, 9999999999999999L).findFirst().getAsLong(), System.getProperty("java.version").replaceAll("\\.|_", ""), NgrokInstaller.getSystem().toLowerCase());
     }
 }
