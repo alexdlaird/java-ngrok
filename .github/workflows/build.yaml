@@ -1,19 +1,22 @@
 name: "CI/CD"
 
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - "**"
+    branches: [ main, develop, java8-ngrok ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, develop, java8-ngrok ]
   schedule:
-    - cron: "0 9 * * *"
+    - cron: "0 10 * * *"
 
 jobs:
   build:
     name: Build
 
     runs-on: ubuntu-latest
+
+    env:
+      NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
 
     steps:
       - uses: actions/checkout@v2

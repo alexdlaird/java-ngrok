@@ -35,6 +35,9 @@ test {
     testLogging {
         events "failed"
         exceptionFormat "full"
+        afterSuite { desc, result ->
+            println "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+        }
     }
 }
 

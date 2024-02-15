@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.util.function.Function;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * An object for managing <code>java-ngrok</code>'s configuration to interact the <code>ngrok</code> binary.
@@ -243,6 +244,10 @@ public class JavaNgrokConfig {
             }
             if (isNull(configPath)) {
                 configPath = NgrokInstaller.DEFAULT_CONFIG_PATH;
+            }
+            final String envAuthToken = System.getenv("NGROK_AUTHTOKEN");
+            if (isNull(authToken) && nonNull(envAuthToken)) {
+                authToken = envAuthToken;
             }
 
             return new JavaNgrokConfig(this);
