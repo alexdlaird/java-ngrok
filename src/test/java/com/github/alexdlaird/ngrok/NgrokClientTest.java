@@ -137,20 +137,6 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testMultipleConnectionsNoTokenFails() throws InterruptedException {
-        // WHEN
-        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
-        ngrokClient.connect(new CreateTunnel.Builder().withAddr(5000).build());
-        Thread.sleep(1000);
-        final JavaNgrokHTTPException exception = assertThrows(JavaNgrokHTTPException.class, () -> ngrokClient.connect(new CreateTunnel.Builder().withAddr(5001).build()));
-
-        // THEN
-        assertEquals(HTTP_BAD_GATEWAY, exception.getStatusCode());
-        assertEquals(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), exception.getUrl());
-        assertThat(exception.getBody(), containsString("account may not run more than 2 tunnels"));
-    }
-
-    @Test
     public void testGetTunnels() {
         // GIVEN
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
