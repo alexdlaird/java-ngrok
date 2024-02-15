@@ -28,17 +28,13 @@ import com.github.alexdlaird.ngrok.process.NgrokLog;
 import com.github.alexdlaird.ngrok.protocol.Region;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 import java.util.function.Function;
 
-import static com.github.alexdlaird.util.StringUtils.isBlank;
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
