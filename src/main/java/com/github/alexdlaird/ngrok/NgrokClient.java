@@ -235,7 +235,7 @@ public class NgrokClient {
         final Response<Tunnel> response;
         try {
             response = httpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), finalTunnel, Tunnel.class);
-        } catch (HttpClientException e) {
+        } catch (final HttpClientException e) {
             throw new JavaNgrokHTTPException(String.format("An error occurred when POSTing to create the tunnel %s.", finalTunnel.getName()),
                     e, e.getUrl(), e.getStatusCode(), e.getBody());
         }
@@ -247,7 +247,7 @@ public class NgrokClient {
             try {
                 final Response<Tunnel> getResponse = httpClient.get(ngrokProcess.getApiUrl() + response.getBody().getUri() + "%20%28http%29", Tunnel.class);
                 tunnel = getResponse.getBody();
-            } catch (HttpClientException e) {
+            } catch (final HttpClientException e) {
                 throw new JavaNgrokHTTPException(String.format("An error occurred when GETing the HTTP tunnel %s.", response.getBody().getName()),
                         e, e.getUrl(), e.getStatusCode(), e.getBody());
             }
@@ -332,7 +332,7 @@ public class NgrokClient {
 
         try {
             httpClient.delete(ngrokProcess.getApiUrl() + tunnel.getUri());
-        } catch (HttpClientException e) {
+        } catch (final HttpClientException e) {
             throw new JavaNgrokHTTPException(String.format("An error occurred when DELETing the tunnel %s.", publicUrl),
                     e, e.getUrl(), e.getStatusCode(), e.getBody());
         }
@@ -359,7 +359,7 @@ public class NgrokClient {
             }
 
             return new ArrayList<>(currentTunnels.values());
-        } catch (HttpClientException e) {
+        } catch (final HttpClientException e) {
             throw new JavaNgrokHTTPException("An error occurred when GETing the tunnels.", e, e.getUrl(),
                     e.getStatusCode(), e.getBody());
         }

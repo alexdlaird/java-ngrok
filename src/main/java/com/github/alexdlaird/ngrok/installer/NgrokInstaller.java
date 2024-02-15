@@ -146,7 +146,7 @@ public class NgrokInstaller {
             yaml.dump(config, writer);
             out.write(writer.toString().getBytes());
             out.close();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new JavaNgrokInstallerException(String.format("An error while installing the default ngrok config to %s.", configPath), e);
         }
     }
@@ -281,7 +281,7 @@ public class NgrokInstaller {
                 } else {
                     configCache.put(key, yaml.load(config));
                 }
-            } catch (IOException | JsonParseException e) {
+            } catch (final IOException | JsonParseException e) {
                 throw new JavaNgrokInstallerException(String.format("An error occurred while parsing the config file: %s", configPath), e);
             }
         }
@@ -364,7 +364,7 @@ public class NgrokInstaller {
                 perms.add(PosixFilePermission.OTHERS_EXECUTE);
                 Files.setPosixFilePermissions(ngrokPath, perms);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new JavaNgrokInstallerException("An error occurred while unzipping ngrok.", e);
         }
     }
@@ -376,7 +376,7 @@ public class NgrokInstaller {
             LOGGER.fine(String.format("Download ngrok from %s ...", url));
 
             httpClient.get(url, List.of(), Map.of(), dest);
-        } catch (IOException | HttpClientException | InterruptedException e) {
+        } catch (final IOException | HttpClientException | InterruptedException e) {
             throw new JavaNgrokInstallerException(String.format("An error occurred while downloading ngrok from %s.", url), e);
         }
     }

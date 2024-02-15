@@ -160,7 +160,7 @@ public class NgrokProcess {
                     throw new NgrokException("The ngrok process was unable to start.", processMonitor.logs);
                 }
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new NgrokException("An error occurred while starting ngrok.", e);
         }
     }
@@ -249,7 +249,7 @@ public class NgrokProcess {
             if (!result.contains("Authtoken saved")) {
                 throw new NgrokException(String.format("An error occurred while setting the auth token: %s", result));
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (final IOException | InterruptedException e) {
             throw new NgrokException("An error occurred while setting the auth token for ngrok.", e);
         }
     }
@@ -279,7 +279,7 @@ public class NgrokProcess {
         try {
             final Process process = processBuilder.start();
             process.waitFor();
-        } catch (IOException | InterruptedException e) {
+        } catch (final IOException | InterruptedException e) {
             throw new NgrokException("An error occurred while trying to update ngrok.", e);
         }
     }
@@ -305,7 +305,7 @@ public class NgrokProcess {
 
             final String result = captureOutput(reader);
             return result.split("version ")[1];
-        } catch (IOException | InterruptedException | ArrayIndexOutOfBoundsException e) {
+        } catch (final IOException | InterruptedException | ArrayIndexOutOfBoundsException e) {
             throw new NgrokException("An error occurred while trying to update ngrok.", e);
         }
     }
@@ -382,7 +382,7 @@ public class NgrokProcess {
                 }
 
                 alive = false;
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new NgrokException("An error occurred in the ngrok process.", e);
             }
         }

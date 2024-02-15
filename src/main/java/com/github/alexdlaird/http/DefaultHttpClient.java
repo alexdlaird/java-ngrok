@@ -99,7 +99,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), null, "GET",
                     additionalHeaders, clazz);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new HttpClientException("HTTP GET error", e);
         }
     }
@@ -118,7 +118,7 @@ public class DefaultHttpClient implements HttpClient {
 
             inputStream = getInputStream(httpUrlConnection, null, "GET", additionalHeaders);
             Files.copy(inputStream, dest, StandardCopyOption.REPLACE_EXISTING);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             if (retries < retryCount) {
                 LOGGER.warning("GET failed, retrying in 0.5 seconds ...");
                 Thread.sleep(500);
@@ -137,7 +137,7 @@ public class DefaultHttpClient implements HttpClient {
                         }
 
                         msg = "An error occurred when downloading the file (" + httpUrlConnection.getResponseCode() + "): " + errorResponse;
-                    } catch (IOException | NullPointerException ignored) {
+                    } catch (final IOException | NullPointerException ignored) {
                     }
                 }
 
@@ -151,7 +151,7 @@ public class DefaultHttpClient implements HttpClient {
                 if (inputStream != null) {
                     inputStream.close();
                 }
-            } catch (IOException ex) {
+            } catch (final IOException ex) {
                 LOGGER.log(Level.INFO, "Unable to close connection", ex);
             }
         }
@@ -166,7 +166,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), convertRequestToString(request), "POST",
                     additionalHeaders, clazz);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new HttpClientException("HTTP POST error", e);
         }
     }
@@ -180,7 +180,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), convertRequestToString(request), "PUT",
                     additionalHeaders, clazz);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new HttpClientException("HTTP PUT error", e);
         }
     }
@@ -193,7 +193,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), null, "DELETE",
                     additionalHeaders, clazz);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new HttpClientException("HTTP DELETE error", e);
         }
     }
@@ -231,7 +231,7 @@ public class DefaultHttpClient implements HttpClient {
         if (isNotBlank(response)) {
             try {
                 return gson.fromJson(response, clazz);
-            } catch (JsonSyntaxException ex) {
+            } catch (final JsonSyntaxException ex) {
                 return null;
             }
         } else {
@@ -309,7 +309,7 @@ public class DefaultHttpClient implements HttpClient {
                     convertResponseFromString(responseBody, clazz),
                     responseBody,
                     httpUrlConnection.getHeaderFields());
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             String msg = "An unknown error occurred when performing the operation";
 
             int statusCode = -1;
@@ -320,7 +320,7 @@ public class DefaultHttpClient implements HttpClient {
                     errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(), Charset.forName(encoding));
 
                     msg = "An error occurred when performing the operation (" + httpUrlConnection.getResponseCode() + "): " + errorResponse;
-                } catch (IOException | NullPointerException ignored) {
+                } catch (final IOException | NullPointerException ignored) {
                 }
             }
 
@@ -333,7 +333,7 @@ public class DefaultHttpClient implements HttpClient {
                 if (inputStream != null) {
                     inputStream.close();
                 }
-            } catch (IOException ex) {
+            } catch (final IOException ex) {
                 LOGGER.log(Level.INFO, "Unable to close connection", ex);
             }
         }

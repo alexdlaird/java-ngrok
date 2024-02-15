@@ -97,7 +97,7 @@ public class NgrokTestCase {
                 .forEach((path) -> {
                     try {
                         Files.delete(path);
-                    } catch (IOException e) {
+                    } catch (final IOException e) {
                         throw new JavaNgrokException(String.format("An error occurred cleaning up file %s when testing.", path));
                     }
                 });
@@ -120,7 +120,7 @@ public class NgrokTestCase {
     }
 
     protected String createUniqueSubdomain() {
-        Random random = new Random();
+        final Random random = new Random();
         return String.format("java-ngrok-%s-%s-%s-tcp", random.longs(1000000000000000L, 9999999999999999L).findFirst().getAsLong(), System.getProperty("java.version").replaceAll("\\.", ""), NgrokInstaller.getSystem().toLowerCase());
     }
 
