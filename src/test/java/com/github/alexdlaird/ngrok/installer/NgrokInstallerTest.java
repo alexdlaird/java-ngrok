@@ -143,19 +143,19 @@ class NgrokInstallerTest extends NgrokTestCase {
     @Test
     public void testWebAddrFalseNotAllowed() {
         // WHEN
-        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(), Map.of("web_addr", "false")));
+        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(), Collections.singletonMap("web_addr", "false")));
     }
 
     @Test
     public void testLogFormatJsonNotAllowed() {
         // WHEN
-        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(), Map.of("log_format", "json")));
+        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(), Collections.singletonMap("log_format", "json")));
     }
 
     @Test
     public void testLogLevelWarnNotAllowed() {
         // WHEN
-        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(), Map.of("log_level", "warn")));
+        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(), Collections.singletonMap("log_level", "warn")));
     }
 
     @Test

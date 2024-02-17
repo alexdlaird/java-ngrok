@@ -27,6 +27,7 @@ import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -186,7 +187,7 @@ public class CreateTunnelTest {
     public void testCreateLabelsWithTunnelDefinitions() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withTunnelDefinition(Map.of("labels", Collections.singletonList(("edge=some-edge-id"))))
+                .withTunnelDefinition(Collections.singletonMap("labels", Collections.singletonList(("edge=some-edge-id"))))
                 .build();
 
         // THEN
@@ -198,7 +199,10 @@ public class CreateTunnelTest {
     @Test
     public void testCreateBindTlsLabelsFails() {
         // WHEN
+        Map<String, Object> tunnelDefinitions = new HashMap<>();
+        tunnelDefinitions.put("bind_tls", true);
+        tunnelDefinitions.put("labels", Collections.singletonList(("edge=some-edge-id")));
         assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
-                .withTunnelDefinition(Map.of("bind_tls", true, "labels", Collections.singletonList(("edge=some-edge-id")))));
+                .withTunnelDefinition(tunnelDefinitions));
     }
 }

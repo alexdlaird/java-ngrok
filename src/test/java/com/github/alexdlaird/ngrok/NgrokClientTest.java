@@ -44,6 +44,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -630,19 +631,19 @@ class NgrokClientTest extends NgrokTestCase {
 
         // GIVEN
         final String subdomain = createUniqueSubdomain();
-        final Map<String, Object> httpTunnelConfig = Map.of(
-                "proto", "http",
-                "addr", "8000",
-                "subdomain", subdomain,
-                "inspect", Boolean.FALSE,
-                "bind_tls", Boolean.TRUE);
-        final Map<String, Object> tcpTunnelConfig = Map.of(
-                "proto", "tcp",
-                "addr", "22");
-        final Map<String, Object> tunnelsConfig = Map.of(
-                "http-tunnel", httpTunnelConfig,
-                "tcp-tunnel", tcpTunnelConfig);
-        final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
+        final Map<String, Object> httpTunnelConfig = new HashMap<>();
+        httpTunnelConfig.put("proto", "http");
+        httpTunnelConfig.put("addr", "8000");
+        httpTunnelConfig.put("subdomain", subdomain);
+        httpTunnelConfig.put("inspect", Boolean.FALSE);
+        httpTunnelConfig.put("bind_tls", Boolean.TRUE);
+        final Map<String, Object> tcpTunnelConfig = new HashMap<>();
+        tcpTunnelConfig.put("proto", "tcp");
+        tcpTunnelConfig.put("addr", "22");
+        final Map<String, Map<String, Object>> tunnelsConfig = new HashMap<>();
+        tunnelsConfig.put("http-tunnel", httpTunnelConfig);
+        tunnelsConfig.put("tcp-tunnel", tcpTunnelConfig);
+        final Map<String, Object> config = Collections.singletonMap("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfigV2.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV2.getNgrokVersion());
@@ -687,20 +688,20 @@ class NgrokClientTest extends NgrokTestCase {
 
         // GIVEN
         final String subdomain = createUniqueSubdomain();
-        final Map<String, Object> httpTunnelConfig = Map.of(
-                "proto", "http",
-                "addr", "8000",
-                "subdomain", subdomain,
-                "inspect", Boolean.FALSE,
-                "schemes", Collections.singletonList("http"),
-                "circuit_breaker", 0.5f);
-        final Map<String, Object> tcpTunnelConfig = Map.of(
-                "proto", "tcp",
-                "addr", "22");
-        final Map<String, Object> tunnelsConfig = Map.of(
-                "http-tunnel", httpTunnelConfig,
-                "tcp-tunnel", tcpTunnelConfig);
-        final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
+        final Map<String, Object> httpTunnelConfig = new HashMap<>();
+        httpTunnelConfig.put("proto", "http");
+        httpTunnelConfig.put("addr", "8000");
+        httpTunnelConfig.put("subdomain", subdomain);
+        httpTunnelConfig.put("inspect", Boolean.FALSE);
+        httpTunnelConfig.put("schemes", Collections.singletonList("http"));
+        httpTunnelConfig.put("circuit_breaker", 0.5f);
+        final Map<String, Object> tcpTunnelConfig = new HashMap<>();
+        tcpTunnelConfig.put("proto", "tcp");
+        tcpTunnelConfig.put("addr", "22");
+        final Map<String, Object> tunnelsConfig = new HashMap<>();
+        tunnelsConfig.put("http-tunnel", httpTunnelConfig);
+        tunnelsConfig.put("tcp-tunnel", tcpTunnelConfig);
+        final Map<String, Object> config = Collections.singletonMap("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
@@ -754,16 +755,16 @@ class NgrokClientTest extends NgrokTestCase {
         assumeTrue(isNotBlank(System.getenv("NGROK_TCP_EDGE_ENDPOINT")), "NGROK_TCP_EDGE_ENDPOINT environment variable not set");
 
         // GIVEN
-        final Map<String, Object> edgeHttpTunnelConfig = Map.of(
-                "addr", "80",
-                "labels", Collections.singletonList(String.format("edge=%s", ngrokHttpEdge)));
-        final Map<String, Object> edgeTcpTunnelConfig = Map.of(
-                "addr", "22",
-                "labels", Collections.singletonList(String.format("edge=%s", ngrokTcpEdge)));
-        final Map<String, Object> tunnelsConfig = Map.of(
-                "edge-http-tunnel", edgeHttpTunnelConfig,
-                "edge-tcp-tunnel", edgeTcpTunnelConfig);
-        final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
+        final Map<String, Object> edgeHttpTunnelConfig = new HashMap<>();
+        edgeHttpTunnelConfig.put("addr", "80");
+        edgeHttpTunnelConfig.put("labels", Collections.singletonList(String.format("edge=%s", ngrokHttpEdge)));
+        final Map<String, Object> edgeTcpTunnelConfig = new HashMap<>();
+        edgeTcpTunnelConfig.put("addr", "22");
+        edgeTcpTunnelConfig.put("labels", Collections.singletonList(String.format("edge=%s", ngrokTcpEdge)));
+        final Map<String, Object> tunnelsConfig = new HashMap<>();
+        tunnelsConfig.put("edge-http-tunnel", edgeHttpTunnelConfig);
+        tunnelsConfig.put("edge-tcp-tunnel", edgeTcpTunnelConfig);
+        final Map<String, Object> config = Collections.singletonMap("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
@@ -817,12 +818,11 @@ class NgrokClientTest extends NgrokTestCase {
         assumeTrue(isNotBlank(System.getenv("NGROK_HTTP_EDGE")), "NGROK_HTTP_EDGE environment variable not set");
 
         // GIVEN
-        final Map<String, Object> edgeHttpTunnelConfig = Map.of(
-                "addr", "80",
-                "labels", Collections.singletonList(String.format("edge=%s", ngrokHttpEdge)));
-        final Map<String, Object> tunnelsConfig = Map.of(
-                "edge-tunnel", edgeHttpTunnelConfig);
-        final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
+        final Map<String, Object> edgeHttpTunnelConfig = new HashMap<>();
+        edgeHttpTunnelConfig.put("addr", "80");
+        edgeHttpTunnelConfig.put("labels", Collections.singletonList(String.format("edge=%s", ngrokHttpEdge)));
+        final Map<String, Object> tunnelsConfig = Collections.singletonMap("edge-tunnel", edgeHttpTunnelConfig);
+        final Map<String, Object> config = Collections.singletonMap("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
@@ -849,18 +849,17 @@ class NgrokClientTest extends NgrokTestCase {
 
         // GIVEN
         final String subdomain = createUniqueSubdomain();
-        final Map<String, Object> httpTunnelConfig = Map.of(
-                "proto", "http",
-                "addr", "8000",
-                "subdomain", subdomain,
-                "oauth", Map.of(
-                        "provider", "google",
-                        "allow_domains", Collections.singletonList("pyngrok.com"),
-                        "allow_emails", Collections.singletonList("email@pyngrok.com")
-                ));
-        final Map<String, Object> tunnelsConfig = Map.of(
-                "http-tunnel", httpTunnelConfig);
-        final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
+        HashMap<String, Object> oauthConfig = new HashMap<>();
+        oauthConfig.put("provider", "google");
+        oauthConfig.put("allow_domains", Collections.singletonList("pyngrok.com"));
+        oauthConfig.put("allow_emails", Collections.singletonList("email@pyngrok.com"));
+        final Map<String, Object> httpTunnelConfig = new HashMap<>();
+        httpTunnelConfig.put("proto", "http");
+        httpTunnelConfig.put("addr", "8000");
+        httpTunnelConfig.put("subdomain", subdomain);
+        httpTunnelConfig.put("oauth", oauthConfig);
+        final Map<String, Object> tunnelsConfig = Collections.singletonMap("http-tunnel", httpTunnelConfig);
+        final Map<String, Object> config = Collections.singletonMap("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
@@ -897,9 +896,12 @@ class NgrokClientTest extends NgrokTestCase {
 
         // GIVEN
         final String subdomain1 = createUniqueSubdomain();
-        final Map<String, Object> defaultTunnelConfig = Map.of("proto", "http", "addr", "8080", "subdomain", subdomain1);
-        final Map<String, Object> tunnelsConfig = Map.of("java-ngrok-default", defaultTunnelConfig);
-        final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
+        final Map<String, Object> defaultTunnelConfig = new HashMap<>();
+        defaultTunnelConfig.put("proto", "http");
+        defaultTunnelConfig.put("addr", "8080");
+        defaultTunnelConfig.put("subdomain", subdomain1);
+        final Map<String, Object> tunnelsConfig = Collections.singletonMap("java-ngrok-default", defaultTunnelConfig);
+        final Map<String, Object> config = Collections.singletonMap("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
