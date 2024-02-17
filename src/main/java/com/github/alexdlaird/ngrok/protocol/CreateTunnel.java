@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Alex Laird
+ * Copyright (c) 2023 Alex Laird
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,11 +25,15 @@ package com.github.alexdlaird.ngrok.protocol;
 
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokClient;
+import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * An object that represents a <code>ngrok</code> Tunnel creation request. This object can be serialized
@@ -37,6 +41,8 @@ import static java.util.Objects.isNull;
  *
  * <h3>Basic Usage</h3>
  * <pre>
+ * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+ *
  * final CreateTunnel createTunnel = new CreateTunnel.Builder()
  *         .withName("my-tunnel")
  *         .withProto(Proto.TCP)
@@ -48,9 +54,13 @@ import static java.util.Objects.isNull;
  *                                                                 createTunnel,
  *                                                                 Tunnel.class);
  * </pre>
+ * <h2><code>ngrok</code> Version Compatibility</h2>
+ * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
+ * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}
+ * and {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
  */
 public class CreateTunnel {
-
+    private transient final NgrokVersion ngrokVersion;
     private final String name;
     private final Proto proto;
     private final String addr;
@@ -65,8 +75,23 @@ public class CreateTunnel {
     private final String clientCas;
     private final String remoteAddr;
     private final String metadata;
+    private final List<String> schemes;
+    private final List<String> basicAuth;
+    private final TunnelOAuth oauth;
+    private final Float circuitBreaker;
+    private final Boolean compression;
+    private final String mutualTlsCas;
+    private final String proxyProto;
+    private final Boolean websocketTcpConverter;
+    private final String terminateAt;
+    private final TunnelHeader requestHeader;
+    private final TunnelHeader responseHeader;
+    private final TunnelIPRestrictions ipRestrictions;
+    private final TunnelVerifyWebhook verifyWebhook;
+    private final List<String> labels;
 
     private CreateTunnel(final Builder builder) {
+        this.ngrokVersion = builder.ngrokVersion;
         this.name = builder.name;
         this.proto = builder.proto;
         this.addr = builder.addr;
@@ -81,6 +106,27 @@ public class CreateTunnel {
         this.clientCas = builder.clientCas;
         this.remoteAddr = builder.remoteAddr;
         this.metadata = builder.metadata;
+        this.schemes = builder.schemes;
+        this.basicAuth = builder.basicAuth;
+        this.oauth = builder.oauth;
+        this.circuitBreaker = builder.circuitBreaker;
+        this.compression = builder.compression;
+        this.mutualTlsCas = builder.mutualTlsCas;
+        this.proxyProto = builder.proxyProto;
+        this.websocketTcpConverter = builder.websocketTcpConverter;
+        this.terminateAt = builder.terminateAt;
+        this.requestHeader = builder.requestHeader;
+        this.responseHeader = builder.responseHeader;
+        this.ipRestrictions = builder.ipRestrictions;
+        this.verifyWebhook = builder.verifyWebhook;
+        this.labels = builder.labels;
+    }
+
+    /**
+     * Get the version of <code>ngrok</code> for which the tunnel was created.
+     */
+    public NgrokVersion getNgrokVersion() {
+        return ngrokVersion;
     }
 
     /**
@@ -183,13 +229,112 @@ public class CreateTunnel {
     }
 
     /**
+     * Get the schemes to be bound.
+     */
+    public List<String> getSchemes() {
+        return schemes;
+    }
+
+    /**
+     * Get the list of HTTP basic authentication credentials to enforce on tunneled requests.
+     */
+    public List<String> getBasicAuth() {
+        return basicAuth;
+    }
+
+    /**
+     * Get the OAuth settings to be setup on the tunnel.
+     */
+    public TunnelOAuth getOauth() {
+        return oauth;
+    }
+
+    /**
+     * Get the circuit breaker trigger.
+     */
+    public Float getCircuitBreaker() {
+        return circuitBreaker;
+    }
+
+    /**
+     * Whether compression is enabled on this tunnel.
+     */
+    public Boolean isCompression() {
+        return compression;
+    }
+
+    /**
+     * Get the path to the TLS certificate authority to verify client certs.
+     */
+    public String getMutualTlsCas() {
+        return mutualTlsCas;
+    }
+
+    /**
+     * Get the proxy proto.
+     */
+    public String getProxyProto() {
+        return proxyProto;
+    }
+
+    /**
+     * Whether ingress connections are converted to TCP upstream.
+     */
+    public Boolean isWebsocketTcpConverter() {
+        return websocketTcpConverter;
+    }
+
+    /**
+     * Get the termination point.
+     */
+    public String getTerminateAt() {
+        return terminateAt;
+    }
+
+    /**
+     * Get the Headers to be added or removed from requests.
+     */
+    public TunnelHeader getRequestHeader() {
+        return requestHeader;
+    }
+
+    /**
+     * Get the Headers to be added or removed from responses.
+     */
+    public TunnelHeader getResponseHeader() {
+        return responseHeader;
+    }
+
+    /**
+     * Get the IP restrictions for the tunnel.
+     */
+    public TunnelIPRestrictions getIpRestrictions() {
+        return ipRestrictions;
+    }
+
+    /**
+     * Get the signature for webhooks.
+     */
+    public TunnelVerifyWebhook getVerifyWebhook() {
+        return verifyWebhook;
+    }
+
+    /**
+     * Get the labels.
+     */
+    public List<String> getLabels() {
+        return labels;
+    }
+
+    /**
      * Builder for a {@link CreateTunnel}, which can be used to construct a request that conforms to
-     * <a href="https://ngrok.com/docs#tunnel-definitions" target="_blank"><code>ngrok</code>'s tunnel definition</a>.
+     * <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions" target="_blank"><code>ngrok</code>'s tunnel definition</a>.
      * See docs for that class for example usage.
      */
     public static class Builder {
         private boolean setDefaults = false;
 
+        private NgrokVersion ngrokVersion;
         private String name;
         private Proto proto;
         private String addr;
@@ -204,6 +349,20 @@ public class CreateTunnel {
         private String clientCas;
         private String remoteAddr;
         private String metadata;
+        private List<String> schemes;
+        private List<String> basicAuth;
+        private TunnelOAuth oauth;
+        private Float circuitBreaker;
+        private Boolean compression;
+        private String mutualTlsCas;
+        private String proxyProto;
+        private Boolean websocketTcpConverter;
+        private String terminateAt;
+        private TunnelHeader requestHeader;
+        private TunnelHeader responseHeader;
+        private TunnelIPRestrictions ipRestrictions;
+        private TunnelVerifyWebhook verifyWebhook;
+        private List<String> labels;
 
         /**
          * Use this constructor if default values should not be populated in required attributes when {@link #build()}
@@ -234,6 +393,7 @@ public class CreateTunnel {
         public Builder(final CreateTunnel createTunnel) {
             this.setDefaults = true;
 
+            this.ngrokVersion = createTunnel.ngrokVersion;
             this.name = createTunnel.name;
             this.proto = createTunnel.proto;
             this.addr = createTunnel.addr;
@@ -248,10 +408,32 @@ public class CreateTunnel {
             this.clientCas = createTunnel.clientCas;
             this.remoteAddr = createTunnel.remoteAddr;
             this.metadata = createTunnel.metadata;
+            this.schemes = createTunnel.schemes;
+            this.basicAuth = createTunnel.basicAuth;
+            this.oauth = createTunnel.oauth;
+            this.circuitBreaker = createTunnel.circuitBreaker;
+            this.compression = createTunnel.compression;
+            this.mutualTlsCas = createTunnel.mutualTlsCas;
+            this.proxyProto = createTunnel.proxyProto;
+            this.websocketTcpConverter = createTunnel.websocketTcpConverter;
+            this.terminateAt = createTunnel.terminateAt;
+            this.requestHeader = createTunnel.requestHeader;
+            this.responseHeader = createTunnel.responseHeader;
+            this.ipRestrictions = createTunnel.ipRestrictions;
+            this.verifyWebhook = createTunnel.verifyWebhook;
         }
 
         /**
-         * The name of the tunnel.
+         * The major version of <code>ngrok</code> for which the tunnel will be created.
+         */
+        public Builder withNgrokVersion(final NgrokVersion ngrokVersion) {
+            this.ngrokVersion = ngrokVersion;
+            return this;
+        }
+
+        /**
+         * A friendly name for the tunnel, or the name of a <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions" target="_blank">ngrok tunnel definition</a>
+         * to be used.
          */
         public Builder withName(final String name) {
             this.name = name;
@@ -268,7 +450,7 @@ public class CreateTunnel {
 
         /**
          * The local port to which the tunnel will forward traffic, or a
-         * <a href="https://ngrok.com/docs#http-file-urls">local directory or network address</a>, defaults to "80"
+         * <a href="https://ngrok.com/docs#http-file-urls">local directory or network address</a>, defaults to "80".
          */
         public Builder withAddr(final String addr) {
             this.addr = addr;
@@ -291,9 +473,13 @@ public class CreateTunnel {
         }
 
         /**
-         * HTTP basic authentication credentials to enforce on tunneled requests
+         * HTTP basic authentication credentials to enforce on tunneled requests.
          */
         public Builder withAuth(final String auth) {
+            if (nonNull(basicAuth)) {
+                throw new IllegalArgumentException("Cannot set both 'auth' and 'basicAuth'.");
+            }
+
             this.auth = auth;
             return this;
         }
@@ -311,6 +497,10 @@ public class CreateTunnel {
          * to {@link BindTls#BOTH}.
          */
         public Builder withBindTls(final BindTls bindTls) {
+            if (nonNull(schemes)) {
+                throw new IllegalArgumentException("Cannot set both 'schemes' and 'bindTls'.");
+            }
+
             this.bindTls = bindTls;
             return this;
         }
@@ -379,12 +569,124 @@ public class CreateTunnel {
         }
 
         /**
+         * The schemes to be bound.
+         */
+        public Builder withSchemes(final List<String> schemes) {
+            if (nonNull(bindTls)) {
+                throw new IllegalArgumentException("Cannot set both 'schemes' and 'bindTls'.");
+            }
+
+            this.schemes = schemes;
+            return this;
+        }
+
+        /**
+         * List of HTTP basic authentication credentials to enforce on tunneled requests.
+         */
+        public Builder withBasicAuth(final List<String> basicAuth) {
+            if (nonNull(auth)) {
+                throw new IllegalArgumentException("Cannot set both 'auth' and 'basicAuth'.");
+            }
+
+            this.basicAuth = basicAuth;
+            return this;
+        }
+
+        /**
+         * Set of OAuth settings to enable OAuth authentication on the tunnel endpoint.
+         */
+        public Builder withOAuth(TunnelOAuth oauth) {
+            this.oauth = oauth;
+            return this;
+        }
+
+        /**
+         * The circuit breaker trigger.
+         */
+        public Builder withCircuitBreaker(Float circuitBreaker) {
+            this.circuitBreaker = circuitBreaker;
+            return this;
+        }
+
+        /**
+         * Whether compression is enabled on this tunnel.
+         */
+        public Builder withCompression(Boolean compression) {
+            this.compression = compression;
+            return this;
+        }
+
+        /**
+         * The path to the TLS certificate authority to verify client certs.
+         */
+        public Builder withMutualTlsCas(String mutualTlsCas) {
+            this.mutualTlsCas = mutualTlsCas;
+            return this;
+        }
+
+        /**
+         * The proxy proto.
+         */
+        public Builder withProxyProto(String proxyProto) {
+            this.proxyProto = proxyProto;
+            return this;
+        }
+
+        /**
+         * Whether ingress connections are converted to TCP upstream.
+         */
+        public Builder withWebsocketTcpConverter(Boolean websocketTcpConverter) {
+            this.websocketTcpConverter = websocketTcpConverter;
+            return this;
+        }
+
+        /**
+         * The termination point.
+         */
+        public Builder withTerminateAt(String terminateAt) {
+            this.terminateAt = terminateAt;
+            return this;
+        }
+
+        /**
+         * The Headers to be added or removed from requests.
+         */
+        public Builder withRequestHeader(TunnelHeader requestHeader) {
+            this.requestHeader = requestHeader;
+            return this;
+        }
+
+        /**
+         * The Headers to be added or removed from responses.
+         */
+        public Builder withResponseHeader(TunnelHeader responseHeader) {
+            this.responseHeader = responseHeader;
+            return this;
+        }
+
+        /**
+         * The IP restrictions for the tunnel.
+         */
+        public Builder withIpRestrictions(TunnelIPRestrictions ipRestrictions) {
+            this.ipRestrictions = ipRestrictions;
+            return this;
+        }
+
+        /**
+         * The signature for webhooks.
+         */
+        public Builder withVerifyWebhook(TunnelVerifyWebhook verifyWebhook) {
+            this.verifyWebhook = verifyWebhook;
+            return this;
+        }
+
+        /**
          * Populate any <code>null</code> attributes (with the exception of <code>name</code>) in this Builder with
          * values from the given <code>tunnelDefinition</code>.
          *
          * @param tunnelDefinition The map from which <code>null</code> attributes will be populated.
          */
-        public void withTunnelDefinition(Map<String, Object> tunnelDefinition) {
+        public Builder withTunnelDefinition(Map<String, Object> tunnelDefinition) {
             if (isNull(this.proto) && tunnelDefinition.containsKey("proto")) {
                 this.proto = Proto.valueOf(((String) tunnelDefinition.get("proto")).toUpperCase());
             }
@@ -424,11 +726,64 @@ public class CreateTunnel {
             if (isNull(this.metadata) && tunnelDefinition.containsKey("metadata")) {
                 this.metadata = (String) tunnelDefinition.get("metadata");
             }
+            if (isNull(this.schemes) && tunnelDefinition.containsKey("schemes")) {
+                this.schemes = (List<String>) tunnelDefinition.get("schemes");
+            }
+            if (isNull(this.basicAuth) && tunnelDefinition.containsKey("basic_auth")) {
+                this.basicAuth = (List<String>) tunnelDefinition.get("basic_auth");
+            }
+            if (isNull(this.oauth) && tunnelDefinition.containsKey("oauth")) {
+                this.oauth = new TunnelOAuth.Builder((Map<String, Object>) tunnelDefinition.get("oauth")).build();
+            }
+            if (isNull(this.circuitBreaker) && tunnelDefinition.containsKey("circuit_breaker")) {
+                this.circuitBreaker = Float.valueOf(String.valueOf(tunnelDefinition.get("circuit_breaker")));
+            }
+            if (isNull(this.compression) && tunnelDefinition.containsKey("compression")) {
+                this.compression = Boolean.valueOf(String.valueOf(tunnelDefinition.get("compression")));
+            }
+            if (isNull(this.mutualTlsCas) && tunnelDefinition.containsKey("mutual_tls_cas")) {
+                this.mutualTlsCas = (String) tunnelDefinition.get("mutual_tls_cas");
+            }
+            if (isNull(this.proxyProto) && tunnelDefinition.containsKey("proxy_proto")) {
+                this.proxyProto = (String) tunnelDefinition.get("proxy_proto");
+            }
+            if (isNull(this.websocketTcpConverter) && tunnelDefinition.containsKey("websocket_tcp_converter")) {
+                this.websocketTcpConverter = Boolean.valueOf(String.valueOf(tunnelDefinition.get("websocket_tcp_converter")));
+            }
+            if (isNull(this.terminateAt) && tunnelDefinition.containsKey("terminate_at")) {
+                this.terminateAt = (String) tunnelDefinition.get("terminate_at");
+            }
+            if (isNull(this.requestHeader) && tunnelDefinition.containsKey("request_header")) {
+                this.requestHeader = new TunnelHeader.Builder((Map<String, Object>) tunnelDefinition.get("request_header")).build();
+            }
+            if (isNull(this.responseHeader) && tunnelDefinition.containsKey("response_header")) {
+                this.responseHeader = new TunnelHeader.Builder((Map<String, Object>) tunnelDefinition.get("response_header")).build();
+            }
+            if (isNull(this.ipRestrictions) && tunnelDefinition.containsKey("ip_restrictions")) {
+                this.ipRestrictions = new TunnelIPRestrictions.Builder((Map<String, Object>) tunnelDefinition.get("ip_restrictions")).build();
+            }
+            if (isNull(this.verifyWebhook) && tunnelDefinition.containsKey("verify_webhook")) {
+                this.verifyWebhook = new TunnelVerifyWebhook.Builder((Map<String, Object>) tunnelDefinition.get("verify_webhook")).build();
+            }
+            if (tunnelDefinition.containsKey("labels")) {
+                if (nonNull(bindTls)) {
+                    throw new IllegalArgumentException("'bindTls' cannot be set when 'labels' is also on the tunnel definition.");
+                }
+                this.labels = (List<String>) tunnelDefinition.get("labels");
+            }
+
+            // Returning this to allow chained configuration of
+            // properties not visible in ngrok's GET /api/tunnels endpoint
+            return this;
         }
 
         public CreateTunnel build() {
+            if (isNull(ngrokVersion)) {
+                ngrokVersion = NgrokVersion.V3;
+            }
+
             if (setDefaults) {
-                if (isNull(proto)) {
+                if (isNull(proto) && isNull(labels)) {
                     proto = Proto.HTTP;
                 }
                 if (isNull(addr)) {
@@ -441,8 +796,26 @@ public class CreateTunnel {
                         name = String.format("%s-file-%s", proto, UUID.randomUUID());
                     }
                 }
-                if (isNull(bindTls)) {
+                if (ngrokVersion == NgrokVersion.V2 && isNull(bindTls)) {
                     bindTls = BindTls.BOTH;
+                }
+                if (ngrokVersion == NgrokVersion.V3) {
+                    if (nonNull(bindTls)) {
+                        if (bindTls == BindTls.TRUE) {
+                            schemes = List.of("https");
+                        } else if (bindTls == BindTls.FALSE) {
+                            schemes = List.of("http");
+                        } else {
+                            schemes = List.of("http", "https");
+                        }
+
+                        bindTls = null;
+                    }
+                    if (nonNull(auth)) {
+                        basicAuth = List.of(auth);
+
+                        auth = null;
+                    }
                 }
             }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Alex Laird
+ * Copyright (c) 2023 Alex Laird
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,6 +23,8 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Map;
 
 /**
@@ -30,12 +32,21 @@ import java.util.Map;
  */
 public class Tunnel {
 
+    @SerializedName("ID")
+    private String id;
     private String name;
     private String uri;
     private String publicUrl;
     private String proto;
     private TunnelConfig config;
     private Map<String, Metrics> metrics;
+
+    /**
+     * Get the ID of the tunnel.
+     */
+    public String getId() {
+        return id;
+    }
 
     /**
      * Get the name of the tunnel.
@@ -59,10 +70,28 @@ public class Tunnel {
     }
 
     /**
+     * Set the tunnel's public URL.
+     *
+     * @param publicUrl The updated public URL.
+     */
+    public void setPublicUrl(final String publicUrl) {
+        this.publicUrl = publicUrl;
+    }
+
+    /**
      * Get the proto of the tunnel.
      */
     public String getProto() {
         return proto;
+    }
+
+    /**
+     * Set tunnel proto.
+     *
+     * @param proto The updated proto.
+     */
+    public void setProto(final String proto) {
+        this.proto = proto;
     }
 
     /**
@@ -73,7 +102,7 @@ public class Tunnel {
     }
 
     /**
-     * Get the <a href="https://ngrok.com/docs#list-tunnels" target="_blank">tunnel metrics</a>.
+     * Get the <a href="https://ngrok.com/docs/ngrok-agent/api#list-tunnels" target="_blank">tunnel metrics</a>.
      */
     public Map<String, Metrics> getMetrics() {
         return metrics;

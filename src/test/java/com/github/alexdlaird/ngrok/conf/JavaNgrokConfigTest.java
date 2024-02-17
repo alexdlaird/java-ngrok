@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Alex Laird
+ * Copyright (c) 2023 Alex Laird
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,6 +23,7 @@
 
 package com.github.alexdlaird.ngrok.conf;
 
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokLog;
 import com.github.alexdlaird.ngrok.protocol.Region;
 import org.junit.jupiter.api.Test;
@@ -31,9 +32,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Function;
 
+import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class JavaNgrokConfigTest {
     @Test
@@ -53,6 +56,8 @@ public class JavaNgrokConfigTest {
                 .withMaxLogs(50)
                 .withLogEventCallback(logEventCallback)
                 .withStartupTimeout(5)
+                .withNgrokVersion(NgrokVersion.V2)
+                .withApiKey("api-key")
                 .build();
 
         // THEN
@@ -64,6 +69,8 @@ public class JavaNgrokConfigTest {
         assertEquals(50, javaNgrokConfig.getMaxLogs());
         assertEquals(logEventCallback, javaNgrokConfig.getLogEventCallback());
         assertEquals(5, javaNgrokConfig.getStartupTime());
+        assertEquals(NgrokVersion.V2, javaNgrokConfig.getNgrokVersion());
+        assertEquals("api-key", javaNgrokConfig.getApiKey());
     }
 
     @Test
@@ -76,5 +83,19 @@ public class JavaNgrokConfigTest {
     public void testJavaNgrokConfigWithInvalidStartupTimeout() {
         // WHEN
         assertThrows(IllegalArgumentException.class, () -> new JavaNgrokConfig.Builder().withStartupTimeout(0));
+    }
+
+    @Test
+    public void testAuthTokenSetFromEnv() {
+        // GIVEN
+        final String ngrokAuthToken = System.getenv("NGROK_AUTHTOKEN");
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+
+        // WHEN
+        final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+                .build();
+
+        // THEN
+        assertEquals(ngrokAuthToken, javaNgrokConfig.getAuthToken());
     }
 }

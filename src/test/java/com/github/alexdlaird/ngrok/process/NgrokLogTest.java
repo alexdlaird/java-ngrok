@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Alex Laird
+ * Copyright (c) 2023 Alex Laird
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -50,9 +50,19 @@ public class NgrokLogTest {
     }
 
     @Test
+    public void testNgrokLogMsgWithPossessiveQuote() {
+        // WHEN
+        final NgrokLog ngrokLog = new NgrokLog("lvl=WARN msg=\"Test=This is Tom's test\"");
+
+        // THEN
+        assertEquals("WARNING", ngrokLog.getLvl());
+        assertEquals("Test=This is Tom's test", ngrokLog.getMsg());
+    }
+
+    @Test
     public void testNgrokLogMsgWithSpaces() {
         // WHEN
-        final NgrokLog ngrokLog = new NgrokLog("lvl=WARN msg=\"Test=Test with spaces");
+        final NgrokLog ngrokLog = new NgrokLog("lvl=WARN msg=\"Test=Test with spaces\"");
 
         // THEN
         assertEquals("WARNING", ngrokLog.getLvl());

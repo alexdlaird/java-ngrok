@@ -14,5 +14,5 @@ If you would like to contribute to the code, the process is pretty simple:
 Also be sure to review the [Code of Conduct](https://github.com/alexdlaird/java-ngrok/blob/main/CODE_OF_CONDUCT.md) before
 submitting issues or pull requests.
 
-Want to contribute financially? If you've found `java-ngrok` useful, [a donation](https://www.paypal.me/alexdlaird)
+Want to contribute financially? If you've found `java-ngrok` useful, [sponsorship](https://github.com/sponsors/alexdlaird)
 would also be greatly appreciated!

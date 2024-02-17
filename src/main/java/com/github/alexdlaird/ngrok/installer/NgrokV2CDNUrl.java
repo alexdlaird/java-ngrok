@@ -21,32 +21,33 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.alexdlaird.ngrok.protocol;
+package com.github.alexdlaird.ngrok.installer;
 
 /**
- * An object representing <code>ngrok</code>'s version and <code>java-ngrok</code>'s version.
+ * An enum that maps systems and architectures to their corresponding legacy <code>ngrok</code> V2 download URLs.
  */
-public class Version {
+public enum NgrokV2CDNUrl implements NgrokCDNUrl {
 
-    private final String ngrokVersion;
-    private final String javaNgrokVersion;
+    DARWIN_x86_64("ngrok-stable-darwin-amd64.zip"),
+    DARWIN_i386_arm("ngrok-stable-darwin-arm64.zip"),
+    WINDOWS_x86_64("ngrok-stable-windows-amd64.zip"),
+    WINDOWS_i386("ngrok-stable-windows-386.zip"),
+    LINUX_x86_64_arm("ngrok-stable-linux-arm64.zip"),
+    LINUX_i386_arm("ngrok-stable-linux-arm.zip"),
+    LINUX_i386("ngrok-stable-linux-386.zip"),
+    LINUX_x86_64("ngrok-stable-linux-amd64.zip"),
+    FREEBSD_x86_64("ngrok-stable-freebsd-amd64.zip"),
+    FREEBSD_i386("ngrok-stable-freebsd-386.zip");
 
-    public Version(final String ngrokVersion, final String javaNgrokVersion) {
-        this.ngrokVersion = ngrokVersion;
-        this.javaNgrokVersion = javaNgrokVersion;
+    private static final String CDN_URL_PREFIX = "https://bin.equinox.io/c/4VmDzA7iaHb/";
+
+    private final String url;
+
+    NgrokV2CDNUrl(String filename) {
+        this.url = CDN_URL_PREFIX + filename;
     }
 
-    /**
-     * Get the <code>ngrok</code> version.
-     */
-    public String getNgrokVersion() {
-        return ngrokVersion;
-    }
-
-    /**
-     * Get the <code>java-ngrok</code> version.
-     */
-    public String getJavaNgrokVersion() {
-        return javaNgrokVersion;
+    public String getUrl() {
+        return url;
     }
 }

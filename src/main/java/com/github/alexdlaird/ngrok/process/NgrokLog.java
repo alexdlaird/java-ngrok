@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Alex Laird
+ * Copyright (c) 2023 Alex Laird
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -76,6 +76,7 @@ public class NgrokLog extends HashMap<String, String> {
                     case "WARN":
                         value = WARNING.getName();
                         break;
+                    default:
                 }
             }
 
@@ -95,6 +96,7 @@ public class NgrokLog extends HashMap<String, String> {
                 case "addr":
                     this.addr = value;
                     break;
+                default:
             }
 
             put(key, value);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Alex Laird
+ * Copyright (c) 2023 Alex Laird
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -37,12 +37,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
+import static java.util.Objects.nonNull;
 
 /**
  * A default client for executing JSON-based HTTP requests.
@@ -74,10 +78,14 @@ public class DefaultHttpClient implements HttpClient {
     private final Gson gson;
     private final String encoding;
     private final String contentType;
+    private final int timeout;
+    private final int retryCount;
 
     private DefaultHttpClient(final Builder builder) {
         this.encoding = builder.encoding;
         this.contentType = builder.contentType;
+        this.timeout = builder.timeout;
+        this.retryCount = builder.retryCount;
         this.gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
@@ -91,8 +99,61 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), null, "GET",
                     additionalHeaders, clazz);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new HttpClientException("HTTP GET error", e);
+        }
+    }
+
+    @Override
+    public void get(final String url,
+                    final List<Parameter> parameters,
+                    final Map<String, String> additionalHeaders,
+                    final Path dest,
+                    final int retries) throws InterruptedException {
+        HttpURLConnection httpUrlConnection = null;
+        InputStream inputStream = null;
+
+        try {
+            httpUrlConnection = createHttpUrlConnection(urlWithParameters(url, parameters));
+
+            inputStream = getInputStream(httpUrlConnection, null, "GET", additionalHeaders);
+            Files.copy(inputStream, dest, StandardCopyOption.REPLACE_EXISTING);
+        } catch (final Exception ex) {
+            if (retries < retryCount) {
+                LOGGER.warning("GET failed, retrying in 0.5 seconds ...");
+                Thread.sleep(500);
+
+                get(url, parameters, additionalHeaders, dest, retries + 1);
+            } else {
+                String msg = "An unknown error occurred when downloading the file";
+
+                int statusCode = -1;
+                String errorResponse = null;
+                if (httpUrlConnection != null) {
+                    try {
+                        statusCode = httpUrlConnection.getResponseCode();
+                        if (nonNull(httpUrlConnection.getErrorStream())) {
+                            errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(), Charset.forName(encoding));
+                        }
+
+                        msg = "An error occurred when downloading the file (" + httpUrlConnection.getResponseCode() + "): " + errorResponse;
+                    } catch (final IOException | NullPointerException ignored) {
+                    }
+                }
+
+                throw new HttpClientException(msg, ex, url, statusCode, errorResponse);
+            }
+        } finally {
+            if (httpUrlConnection != null) {
+                httpUrlConnection.disconnect();
+            }
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (final IOException ex) {
+                LOGGER.log(Level.INFO, "Unable to close connection", ex);
+            }
         }
     }
 
@@ -105,7 +166,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), convertRequestToString(request), "POST",
                     additionalHeaders, clazz);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new HttpClientException("HTTP POST error", e);
         }
     }
@@ -119,7 +180,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), convertRequestToString(request), "PUT",
                     additionalHeaders, clazz);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new HttpClientException("HTTP PUT error", e);
         }
     }
@@ -132,7 +193,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), null, "DELETE",
                     additionalHeaders, clazz);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new HttpClientException("HTTP DELETE error", e);
         }
     }
@@ -170,7 +231,7 @@ public class DefaultHttpClient implements HttpClient {
         if (isNotBlank(response)) {
             try {
                 return gson.fromJson(response, clazz);
-            } catch (JsonSyntaxException ex) {
+            } catch (final JsonSyntaxException ex) {
                 return null;
             }
         } else {
@@ -204,43 +265,51 @@ public class DefaultHttpClient implements HttpClient {
         return stringBuilder.toString();
     }
 
+    protected InputStream getInputStream(final HttpURLConnection httpUrlConnection,
+                                         final String body,
+                                         final String method,
+                                         final Map<String, String> additionalHeaders) throws IOException {
+        httpUrlConnection.setRequestMethod(method);
+        httpUrlConnection.setConnectTimeout(timeout);
+        httpUrlConnection.setReadTimeout(timeout);
+
+        appendDefaultsToConnection(httpUrlConnection, additionalHeaders);
+        modifyConnection(httpUrlConnection);
+
+        if (isNotBlank(body)) {
+            httpUrlConnection.setDoOutput(true);
+            httpUrlConnection.connect();
+
+            final OutputStream outputStream = httpUrlConnection.getOutputStream();
+            outputStream.write(body.getBytes(Charset.forName(encoding)));
+            outputStream.close();
+        } else {
+            httpUrlConnection.setRequestProperty("Content-Length", "0");
+            httpUrlConnection.connect();
+        }
+
+        return httpUrlConnection.getInputStream();
+    }
+
     private <B> Response<B> execute(final String url,
                                     final String body,
                                     final String method,
                                     final Map<String, String> additionalHeaders,
                                     final Class<B> clazz) throws IOException {
         HttpURLConnection httpUrlConnection = null;
-        OutputStream outputStream = null;
         InputStream inputStream = null;
 
         try {
             httpUrlConnection = createHttpUrlConnection(url);
-            httpUrlConnection.setRequestMethod(method);
 
-            appendDefaultsToConnection(httpUrlConnection, additionalHeaders);
-            modifyConnection(httpUrlConnection);
-
-            if (isNotBlank(body)) {
-                httpUrlConnection.setDoOutput(true);
-                httpUrlConnection.connect();
-
-                outputStream = httpUrlConnection.getOutputStream();
-
-                outputStream.write(body.getBytes(Charset.forName(encoding)));
-            } else {
-                httpUrlConnection.setRequestProperty("Content-Length", "0");
-                httpUrlConnection.connect();
-            }
-
-            inputStream = httpUrlConnection.getInputStream();
-
+            inputStream = getInputStream(httpUrlConnection, body, method, additionalHeaders);
             final String responseBody = StringUtils.streamToString(inputStream, Charset.forName(encoding));
 
             return new Response<>(httpUrlConnection.getResponseCode(),
                     convertResponseFromString(responseBody, clazz),
                     responseBody,
                     httpUrlConnection.getHeaderFields());
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             String msg = "An unknown error occurred when performing the operation";
 
             int statusCode = -1;
@@ -251,7 +320,7 @@ public class DefaultHttpClient implements HttpClient {
                     errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(), Charset.forName(encoding));
 
                     msg = "An error occurred when performing the operation (" + httpUrlConnection.getResponseCode() + "): " + errorResponse;
-                } catch (IOException | NullPointerException ignored) {
+                } catch (final IOException | NullPointerException ignored) {
                 }
             }
 
@@ -261,13 +330,10 @@ public class DefaultHttpClient implements HttpClient {
                 httpUrlConnection.disconnect();
             }
             try {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
                 if (inputStream != null) {
                     inputStream.close();
                 }
-            } catch (IOException ex) {
+            } catch (final IOException ex) {
                 LOGGER.log(Level.INFO, "Unable to close connection", ex);
             }
         }
@@ -279,6 +345,8 @@ public class DefaultHttpClient implements HttpClient {
     public static class Builder {
         private String encoding = "UTF-8";
         private String contentType = "application/json";
+        public int timeout = 4000;
+        public int retryCount = 0;
 
         /**
          * Default encoding for requests.
@@ -293,6 +361,22 @@ public class DefaultHttpClient implements HttpClient {
          */
         public Builder withContentType(final String contentType) {
             this.contentType = contentType;
+            return this;
+        }
+
+        /**
+         * Default timeout for requests.
+         */
+        public Builder withTimeout(final int timeout) {
+            this.timeout = timeout;
+            return this;
+        }
+
+        /**
+         * Default retry count for GET requests.
+         */
+        public Builder withRetryCount(final int retryCount) {
+            this.retryCount = retryCount;
             return this;
         }
 

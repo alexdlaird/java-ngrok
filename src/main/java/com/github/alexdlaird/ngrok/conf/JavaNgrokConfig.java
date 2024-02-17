@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Alex Laird
+ * Copyright (c) 2023 Alex Laird
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -24,7 +24,9 @@
 package com.github.alexdlaird.ngrok.conf;
 
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokLog;
+import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Region;
 
 import java.nio.file.Path;
@@ -43,7 +45,7 @@ import static java.util.Objects.nonNull;
  *     return null;
  * };
  * final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
- *         .withAuthToken("&lt;NGROK_AUTH_TOKEN&gt;")
+ *         .withAuthToken("&lt;NGROK_AUTHTOKEN&gt;")
  *         .withRegion(Region.AU)
  *         .withLogEventCallback(logEventCallback)
  *         .withMaxLogs(10);
@@ -52,6 +54,10 @@ import static java.util.Objects.nonNull;
  *         .withJavaNgrokConfig(javaNgrokConfig)
  *         .build();
  * </pre>
+ * <h2><code>ngrok</code> Version Compatibility</h2>
+ * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
+ * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}
+ * and {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
  */
 public class JavaNgrokConfig {
 
@@ -63,6 +69,8 @@ public class JavaNgrokConfig {
     private final int maxLogs;
     private final Function<NgrokLog, Void> logEventCallback;
     private final int startupTimeout;
+    private final NgrokVersion ngrokVersion;
+    private final String apiKey;
 
     private JavaNgrokConfig(final Builder builder) {
         this.ngrokPath = builder.ngrokPath;
@@ -73,6 +81,8 @@ public class JavaNgrokConfig {
         this.maxLogs = builder.maxLogs;
         this.logEventCallback = builder.logEventCallback;
         this.startupTimeout = builder.startupTimeout;
+        this.ngrokVersion = builder.ngrokVersion;
+        this.apiKey = builder.apiKey;
     }
 
     /**
@@ -90,7 +100,7 @@ public class JavaNgrokConfig {
     }
 
     /**
-     * Get the authtoken that will be passed to commands.
+     * Get the <code>ngrok</code> authtoken that will be passed to commands.
      */
     public String getAuthToken() {
         return authToken;
@@ -132,6 +142,20 @@ public class JavaNgrokConfig {
     }
 
     /**
+     * Get the major <code>ngrok</code> version to be used.
+     */
+    public NgrokVersion getNgrokVersion() {
+        return ngrokVersion;
+    }
+
+    /**
+     * A <code>ngrok</code> API key.
+     */
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    /**
      * Builder for a {@link JavaNgrokConfig}, see docs for that class for example usage.
      */
     public static class Builder {
@@ -144,6 +168,8 @@ public class JavaNgrokConfig {
         private int maxLogs = 100;
         private Function<NgrokLog, Void> logEventCallback;
         private int startupTimeout = 15;
+        private NgrokVersion ngrokVersion = NgrokVersion.V3;
+        private String apiKey;
 
         public Builder() {
         }
@@ -162,10 +188,13 @@ public class JavaNgrokConfig {
             this.maxLogs = javaNgrokConfig.maxLogs;
             this.logEventCallback = javaNgrokConfig.logEventCallback;
             this.startupTimeout = javaNgrokConfig.startupTimeout;
+            this.ngrokVersion = javaNgrokConfig.ngrokVersion;
+            this.apiKey = javaNgrokConfig.apiKey;
         }
 
         /**
-         * The path to the <code>ngrok</code> binary, defaults to <code>~/.ngrok2/ngrok</code>.
+         * The path to the <code>ngrok</code> binary, defaults to being placed in the same directory as
+         * <a href="https://ngrok.com/docs/ngrok-agent/config" target="_blank"><code>ngrok's</code> configs</a>.
          */
         public Builder withNgrokPath(final Path ngrokPath) {
             this.ngrokPath = ngrokPath;
@@ -173,7 +202,7 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * The path to the <code>ngrok</code> config file, defaults to <code>~/.ngrok2/ngrok.yml</code>.
+         * The path to the <code>ngrok</code> config file, defaults to <a href="https://ngrok.com/docs/ngrok-agent/config" target="_blank"><code>ngrok's</code> default config location</a>.
          */
         public Builder withConfigPath(final Path configPath) {
             this.configPath = configPath;
@@ -181,7 +210,8 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * An authtoken to pass to commands (overrides what is in the config).
+         * A <code>ngrok</code> authtoken to pass to commands (overrides what is in the config). If not set here, the
+         * {@link Builder} will attempt to use the environment variable <code>NGROK_AUTHTOKEN</code> if it is set.
          */
         public Builder withAuthToken(final String authToken) {
             this.authToken = authToken;
@@ -235,6 +265,22 @@ public class JavaNgrokConfig {
             }
 
             this.startupTimeout = startupTimeout;
+            return this;
+        }
+
+        /**
+         * The major version of <code>ngrok</code> to be used.
+         */
+        public Builder withNgrokVersion(final NgrokVersion ngrokVersion) {
+            this.ngrokVersion = ngrokVersion;
+            return this;
+        }
+
+        /**
+         * A <code>ngrok</code> API key.
+         */
+        public Builder withApiKey(final String apiKey) {
+            this.apiKey = apiKey;
             return this;
         }
 

@@ -21,32 +21,11 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.alexdlaird.ngrok.protocol;
+package com.github.alexdlaird.ngrok.installer;
 
 /**
- * An object representing <code>ngrok</code>'s version and <code>java-ngrok</code>'s version.
+ * An enum for the list of supported major <code>ngrok</code> versions.
  */
-public class Version {
-
-    private final String ngrokVersion;
-    private final String javaNgrokVersion;
-
-    public Version(final String ngrokVersion, final String javaNgrokVersion) {
-        this.ngrokVersion = ngrokVersion;
-        this.javaNgrokVersion = javaNgrokVersion;
-    }
-
-    /**
-     * Get the <code>ngrok</code> version.
-     */
-    public String getNgrokVersion() {
-        return ngrokVersion;
-    }
-
-    /**
-     * Get the <code>java-ngrok</code> version.
-     */
-    public String getJavaNgrokVersion() {
-        return javaNgrokVersion;
-    }
+public enum NgrokVersion {
+    V2, V3
 }

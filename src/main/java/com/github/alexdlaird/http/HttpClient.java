@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Alex Laird
+ * Copyright (c) 2023 Alex Laird
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -24,6 +24,7 @@
 package com.github.alexdlaird.http;
 
 import java.net.HttpURLConnection;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,26 @@ public interface HttpClient {
      */
     default <B> Response<B> get(final String url, final Class<B> clazz) {
         return get(url, Collections.emptyList(), Collections.emptyMap(), clazz);
+    }
+
+    /**
+     * Perform GET operation that downloads a file to the given path.
+     *
+     * @param url               The URL on which to perform the operation.
+     * @param parameters        An arbitrary number of parameters to add to the URL.
+     * @param additionalHeaders Additional headers for the request.
+     * @param dest              The destination to which the file will be downloaded.
+     * @param retries           The retry attempt index, if download fails.
+     */
+    void get(final String url, final List<Parameter> parameters,
+             final Map<String, String> additionalHeaders, final Path dest, final int retries) throws InterruptedException;
+
+    /**
+     * See {@link #get(String, List, Map, Path, int)}
+     */
+    default void get(final String url, final List<Parameter> parameters,
+                     final Map<String, String> additionalHeaders, final Path dest) throws InterruptedException {
+        get(url, parameters, additionalHeaders, dest, 0);
     }
 
     /**
