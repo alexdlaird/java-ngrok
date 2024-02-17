@@ -180,8 +180,8 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
         // WHEN
         final Response<CapturedRequests> response1 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), CapturedRequests.class);
-        final Response<CapturedRequests> response2 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), Stream.of(new Parameter("tunnel_name", "my-tunnel")).collect(Collectors.toList()), Collections.emptyMap(), CapturedRequests.class);
-        final Response<CapturedRequests> response3 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), Stream.of(new Parameter("tunnel_name", "my-tunnel (http)")).collect(Collectors.toList()), Collections.emptyMap(), CapturedRequests.class);
+        final Response<CapturedRequests> response2 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), Collections.singletonList(new Parameter("tunnel_name", "my-tunnel")), Collections.emptyMap(), CapturedRequests.class);
+        final Response<CapturedRequests> response3 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), Collections.singletonList(new Parameter("tunnel_name", "my-tunnel (http)")), Collections.emptyMap(), CapturedRequests.class);
 
         // THEN
         assertEquals(HTTP_OK, response1.getStatusCode());

@@ -24,6 +24,7 @@
 package com.github.alexdlaird.ngrok.process;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -161,6 +162,6 @@ public class NgrokLog extends HashMap<String, String> {
             tokens.add(current.toString());
         }
 
-        return tokens;
+        return Collections.unmodifiableList(tokens);
     }
 }

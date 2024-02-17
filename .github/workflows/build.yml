@@ -27,14 +27,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
-        java-version: [ 21 ]
-        include:
-          - java-version: 11
-            os: ubuntu-latest
-          - java-version: 15
-            os: ubuntu-latest
-          - java-version: 17
-            os: ubuntu-latest
+        java-version: [ 8 ]
 
     runs-on: ${{ matrix.os }}
 
@@ -52,22 +45,6 @@ jobs:
       - name: Validate package
         run: make local
       - name: Upload coverage
-        if: matrix.os == 'ubuntu-latest' && matrix.java-version == '17'
         uses: codecov/codecov-action@v1
         with:
           file: ./build/reports/jacoco/report.xml
-
-  automerge:
-    name: "Auto Approve"
-    needs: build
-    runs-on: ubuntu-latest
-
-    permissions:
-      pull-requests: write
-      contents: write
-
-    steps:
-      - uses: fastify/github-action-merge-dependabot@v3
-        with:
-          target: major
-          use-github-auto-merge: true

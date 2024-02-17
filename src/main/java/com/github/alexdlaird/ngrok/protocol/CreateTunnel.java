@@ -28,9 +28,12 @@ import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -802,17 +805,19 @@ public class CreateTunnel {
                 if (ngrokVersion == NgrokVersion.V3) {
                     if (nonNull(bindTls)) {
                         if (bindTls == BindTls.TRUE) {
-                            schemes = Stream.of("https");
+                            schemes = Collections.singletonList("https");
                         } else if (bindTls == BindTls.FALSE) {
-                            schemes = Stream.of("http");
+                            schemes = Collections.singletonList("http");
                         } else {
-                            schemes = Stream.of("http", "https");
+                            schemes = Collections.unmodifiableList(
+                                    Stream.of("http", "https")
+                                            .collect(Collectors.toList()));
                         }
 
                         bindTls = null;
                     }
                     if (nonNull(auth)) {
-                        basicAuth = Stream.of(auth);
+                        basicAuth = Collections.singletonList(auth);
 
                         auth = null;
                     }

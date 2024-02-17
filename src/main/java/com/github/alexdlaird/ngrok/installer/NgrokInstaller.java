@@ -76,11 +76,15 @@ public class NgrokInstaller {
     public static final String WINDOWS = "WINDOWS";
     public static final String LINUX = "LINUX";
     public static final String FREEBSD = "FREEBSD";
-    public static final List<String> UNIX_BINARIES = Stream.of(MAC, LINUX, FREEBSD).collect(Collectors.toList());
+    public static final List<String> UNIX_BINARIES = Collections.unmodifiableList(
+            Stream.of(MAC, LINUX, FREEBSD)
+                    .collect(Collectors.toList()));
     public static final Path DEFAULT_NGROK_PATH = Paths.get(getDefaultNgrokDir().toString(), NgrokInstaller.getNgrokBin());
     public static final Path DEFAULT_CONFIG_PATH = Paths.get(getDefaultNgrokDir().toString(), "ngrok.yml");
 
-    private static final List<String> VALID_LOG_LEVELS = Stream.of("info", "debug").collect(Collectors.toList());
+    private static final List<String> VALID_LOG_LEVELS = Collections.unmodifiableList(
+            Stream.of("info", "debug")
+                    .collect(Collectors.toList()));
 
     private final Yaml yaml = new Yaml();
 

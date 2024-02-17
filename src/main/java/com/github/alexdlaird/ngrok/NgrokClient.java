@@ -42,6 +42,7 @@ import com.github.alexdlaird.ngrok.protocol.Version;
 
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -360,7 +361,7 @@ public class NgrokClient {
 
             final List<Tunnel> sortedTunnels = new ArrayList<>(currentTunnels.values());
             sortedTunnels.sort(Comparator.comparing(Tunnel::getProto));
-            return List.of(sortedTunnels.toArray(new Tunnel[]{}));
+            return Collections.unmodifiableList(sortedTunnels);
         } catch (final HttpClientException e) {
             throw new JavaNgrokHTTPException("An error occurred when GETing the tunnels.", e, e.getUrl(),
                     e.getStatusCode(), e.getBody());
