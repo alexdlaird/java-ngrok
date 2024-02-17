@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -226,8 +225,7 @@ public class NgrokProcess {
         if (javaNgrokConfig.getNgrokVersion() == NgrokVersion.V2) {
             command.add("authtoken");
             command.add(authToken);
-        }
-        else {
+        } else {
             command.add("config");
             command.add("add-authtoken");
             command.add(authToken);
@@ -397,7 +395,9 @@ public class NgrokProcess {
          * Get the <code>ngrok</code> logs.
          */
         public List<NgrokLog> getLogs() {
-            return Collections.unmodifiableList(logs);
+            return Collections.unmodifiableList(
+                    Stream.of(logs.toArray(new NgrokLog[]{}))
+                            .collect(Collectors.toList()));
         }
 
         /**
