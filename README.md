@@ -97,9 +97,9 @@ and [`CreateTunnel.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/d
 
 ### Java 8
 
-Java 8 support is not actively maintained, but a compatible build of this project does exist for Java 8. To use it,
-include the `java8-ngrok` dependency from
-[Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/) instead.
+Java 8 support is not actively maintained, but on a periodic basis, `main` may be rebased in to the `java8-ngrok`
+branch, where a compatible build of this project does exist for Java 8. To use it, include the `java8-ngrok`
+dependency from [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
 
 ```xml
 <dependency>
