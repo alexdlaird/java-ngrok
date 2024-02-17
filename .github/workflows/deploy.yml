@@ -1,4 +1,6 @@
-name: "CI/CD"
+name: "Deploy"
+
+run-name: "Release ${{ github.ref_name }}"
 
 on:
   release:
@@ -9,6 +11,9 @@ jobs:
     name: Deploy
 
     runs-on: ubuntu-latest
+
+    env:
+      NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
 
     steps:
       - uses: actions/checkout@v2
