@@ -358,7 +358,7 @@ public class NgrokClient {
                 currentTunnels.put(tunnel.getPublicUrl(), tunnel);
             }
 
-            return new ArrayList<>(currentTunnels.values());
+            return List.of(currentTunnels.values().toArray(new Tunnel[]{}));
         } catch (final HttpClientException e) {
             throw new JavaNgrokHTTPException("An error occurred when GETing the tunnels.", e, e.getUrl(),
                     e.getStatusCode(), e.getBody());
