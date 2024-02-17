@@ -43,7 +43,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -785,7 +784,6 @@ class NgrokClientTest extends NgrokTestCase {
         final Tunnel httpEdgeTunnel = ngrokClient2.connect(createHttpEdgeTunnel);
         final Tunnel tcpEdgeTunnel = ngrokClient2.connect(createTcpEdgeTunnel);
         final List<Tunnel> tunnels = ngrokClient2.getTunnels();
-        tunnels.sort(Comparator.comparing(Tunnel::getProto));
 
         // THEN
         assertEquals("edge-http-tunnel", httpEdgeTunnel.getName());
