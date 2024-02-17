@@ -105,7 +105,7 @@ dependency from [Maven Central](https://maven-badges.herokuapp.com/maven-central
 <dependency>
     <groupId>com.github.alexdlaird</groupId>
     <artifactId>java8-ngrok</artifactId>
-    <version>1.4.6</version>
+    <version>1.4.7</version>
 </dependency>
 ```
 
