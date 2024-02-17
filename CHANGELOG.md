@@ -3,7 +3,11 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.10...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.11...HEAD)
+
+## [2.2.11](https://github.com/alexdlaird/java-ngrok/compare/2.2.10...2.2.11) - 2024-02-17
+### Added
+- Build and stability improvements.
 
 ## [2.2.10](https://github.com/alexdlaird/java-ngrok/compare/2.2.9...2.2.10) - 2024-02-15
 ### Changed
@@ -157,9 +161,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## 1.4.x
 The `1.4.x` branch is where support for Java 8 of `java-ngrok` is passively maintains. It is available through the `java8-ngrok` artifact on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
 
-## [1.4.7](https://github.com/alexdlaird/java-ngrok/compare/1.4.6...1.4.7) - TBD
+## [1.4.7](https://github.com/alexdlaird/java-ngrok/compare/1.4.6...1.4.7) - 2024-02-17
 ### Added
-- Rebased the `1.4.x` branch with Java 8-compatible changes from `main` between `1.6.0` and `2.2.10`. See the [`main changelog`](https://github.com/alexdlaird/java-ngrok/blob/main/CHANGELOG.md) for full details.
+- Rebased the `1.4.x` branch with Java 8-compatible changes from `main` between `1.6.0` and `2.2.11`. See the [`main changelog`](https://github.com/alexdlaird/java-ngrok/blob/main/CHANGELOG.md) for full details.
 - Biggest change is support for `ngrok` v3—including `labels`—and that `ngrok` v3 is installed by default.
 
 ## [1.4.6](https://github.com/alexdlaird/java-ngrok/compare/1.4.5...1.4.6) - 2024-02-15
