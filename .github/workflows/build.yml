@@ -5,9 +5,9 @@ run-name: "Build ${{ github.ref_name }}"
 on:
   workflow_dispatch:
   push:
-    branches: [ main, develop, java8-ngrok ]
+    branches: [ main, develop, 1.4.x ]
   pull_request:
-    branches: [ main, develop, java8-ngrok ]
+    branches: [ main, develop, 1.4.x ]
   schedule:
     - cron: "0 10 * * *"
 
