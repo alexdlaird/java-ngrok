@@ -183,7 +183,7 @@ public class NgrokClient {
 
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokClient.class));
 
-    private static final String VERSION = "2.2.10";
+    private static final String VERSION = "1.4.7";
 
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokProcess ngrokProcess;
