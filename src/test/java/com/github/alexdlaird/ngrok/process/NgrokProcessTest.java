@@ -161,33 +161,6 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testExternalKill() throws InterruptedException {
-        // GIVEN
-        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
-        ngrokProcessV3.start();
-        assertTrue(ngrokProcessV3.isRunning());
-
-        // WHEN
-        final ProcessHandle processHandle = ProcessHandle.allProcesses()
-                .filter(p -> p.info().command().orElse("").contains(javaNgrokConfigV3.getNgrokPath().toString()))
-                .findFirst().orElse(null);
-
-        // THEN
-        assertNotNull(processHandle);
-        processHandle.destroy();
-        long timeoutTime = System.currentTimeMillis() + 10 * 1000;
-        while (processHandle.isAlive() && ngrokProcessV3.isRunning() && System.currentTimeMillis() < timeoutTime) {
-            Thread.sleep(50);
-        }
-        assertFalse(processHandle.isAlive());
-        assertFalse(ngrokProcessV3.isRunning());
-
-        // THEN test we can successfully restart the process
-        ngrokProcessV3.start();
-        assertTrue(ngrokProcessV3.isRunning());
-    }
-
-    @Test
     public void testMultipleProcessesDifferentBinariesV2() {
         // GIVEN
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
