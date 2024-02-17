@@ -360,7 +360,7 @@ public class NgrokClient {
 
             final List<Tunnel> sortedTunnels = new ArrayList<>(currentTunnels.values());
             sortedTunnels.sort(Comparator.comparing(Tunnel::getProto));
-            return List.of(sortedTunnels.toArray(new String[]{}));
+            return List.of(sortedTunnels.toArray(new Tunnel[]{}));
         } catch (final HttpClientException e) {
             throw new JavaNgrokHTTPException("An error occurred when GETing the tunnels.", e, e.getUrl(),
                     e.getStatusCode(), e.getBody());
