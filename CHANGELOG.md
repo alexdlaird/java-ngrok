@@ -3,7 +3,159 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-**Note:** `1.4.x` is the branch of `java-ngrok` that passively maintains Java 8 support. It is available through the `java8-ngrok` artifact on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.10...HEAD)
+
+## [2.2.10](https://github.com/alexdlaird/java-ngrok/compare/2.2.9...2.2.10) - 2024-02-15
+### Changed
+- Moved evaluation of HTTP `GET` retry logic from `DefaultHttpClient`'s [`getInputStream()`](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.2.10/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html#getInputStream(java.net.HttpURLConnection,java.lang.String,java.lang.String,java.util.Map)) to [`get()`](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.2.10/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html#get(java.lang.String,java.util.List,java.util.Map,java.nio.file.Path,int)).
+- Build and stability improvements.
+
+## [2.2.9](https://github.com/alexdlaird/java-ngrok/compare/2.2.8...2.2.9) - 2024-02-14
+### Added
+- Stability improvements.
+
+## [2.2.8](https://github.com/alexdlaird/java-ngrok/compare/2.2.7...2.2.8) - 2024-01-08
+### Added
+- Support for Java 21.
+- Build improvements.
+
+## [2.2.7](https://github.com/alexdlaird/java-ngrok/compare/2.2.6...2.2.7) - 2023-12-30
+### Fixed
+- Test improvements, suite now respects `NGROK_AUTHTOKEN` for all necessary tests (skipped if not set, rather than tests failing).
+
+## [2.2.6](https://github.com/alexdlaird/java-ngrok/compare/2.2.5...2.2.6) - 2023-12-27
+### Added
+- If a value for `authToken` is not set in [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.5/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), it will attempt to use the environment variable `NGROK_AUTHTOKEN` if it is set.
+- Build improvements.
+
+## [2.2.5](https://github.com/alexdlaird/java-ngrok/compare/2.2.4...2.2.5) - 2023-12-01
+### Changed
+- `java-ngrok` to no longer install the config file in a legacy location, now respects [`ngrok`'s default locations](https://ngrok.com/docs/agent/config/#default-locations).
+
+### Fixed
+- Build improvements.
+
+## [2.2.4](https://github.com/alexdlaird/java-ngrok/compare/2.2.3...2.2.4) - 2023-11-14
+### Added
+- Documentation improvements.
+
+## [2.2.3](https://github.com/alexdlaird/java-ngrok/compare/2.2.2...2.2.3) - 2023-09-17
+### Added
+- `retryCount` added to [`DefaultHttpClient`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.3/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html), so `GET` options can now support retries.
+- Documentation improvements.
+- Test improvements.
+
+### Changed
+- `NgrokInstaller` now uses the `DefaultHttpClient` to download `ngrok` binaries.
+
+## [2.2.2](https://github.com/alexdlaird/java-ngrok/compare/2.2.1...2.2.2) - 2023-09-14
+### Added
+- Documentation improvements.
+
+## [2.2.1](https://github.com/alexdlaird/java-ngrok/compare/2.2.0...2.2.1) - 2023-09-13
+### Fixed
+- Bug in [Tunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.1/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/Tunnel.html), a misspelled method was committed instead of using `setters` to update `publicUrl` and `proto`.
+
+## [2.2.0](https://github.com/alexdlaird/java-ngrok/compare/2.1.0...2.2.0) - 2023-09-12
+### Added
+- Support for `labels`, so [`ngrok`'s Labeled Tunnel Configuration](https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#labeled-tunnel-configuration-properties) is now supported, which enables basic support for [`ngrok`'s Cloud Edge](https://ngrok.com/docs/cloud-edge/).
+- `apiKey` to [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), which can be set so `java-ngrok` can interface with Cloud Edge `labels`.
+- `id` to [Tunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/Tunnel.html).
+- `timeout` to [DefaultHttpClient](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html).
+- Documentation improvements.
+- Test improvements.
+
+## [2.1.0](https://github.com/alexdlaird/java-ngrok/compare/2.0.0...2.1.0) - 2023-04-22
+### Added
+- Support for `oauth` configuration when building [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.1.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html).
+- Support for other new `ngrok` v3 [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.1.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html) parameters, including `circuit_breaker`, `compression`, `mutual_tls_cas`, `proxy_proto`, `websocket_tcp_converter`, `terminate_at`, `request_header`, `response_header`, `ip_restrictions`, and `verify_webhook`.
+- Documentation improvements.
+- Test improvements.
+
+## [2.0.0](https://github.com/alexdlaird/java-ngrok/compare/1.7.2...2.0.0) - 2023-04-12
+### Changed
+- Default installer behavior downloads `ngrok` v3 by default.
+- Documentation updates.
+- Test updates.
+
+## [1.7.2](https://github.com/alexdlaird/java-ngrok/compare/1.7.1...1.7.2) - 2023-04-12
+### Added
+- Support for `basic_auth` parameter in `ngrok` v3.
+- Documentation improvements.
+- Test improvements.
+
+## [1.7.1](https://github.com/alexdlaird/java-ngrok/compare/1.7.0...1.7.1) - 2023-04-11
+### Fixed
+- Inconsistencies with default installation of `ngrok` v2.
+
+## [1.7.0](https://github.com/alexdlaird/java-ngrok/compare/1.6.2...1.7.0) - 2023-04-11
+### Added
+- `ngrokVersion` to [CreateTunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.7.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html) so parameter details can be properly inferred when necessary.
+
+### Fixed
+- Inconsistencies with default installation of `ngrok` v2.
+- Documentation improvements.
+- Test improvements.
+
+## [1.6.2](https://github.com/alexdlaird/java-ngrok/compare/1.6.1...1.6.2) - 2023-03-08
+### Fixed
+- Issue where zip file paths were not normalized before they were read.
+- Documentation improvements.
+- Test improvements.
+
+## [1.6.1](https://github.com/alexdlaird/java-ngrok/compare/1.6.0...1.6.1) - 2022-11-29
+### Fixed
+- Stability improvements.
+
+## [1.6.0](https://github.com/alexdlaird/java-ngrok/compare/1.5.6...1.6.0) - 2022-11-28
+### Added
+- Support for [`ngrok` v3](https://ngrok.com/docs/guides/upgrade-v2-v3) (v2 is still used by default).
+- Documentation and examples for using `java-ngrok` with `ngrok` v3.
+
+### Fixed
+- Stability improvements.
+- Documentation improvements.
+- Test improvements.
+
+## [1.5.6](https://github.com/alexdlaird/java-ngrok/compare/1.5.5...1.5.6) - 2022-02-07
+### Added
+- Darwin 64-bit ARM support, as this was added to `ngrok` itself.
+
+### Removed
+- Darwin 386 support, as this was removed from `ngrok` itself.
+
+## [1.5.5](https://github.com/alexdlaird/java-ngrok/compare/1.5.4...1.5.5) - 2021-09-28
+### Fixed
+- Full `ngrok` log line now passed to Java logger (was previously just the `msg` field).
+
+## [1.5.4](https://github.com/alexdlaird/java-ngrok/compare/1.5.3...1.5.4) - 2021-09-21
+### Added
+- Test improvements.
+
+### Fixed
+- Parse issue from `ngrok` config file with `inspect` and `bind_tls` in `tunnels` definitions.
+
+## [1.5.3](https://github.com/alexdlaird/java-ngrok/compare/1.5.0...1.5.3) - 2021-08-26
+### Added
+- Build improvements.
+- Documentation improvements.
+
+### Fixed
+- If no `configPath` is set in `JavaNgrokConfig`, now properly defaults to `~/.ngrok2/ngrok.yml`.
+
+## [1.5.0](https://github.com/alexdlaird/java-ngrok/compare/1.1.0...1.5.0) - 2021-08-25
+### Added
+- Shutdown hook, so running `ngrok` processes will clean themselves when the JVM shuts down.
+- Build improvements.
+- Documentation improvements.
+- Test improvements.
+
+### Removed
+- Java 8 support.
+- `reconnectSessionRetries` from [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.5.0/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), instead relying on `ngrok`'s own built-in retry mechanism on startup fails.
+
+## 1.4.x
+The `1.4.x` branch is where support for Java 8 of `java-ngrok` is passively maintains. It is available through the `java8-ngrok` artifact on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
 
 ## [1.4.7](https://github.com/alexdlaird/java-ngrok/compare/1.4.6...1.4.7) - TBD
 ### Added
