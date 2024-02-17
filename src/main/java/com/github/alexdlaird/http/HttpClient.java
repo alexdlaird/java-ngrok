@@ -50,7 +50,7 @@ public interface HttpClient {
      * See {@link #get(String, List, Map, Class)}.
      */
     default <B> Response<B> get(final String url, final Class<B> clazz) {
-        return get(url, Collections.emptyList(), Collections.emptyMap(), clazz);
+        return get(url, List.of(), Map.of(), clazz);
     }
 
     /**
@@ -92,7 +92,7 @@ public interface HttpClient {
      * See {@link #post(String, Object, List, Map, Class)}.
      */
     default <R, B> Response<B> post(final String url, final R request, final Class<B> clazz) {
-        return post(url, request, Collections.emptyList(), Collections.emptyMap(), clazz);
+        return post(url, request, List.of(), Map.of(), clazz);
     }
 
     /**
@@ -114,7 +114,7 @@ public interface HttpClient {
      * See {@link #put(String, Object, List, Map, Class)}.
      */
     default <R, B> Response<B> put(final String url, final R request, final Class<B> clazz) {
-        return put(url, request, Collections.emptyList(), Collections.emptyMap(), clazz);
+        return put(url, request, List.of(), Map.of(), clazz);
     }
 
     /**
@@ -142,7 +142,7 @@ public interface HttpClient {
      * See {@link #delete(String, List, Map)}.
      */
     default Response<Map> delete(final String url) {
-        return delete(url, Collections.emptyList(), Collections.emptyMap());
+        return delete(url, List.of(), Map.of());
     }
 
     /**
