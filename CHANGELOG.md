@@ -3,10 +3,14 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/1.4.6...java8-ngrok)
+**Note:** `1.4.x` is the branch of `java-ngrok` that passively maintains Java 8 support. It is available through the `java8-ngrok` artifact on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
+
+## [1.4.7](https://github.com/alexdlaird/java-ngrok/compare/1.4.6...1.4.7) - TBD
+### Added
+- Rebased the `1.4.x` branch with Java 8-compatible changes from `main` between `1.6.0` and `2.2.10`. See the [`main changelog`](https://github.com/alexdlaird/java-ngrok/blob/main/CHANGELOG.md) for full details.
+- Biggest change is support for `ngrok` v3—including `labels`—and that `ngrok` v3 is installed by default.
 
 ## [1.4.6](https://github.com/alexdlaird/java-ngrok/compare/1.4.5...1.4.6) - 2024-02-15
-**Note:** 1.4.x is a special release that added Java 8 support, which will not be actively maintained. It is available through the `java8-ngrok` artifact on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
 
 ### Added
 - If a value for `authToken` is not set in [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.4.6/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), it will attempt to use the environment variable `NGROK_AUTHTOKEN` if it is set.
