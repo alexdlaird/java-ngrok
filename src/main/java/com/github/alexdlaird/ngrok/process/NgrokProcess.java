@@ -45,6 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.github.alexdlaird.util.StringUtils.isBlank;
 import static java.net.HttpURLConnection.HTTP_OK;
@@ -82,7 +84,7 @@ public class NgrokProcess {
             ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath(), javaNgrokConfig.getNgrokVersion());
         }
         if (!Files.exists(javaNgrokConfig.getConfigPath())) {
-            ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Map.of(), javaNgrokConfig.getNgrokVersion());
+            ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Collections.emptyMap(), javaNgrokConfig.getNgrokVersion());
         }
     }
 
@@ -130,7 +132,7 @@ public class NgrokProcess {
             process = processBuilder.start();
             Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
 
-            LOGGER.fine(String.format("ngrok process starting with PID: %s", process.pid()));
+            LOGGER.fine("ngrok process starting");
 
             processMonitor = new ProcessMonitor(process, javaNgrokConfig);
             new Thread(processMonitor).start();
@@ -184,10 +186,9 @@ public class NgrokProcess {
             return;
         }
 
-        LOGGER.info(String.format("Killing ngrok process: %s", process.pid()));
+        LOGGER.info("Killing ngrok process");
 
         processMonitor.stop();
-        process.descendants().forEach(ProcessHandle::destroy);
         process.destroy();
 
         process = null;
@@ -274,7 +275,7 @@ public class NgrokProcess {
         processBuilder.redirectErrorStream(true);
         processBuilder.inheritIO().redirectOutput(ProcessBuilder.Redirect.PIPE);
 
-        final List<String> command = List.of(javaNgrokConfig.getNgrokPath().toString(), "update", "--log=stdout");
+        final List<String> command = Stream.of(javaNgrokConfig.getNgrokPath().toString(), "update", "--log=stdout").collect(Collectors.toList());
 
         processBuilder.command(command);
         try {
@@ -295,7 +296,7 @@ public class NgrokProcess {
         processBuilder.redirectErrorStream(true);
         processBuilder.inheritIO().redirectOutput(ProcessBuilder.Redirect.PIPE);
 
-        final List<String> command = List.of(javaNgrokConfig.getNgrokPath().toString(), "--version");
+        final List<String> command = Stream.of(javaNgrokConfig.getNgrokPath().toString(), "--version").collect(Collectors.toList());
 
         processBuilder.command(command);
         try {
@@ -392,7 +393,7 @@ public class NgrokProcess {
          * Get the <code>ngrok</code> logs.
          */
         public List<NgrokLog> getLogs() {
-            return List.of(logs.toArray(new NgrokLog[]{}));
+            return logs;
         }
 
         /**

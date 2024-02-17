@@ -161,6 +161,6 @@ public class NgrokLog extends HashMap<String, String> {
             tokens.add(current.toString());
         }
 
-        return List.of(tokens.toArray(new String[]{}));
+        return tokens;
     }
 }

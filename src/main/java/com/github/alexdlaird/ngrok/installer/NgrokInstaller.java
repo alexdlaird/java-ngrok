@@ -43,11 +43,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -73,11 +76,11 @@ public class NgrokInstaller {
     public static final String WINDOWS = "WINDOWS";
     public static final String LINUX = "LINUX";
     public static final String FREEBSD = "FREEBSD";
-    public static final List<String> UNIX_BINARIES = List.of(MAC, LINUX, FREEBSD);
+    public static final List<String> UNIX_BINARIES = Stream.of(MAC, LINUX, FREEBSD).collect(Collectors.toList());
     public static final Path DEFAULT_NGROK_PATH = Paths.get(getDefaultNgrokDir().toString(), NgrokInstaller.getNgrokBin());
     public static final Path DEFAULT_CONFIG_PATH = Paths.get(getDefaultNgrokDir().toString(), "ngrok.yml");
 
-    private static final List<String> VALID_LOG_LEVELS = List.of("info", "debug");
+    private static final List<String> VALID_LOG_LEVELS = Stream.of("info", "debug").collect(Collectors.toList());
 
     private final Yaml yaml = new Yaml();
 
@@ -274,7 +277,7 @@ public class NgrokInstaller {
         final String key = configPath.toString();
         if (!configCache.containsKey(key) || !useCache) {
             try {
-                final String config = Files.readString(configPath);
+                final String config = new String(Files.readAllBytes(configPath));
 
                 if (isBlank(config)) {
                     configCache.put(key, getDefaultConfig(ngrokVersion));
@@ -375,7 +378,7 @@ public class NgrokInstaller {
 
             LOGGER.fine(String.format("Download ngrok from %s ...", url));
 
-            httpClient.get(url, List.of(), Map.of(), dest);
+            httpClient.get(url, Collections.emptyList(), Collections.emptyMap(), dest);
         } catch (final IOException | HttpClientException | InterruptedException e) {
             throw new JavaNgrokInstallerException(String.format("An error occurred while downloading ngrok from %s.", url), e);
         }

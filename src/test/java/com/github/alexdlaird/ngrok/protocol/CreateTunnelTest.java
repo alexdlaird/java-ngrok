@@ -57,9 +57,9 @@ public class CreateTunnelTest {
                 .withRemoteAddr("remoteAddr")
                 .withMetadata("metadata")
                 .withOAuth(new TunnelOAuth.Builder().withProvider("testcase")
-                        .withAllowDomains(List.of("one.domain", "two.domain"))
-                        .withAllowEmails(List.of("one@email", "two@email"))
-                        .withScopes(List.of("ascope", "bscope"))
+                        .withAllowDomains(Stream.of("one.domain", "two.domain"))
+                        .withAllowEmails(Stream.of("one@email", "two@email"))
+                        .withScopes(Stream.of("ascope", "bscope"))
                         .build())
                 .withCircuitBreaker(0.5f)
                 .withCompression(false)
@@ -67,14 +67,14 @@ public class CreateTunnelTest {
                 .withProxyProto("proxyProto")
                 .withWebsocketTcpConverter(false)
                 .withTerminateAt("provider")
-                .withRequestHeader(new TunnelHeader.Builder().withAdd(List.of("req-addition"))
-                        .withRemove(List.of("req-subtraction"))
+                .withRequestHeader(new TunnelHeader.Builder().withAdd(Stream.of("req-addition"))
+                        .withRemove(Stream.of("req-subtraction"))
                         .build())
-                .withResponseHeader(new TunnelHeader.Builder().withAdd(List.of("res-addition"))
-                        .withRemove(List.of("res-subtraction"))
+                .withResponseHeader(new TunnelHeader.Builder().withAdd(Stream.of("res-addition"))
+                        .withRemove(Stream.of("res-subtraction"))
                         .build())
-                .withIpRestrictions(new TunnelIPRestrictions.Builder().withAllowCidrs(List.of("allowed"))
-                        .withDenyCidrs(List.of("denied"))
+                .withIpRestrictions(new TunnelIPRestrictions.Builder().withAllowCidrs(Stream.of("allowed"))
+                        .withDenyCidrs(Stream.of("denied"))
                         .build())
                 .withVerifyWebhook(new TunnelVerifyWebhook.Builder().withProvider("provider")
                         .withSecret("secret")
@@ -123,7 +123,7 @@ public class CreateTunnelTest {
     public void testCreateTunnelSchemes() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withSchemes(List.of("http", "https"))
+                .withSchemes(Stream.of("http", "https"))
                 .build();
 
         // THEN
@@ -137,17 +137,17 @@ public class CreateTunnelTest {
     public void testCreateTunnelBindTlsAndSchemesFails() {
         assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
                 .withBindTls(BindTls.TRUE)
-                .withSchemes(List.of("http", "https")));
+                .withSchemes(Stream.of("http", "https")));
 
         assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
-                .withSchemes(List.of("http", "https"))
+                .withSchemes(Stream.of("http", "https"))
                 .withBindTls(BindTls.TRUE));
     }
 
     @Test
     public void testCreateTunnelBasicAuth() {
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withBasicAuth(List.of("token-1", "token-2"))
+                .withBasicAuth(Stream.of("token-1", "token-2"))
                 .build();
 
         assertEquals(2, createTunnel.getBasicAuth().size());
@@ -159,10 +159,10 @@ public class CreateTunnelTest {
     public void testCreateTunnelAuthAndBasicAuthFails() {
         assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
                 .withAuth("auth-token")
-                .withBasicAuth(List.of("auth-token")));
+                .withBasicAuth(Stream.of("auth-token")));
 
         assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
-                .withBasicAuth(List.of("auth-token"))
+                .withBasicAuth(Stream.of("auth-token"))
                 .withAuth("auth-token"));
     }
 
@@ -170,7 +170,7 @@ public class CreateTunnelTest {
     public void testCreateLabelsWithTunnelDefinitions() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withTunnelDefinition(Map.of("labels", List.of("edge=some-edge-id")))
+                .withTunnelDefinition(Map.of("labels", Stream.of("edge=some-edge-id")))
                 .build();
 
         // THEN
@@ -183,6 +183,6 @@ public class CreateTunnelTest {
     public void testCreateBindTlsLabelsFails() {
         // WHEN
         assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
-                .withTunnelDefinition(Map.of("bind_tls", true, "labels", List.of("edge=some-edge-id"))));
+                .withTunnelDefinition(Map.of("bind_tls", true, "labels", Stream.of("edge=some-edge-id"))));
     }
 }

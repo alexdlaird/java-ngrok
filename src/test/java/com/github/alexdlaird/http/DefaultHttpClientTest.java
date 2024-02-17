@@ -44,6 +44,8 @@ import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static java.net.HttpURLConnection.HTTP_BAD_METHOD;
@@ -178,8 +180,8 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
         // WHEN
         final Response<CapturedRequests> response1 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), CapturedRequests.class);
-        final Response<CapturedRequests> response2 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), List.of(new Parameter("tunnel_name", "my-tunnel")), Map.of(), CapturedRequests.class);
-        final Response<CapturedRequests> response3 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), List.of(new Parameter("tunnel_name", "my-tunnel (http)")), Map.of(), CapturedRequests.class);
+        final Response<CapturedRequests> response2 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), Stream.of(new Parameter("tunnel_name", "my-tunnel")).collect(Collectors.toList()), Collections.emptyMap(), CapturedRequests.class);
+        final Response<CapturedRequests> response3 = defaultHttpClient.get(String.format("%s/api/requests/http", publicUrl), Stream.of(new Parameter("tunnel_name", "my-tunnel (http)")).collect(Collectors.toList()), Collections.emptyMap(), CapturedRequests.class);
 
         // THEN
         assertEquals(HTTP_OK, response1.getStatusCode());

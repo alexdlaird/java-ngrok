@@ -802,17 +802,17 @@ public class CreateTunnel {
                 if (ngrokVersion == NgrokVersion.V3) {
                     if (nonNull(bindTls)) {
                         if (bindTls == BindTls.TRUE) {
-                            schemes = List.of("https");
+                            schemes = Stream.of("https");
                         } else if (bindTls == BindTls.FALSE) {
-                            schemes = List.of("http");
+                            schemes = Stream.of("http");
                         } else {
-                            schemes = List.of("http", "https");
+                            schemes = Stream.of("http", "https");
                         }
 
                         bindTls = null;
                     }
                     if (nonNull(auth)) {
-                        basicAuth = List.of(auth);
+                        basicAuth = Stream.of(auth);
 
                         auth = null;
                     }

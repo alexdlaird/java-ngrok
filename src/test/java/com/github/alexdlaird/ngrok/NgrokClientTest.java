@@ -257,7 +257,7 @@ class NgrokClientTest extends NgrokTestCase {
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withNgrokVersion(NgrokVersion.V3)
-                .withSchemes(List.of("http"))
+                .withSchemes(Stream.of("http"))
                 .build();
         final Tunnel tunnel = ngrokClientV3.connect(createTunnel);
 
@@ -275,7 +275,7 @@ class NgrokClientTest extends NgrokTestCase {
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withNgrokVersion(NgrokVersion.V3)
-                .withSchemes(List.of("https"))
+                .withSchemes(Stream.of("https"))
                 .build();
         final Tunnel tunnel = ngrokClientV3.connect(createTunnel);
 
@@ -293,7 +293,7 @@ class NgrokClientTest extends NgrokTestCase {
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withNgrokVersion(NgrokVersion.V3)
-                .withSchemes(List.of("http", "https"))
+                .withSchemes(Stream.of("http", "https"))
                 .build();
         final Tunnel tunnel = ngrokClientV3.connect(createTunnel);
 
@@ -688,7 +688,7 @@ class NgrokClientTest extends NgrokTestCase {
                 "addr", "8000",
                 "subdomain", subdomain,
                 "inspect", Boolean.FALSE,
-                "schemes", List.of("http"),
+                "schemes", Stream.of("http"),
                 "circuit_breaker", 0.5f);
         final Map<String, Object> tcpTunnelConfig = Map.of(
                 "proto", "tcp",
@@ -752,10 +752,10 @@ class NgrokClientTest extends NgrokTestCase {
         // GIVEN
         final Map<String, Object> edgeHttpTunnelConfig = Map.of(
                 "addr", "80",
-                "labels", List.of(String.format("edge=%s", ngrokHttpEdge)));
+                "labels", Stream.of(String.format("edge=%s", ngrokHttpEdge)));
         final Map<String, Object> edgeTcpTunnelConfig = Map.of(
                 "addr", "22",
-                "labels", List.of(String.format("edge=%s", ngrokTcpEdge)));
+                "labels", Stream.of(String.format("edge=%s", ngrokTcpEdge)));
         final Map<String, Object> tunnelsConfig = Map.of(
                 "edge-http-tunnel", edgeHttpTunnelConfig,
                 "edge-tcp-tunnel", edgeTcpTunnelConfig);
@@ -816,7 +816,7 @@ class NgrokClientTest extends NgrokTestCase {
         // GIVEN
         final Map<String, Object> edgeHttpTunnelConfig = Map.of(
                 "addr", "80",
-                "labels", List.of(String.format("edge=%s", ngrokHttpEdge)));
+                "labels", Stream.of(String.format("edge=%s", ngrokHttpEdge)));
         final Map<String, Object> tunnelsConfig = Map.of(
                 "edge-tunnel", edgeHttpTunnelConfig);
         final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
@@ -852,8 +852,8 @@ class NgrokClientTest extends NgrokTestCase {
                 "subdomain", subdomain,
                 "oauth", Map.of(
                         "provider", "google",
-                        "allow_domains", List.of("pyngrok.com"),
-                        "allow_emails", List.of("email@pyngrok.com")
+                        "allow_domains", Stream.of("pyngrok.com"),
+                        "allow_emails", Stream.of("email@pyngrok.com")
                 ));
         final Map<String, Object> tunnelsConfig = Map.of(
                 "http-tunnel", httpTunnelConfig);
