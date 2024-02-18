@@ -25,7 +25,6 @@ package com.github.alexdlaird.http;
 
 import java.net.HttpURLConnection;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 

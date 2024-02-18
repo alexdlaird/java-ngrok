@@ -239,8 +239,8 @@ public class DefaultHttpClient implements HttpClient {
         }
     }
 
-    private String urlWithParameters(final String url,
-                                     final List<Parameter> parameters)
+    protected String urlWithParameters(final String url,
+                                       final List<Parameter> parameters)
             throws UnsupportedEncodingException {
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(url);
