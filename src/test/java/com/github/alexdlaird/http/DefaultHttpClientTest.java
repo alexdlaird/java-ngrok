@@ -23,6 +23,8 @@
 
 package com.github.alexdlaird.http;
 
+import com.github.alexdlaird.exception.JavaNgrokHTTPException;
+import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.NgrokTestCase;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.protocol.CapturedRequest;
@@ -246,5 +248,26 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
         // WHEN
         assertThrows(HttpClientException.class, () -> defaultHttpClient.get("/some-url", List.of(), Map.of(), Tunnel.class));
+    }
+
+    @Test
+    public void testGetTunnelsThrowsException() throws IOException {
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+
+        // GIVEN
+        ngrokProcessV3.start();
+        final NgrokClient ngrokClientV3 = new NgrokClient.Builder()
+                .withJavaNgrokConfig(javaNgrokConfigV3)
+                .withNgrokProcess(ngrokProcessV3)
+                .withHttpClient(defaultHttpClient)
+                .build();
+        final HttpURLConnection mockHttpUrlConnection = mock(HttpURLConnection.class);
+        doReturn(mockHttpUrlConnection).when(defaultHttpClient).createHttpUrlConnection(any());
+        doAnswer(invocation -> {
+            throw new SocketTimeoutException("Download failed");
+        }).when(mockHttpUrlConnection).getInputStream();
+
+        // WHEN
+        assertThrows(JavaNgrokHTTPException.class, () -> ngrokClientV3.getTunnels());
     }
 }
