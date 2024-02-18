@@ -45,8 +45,8 @@ test-downstream-dependency:
 		git clone --branch java8 https://github.com/alexdlaird/java-ngrok-example-dropwizard.git; \
 		make local; \
 		mvn -f java-ngrok-example-dropwizard/pom.xml versions:set-property -Dproperty=java-ngrok.version -DnewVersion=${VERSION}; \
-		make -C java-ngrok-example-dropwizard build; \
-		make -C java-ngrok-example-dropwizard test; \
+		( make -C java-ngrok-example-dropwizard build ) || exit $$?; \
+		( make -C java-ngrok-example-dropwizard test ) || exit $$?; \
 		rm -rf java-ngrok-example-dropwizard; \
 	)
 
