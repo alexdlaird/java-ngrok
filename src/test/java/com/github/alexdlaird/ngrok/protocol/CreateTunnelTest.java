@@ -209,26 +209,39 @@ public class CreateTunnelTest {
     @Test
     public void testCreateWithTunnelDefinitions() {
         // WHEN
+        final Map<String, Object> tunnelDefinition = new HashMap<>();
+        tunnelDefinition.put("labels", Collections.singletonList("edge=some-edge-id"));
+        tunnelDefinition.put("auth", "auth-token");
+        tunnelDefinition.put("host_header", "host-header");
+        tunnelDefinition.put("hostname", "hostname");
+        tunnelDefinition.put("crt", "crt");
+        tunnelDefinition.put("key", "key");
+        tunnelDefinition.put("client_cas", "clientCas");
+        tunnelDefinition.put("remote_addr", "remoteAddr");
+        tunnelDefinition.put("metadata", "metadata");
+        tunnelDefinition.put("compression", "false");
+        tunnelDefinition.put("mutual_tls_cas", "mutualTlsCas");
+        tunnelDefinition.put("proxy_proto", "proxyProto");
+        tunnelDefinition.put("websocket_tcp_converter", "false");
+        tunnelDefinition.put("terminate_at", "provider");
+        final Map<String, Object> requestHeaderDefinition = new HashMap<>();
+        requestHeaderDefinition.put("add", Collections.singletonList("req-addition"));
+        requestHeaderDefinition.put("remove", Collections.singletonList("req-subtraction"));
+        tunnelDefinition.put("request_header", requestHeaderDefinition);
+        final Map<String, Object> responseHeaderDefinition = new HashMap<>();
+        responseHeaderDefinition.put("add", Collections.singletonList("res-addition"));
+        responseHeaderDefinition.put("remove", Collections.singletonList("res-subtraction"));
+        tunnelDefinition.put("response_header", responseHeaderDefinition);
+        final Map<String, Object> ipRestrictionsDefinition = new HashMap<>();
+        ipRestrictionsDefinition.put("allow_cidrs", Collections.singletonList("allowed"));
+        ipRestrictionsDefinition.put("deny_cidrs", Collections.singletonList("denied"));
+        tunnelDefinition.put("ip_restrictions", ipRestrictionsDefinition);
+        final Map<String, Object> verifyWebhookDefinition = new HashMap<>();
+        verifyWebhookDefinition.put("provider", "provider");
+        verifyWebhookDefinition.put("secret", "secret");
+        tunnelDefinition.put("verify_webhook", verifyWebhookDefinition);
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withTunnelDefinition(Map.ofEntries(
-                        Map.entry("labels", Collections.singletonList("edge=some-edge-id")),
-                        Map.entry("auth", "auth-token"),
-                        Map.entry("host_header", "host-header"),
-                        Map.entry("hostname", "hostname"),
-                        Map.entry("crt", "crt"),
-                        Map.entry("key", "key"),
-                        Map.entry("client_cas", "clientCas"),
-                        Map.entry("remote_addr", "remoteAddr"),
-                        Map.entry("metadata", "metadata"),
-                        Map.entry("compression", "false"),
-                        Map.entry("mutual_tls_cas", "mutualTlsCas"),
-                        Map.entry("proxy_proto", "proxyProto"),
-                        Map.entry("websocket_tcp_converter", "false"),
-                        Map.entry("terminate_at", "provider"),
-                        Map.entry("request_header", Map.of("add", Collections.singletonList("req-addition"), "remove", Collections.singletonList("req-subtraction"))),
-                        Map.entry("response_header", Map.of("add", Collections.singletonList("req-addition"), "remove", Collections.singletonList("req-subtraction"))),
-                        Map.entry("ip_restrictions", Map.of("allow_cidrs", Collections.singletonList("allowed"), "deny_cidrs", Collections.singletonList("denied"))),
-                        Map.entry("verify_webhook", Map.of("provider", "provider", "secret", "secret"))))
+                .withTunnelDefinition(Collections.unmodifiableMap(tunnelDefinition))
                 .build();
 
         // THEN
@@ -249,8 +262,8 @@ public class CreateTunnelTest {
         assertEquals("provider", createTunnel.getTerminateAt());
         assertTrue(createTunnel.getRequestHeader().getAdd().contains("req-addition"));
         assertTrue(createTunnel.getRequestHeader().getRemove().contains("req-subtraction"));
-        assertTrue(createTunnel.getResponseHeader().getAdd().contains("req-addition"));
-        assertTrue(createTunnel.getResponseHeader().getRemove().contains("req-subtraction"));
+        assertTrue(createTunnel.getResponseHeader().getAdd().contains("res-addition"));
+        assertTrue(createTunnel.getResponseHeader().getRemove().contains("res-subtraction"));
         assertTrue(createTunnel.getIpRestrictions().getAllowCidrs().contains("allowed"));
         assertTrue(createTunnel.getIpRestrictions().getDenyCidrs().contains("denied"));
         assertEquals("provider", createTunnel.getVerifyWebhook().getProvider());
@@ -263,7 +276,7 @@ public class CreateTunnelTest {
     public void testCreateWithTunnelDefinitionBasicAuth() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withTunnelDefinition(Map.of("basic_auth", Collections.unmodifiableList(
+                .withTunnelDefinition(Collections.singletonMap("basic_auth", Collections.unmodifiableList(
                         Stream.of("token-1", "token-2")
                                 .collect(Collectors.toList()))))
                 .build();
