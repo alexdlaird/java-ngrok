@@ -23,9 +23,7 @@
 
 package com.github.alexdlaird.http;
 
-import com.github.alexdlaird.exception.JavaNgrokInstallerException;
 import com.github.alexdlaird.ngrok.NgrokTestCase;
-import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.protocol.CapturedRequest;
 import com.github.alexdlaird.ngrok.protocol.CapturedRequests;
@@ -36,12 +34,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.util.Collections;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +52,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -76,18 +73,17 @@ public class DefaultHttpClientTest extends NgrokTestCase {
     public void setUp() {
         super.setUp();
 
-        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
-
-        ngrokProcessV3.start();
-
-        defaultHttpClient = new DefaultHttpClient.Builder()
+        defaultHttpClient = spy(new DefaultHttpClient.Builder()
                 .withRetryCount(3)
-                .build();
+                .build());
     }
 
     @Test
     public void testPost() {
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+
         // GIVEN
+        ngrokProcessV3.start();
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
                 .withNgrokVersion(NgrokVersion.V3)
                 .withName("my-tunnel")
@@ -103,7 +99,10 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
     @Test
     public void testGet() {
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+
         // GIVEN
+        ngrokProcessV3.start();
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
                 .withNgrokVersion(NgrokVersion.V3)
                 .withName("my-tunnel")
@@ -128,7 +127,10 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
     @Test
     public void testDelete() {
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+
         // GIVEN
+        ngrokProcessV3.start();
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
                 .withNgrokVersion(NgrokVersion.V3)
                 .build();
@@ -144,7 +146,10 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
     @Test
     public void testPut() {
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+
         // GIVEN
+        ngrokProcessV3.start();
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
                 .withNgrokVersion(NgrokVersion.V3)
                 .withName("my-tunnel")
@@ -160,7 +165,10 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
     @Test
     public void testGetWithQueryParameters() throws InterruptedException, MalformedURLException {
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+
         // GIVEN
+        ngrokProcessV3.start();
         final CreateTunnel request = new CreateTunnel.Builder(true)
                 .withNgrokVersion(NgrokVersion.V3)
                 .withName("my-tunnel")
@@ -215,25 +223,28 @@ public class DefaultHttpClientTest extends NgrokTestCase {
     @Test
     public void testGetRetries() throws IOException, InterruptedException {
         // GIVEN
-        ngrokProcessV3.stop();
-        givenNgrokNotInstalled(javaNgrokConfigV3);
-        final DefaultHttpClient defaultHttpClient_2 = new DefaultHttpClient.Builder()
-                .withRetryCount(3)
-                .build();
-        final DefaultHttpClient mockHttpClient = spy(defaultHttpClient_2);
         final HttpURLConnection mockHttpUrlConnection = mock(HttpURLConnection.class);
-        final NgrokInstaller ngrokInstaller_2 = new NgrokInstaller(mockHttpClient);
-        doReturn(mockHttpUrlConnection).when(mockHttpClient).createHttpUrlConnection(any());
+        doReturn(mockHttpUrlConnection).when(defaultHttpClient).createHttpUrlConnection(any());
         doAnswer(invocation -> {
             throw new SocketTimeoutException("Download failed");
         }).when(mockHttpUrlConnection).getInputStream();
 
         // WHEN
-        assertThrows(JavaNgrokInstallerException.class, () -> ngrokInstaller_2.installNgrok(javaNgrokConfigV3.getNgrokPath(), javaNgrokConfigV3.getNgrokVersion()));
+        assertThrows(HttpClientException.class, () -> defaultHttpClient.get("/some-url", List.of(), Map.of(), Paths.get("some", "path")));
 
         // THEN
-        verify(mockHttpClient, times(4)).get(any(), any(), any(), any(), anyInt());
-        verify(mockHttpClient, times(4)).getInputStream(any(), any(), any(), any());
-        assertFalse(Files.exists(javaNgrokConfigV3.getNgrokPath()));
+        verify(defaultHttpClient, times(4)).get(any(), any(), any(), any(), anyInt());
+        verify(defaultHttpClient, times(4)).getInputStream(any(), any(), any(), any());
+    }
+
+    @Test
+    public void testGetThrowsException() throws IOException {
+        // GIVEN
+        doAnswer(invocation -> {
+            throw new UnsupportedEncodingException("Bad input params");
+        }).when(defaultHttpClient).urlWithParameters(any(), any());
+
+        // WHEN
+        assertThrows(HttpClientException.class, () -> defaultHttpClient.get("/some-url", List.of(), Map.of(), Tunnel.class));
     }
 }
