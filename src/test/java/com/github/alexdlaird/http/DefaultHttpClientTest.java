@@ -233,7 +233,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         }).when(mockHttpUrlConnection).getInputStream();
 
         // WHEN
-        assertThrows(HttpClientException.class, () -> defaultHttpClient.get("/some-url", List.of(), Map.of(), Paths.get("some", "path")));
+        assertThrows(HttpClientException.class, () -> defaultHttpClient.get("/some-url", Collections.emptyList(), Collections.emptyMap(), Paths.get("some", "path")));
 
         // THEN
         verify(defaultHttpClient, times(4)).get(any(), any(), any(), any(), anyInt());
@@ -248,7 +248,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         }).when(defaultHttpClient).urlWithParameters(any(), any());
 
         // WHEN
-        assertThrows(HttpClientException.class, () -> defaultHttpClient.get("/some-url", List.of(), Map.of(), Tunnel.class));
+        assertThrows(HttpClientException.class, () -> defaultHttpClient.get("/some-url", Collections.emptyList(), Collections.emptyMap(), Tunnel.class));
     }
 
     @Test
