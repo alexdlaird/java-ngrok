@@ -36,6 +36,7 @@ import java.net.SocketTimeoutException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Map;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;

@@ -42,10 +42,9 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static java.net.HttpURLConnection.HTTP_BAD_METHOD;
