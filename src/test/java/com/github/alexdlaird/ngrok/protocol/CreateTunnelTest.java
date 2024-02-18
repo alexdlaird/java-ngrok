@@ -193,7 +193,7 @@ public class CreateTunnelTest {
                         Map.entry("websocket_tcp_converter", "false"),
                         Map.entry("terminate_at", "provider"),
                         Map.entry("request_header", Map.of("add", List.of("req-addition"), "remove", List.of("req-subtraction"))),
-                        Map.entry("response_header", Map.of("add", List.of("req-addition"), "remove", List.of("req-subtraction"))),
+                        Map.entry("response_header", Map.of("add", List.of("res-addition"), "remove", List.of("res-subtraction"))),
                         Map.entry("ip_restrictions", Map.of("allow_cidrs", List.of("allowed"), "deny_cidrs", List.of("denied"))),
                         Map.entry("verify_webhook", Map.of("provider", "provider", "secret", "secret"))))
                 .build();
@@ -216,8 +216,8 @@ public class CreateTunnelTest {
         assertEquals("provider", createTunnel.getTerminateAt());
         assertTrue(createTunnel.getRequestHeader().getAdd().contains("req-addition"));
         assertTrue(createTunnel.getRequestHeader().getRemove().contains("req-subtraction"));
-        assertTrue(createTunnel.getResponseHeader().getAdd().contains("req-addition"));
-        assertTrue(createTunnel.getResponseHeader().getRemove().contains("req-subtraction"));
+        assertTrue(createTunnel.getResponseHeader().getAdd().contains("res-addition"));
+        assertTrue(createTunnel.getResponseHeader().getRemove().contains("res-subtraction"));
         assertTrue(createTunnel.getIpRestrictions().getAllowCidrs().contains("allowed"));
         assertTrue(createTunnel.getIpRestrictions().getDenyCidrs().contains("denied"));
         assertEquals("provider", createTunnel.getVerifyWebhook().getProvider());
