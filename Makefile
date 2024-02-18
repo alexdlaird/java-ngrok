@@ -45,7 +45,7 @@ test-downstream-dependency:
 	@if [[ "${VERSION}" == "" ]]; then echo "VERSION is not set" & exit 1 ; fi
 	@( \
 		git clone https://github.com/alexdlaird/java-ngrok-example-dropwizard.git; \
-		make local; \
+		( make local ) || exit $$?; \
 		mvn -f java-ngrok-example-dropwizard/pom.xml versions:set-property -Dproperty=java-ngrok.version -DnewVersion=${VERSION}; \
 		( make -C java-ngrok-example-dropwizard build ) || exit $$?; \
 		( make -C java-ngrok-example-dropwizard test ) || exit $$?; \
