@@ -205,4 +205,72 @@ public class CreateTunnelTest {
         assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
                 .withTunnelDefinition(tunnelDefinitions));
     }
+
+    @Test
+    public void testCreateWithTunnelDefinitions() {
+        // WHEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withTunnelDefinition(Map.ofEntries(
+                        Map.entry("labels", Collections.singletonList("edge=some-edge-id")),
+                        Map.entry("auth", "auth-token"),
+                        Map.entry("host_header", "host-header"),
+                        Map.entry("hostname", "hostname"),
+                        Map.entry("crt", "crt"),
+                        Map.entry("key", "key"),
+                        Map.entry("client_cas", "clientCas"),
+                        Map.entry("remote_addr", "remoteAddr"),
+                        Map.entry("metadata", "metadata"),
+                        Map.entry("compression", "false"),
+                        Map.entry("mutual_tls_cas", "mutualTlsCas"),
+                        Map.entry("proxy_proto", "proxyProto"),
+                        Map.entry("websocket_tcp_converter", "false"),
+                        Map.entry("terminate_at", "provider"),
+                        Map.entry("request_header", Map.of("add", Collections.singletonList("req-addition"), "remove", Collections.singletonList("req-subtraction"))),
+                        Map.entry("response_header", Map.of("add", Collections.singletonList("req-addition"), "remove", Collections.singletonList("req-subtraction"))),
+                        Map.entry("ip_restrictions", Map.of("allow_cidrs", Collections.singletonList("allowed"), "deny_cidrs", Collections.singletonList("denied"))),
+                        Map.entry("verify_webhook", Map.of("provider", "provider", "secret", "secret"))))
+                .build();
+
+        // THEN
+        assertEquals(1, createTunnel.getLabels().size());
+        assertEquals("edge=some-edge-id", createTunnel.getLabels().get(0));
+        assertEquals("auth-token", createTunnel.getAuth());
+        assertEquals("host-header", createTunnel.getHostHeader());
+        assertEquals("hostname", createTunnel.getHostname());
+        assertEquals("crt", createTunnel.getCrt());
+        assertEquals("key", createTunnel.getKey());
+        assertEquals("clientCas", createTunnel.getClientCas());
+        assertEquals("remoteAddr", createTunnel.getRemoteAddr());
+        assertEquals("metadata", createTunnel.getMetadata());
+        assertFalse(createTunnel.isCompression());
+        assertEquals("mutualTlsCas", createTunnel.getMutualTlsCas());
+        assertEquals("proxyProto", createTunnel.getProxyProto());
+        assertFalse(createTunnel.isWebsocketTcpConverter());
+        assertEquals("provider", createTunnel.getTerminateAt());
+        assertTrue(createTunnel.getRequestHeader().getAdd().contains("req-addition"));
+        assertTrue(createTunnel.getRequestHeader().getRemove().contains("req-subtraction"));
+        assertTrue(createTunnel.getResponseHeader().getAdd().contains("req-addition"));
+        assertTrue(createTunnel.getResponseHeader().getRemove().contains("req-subtraction"));
+        assertTrue(createTunnel.getIpRestrictions().getAllowCidrs().contains("allowed"));
+        assertTrue(createTunnel.getIpRestrictions().getDenyCidrs().contains("denied"));
+        assertEquals("provider", createTunnel.getVerifyWebhook().getProvider());
+        assertEquals("secret", createTunnel.getVerifyWebhook().getSecret());
+
+        assertNull(createTunnel.getBindTls());
+    }
+
+    @Test
+    public void testCreateWithTunnelDefinitionBasicAuth() {
+        // WHEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withTunnelDefinition(Map.of("basic_auth", Collections.unmodifiableList(
+                        Stream.of("token-1", "token-2")
+                                .collect(Collectors.toList()))))
+                .build();
+
+        // THEN
+        assertEquals(2, createTunnel.getBasicAuth().size());
+        assertEquals("token-1", createTunnel.getBasicAuth().get(0));
+        assertEquals("token-2", createTunnel.getBasicAuth().get(1));
+    }
 }
