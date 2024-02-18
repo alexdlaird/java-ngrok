@@ -255,7 +255,6 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
 
         // GIVEN
-        ngrokProcessV3.start();
         final NgrokClient ngrokClientV3 = new NgrokClient.Builder()
                 .withJavaNgrokConfig(javaNgrokConfigV3)
                 .withNgrokProcess(ngrokProcessV3)
@@ -264,7 +263,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         final HttpURLConnection mockHttpUrlConnection = mock(HttpURLConnection.class);
         doReturn(mockHttpUrlConnection).when(defaultHttpClient).createHttpUrlConnection(any());
         doAnswer(invocation -> {
-            throw new SocketTimeoutException("Download failed");
+            throw new SocketTimeoutException("GET failed");
         }).when(mockHttpUrlConnection).getInputStream();
 
         // WHEN
