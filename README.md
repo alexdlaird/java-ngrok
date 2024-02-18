@@ -2,7 +2,7 @@
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/)
 [![Build](https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml/badge.svg?branch=1.4.x)](https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml)
-[![Codecov](https://codecov.io/gh/alexdlaird/java-ngrok/branch/main/graph/badge.svg)](https://codecov.io/gh/alexdlaird/java-ngrok)
+[![Codecov](https://codecov.io/gh/alexdlaird/java-ngrok/branch/1.4.x/graph/badge.svg)](https://codecov.io/gh/alexdlaird/java-ngrok/tree/1.4.x)
 [![Doc](https://img.shields.io/badge/docs-passing-green)](https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok)
 [![Java Versions](https://img.shields.io/badge/Java-8+-blue)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/)
 [![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)](https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE)
