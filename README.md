@@ -1,6 +1,6 @@
 <p align="center"><img alt="java-ngrok - a Java wrapper for ngrok" src="https://github.com/alexdlaird/java-ngrok/raw/main/logo.png" /></p>
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/)
 [![Build](https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml/badge.svg)](https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml)
 [![Codecov](https://codecov.io/gh/alexdlaird/java-ngrok/branch/main/graph/badge.svg)](https://codecov.io/gh/alexdlaird/java-ngrok)
 [![Doc](https://img.shields.io/badge/docs-passing-green)](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok)
