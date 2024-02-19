@@ -1,10 +1,9 @@
 <p align="center"><img alt="java-ngrok - a Java wrapper for ngrok" src="https://github.com/alexdlaird/java-ngrok/raw/main/logo.png" /></p>
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/)
-[![Build](https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml/badge.svg)](https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml)
-[![Codecov](https://codecov.io/gh/alexdlaird/java-ngrok/branch/main/graph/badge.svg)](https://codecov.io/gh/alexdlaird/java-ngrok)
-[![Doc](https://img.shields.io/badge/docs-passing-green)](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok)
+[![Version](https://img.shields.io/maven-central/v/com.github.alexdlaird/java-ngrok)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/)
 [![Java Versions](https://img.shields.io/badge/Java-11+-blue)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/)
+[![Coverage](https://img.shields.io/codecov/c/github/alexdlaird/java-ngrok)](https://codecov.io/gh/alexdlaird/java-ngrok)
+[![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok)
 [![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)](https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE)
 
 `java-ngrok` is a Java wrapper for `ngrok` that manages its own binary, making `ngrok` available via a convenient Java
