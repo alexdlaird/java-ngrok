@@ -27,7 +27,7 @@ jobs:
         with:
           java-version: 11
           distribution: adopt
-      - name: Build
+      - name: Build code and docs
         run: make build
       - name: Get version
         id: get_version
@@ -36,6 +36,8 @@ jobs:
         run: make validate-release VERSION=${{ steps.get_version.outputs.VERSION }}
       - name: Test
         run: make test
+      - name: Check code
+        run: make check
       - name: Validate package
         run: make local
       - name: Test downstream dependency

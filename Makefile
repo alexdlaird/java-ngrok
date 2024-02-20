@@ -28,6 +28,8 @@ test:
 docs:
 	$(GRADLE_BIN) javadoc
 
+check:
+
 local:
 	$(GRADLE_BIN) publishToMavenLocal
 
