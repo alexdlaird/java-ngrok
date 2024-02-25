@@ -1,4 +1,4 @@
-.PHONY: all build install clean test docs local validate-release test-downstream-dependency upload
+.PHONY: all build install clean test docs check local validate-release test-downstream-dependency upload
 
 SHELL := /usr/bin/env bash
 ifeq ($(OS),Windows_NT)
