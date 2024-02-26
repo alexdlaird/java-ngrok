@@ -79,23 +79,6 @@ at [https://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/
 set the version with [`JavaNgrokConfig.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withNgrokVersion(com.github.alexdlaird.ngrok.installer.NgrokVersion))
 and [`CreateTunnel.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withNgrokVersion(com.github.alexdlaird.ngrok.installer.NgrokVersion)).
 
-### Java 8
-
-[![Version](https://img.shields.io/maven-central/v/com.github.alexdlaird/java8-ngrok)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/)
-[![Java Versions](https://img.shields.io/badge/Java-8+-blue)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/)
-[![Coverage](https://img.shields.io/codecov/c/github/alexdlaird/java-ngrok/1.4.x)](https://codecov.io/gh/alexdlaird/java-ngrok/tree/1.4.x)
-[![Build](https://img.shields.io/github/actions/workflow/status/alexdlaird/java-ngrok/build.yml?branch=1.4.x)](https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml?query=branch%3A1.4.x)
-[![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok)
-[![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)](https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE)
-
-Java 8 support is not actively maintained, but on a periodic basis, `main` may be rebased in to the `1.4.x`
-branch, where a compatible build of this project does exist for Java 8. To use it, include the `java8-ngrok`
-dependency from [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
-
-The [Process API](https://docs.oracle.com/javase/9/docs/api/java/lang/ProcessHandle.html) was introduced in Java 9, so
-certain convenience methods around managing the `ngrok` process (for instance, tearing it down) are not available in
-the Java 8 build.
-
 ## Contributing
 
 If you would like to get involved, be sure to review
