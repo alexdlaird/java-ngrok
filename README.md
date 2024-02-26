@@ -82,7 +82,7 @@ and [`CreateTunnel.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/d
 ### Java 8
 
 Java 8 support is not actively maintained, this is the custom `1.4.x` branch, where a compatible build of this project
-exists for Java 8. Use the maintained `java-ngrok` dependency from [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/)
+exists for Java 8. Use the maintained `java-ngrok` dependency from [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/)
 and [the `main` branch](https://github.com/alexdlaird/java-ngrok) for Java 9 and above.
 
 The [Process API](https://docs.oracle.com/javase/9/docs/api/java/lang/ProcessHandle.html) was introduced in Java 9, so
