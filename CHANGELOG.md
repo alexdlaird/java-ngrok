@@ -166,7 +166,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## 1.4.x
 The `1.4.x` branch is where support for Java 8 of `java-ngrok` is passively maintains. It is available through the `java8-ngrok` artifact on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
 
-## [1.4.9](https://github.com/alexdlaird/java-ngrok/compare/1.4.8...1.4.9) - 2024-02-26
+## [1.4.10](https://github.com/alexdlaird/java-ngrok/compare/1.4.8...1.4.10) - 2024-02-26
 ### Added
 - Build improvements.
 - Documentation improvements.
