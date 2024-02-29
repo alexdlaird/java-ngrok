@@ -173,13 +173,16 @@ The `1.4.x` branch is where support for Java 8 of `java-ngrok` is passively main
 
 ## [1.4.8](https://github.com/alexdlaird/java-ngrok/compare/1.4.6...1.4.8) - 2024-02-19
 ### Added
-- Rebased the `1.4.x` branch with Java 8-compatible changes from `main` between `1.6.0` and `2.2.12`. See the [`main changelog`](https://github.com/alexdlaird/java-ngrok/blob/main/CHANGELOG.md) for full details.
+- Rebased the `1.4.x` branch with Java 8-compatible changes from `main` between `1.6.0` and `2.2.12`. See the [`main changelog`](https://github.com/alexdlaird/java-ngrok/blob/main/CHANGELOG.md#160---2022-11-28) for full details.
 - Biggest change is support for `ngrok` v3—including `labels`—and that `ngrok` v3 is installed by default.
+
+### Removed
+- `NgrokProcess.stopMonitorThread()`, use [NgrokProcess.stop()](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.8/com/github/alexdlaird/ngrok/process/NgrokProcess.html#stop--) instead.
 
 ## [1.4.6](https://github.com/alexdlaird/java-ngrok/compare/1.4.5...1.4.6) - 2024-02-15
 
 ### Added
-- If a value for `authToken` is not set in [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.4.6/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), it will attempt to use the environment variable `NGROK_AUTHTOKEN` if it is set.
+- If a value for `authToken` is not set in [`JavaNgrokConfig`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.8/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), it will attempt to use the environment variable `NGROK_AUTHTOKEN` if it is set.
 - Test improvements, suite now respects `NGROK_AUTHTOKEN` for all necessary tests (skipped if not set, rather than tests failing).
 - Build and stability improvements.
 
