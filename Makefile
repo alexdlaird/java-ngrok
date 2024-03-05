@@ -1,4 +1,4 @@
-.PHONY: all build install clean test docs check local validate-release test-downstream-dependency upload
+.PHONY: all build install clean test docs check local validate-release test-downstream upload
 
 SHELL := /usr/bin/env bash
 ifeq ($(OS),Windows_NT)
@@ -39,7 +39,7 @@ validate-release:
 	@if [[ $$(grep "version \"${VERSION}\"" build.gradle) == "" ]] ; then echo "Version not bumped in build.gradle" & exit 1 ; fi
 	@if [[ $$(grep "VERSION = \"${VERSION}\"" src/main/java/com/github/alexdlaird/ngrok/NgrokClient.java) == "" ]] ; then echo "Version not bumped in NgrokClient.java" & exit 1 ; fi
 
-test-downstream-dependency:
+test-downstream:
 	@if [[ "${VERSION}" == "" ]]; then echo "VERSION is not set" & exit 1 ; fi
 	@( \
 		git clone https://github.com/alexdlaird/java-ngrok-example-dropwizard.git; \
