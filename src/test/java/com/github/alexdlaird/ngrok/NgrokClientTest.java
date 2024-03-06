@@ -931,7 +931,8 @@ class NgrokClientTest extends NgrokTestCase {
     public void testSetAuthTokenV2() throws IOException {
         // WHEN
         ngrokClientV2.setAuthToken("807ad30a-73be-48d8");
-        final String contents = new String(Files.readAllBytes(javaNgrokConfigV2.getConfigPath()), StandardCharsets.UTF_8);
+        final String contents = new String(Files.readAllBytes(javaNgrokConfigV2.getConfigPath()),
+            StandardCharsets.UTF_8);
 
         // THEN
         assertThat(contents, containsString("807ad30a-73be-48d8"));
@@ -942,7 +943,8 @@ class NgrokClientTest extends NgrokTestCase {
     public void testSetAuthTokenV3() throws IOException {
         // WHEN
         ngrokClientV3.setAuthToken("807ad30a-73be-48d8");
-        final String contents = new String(Files.readAllBytes(javaNgrokConfigV3.getConfigPath()), StandardCharsets.UTF_8);
+        final String contents = new String(Files.readAllBytes(javaNgrokConfigV3.getConfigPath()),
+            StandardCharsets.UTF_8);
 
         // THEN
         assertThat(contents, containsString("807ad30a-73be-48d8"));
