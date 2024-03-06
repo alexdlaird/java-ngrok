@@ -118,8 +118,8 @@ public class NgrokProcess {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
                     stop();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                } catch (final IOException ex) {
+                    LOGGER.log(Level.INFO, "An error occurred when stopping the process", ex);
                 }
             }));
 
@@ -181,8 +181,12 @@ public class NgrokProcess {
         processMonitor.stop();
         process.descendants().forEach(ProcessHandle::destroy);
         process.destroy();
+        if (nonNull(processMonitor.reader)) {
+            processMonitor.reader.close();
+        }
 
         process = null;
+        processMonitor = null;
     }
 
     /**
@@ -402,10 +406,7 @@ public class NgrokProcess {
             return alive;
         }
 
-        private void stop() throws IOException {
-            if (nonNull(reader)) {
-                reader.close();
-            }
+        private void stop() {
             this.alive = false;
         }
 
