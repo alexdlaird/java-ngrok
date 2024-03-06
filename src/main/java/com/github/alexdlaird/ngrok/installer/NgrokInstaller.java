@@ -38,6 +38,7 @@ import java.util.zip.ZipInputStream;
 import org.yaml.snakeyaml.Yaml;
 
 import static com.github.alexdlaird.util.StringUtils.isBlank;
+import static java.util.Objects.nonNull;
 
 /**
  * A helper for downloading and installing the <code>ngrok</code> for the current system.
@@ -325,7 +326,7 @@ public class NgrokInstaller {
             final byte[] buffer = new byte[1024];
             final ZipInputStream in = new ZipInputStream(new FileInputStream(zipPath.toFile()));
             ZipEntry zipEntry;
-            while ((zipEntry = in.getNextEntry()) != null) {
+            while (nonNull(zipEntry = in.getNextEntry())) {
                 final Path file = Paths.get(dir.toString(), zipEntry.getName());
                 if (!file.normalize().startsWith(dir)) {
                     throw new JavaNgrokSecurityException("Bad zip entry, paths don't match");

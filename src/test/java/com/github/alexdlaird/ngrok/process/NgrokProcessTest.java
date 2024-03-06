@@ -50,7 +50,7 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testStop() {
+    public void testStop() throws IOException {
         // GIVEN
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
         ngrokProcessV3.start();

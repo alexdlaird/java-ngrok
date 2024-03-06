@@ -346,7 +346,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testKill() {
+    public void testKill() throws IOException {
         // GIVEN
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
         final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build();

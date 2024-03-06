@@ -23,6 +23,7 @@ import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import com.github.alexdlaird.ngrok.protocol.Version;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -389,7 +390,7 @@ public class NgrokClient {
      * Terminate the <code>ngrok</code> processes, if running. This method will not block, it will
      * just issue a kill request.
      */
-    public void kill() {
+    public void kill() throws IOException {
         ngrokProcess.stop();
 
         currentTunnels.clear();

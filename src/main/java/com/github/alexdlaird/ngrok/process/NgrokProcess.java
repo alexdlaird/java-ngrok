@@ -38,8 +38,8 @@ import static java.util.Objects.nonNull;
 import static java.util.logging.Level.SEVERE;
 
 /**
- * An object containing information about the <code>ngrok</code> process.
- * Can be configured with {@link JavaNgrokConfig}.
+ * An object containing information about the <code>ngrok</code> process. Can be configured with
+ * {@link JavaNgrokConfig}.
  */
 public class NgrokProcess {
 
@@ -52,8 +52,8 @@ public class NgrokProcess {
 
     /**
      * If <code>ngrok</code> is not already installed at {@link JavaNgrokConfig#getNgrokPath()}, the given
-     * {@link NgrokInstaller} will install it. This will also provision a default <code>ngrok</code> config
-     * at {@link JavaNgrokConfig#getConfigPath()}, if none exists.
+     * {@link NgrokInstaller} will install it. This will also provision a default <code>ngrok</code> config at
+     * {@link JavaNgrokConfig#getConfigPath()}, if none exists.
      *
      * @param javaNgrokConfig The <code>java-ngrok</code> to use when interacting with the <code>ngrok</code> binary.
      * @param ngrokInstaller  The class used to download and install <code>ngrok</code>.
@@ -115,7 +115,13 @@ public class NgrokProcess {
         processBuilder.command(command);
         try {
             process = processBuilder.start();
-            Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    stop();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }));
 
             LOGGER.fine(String.format("ngrok process starting with PID: %s", process.pid()));
 
@@ -160,10 +166,10 @@ public class NgrokProcess {
     }
 
     /**
-     * Terminate the <code>ngrok</code> processes, if running. This method will not block, it will
-     * just issue a kill request.
+     * Terminate the <code>ngrok</code> processes, if running. This method will not block, it will just issue a kill
+     * request.
      */
-    public void stop() {
+    public void stop() throws IOException {
         if (!isRunning()) {
             LOGGER.info(String.format("\"ngrokPath\" %s is not running a process", javaNgrokConfig.getNgrokPath()));
 
@@ -180,8 +186,8 @@ public class NgrokProcess {
     }
 
     /**
-     * Set the <code>ngrok</code> auth token in the config file, enabling authenticated features (for instance,
-     * more concurrent tunnels, custom subdomains, etc.).
+     * Set the <code>ngrok</code> auth token in the config file, enabling authenticated features (for instance, more
+     * concurrent tunnels, custom subdomains, etc.).
      *
      * <pre>
      * // Setting an auth token allows us to do things like open multiple tunnels at the same time
@@ -230,7 +236,8 @@ public class NgrokProcess {
             final Process process = processBuilder.start();
             process.waitFor();
 
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+            final BufferedReader reader = new BufferedReader(
+                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
             final String result = captureOutput(reader);
             reader.close();
             if (!result.contains("Authtoken saved")) {
@@ -245,7 +252,7 @@ public class NgrokProcess {
         final StringBuilder builder = new StringBuilder();
 
         String line;
-        while ((line = reader.readLine()) != null) {
+        while (nonNull(line = reader.readLine())) {
             builder.append(line).append("\n");
         }
 
@@ -288,7 +295,8 @@ public class NgrokProcess {
             final Process process = processBuilder.start();
             process.waitFor();
 
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+            final BufferedReader reader = new BufferedReader(
+                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
             final String result = captureOutput(reader);
             reader.close();
             return result.split("version ")[1];
@@ -323,6 +331,7 @@ public class NgrokProcess {
     }
 
     public static class ProcessMonitor implements Runnable {
+
         private final Process process;
         private final JavaNgrokConfig javaNgrokConfig;
         private final HttpClient httpClient;
@@ -330,6 +339,7 @@ public class NgrokProcess {
         private boolean tunnelStarted;
         private boolean clientConnected;
         private String startupError;
+        private BufferedReader reader;
 
         private final List<NgrokLog> logs = new ArrayList<>();
         private boolean alive = true;
@@ -349,14 +359,13 @@ public class NgrokProcess {
 
         @Override
         public void run() {
-            InputStreamReader inputStream = null;
-            BufferedReader reader = null;
             try {
-                inputStream = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8);
+                final InputStreamReader inputStream = new InputStreamReader(process.getInputStream(),
+                    StandardCharsets.UTF_8);
                 reader = new BufferedReader(inputStream);
 
                 String line;
-                while ((line = reader.readLine()) != null) {
+                while (nonNull(line = reader.readLine())) {
                     logStartupLine(line);
 
                     if (isHealthy()) {
@@ -369,21 +378,13 @@ public class NgrokProcess {
 
                 while (alive && process.isAlive()
                     && javaNgrokConfig.isKeepMonitoring()
-                    && (line = reader.readLine()) != null) {
+                    && nonNull(line = reader.readLine())) {
                     logLine(line);
                 }
 
                 alive = false;
             } catch (final IOException e) {
                 throw new NgrokException("An error occurred in the ngrok process.", e);
-            } finally {
-                try {
-                    if (reader != null) {
-                        reader.close();
-                    }
-                } catch (final IOException ex) {
-                    LOGGER.log(Level.INFO, "Unable to close connection", ex);
-                }
             }
         }
 
@@ -401,7 +402,10 @@ public class NgrokProcess {
             return alive;
         }
 
-        private void stop() {
+        private void stop() throws IOException {
+            if (nonNull(reader)) {
+                reader.close();
+            }
             this.alive = false;
         }
 

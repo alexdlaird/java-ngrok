@@ -94,7 +94,8 @@ public class DefaultHttpClientTest extends NgrokTestCase {
                 .withName("my-tunnel")
                 .withBindTls(true)
                 .build();
-        defaultHttpClient.post(String.format("%s/api/tunnels", ngrokProcessV3.getApiUrl()), createTunnel, Tunnel.class);
+        defaultHttpClient.post(String.format("%s/api/tunnels",
+            ngrokProcessV3.getApiUrl()), createTunnel, Tunnel.class);
 
         // WHEN
         final Response<Tunnels> getResponse = defaultHttpClient.get(String.format("%s/api/tunnels",
