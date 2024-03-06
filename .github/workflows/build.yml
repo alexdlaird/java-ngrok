@@ -57,7 +57,7 @@ jobs:
       - name: Validate package
         run: make local
       - name: Upload coverage
-        if: matrix.os == 'ubuntu-latest' && matrix.java-version == '17'
+        if: matrix.os == 'ubuntu-latest' && matrix.java-version == '21'
         uses: codecov/codecov-action@v1
         with:
           file: ./build/reports/jacoco/report.xml
