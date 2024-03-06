@@ -11,7 +11,7 @@ plugins {
 }
 
 group "com.github.alexdlaird"
-version "2.2.13"
+version "2.2.14"
 
 java {
     withJavadocJar()
