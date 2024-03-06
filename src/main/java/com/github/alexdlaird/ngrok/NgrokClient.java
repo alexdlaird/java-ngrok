@@ -521,6 +521,9 @@ public class NgrokClient {
             return this;
         }
 
+        /**
+         * Build the {@link NgrokClient}.
+         */
         public NgrokClient build() {
             if (isNull(javaNgrokConfig)) {
                 javaNgrokConfig = new JavaNgrokConfig.Builder().build();

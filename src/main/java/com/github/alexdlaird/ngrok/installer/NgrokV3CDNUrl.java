@@ -7,7 +7,7 @@
 package com.github.alexdlaird.ngrok.installer;
 
 /**
- * An enum that maps systems and architectures to their corresponding <code>ngrok</code> download URLs.
+ * An enum that maps systems and architectures to their corresponding <code>ngrok</code> V3 download URLs.
  */
 public enum NgrokV3CDNUrl implements NgrokCDNUrl {
 

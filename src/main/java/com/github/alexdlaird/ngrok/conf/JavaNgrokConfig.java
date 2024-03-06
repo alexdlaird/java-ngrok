@@ -265,6 +265,9 @@ public class JavaNgrokConfig {
             return this;
         }
 
+        /**
+         * Build the {@link JavaNgrokConfig}.
+         */
         public JavaNgrokConfig build() {
             if (isNull(ngrokPath)) {
                 ngrokPath = NgrokInstaller.DEFAULT_NGROK_PATH;

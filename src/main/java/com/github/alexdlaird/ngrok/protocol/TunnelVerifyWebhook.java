@@ -35,19 +35,31 @@ public class TunnelVerifyWebhook {
         return secret;
     }
 
+    /**
+     * Builder for a {@link TunnelVerifyWebhook}.
+     */
     public static class Builder {
         public String provider;
         public String secret;
 
+        /**
+         * Default constructor for {@link TunnelVerifyWebhook.Builder}.
+         */
         public Builder() {
         }
 
-        public Builder(Map<String, Object> tunnelDefinitions) {
-            if (tunnelDefinitions.containsKey("provider")) {
-                this.provider = (String) tunnelDefinitions.get("provider");
+        /**
+         * Constructor for {@link TunnelVerifyWebhook.Builder} to be built from <code>verify_webhook</code>
+         * portion of a tunnel definition.
+         *
+         * @param tunnelVerifyWebhookDefinitions The map of Tunnel OAuth attributes.
+         */
+        public Builder(Map<String, Object> tunnelVerifyWebhookDefinitions) {
+            if (tunnelVerifyWebhookDefinitions.containsKey("provider")) {
+                this.provider = (String) tunnelVerifyWebhookDefinitions.get("provider");
             }
-            if (tunnelDefinitions.containsKey("secret")) {
-                this.secret = (String) tunnelDefinitions.get("secret");
+            if (tunnelVerifyWebhookDefinitions.containsKey("secret")) {
+                this.secret = (String) tunnelVerifyWebhookDefinitions.get("secret");
             }
         }
 
@@ -67,6 +79,9 @@ public class TunnelVerifyWebhook {
             return this;
         }
 
+        /**
+         * Build the {@link TunnelVerifyWebhook}.
+         */
         public TunnelVerifyWebhook build() {
             return new TunnelVerifyWebhook(this);
         }

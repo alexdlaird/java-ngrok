@@ -36,19 +36,31 @@ public class TunnelHeader {
         return remove;
     }
 
+    /**
+     * Builder for a {@link TunnelHeader}.
+     */
     public static class Builder {
         private List<String> add;
         private List<String> remove;
 
+        /**
+         * Default constructor for {@link TunnelHeader.Builder}.
+         */
         public Builder() {
         }
 
-        public Builder(Map<String, Object> tunnelDefinitions) {
-            if (tunnelDefinitions.containsKey("add")) {
-                this.add = (List<String>) tunnelDefinitions.get("add");
+        /**
+         * Constructor for {@link TunnelHeader.Builder} to be built from <code>request_header</code> or
+         * <code>response_header</code> portion of a tunnel definition.
+         *
+         * @param tunnelHeaderDefinitions The map of Tunnel header attributes.
+         */
+        public Builder(Map<String, Object> tunnelHeaderDefinitions) {
+            if (tunnelHeaderDefinitions.containsKey("add")) {
+                this.add = (List<String>) tunnelHeaderDefinitions.get("add");
             }
-            if (tunnelDefinitions.containsKey("remove")) {
-                this.remove = (List<String>) tunnelDefinitions.get("remove");
+            if (tunnelHeaderDefinitions.containsKey("remove")) {
+                this.remove = (List<String>) tunnelHeaderDefinitions.get("remove");
             }
         }
 
@@ -68,6 +80,9 @@ public class TunnelHeader {
             return this;
         }
 
+        /**
+         * Build the {@link TunnelHeader}.
+         */
         public TunnelHeader build() {
             return new TunnelHeader(this);
         }
