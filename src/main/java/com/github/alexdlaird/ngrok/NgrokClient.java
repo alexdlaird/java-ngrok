@@ -456,7 +456,8 @@ public class NgrokClient {
         }
 
         final String name;
-        final Map<String, Object> tunnelDefinitions = (Map<String, Object>) config.getOrDefault("tunnels", Collections.emptyMap());
+        final Map<String, Object> tunnelDefinitions = (Map<String, Object>) config.getOrDefault("tunnels",
+            Collections.emptyMap());
         if (isNull(createTunnel.getName()) && tunnelDefinitions.containsKey("java-ngrok-default")) {
             name = "java-ngrok-default";
             createTunnelBuilder.withName(name);

@@ -64,7 +64,8 @@ public class CreateTunnelTest {
                 .withResponseHeader(new TunnelHeader.Builder().withAdd(Collections.singletonList(("res-addition")))
                         .withRemove(Collections.singletonList(("res-subtraction")))
                         .build())
-                .withIpRestrictions(new TunnelIPRestrictions.Builder().withAllowCidrs(Collections.singletonList(("allowed")))
+                .withIpRestrictions(new TunnelIPRestrictions
+                    .Builder().withAllowCidrs(Collections.singletonList(("allowed")))
                         .withDenyCidrs(Collections.singletonList(("denied")))
                         .build())
                 .withVerifyWebhook(new TunnelVerifyWebhook.Builder().withProvider("provider")
@@ -169,7 +170,8 @@ public class CreateTunnelTest {
     public void testCreateLabelsWithTunnelDefinitions() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withTunnelDefinition(Collections.singletonMap("labels", Collections.singletonList(("edge=some-edge-id"))))
+                .withTunnelDefinition(Collections.singletonMap("labels",
+                    Collections.singletonList(("edge=some-edge-id"))))
                 .build();
 
         // THEN

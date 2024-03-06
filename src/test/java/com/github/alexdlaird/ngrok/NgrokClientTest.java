@@ -35,6 +35,7 @@ import com.github.alexdlaird.ngrok.protocol.Version;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -930,7 +931,7 @@ class NgrokClientTest extends NgrokTestCase {
     public void testSetAuthTokenV2() throws IOException {
         // WHEN
         ngrokClientV2.setAuthToken("807ad30a-73be-48d8");
-        final String contents = new String(Files.readAllBytes(javaNgrokConfigV2.getConfigPath()));
+        final String contents = new String(Files.readAllBytes(javaNgrokConfigV2.getConfigPath()), StandardCharsets.UTF_8);
 
         // THEN
         assertThat(contents, containsString("807ad30a-73be-48d8"));
@@ -941,7 +942,7 @@ class NgrokClientTest extends NgrokTestCase {
     public void testSetAuthTokenV3() throws IOException {
         // WHEN
         ngrokClientV3.setAuthToken("807ad30a-73be-48d8");
-        final String contents = new String(Files.readAllBytes(javaNgrokConfigV3.getConfigPath()));
+        final String contents = new String(Files.readAllBytes(javaNgrokConfigV3.getConfigPath()), StandardCharsets.UTF_8);
 
         // THEN
         assertThat(contents, containsString("807ad30a-73be-48d8"));
