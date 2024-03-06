@@ -331,6 +331,9 @@ public class NgrokProcess {
         return processMonitor;
     }
 
+    /**
+     * A Runnable that monitors the <code>ngrok</code> thread.
+     */
     public static class ProcessMonitor implements Runnable {
 
         private final Process process;

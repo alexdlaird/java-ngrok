@@ -64,21 +64,30 @@ public class TunnelOAuth {
         private List<String> allowEmails;
         private List<String> allowDomains;
 
+        /**
+         * Default constructor for {@link TunnelOAuth.Builder}.
+         */
         public Builder() {
         }
 
-        public Builder(Map<String, Object> tunnelDefinitions) {
-            if (tunnelDefinitions.containsKey("provider")) {
-                this.provider = (String) tunnelDefinitions.get("provider");
+        /**
+         * Constructor for {@link TunnelOAuth.Builder} to be built from <code>oauth</code>
+         * portion of a tunnel definition.
+         *
+         * @param tunnelOAuthDefinitions The map of Tunnel OAuth attributes.
+         */
+        public Builder(Map<String, Object> tunnelOAuthDefinitions) {
+            if (tunnelOAuthDefinitions.containsKey("provider")) {
+                this.provider = (String) tunnelOAuthDefinitions.get("provider");
             }
-            if (tunnelDefinitions.containsKey("scopes")) {
-                this.scopes = (List<String>) tunnelDefinitions.get("scopes");
+            if (tunnelOAuthDefinitions.containsKey("scopes")) {
+                this.scopes = (List<String>) tunnelOAuthDefinitions.get("scopes");
             }
-            if (tunnelDefinitions.containsKey("allow_emails")) {
-                this.allowEmails = (List<String>) tunnelDefinitions.get("allow_emails");
+            if (tunnelOAuthDefinitions.containsKey("allow_emails")) {
+                this.allowEmails = (List<String>) tunnelOAuthDefinitions.get("allow_emails");
             }
-            if (tunnelDefinitions.containsKey("allow_domains")) {
-                this.allowDomains = (List<String>) tunnelDefinitions.get("allow_domains");
+            if (tunnelOAuthDefinitions.containsKey("allow_domains")) {
+                this.allowDomains = (List<String>) tunnelOAuthDefinitions.get("allow_domains");
             }
         }
 
@@ -115,6 +124,9 @@ public class TunnelOAuth {
             return this;
         }
 
+        /**
+         * Build the {@link TunnelOAuth}.
+         */
         public TunnelOAuth build() {
             return new TunnelOAuth(this);
         }

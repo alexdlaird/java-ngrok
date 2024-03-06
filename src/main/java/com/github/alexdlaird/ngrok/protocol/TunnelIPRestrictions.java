@@ -35,19 +35,31 @@ public class TunnelIPRestrictions {
         return denyCidrs;
     }
 
+    /**
+     * Builder for a {@link TunnelIPRestrictions}.
+     */
     public static class Builder {
         public List<String> allowCidrs;
         public List<String> denyCidrs;
 
+        /**
+         * Default constructor for {@link TunnelIPRestrictions.Builder}.
+         */
         public Builder() {
         }
 
-        public Builder(Map<String, Object> tunnelDefinitions) {
-            if (tunnelDefinitions.containsKey("allow_cidrs")) {
-                this.allowCidrs = (List<String>) tunnelDefinitions.get("allow_cidrs");
+        /**
+         * Constructor for {@link TunnelIPRestrictions.Builder} to be built from <code>ip_restrictions</code>
+         * portion of a tunnel definition.
+         *
+         * @param tunnelIPRestrictionsDefinitions The map of Tunnel IP restrictions attributes.
+         */
+        public Builder(Map<String, Object> tunnelIPRestrictionsDefinitions) {
+            if (tunnelIPRestrictionsDefinitions.containsKey("allow_cidrs")) {
+                this.allowCidrs = (List<String>) tunnelIPRestrictionsDefinitions.get("allow_cidrs");
             }
-            if (tunnelDefinitions.containsKey("deny_cidrs")) {
-                this.denyCidrs = (List<String>) tunnelDefinitions.get("deny_cidrs");
+            if (tunnelIPRestrictionsDefinitions.containsKey("deny_cidrs")) {
+                this.denyCidrs = (List<String>) tunnelIPRestrictionsDefinitions.get("deny_cidrs");
             }
         }
 
@@ -67,6 +79,9 @@ public class TunnelIPRestrictions {
             return this;
         }
 
+        /**
+         * Build the {@link TunnelIPRestrictions}.
+         */
         public TunnelIPRestrictions build() {
             return new TunnelIPRestrictions(this);
         }

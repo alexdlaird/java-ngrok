@@ -6,6 +6,9 @@
 
 package com.github.alexdlaird.ngrok.installer;
 
+/**
+ * An interface for getting <code>ngrok</code> download URLs.
+ */
 public interface NgrokCDNUrl {
     String getUrl();
 }

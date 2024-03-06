@@ -771,6 +771,9 @@ public class CreateTunnel {
             return this;
         }
 
+        /**
+         * Build the {@link CreateTunnel}.
+         */
         public CreateTunnel build() {
             if (isNull(ngrokVersion)) {
                 ngrokVersion = NgrokVersion.V3;

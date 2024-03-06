@@ -71,6 +71,9 @@ public class NgrokInstaller {
 
     private final HttpClient httpClient;
 
+    /**
+     * Constructor that uses the {@link DefaultHttpClient}.
+     */
     public NgrokInstaller() {
         this(new DefaultHttpClient.Builder()
                 .withTimeout(6000)
