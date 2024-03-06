@@ -6,6 +6,9 @@
 
 package com.github.alexdlaird.ngrok;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokHTTPException;
 import com.github.alexdlaird.http.DefaultHttpClient;
@@ -22,7 +25,6 @@ import com.github.alexdlaird.ngrok.protocol.Proto;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import com.github.alexdlaird.ngrok.protocol.Version;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -31,9 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 /**
  * A client for interacting with <a href="https://ngrok.com/docs" target="_blank">ngrok</a>, its binary, and its APIs.

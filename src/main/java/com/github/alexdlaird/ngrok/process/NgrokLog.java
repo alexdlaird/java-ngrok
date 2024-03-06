@@ -6,14 +6,14 @@
 
 package com.github.alexdlaird.ngrok.process;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import static com.github.alexdlaird.util.StringUtils.isBlank;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * An object containing a parsed log from the <code>ngrok</code> process.

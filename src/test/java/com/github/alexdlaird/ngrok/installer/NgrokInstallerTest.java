@@ -6,21 +6,6 @@
 
 package com.github.alexdlaird.ngrok.installer;
 
-import com.github.alexdlaird.exception.JavaNgrokException;
-import com.github.alexdlaird.exception.JavaNgrokInstallerException;
-import com.github.alexdlaird.http.HttpClient;
-import com.github.alexdlaird.ngrok.NgrokTestCase;
-import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
-import com.github.alexdlaird.ngrok.process.NgrokProcess;
-
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
-import org.junit.jupiter.api.Test;
-
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -31,6 +16,20 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+
+import com.github.alexdlaird.exception.JavaNgrokException;
+import com.github.alexdlaird.exception.JavaNgrokInstallerException;
+import com.github.alexdlaird.http.HttpClient;
+import com.github.alexdlaird.ngrok.NgrokTestCase;
+import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
+import com.github.alexdlaird.ngrok.process.NgrokProcess;
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 class NgrokInstallerTest extends NgrokTestCase {
 

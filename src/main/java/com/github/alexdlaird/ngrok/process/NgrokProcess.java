@@ -6,6 +6,12 @@
 
 package com.github.alexdlaird.ngrok.process;
 
+import static com.github.alexdlaird.util.StringUtils.isBlank;
+import static java.net.HttpURLConnection.HTTP_OK;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static java.util.logging.Level.SEVERE;
+
 import com.github.alexdlaird.exception.JavaNgrokSecurityException;
 import com.github.alexdlaird.exception.NgrokException;
 import com.github.alexdlaird.http.DefaultHttpClient;
@@ -16,12 +22,9 @@ import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
-
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -30,12 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static com.github.alexdlaird.util.StringUtils.isBlank;
-import static java.net.HttpURLConnection.HTTP_OK;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static java.util.logging.Level.SEVERE;
 
 /**
  * An object containing information about the <code>ngrok</code> process. Can be configured with

@@ -7,7 +7,6 @@
 package com.github.alexdlaird.ngrok.protocol;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.util.Map;
 
 /**

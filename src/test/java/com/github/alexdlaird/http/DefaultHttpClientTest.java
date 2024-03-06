@@ -6,28 +6,6 @@
 
 package com.github.alexdlaird.http;
 
-import com.github.alexdlaird.exception.JavaNgrokHTTPException;
-import com.github.alexdlaird.ngrok.NgrokClient;
-import com.github.alexdlaird.ngrok.NgrokTestCase;
-import com.github.alexdlaird.ngrok.installer.NgrokVersion;
-import com.github.alexdlaird.ngrok.protocol.CapturedRequest;
-import com.github.alexdlaird.ngrok.protocol.CapturedRequests;
-import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
-import com.github.alexdlaird.ngrok.protocol.Tunnel;
-import com.github.alexdlaird.ngrok.protocol.Tunnels;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static java.net.HttpURLConnection.HTTP_BAD_METHOD;
 import static java.net.HttpURLConnection.HTTP_CREATED;
@@ -49,6 +27,27 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
+import com.github.alexdlaird.exception.JavaNgrokHTTPException;
+import com.github.alexdlaird.ngrok.NgrokClient;
+import com.github.alexdlaird.ngrok.NgrokTestCase;
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
+import com.github.alexdlaird.ngrok.protocol.CapturedRequest;
+import com.github.alexdlaird.ngrok.protocol.CapturedRequests;
+import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
+import com.github.alexdlaird.ngrok.protocol.Tunnel;
+import com.github.alexdlaird.ngrok.protocol.Tunnels;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DefaultHttpClientTest extends NgrokTestCase {
 

@@ -6,29 +6,6 @@
 
 package com.github.alexdlaird.ngrok;
 
-import com.github.alexdlaird.exception.JavaNgrokException;
-import com.github.alexdlaird.http.Response;
-import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
-import com.github.alexdlaird.ngrok.installer.NgrokVersion;
-import com.github.alexdlaird.ngrok.process.NgrokProcess;
-import com.github.alexdlaird.ngrok.protocol.BindTls;
-import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
-import com.github.alexdlaird.ngrok.protocol.Proto;
-import com.github.alexdlaird.ngrok.protocol.Region;
-import com.github.alexdlaird.ngrok.protocol.Tunnel;
-import com.github.alexdlaird.ngrok.protocol.Version;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -43,6 +20,28 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
+import com.github.alexdlaird.exception.JavaNgrokException;
+import com.github.alexdlaird.http.Response;
+import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
+import com.github.alexdlaird.ngrok.process.NgrokProcess;
+import com.github.alexdlaird.ngrok.protocol.BindTls;
+import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
+import com.github.alexdlaird.ngrok.protocol.Proto;
+import com.github.alexdlaird.ngrok.protocol.Region;
+import com.github.alexdlaird.ngrok.protocol.Tunnel;
+import com.github.alexdlaird.ngrok.protocol.Version;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class NgrokClientTest extends NgrokTestCase {
 
