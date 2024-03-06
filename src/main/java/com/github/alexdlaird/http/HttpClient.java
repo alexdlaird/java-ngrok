@@ -45,10 +45,11 @@ public interface HttpClient {
      * @param retries           The retry attempt index, if download fails.
      */
     void get(final String url, final List<Parameter> parameters,
-             final Map<String, String> additionalHeaders, final Path dest, final int retries) throws InterruptedException;
+             final Map<String, String> additionalHeaders, final Path dest, final int retries)
+        throws InterruptedException;
 
     /**
-     * See {@link #get(String, List, Map, Path, int)}
+     * See {@link #get(String, List, Map, Path, int)}.
      */
     default void get(final String url, final List<Parameter> parameters,
                      final Map<String, String> additionalHeaders, final Path dest) throws InterruptedException {

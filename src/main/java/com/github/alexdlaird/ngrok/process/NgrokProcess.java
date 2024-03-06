@@ -19,7 +19,10 @@ import com.github.alexdlaird.ngrok.protocol.Tunnels;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -64,7 +67,8 @@ public class NgrokProcess {
             ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath(), javaNgrokConfig.getNgrokVersion());
         }
         if (!Files.exists(javaNgrokConfig.getConfigPath())) {
-            ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Map.of(), javaNgrokConfig.getNgrokVersion());
+            ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Map.of(),
+                javaNgrokConfig.getNgrokVersion());
         }
     }
 
@@ -79,8 +83,9 @@ public class NgrokProcess {
         }
 
         if (!Files.exists(javaNgrokConfig.getNgrokPath())) {
-            throw new NgrokException(String.format("ngrok binary was not found. " +
-                    "Be sure to call \"NgrokInstaller.installNgrok()\" first for \"ngrokPath\": %s", javaNgrokConfig.getNgrokPath()));
+            throw new NgrokException(String.format("ngrok binary was not found. "
+                    + "Be sure to call \"NgrokInstaller.installNgrok()\" first for \"ngrokPath\": %s",
+                javaNgrokConfig.getNgrokPath()));
         }
         ngrokInstaller.validateConfig(javaNgrokConfig.getConfigPath());
 
@@ -136,9 +141,8 @@ public class NgrokProcess {
                 stop();
 
                 if (nonNull(processMonitor.startupError)) {
-                    throw new NgrokException(String.format("The ngrok process errored on start: %s.", processMonitor.startupError),
-                            processMonitor.logs,
-                            processMonitor.startupError);
+                    throw new NgrokException(String.format("The ngrok process errored on start: %s.",
+                        processMonitor.startupError), processMonitor.logs, processMonitor.startupError);
                 } else {
                     throw new NgrokException("The ngrok process was unable to start.", processMonitor.logs);
                 }
@@ -182,7 +186,7 @@ public class NgrokProcess {
      * <pre>
      * // Setting an auth token allows us to do things like open multiple tunnels at the same time
      * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
-     * ngrokClient.setAuthToken("<NGROK_AUTHTOKEN>")
+     * ngrokClient.setAuthToken("&lt;NGROK_AUTHTOKEN&gt;")
      *
      * // &lt;NgrokTunnel: "http://&lt;public_sub1&gt;.ngrok.io" -&gt; "http://localhost:80"&gt;
      * final Tunnel ngrokTunnel1 = ngrokClient.connect();
@@ -192,8 +196,9 @@ public class NgrokProcess {
      *         .build();
      * final Tunnel ngrokTunnel2 = ngrokClient.connect(createTunnel);
      * </pre>
-     * <p>
-     * The auth token can also be set in the {@link JavaNgrokConfig} that is passed to the {@link NgrokClient.Builder}.
+     *
+     * <p>The auth token can also be set in the {@link JavaNgrokConfig} that is passed to the
+     * {@link NgrokClient.Builder}.
      *
      * @param authToken The auth token.
      */
@@ -207,8 +212,7 @@ public class NgrokProcess {
         if (javaNgrokConfig.getNgrokVersion() == NgrokVersion.V2) {
             command.add("authtoken");
             command.add(authToken);
-        }
-        else {
+        } else {
             command.add("config");
             command.add("add-authtoken");
             command.add(authToken);
@@ -226,9 +230,9 @@ public class NgrokProcess {
             final Process process = processBuilder.start();
             process.waitFor();
 
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
             final String result = captureOutput(reader);
+            reader.close();
             if (!result.contains("Authtoken saved")) {
                 throw new NgrokException(String.format("An error occurred while setting the auth token: %s", result));
             }
@@ -284,9 +288,9 @@ public class NgrokProcess {
             final Process process = processBuilder.start();
             process.waitFor();
 
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
             final String result = captureOutput(reader);
+            reader.close();
             return result.split("version ")[1];
         } catch (final IOException | InterruptedException | ArrayIndexOutOfBoundsException e) {
             throw new NgrokException("An error occurred while trying to update ngrok.", e);
@@ -345,8 +349,11 @@ public class NgrokProcess {
 
         @Override
         public void run() {
+            InputStreamReader inputStream = null;
+            BufferedReader reader = null;
             try {
-                final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                inputStream = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8);
+                reader = new BufferedReader(inputStream);
 
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -360,13 +367,23 @@ public class NgrokProcess {
                     }
                 }
 
-                while (alive && process.isAlive() && javaNgrokConfig.isKeepMonitoring() && (line = reader.readLine()) != null) {
+                while (alive && process.isAlive()
+                    && javaNgrokConfig.isKeepMonitoring()
+                    && (line = reader.readLine()) != null) {
                     logLine(line);
                 }
 
                 alive = false;
             } catch (final IOException e) {
                 throw new NgrokException("An error occurred in the ngrok process.", e);
+            } finally {
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (final IOException ex) {
+                    LOGGER.log(Level.INFO, "Unable to close connection", ex);
+                }
             }
         }
 
@@ -397,7 +414,8 @@ public class NgrokProcess {
                 throw new JavaNgrokSecurityException(String.format("URL must start with \"http\": %s", apiUrl));
             }
 
-            final Response<Tunnels> tunnelsResponse = httpClient.get(String.format("%s/api/tunnels", apiUrl), Tunnels.class);
+            final Response<Tunnels> tunnelsResponse = httpClient.get(String.format("%s/api/tunnels", apiUrl),
+                Tunnels.class);
             if (tunnelsResponse.getStatusCode() != HTTP_OK) {
                 return false;
             }

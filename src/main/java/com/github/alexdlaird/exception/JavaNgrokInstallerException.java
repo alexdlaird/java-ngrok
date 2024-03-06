@@ -9,7 +9,8 @@ package com.github.alexdlaird.exception;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 
 /**
- * Thrown from {@link NgrokInstaller} when an error occurs while downloading and installing the <code>ngrok</code> binary.
+ * Thrown from {@link NgrokInstaller} when an error occurs while downloading and installing the <code>ngrok</code>
+ * binary.
  */
 public class JavaNgrokInstallerException extends JavaNgrokException {
     /**

@@ -29,6 +29,7 @@ docs:
 	$(GRADLE_BIN) javadoc
 
 check:
+	$(GRADLE_BIN) checkstyleMain checkstyleTest spotbugsMain spotbugsTest
 
 local:
 	$(GRADLE_BIN) publishToMavenLocal

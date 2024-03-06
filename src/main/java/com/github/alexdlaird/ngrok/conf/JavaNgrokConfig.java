@@ -203,7 +203,6 @@ public class JavaNgrokConfig {
 
         /**
          * The region in which <code>ngrok</code> should start.
-         * </pre>
          */
         public Builder withRegion(final Region region) {
             this.region = region;

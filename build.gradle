@@ -6,6 +6,8 @@ plugins {
     id "jacoco"
     id "idea"
     id "com.adarshr.test-logger" version "4.0.0"
+    id "checkstyle"
+    id "com.github.spotbugs" version "6.0.8"
 }
 
 group "com.github.alexdlaird"
@@ -42,6 +44,26 @@ jacocoTestReport {
     reports {
         xml.required = true
         xml.destination file("build/reports/jacoco/report.xml")
+    }
+}
+
+spotbugs {
+    ignoreFailures = true
+}
+
+spotbugsMain {
+    reports {
+        html {
+            enabled = true
+        }
+    }
+}
+
+spotbugsTest {
+    reports {
+        html {
+            enabled = true
+        }
     }
 }
 

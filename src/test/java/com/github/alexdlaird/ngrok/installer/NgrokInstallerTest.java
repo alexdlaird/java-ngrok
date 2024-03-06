@@ -12,7 +12,6 @@ import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokTestCase;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -20,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -103,10 +103,12 @@ class NgrokInstallerTest extends NgrokTestCase {
                 .withNgrokPath(Paths.get("build", "bin", "v2", NgrokInstaller.getNgrokBin()))
                 .withNgrokVersion(NgrokVersion.V3)
                 .build();
-        ngrokInstaller.installDefaultConfig(javaNgrokConfigV3Tmp.getConfigPath(), Map.of(), javaNgrokConfigV3Tmp.getNgrokVersion());
+        ngrokInstaller.installDefaultConfig(javaNgrokConfigV3Tmp.getConfigPath(),
+            Map.of(), javaNgrokConfigV3Tmp.getNgrokVersion());
 
         // WHEN
-        final Map<String, Object> ngrokConfig = ngrokInstaller.getNgrokConfig(javaNgrokConfigV3Tmp.getConfigPath(), true, javaNgrokConfigV3Tmp.getNgrokVersion());
+        final Map<String, Object> ngrokConfig = ngrokInstaller.getNgrokConfig(javaNgrokConfigV3Tmp.getConfigPath(),
+            true, javaNgrokConfigV3Tmp.getNgrokVersion());
 
         // THEN
         assertNotNull(ngrokConfig);
@@ -125,19 +127,22 @@ class NgrokInstallerTest extends NgrokTestCase {
     @Test
     public void testWebAddrFalseNotAllowed() {
         // WHEN
-        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(), Map.of("web_addr", "false")));
+        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(
+            javaNgrokConfigV3.getConfigPath(), Map.of("web_addr", "false")));
     }
 
     @Test
     public void testLogFormatJsonNotAllowed() {
         // WHEN
-        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(), Map.of("log_format", "json")));
+        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(
+            javaNgrokConfigV3.getConfigPath(), Map.of("log_format", "json")));
     }
 
     @Test
     public void testLogLevelWarnNotAllowed() {
         // WHEN
-        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(), Map.of("log_level", "warn")));
+        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(
+            javaNgrokConfigV3.getConfigPath(), Map.of("log_level", "warn")));
     }
 
     @Test
@@ -234,7 +239,8 @@ class NgrokInstallerTest extends NgrokTestCase {
         }).when(mockHttpClient).get(any(), any(), any(), any(Path.class));
 
         // WHEN
-        assertThrows(JavaNgrokInstallerException.class, () -> ngrokInstaller_2.installNgrok(javaNgrokConfigV3.getNgrokPath(), javaNgrokConfigV3.getNgrokVersion()));
+        assertThrows(JavaNgrokInstallerException.class, () -> ngrokInstaller_2.installNgrok(
+            javaNgrokConfigV3.getNgrokPath(), javaNgrokConfigV3.getNgrokVersion()));
 
         // THEN
         assertFalse(Files.exists(javaNgrokConfigV3.getNgrokPath()));

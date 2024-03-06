@@ -6,11 +6,11 @@
 
 package com.github.alexdlaird.util;
 
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,7 +22,7 @@ public class StringUtilTest {
         final InputStream is = null;
 
         // WHEN
-        final String str = StringUtils.streamToString(is, Charset.forName("UTF-8"));
+        final String str = StringUtils.streamToString(is, StandardCharsets.UTF_8);
 
         // THEN
         assertNull(str);

@@ -116,10 +116,13 @@ public class DefaultHttpClient implements HttpClient {
                     try {
                         statusCode = httpUrlConnection.getResponseCode();
                         if (nonNull(httpUrlConnection.getErrorStream())) {
-                            errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(), Charset.forName(encoding));
+                            errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(),
+                                Charset.forName(encoding));
                         }
 
-                        msg = "An error occurred when downloading the file (" + httpUrlConnection.getResponseCode() + "): " + errorResponse;
+                        msg = "An error occurred when downloading the file ("
+                            + httpUrlConnection.getResponseCode() + "): "
+                            + errorResponse;
                     } catch (final IOException | NullPointerException ignored) {
                     }
                 }
@@ -300,9 +303,12 @@ public class DefaultHttpClient implements HttpClient {
             if (httpUrlConnection != null) {
                 try {
                     statusCode = httpUrlConnection.getResponseCode();
-                    errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(), Charset.forName(encoding));
+                    errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(),
+                        Charset.forName(encoding));
 
-                    msg = "An error occurred when performing the operation (" + httpUrlConnection.getResponseCode() + "): " + errorResponse;
+                    msg = "An error occurred when performing the operation ("
+                        + httpUrlConnection.getResponseCode() + "): "
+                        + errorResponse;
                 } catch (final IOException | NullPointerException ignored) {
                 }
             }

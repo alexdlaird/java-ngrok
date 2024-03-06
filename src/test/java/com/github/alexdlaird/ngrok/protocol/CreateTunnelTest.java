@@ -7,10 +7,10 @@
 package com.github.alexdlaird.ngrok.protocol;
 
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
-import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -175,10 +175,14 @@ public class CreateTunnelTest {
                         Map.entry("proxy_proto", "proxyProto"),
                         Map.entry("websocket_tcp_converter", "false"),
                         Map.entry("terminate_at", "provider"),
-                        Map.entry("request_header", Map.of("add", List.of("req-addition"), "remove", List.of("req-subtraction"))),
-                        Map.entry("response_header", Map.of("add", List.of("res-addition"), "remove", List.of("res-subtraction"))),
-                        Map.entry("ip_restrictions", Map.of("allow_cidrs", List.of("allowed"), "deny_cidrs", List.of("denied"))),
-                        Map.entry("verify_webhook", Map.of("provider", "provider", "secret", "secret"))))
+                        Map.entry("request_header",
+                            Map.of("add", List.of("req-addition"), "remove", List.of("req-subtraction"))),
+                        Map.entry("response_header",
+                            Map.of("add", List.of("res-addition"), "remove", List.of("res-subtraction"))),
+                        Map.entry("ip_restrictions",
+                            Map.of("allow_cidrs", List.of("allowed"), "deny_cidrs", List.of("denied"))),
+                        Map.entry("verify_webhook",
+                            Map.of("provider", "provider", "secret", "secret"))))
                 .build();
 
         // THEN

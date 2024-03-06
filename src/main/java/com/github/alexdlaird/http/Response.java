@@ -27,7 +27,8 @@ public class Response<T> {
      * @param bodyRaw      The unparsed body of the response.
      * @param headerFields Header fields in the response.
      */
-    public Response(final int statusCode, final T body, final String bodyRaw, final Map<String, List<String>> headerFields) {
+    public Response(final int statusCode, final T body, final String bodyRaw,
+                    final Map<String, List<String>> headerFields) {
         this.statusCode = statusCode;
         this.body = body;
         this.bodyRaw = bodyRaw;
