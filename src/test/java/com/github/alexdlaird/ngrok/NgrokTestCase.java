@@ -6,13 +6,17 @@
 
 package com.github.alexdlaird.ngrok;
 
+import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
+import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.getNgrokBin;
+import static java.util.Objects.nonNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -22,11 +26,6 @@ import java.util.Map;
 import java.util.Random;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-
-import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
-import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.getNgrokBin;
-import static java.util.Objects.nonNull;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class NgrokTestCase {
 

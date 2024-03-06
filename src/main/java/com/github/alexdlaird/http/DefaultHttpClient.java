@@ -6,12 +6,14 @@
 
 package com.github.alexdlaird.http;
 
+import static com.github.alexdlaird.util.StringUtils.isNotBlank;
+import static java.util.Objects.nonNull;
+
 import com.github.alexdlaird.util.StringUtils;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,9 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static com.github.alexdlaird.util.StringUtils.isNotBlank;
-import static java.util.Objects.nonNull;
 
 /**
  * A default client for executing JSON-based HTTP requests.

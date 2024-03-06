@@ -8,7 +8,6 @@ package com.github.alexdlaird.exception;
 
 import com.github.alexdlaird.ngrok.process.NgrokLog;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;

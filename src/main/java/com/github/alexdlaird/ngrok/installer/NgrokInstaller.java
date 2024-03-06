@@ -6,6 +6,9 @@
 
 package com.github.alexdlaird.ngrok.installer;
 
+import static com.github.alexdlaird.util.StringUtils.isBlank;
+import static java.util.Objects.nonNull;
+
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokInstallerException;
 import com.github.alexdlaird.exception.JavaNgrokSecurityException;
@@ -15,12 +18,10 @@ import com.github.alexdlaird.http.HttpClientException;
 import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.google.gson.JsonParseException;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,11 +38,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 import org.yaml.snakeyaml.Yaml;
-
-import static com.github.alexdlaird.util.StringUtils.isBlank;
-import static java.util.Objects.nonNull;
 
 /**
  * A helper for downloading and installing the <code>ngrok</code> for the current system.

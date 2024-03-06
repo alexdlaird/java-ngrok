@@ -6,20 +6,19 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 /**
  * An object that represents a <code>ngrok</code> Tunnel creation request. This object can be serialized
