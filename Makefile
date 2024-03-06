@@ -16,7 +16,7 @@ all: build
 install: local
 
 build:
-	$(GRADLE_BIN) build -x test
+	$(GRADLE_BIN) assemble
 
 clean:
 	$(GRADLE_BIN) clean
@@ -29,6 +29,7 @@ docs:
 	$(GRADLE_BIN) javadoc
 
 check:
+	$(GRADLE_BIN) checkstyleMain checkstyleTest spotbugsMain spotbugsTest
 
 local:
 	$(GRADLE_BIN) publishToMavenLocal

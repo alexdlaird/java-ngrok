@@ -112,14 +112,17 @@ public class DefaultHttpClient implements HttpClient {
 
                 int statusCode = -1;
                 String errorResponse = null;
-                if (httpUrlConnection != null) {
+                if (nonNull(httpUrlConnection)) {
                     try {
                         statusCode = httpUrlConnection.getResponseCode();
                         if (nonNull(httpUrlConnection.getErrorStream())) {
-                            errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(), Charset.forName(encoding));
+                            errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(),
+                                Charset.forName(encoding));
                         }
 
-                        msg = "An error occurred when downloading the file (" + httpUrlConnection.getResponseCode() + "): " + errorResponse;
+                        msg = "An error occurred when downloading the file ("
+                            + httpUrlConnection.getResponseCode() + "): "
+                            + errorResponse;
                     } catch (final IOException | NullPointerException ignored) {
                     }
                 }
@@ -127,11 +130,11 @@ public class DefaultHttpClient implements HttpClient {
                 throw new HttpClientException(msg, ex, url, statusCode, errorResponse);
             }
         } finally {
-            if (httpUrlConnection != null) {
+            if (nonNull(httpUrlConnection)) {
                 httpUrlConnection.disconnect();
             }
             try {
-                if (inputStream != null) {
+                if (nonNull(inputStream)) {
                     inputStream.close();
                 }
             } catch (final IOException ex) {
@@ -184,7 +187,7 @@ public class DefaultHttpClient implements HttpClient {
     private void appendDefaultsToConnection(final HttpURLConnection httpUrlConnection,
                                             final Map<String, String> additionalHeaders) {
         httpUrlConnection.setRequestProperty("Content-Type", contentType);
-        if (additionalHeaders != null) {
+        if (nonNull(additionalHeaders)) {
             for (final Map.Entry<String, String> entry : additionalHeaders.entrySet()) {
                 httpUrlConnection.setRequestProperty(entry.getKey(), entry.getValue());
             }
@@ -203,7 +206,7 @@ public class DefaultHttpClient implements HttpClient {
     }
 
     private <T> String convertRequestToString(final T request) {
-        if (request != null) {
+        if (nonNull(request)) {
             return gson.toJson(request);
         } else {
             return null;
@@ -228,7 +231,7 @@ public class DefaultHttpClient implements HttpClient {
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(url);
 
-        if (parameters != null && parameters.size() > 0) {
+        if (nonNull(parameters) && !parameters.isEmpty()) {
             boolean first = true;
             for (final Parameter parameter : parameters) {
                 if (!first) {
@@ -297,23 +300,26 @@ public class DefaultHttpClient implements HttpClient {
 
             int statusCode = -1;
             String errorResponse = null;
-            if (httpUrlConnection != null) {
+            if (nonNull(httpUrlConnection)) {
                 try {
                     statusCode = httpUrlConnection.getResponseCode();
-                    errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(), Charset.forName(encoding));
+                    errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(),
+                        Charset.forName(encoding));
 
-                    msg = "An error occurred when performing the operation (" + httpUrlConnection.getResponseCode() + "): " + errorResponse;
+                    msg = "An error occurred when performing the operation ("
+                        + httpUrlConnection.getResponseCode() + "): "
+                        + errorResponse;
                 } catch (final IOException | NullPointerException ignored) {
                 }
             }
 
             throw new HttpClientException(msg, ex, url, statusCode, errorResponse);
         } finally {
-            if (httpUrlConnection != null) {
+            if (nonNull(httpUrlConnection)) {
                 httpUrlConnection.disconnect();
             }
             try {
-                if (inputStream != null) {
+                if (nonNull(inputStream)) {
                     inputStream.close();
                 }
             } catch (final IOException ex) {

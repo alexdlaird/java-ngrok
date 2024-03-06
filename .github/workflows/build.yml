@@ -39,10 +39,12 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
           distribution: adopt
-      - name: Build code and docs
+      - name: Build
         run: make build
       - name: Test
         run: make test
+      - name: Build docs
+        run: make docs
       - name: Check code
         run: make check
       - name: Validate package

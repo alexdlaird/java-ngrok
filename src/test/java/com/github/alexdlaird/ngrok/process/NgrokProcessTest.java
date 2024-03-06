@@ -10,8 +10,6 @@ import com.github.alexdlaird.exception.NgrokException;
 import com.github.alexdlaird.ngrok.NgrokTestCase;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,6 +18,8 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
@@ -51,7 +51,7 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testStop() {
+    public void testStop() throws IOException {
         // GIVEN
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
         ngrokProcessV3.start();
@@ -70,13 +70,17 @@ public class NgrokProcessTest extends NgrokTestCase {
         assertFalse(ngrokProcessV2.isRunning());
         ngrokProcessV2.start();
         assertTrue(ngrokProcessV2.isRunning());
-        final Path ngrokPath2 = Paths.get(javaNgrokConfigV2.getNgrokPath().getParent().toString(), "2", NgrokInstaller.getNgrokBin());
-        final Path configPath2 = Paths.get(javaNgrokConfigV2.getConfigPath().getParent().toString(), "config2.yml");
+        final Path ngrokPath2 = Paths.get(javaNgrokConfigV2.getNgrokPath().getParent().toString(),
+            "2",
+            NgrokInstaller.getNgrokBin());
+        final Path configPath2 = Paths.get(javaNgrokConfigV2.getConfigPath().getParent().toString(),
+            "config2.yml");
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV2)
                 .withNgrokPath(ngrokPath2)
                 .withConfigPath(configPath2)
                 .build();
-        ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(), Collections.singletonMap("web_addr", ngrokProcessV2.getApiUrl().substring(7)), javaNgrokConfig2.getNgrokVersion());
+        ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(), Collections.singletonMap("web_addr",
+            ngrokProcessV2.getApiUrl().substring(7)), javaNgrokConfig2.getNgrokVersion());
 
         // WHEN
         NgrokException exception = null;
@@ -110,13 +114,16 @@ public class NgrokProcessTest extends NgrokTestCase {
         assertFalse(ngrokProcessV3.isRunning());
         ngrokProcessV3.start();
         assertTrue(ngrokProcessV3.isRunning());
-        final Path ngrokPath2 = Paths.get(javaNgrokConfigV3.getNgrokPath().getParent().toString(), "2", NgrokInstaller.getNgrokBin());
+        final Path ngrokPath2 = Paths.get(javaNgrokConfigV3.getNgrokPath().getParent().toString(),
+            "2",
+            NgrokInstaller.getNgrokBin());
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
                 .withNgrokPath(ngrokPath2)
                 .withConfigPath(configPath2)
                 .build();
-        ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(), Collections.singletonMap("web_addr", ngrokProcessV3.getApiUrl().substring(7)), javaNgrokConfigV3.getNgrokVersion());
+        ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(), Collections.singletonMap("web_addr",
+            ngrokProcessV3.getApiUrl().substring(7)), javaNgrokConfigV3.getNgrokVersion());
 
         // WHEN
         NgrokException exception = null;
@@ -147,24 +154,32 @@ public class NgrokProcessTest extends NgrokTestCase {
     public void testMultipleProcessesDifferentBinariesV2() {
         // GIVEN
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
-        ngrokInstaller.installDefaultConfig(javaNgrokConfigV2.getConfigPath(), Collections.singletonMap("web_addr", "localhost:4040"), javaNgrokConfigV2.getNgrokVersion());
-        final Path ngrokPathV2_2 = Paths.get(javaNgrokConfigV2.getNgrokPath().getParent().toString(), "2", NgrokInstaller.getNgrokBin());
+        ngrokInstaller.installDefaultConfig(javaNgrokConfigV2.getConfigPath(),
+            Collections.singletonMap("web_addr", "localhost:4040"),
+            javaNgrokConfigV2.getNgrokVersion());
+        final Path ngrokPathV2_2 = Paths.get(javaNgrokConfigV2.getNgrokPath().getParent().toString(),
+            "2", NgrokInstaller.getNgrokBin());
         final Path configPathV2_2 = Paths.get(javaNgrokConfigV2.getConfigPath().getParent().toString(), "configV2_2.yml");
         final JavaNgrokConfig javaNgrokConfigV2_2 = new JavaNgrokConfig.Builder(javaNgrokConfigV2)
                 .withNgrokPath(ngrokPathV2_2)
                 .withConfigPath(configPathV2_2)
                 .build();
-        ngrokInstaller.installDefaultConfig(javaNgrokConfigV2_2.getConfigPath(), Collections.singletonMap("web_addr", "localhost:4041"), javaNgrokConfigV2.getNgrokVersion());
+        ngrokInstaller.installDefaultConfig(javaNgrokConfigV2_2.getConfigPath(),
+            Collections.singletonMap("web_addr", "localhost:4041"),
+            javaNgrokConfigV2.getNgrokVersion());
         ngrokProcessV2_2 = new NgrokProcess(javaNgrokConfigV2_2, ngrokInstaller);
 
-        ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(), Collections.singletonMap("web_addr", "localhost:4042"), javaNgrokConfigV3.getNgrokVersion());
+        ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(),
+            Collections.singletonMap("web_addr", "localhost:4042"),
+            javaNgrokConfigV3.getNgrokVersion());
         final Path ngrokPath2 = Paths.get(javaNgrokConfigV3.getNgrokPath().getParent().toString(), "2", NgrokInstaller.getNgrokBin());
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "configV3_2.yml");
         final JavaNgrokConfig javaNgrokConfigV3_2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
                 .withNgrokPath(ngrokPath2)
                 .withConfigPath(configPath2)
                 .build();
-        ngrokInstaller.installDefaultConfig(javaNgrokConfigV3_2.getConfigPath(), Collections.singletonMap("web_addr", "localhost:4043"), javaNgrokConfigV3.getNgrokVersion());
+        ngrokInstaller.installDefaultConfig(javaNgrokConfigV3_2.getConfigPath(),
+            Collections.singletonMap("web_addr", "localhost:4043"), javaNgrokConfigV3.getNgrokVersion());
         ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfigV3_2, ngrokInstaller);
 
         // WHEN
@@ -217,7 +232,8 @@ public class NgrokProcessTest extends NgrokTestCase {
         Thread.sleep(1000);
 
         // THEN
-        assertThat(Mockito.mockingDetails(logEventCallbackMock).getInvocations().size(), greaterThan(ngrokProcessV3_2.getProcessMonitor().getLogs().size()));
+        assertThat(Mockito.mockingDetails(logEventCallbackMock).getInvocations().size(),
+            greaterThan(ngrokProcessV3_2.getProcessMonitor().getLogs().size()));
         assertEquals(5, ngrokProcessV3_2.getProcessMonitor().getLogs().size());
     }
 

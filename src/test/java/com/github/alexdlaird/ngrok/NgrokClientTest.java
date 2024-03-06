@@ -17,8 +17,6 @@ import com.github.alexdlaird.ngrok.protocol.Proto;
 import com.github.alexdlaird.ngrok.protocol.Region;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Version;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -32,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static org.hamcrest.CoreMatchers.startsWith;
@@ -352,7 +352,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testKill() {
+    public void testKill() throws IOException {
         // GIVEN
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
         final CreateTunnel createTunnel = new CreateTunnel.Builder().withName("my-tunnel").build();
@@ -578,7 +578,8 @@ class NgrokClientTest extends NgrokTestCase {
         final String apiUrl = ngrokClientV3.getNgrokProcess().getApiUrl();
 
         // WHEN
-        final Response<Tunnel> response = ngrokClientV3.getHttpClient().get(String.format("%s%s", apiUrl, tunnel.getUri()), Tunnel.class);
+        final Response<Tunnel> response = ngrokClientV3.getHttpClient().get(String.format("%s%s", apiUrl,
+            tunnel.getUri()), Tunnel.class);
 
         // THEN
         assertEquals(tunnel.getName(), response.getBody().getName());
@@ -725,17 +726,23 @@ class NgrokClientTest extends NgrokTestCase {
 
     @Test
     public void testTunnelDefinitionsV3CloudEdge() {
-        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")),
+            "NGROK_AUTHTOKEN environment variable not set");
         final String ngrokHttpEdge = System.getenv("NGROK_HTTP_EDGE");
-        assumeTrue(isNotBlank(System.getenv("NGROK_HTTP_EDGE")), "NGROK_HTTP_EDGE environment variable not set");
+        assumeTrue(isNotBlank(System.getenv("NGROK_HTTP_EDGE")),
+            "NGROK_HTTP_EDGE environment variable not set");
         final String ngrokTcpEdge = System.getenv("NGROK_TCP_EDGE");
-        assumeTrue(isNotBlank(System.getenv("NGROK_TCP_EDGE")), "NGROK_TCP_EDGE environment variable not set");
+        assumeTrue(isNotBlank(System.getenv("NGROK_TCP_EDGE")),
+            "NGROK_TCP_EDGE environment variable not set");
         final String ngrokApiKey = System.getenv("NGROK_API_KEY");
-        assumeTrue(isNotBlank(System.getenv("NGROK_API_KEY")), "NGROK_API_KEY environment variable not set");
+        assumeTrue(isNotBlank(System.getenv("NGROK_API_KEY")),
+            "NGROK_API_KEY environment variable not set");
         final String ngrokHttpEdgeEndpoint = System.getenv("NGROK_HTTP_EDGE_ENDPOINT");
-        assumeTrue(isNotBlank(System.getenv("NGROK_HTTP_EDGE_ENDPOINT")), "NGROK_HTTP_EDGE_ENDPOINT environment variable not set");
+        assumeTrue(isNotBlank(System.getenv("NGROK_HTTP_EDGE_ENDPOINT")),
+            "NGROK_HTTP_EDGE_ENDPOINT environment variable not set");
         final String ngrokTcpEdgeEndpoint = System.getenv("NGROK_TCP_EDGE_ENDPOINT");
-        assumeTrue(isNotBlank(System.getenv("NGROK_TCP_EDGE_ENDPOINT")), "NGROK_TCP_EDGE_ENDPOINT environment variable not set");
+        assumeTrue(isNotBlank(System.getenv("NGROK_TCP_EDGE_ENDPOINT")),
+            "NGROK_TCP_EDGE_ENDPOINT environment variable not set");
 
         // GIVEN
         final Map<String, Object> edgeHttpTunnelConfig = new HashMap<>();
@@ -796,9 +803,11 @@ class NgrokClientTest extends NgrokTestCase {
 
     @Test
     public void testLabelsNoApiKeyFails() {
-        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")),
+            "NGROK_AUTHTOKEN environment variable not set");
         final String ngrokHttpEdge = System.getenv("NGROK_HTTP_EDGE");
-        assumeTrue(isNotBlank(System.getenv("NGROK_HTTP_EDGE")), "NGROK_HTTP_EDGE environment variable not set");
+        assumeTrue(isNotBlank(System.getenv("NGROK_HTTP_EDGE")),
+            "NGROK_HTTP_EDGE environment variable not set");
 
         // GIVEN
         final Map<String, Object> edgeHttpTunnelConfig = new HashMap<>();
@@ -862,7 +871,8 @@ class NgrokClientTest extends NgrokTestCase {
         final Tunnel httpTunnel = ngrokClient2.connect(createHttpTunnel);
         final List<Tunnel> tunnels = ngrokClient2.getTunnels();
 
-        final Response<Object> response = ngrokClientV3.getHttpClient().get(String.format(httpTunnel.getPublicUrl()), Object.class);
+        final Response<Object> response = ngrokClientV3.getHttpClient().get(String.format(httpTunnel.getPublicUrl()),
+            Object.class);
 
         // THEN
         assertEquals(1, tunnels.size());

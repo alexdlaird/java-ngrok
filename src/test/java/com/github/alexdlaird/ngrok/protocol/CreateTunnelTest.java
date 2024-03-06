@@ -7,13 +7,13 @@
 package com.github.alexdlaird.ngrok.protocol;
 
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
-import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

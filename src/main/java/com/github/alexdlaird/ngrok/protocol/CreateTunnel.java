@@ -46,7 +46,7 @@ import static java.util.Objects.nonNull;
  * and {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
  */
 public class CreateTunnel {
-    private transient final NgrokVersion ngrokVersion;
+    private final transient NgrokVersion ngrokVersion;
     private final String name;
     private final Proto proto;
     private final String addr;
@@ -314,8 +314,8 @@ public class CreateTunnel {
 
     /**
      * Builder for a {@link CreateTunnel}, which can be used to construct a request that conforms to
-     * <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions" target="_blank"><code>ngrok</code>'s tunnel definition</a>.
-     * See docs for that class for example usage.
+     * <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions"
+     * target="_blank"><code>ngrok</code>'s tunnel definition</a>. See docs for that class for example usage.
      */
     public static class Builder {
         private boolean setDefaults = false;
@@ -353,9 +353,9 @@ public class CreateTunnel {
         /**
          * Use this constructor if default values should not be populated in required attributes when {@link #build()}
          * is called.
-         * <p>
-         * If required attributes are not set in the built {@link CreateTunnel}, default values will be used in methods
-         * like {@link NgrokClient#connect(CreateTunnel)}.
+         *
+         * <p>If required attributes are not set in the built {@link CreateTunnel}, default values will be used in
+         * methods like {@link NgrokClient#connect(CreateTunnel)}.
          */
         public Builder() {
         }
@@ -418,8 +418,9 @@ public class CreateTunnel {
         }
 
         /**
-         * A friendly name for the tunnel, or the name of a <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions" target="_blank">ngrok tunnel definition</a>
-         * to be used.
+         * A friendly name for the tunnel, or the name of a
+         * <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions"
+         * target="_blank">ngrok tunnel definition</a> to be used.
          */
         public Builder withName(final String name) {
             this.name = name;
@@ -734,26 +735,37 @@ public class CreateTunnel {
                 this.proxyProto = (String) tunnelDefinition.get("proxy_proto");
             }
             if (isNull(this.websocketTcpConverter) && tunnelDefinition.containsKey("websocket_tcp_converter")) {
-                this.websocketTcpConverter = Boolean.valueOf(String.valueOf(tunnelDefinition.get("websocket_tcp_converter")));
+                this.websocketTcpConverter = Boolean.valueOf(
+                    String.valueOf(tunnelDefinition.get("websocket_tcp_converter"))
+                );
             }
             if (isNull(this.terminateAt) && tunnelDefinition.containsKey("terminate_at")) {
                 this.terminateAt = (String) tunnelDefinition.get("terminate_at");
             }
             if (isNull(this.requestHeader) && tunnelDefinition.containsKey("request_header")) {
-                this.requestHeader = new TunnelHeader.Builder((Map<String, Object>) tunnelDefinition.get("request_header")).build();
+                this.requestHeader = new TunnelHeader
+                    .Builder((Map<String, Object>) tunnelDefinition.get("request_header"))
+                    .build();
             }
             if (isNull(this.responseHeader) && tunnelDefinition.containsKey("response_header")) {
-                this.responseHeader = new TunnelHeader.Builder((Map<String, Object>) tunnelDefinition.get("response_header")).build();
+                this.responseHeader = new TunnelHeader
+                    .Builder((Map<String, Object>) tunnelDefinition.get("response_header"))
+                    .build();
             }
             if (isNull(this.ipRestrictions) && tunnelDefinition.containsKey("ip_restrictions")) {
-                this.ipRestrictions = new TunnelIPRestrictions.Builder((Map<String, Object>) tunnelDefinition.get("ip_restrictions")).build();
+                this.ipRestrictions = new TunnelIPRestrictions
+                    .Builder((Map<String, Object>) tunnelDefinition.get("ip_restrictions"))
+                    .build();
             }
             if (isNull(this.verifyWebhook) && tunnelDefinition.containsKey("verify_webhook")) {
-                this.verifyWebhook = new TunnelVerifyWebhook.Builder((Map<String, Object>) tunnelDefinition.get("verify_webhook")).build();
+                this.verifyWebhook = new TunnelVerifyWebhook
+                    .Builder((Map<String, Object>) tunnelDefinition.get("verify_webhook"))
+                    .build();
             }
             if (tunnelDefinition.containsKey("labels")) {
                 if (nonNull(bindTls)) {
-                    throw new IllegalArgumentException("'bindTls' cannot be set when 'labels' is also on the tunnel definition.");
+                    throw new IllegalArgumentException("'bindTls' cannot be set when 'labels' is also on the "
+                        + "tunnel definition.");
                 }
                 this.labels = (List<String>) tunnelDefinition.get("labels");
             }

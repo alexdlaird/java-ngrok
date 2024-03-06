@@ -12,8 +12,6 @@ import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,6 +20,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.getNgrokBin;
@@ -81,7 +81,8 @@ public class NgrokTestCase {
                     try {
                         Files.delete(path);
                     } catch (final IOException e) {
-                        throw new JavaNgrokException(String.format("An error occurred cleaning up file %s when testing.", path));
+                        throw new JavaNgrokException(
+                            String.format("An error occurred cleaning up file %s when testing.", path));
                     }
                 });
 
@@ -91,7 +92,8 @@ public class NgrokTestCase {
         mockedSystemProperties.clear();
     }
 
-    protected void givenNgrokNotInstalled(final JavaNgrokConfig javaNgrokConfig) throws InterruptedException, IOException {
+    protected void givenNgrokNotInstalled(final JavaNgrokConfig javaNgrokConfig)
+        throws InterruptedException, IOException {
         if (Files.exists(javaNgrokConfig.getNgrokPath())) {
             // Due to Windows file locking behavior, wait a beat
             if (NgrokInstaller.getSystem().equals(WINDOWS)) {
@@ -104,7 +106,11 @@ public class NgrokTestCase {
 
     protected String createUniqueSubdomain() {
         final Random random = new Random();
-        return String.format("java-ngrok-%s-%s-%s-tcp", random.longs(1000000000000000L, 9999999999999999L).findFirst().getAsLong(), System.getProperty("java.version").replaceAll("\\.|_", ""), NgrokInstaller.getSystem().toLowerCase());
+        return String.format("java-ngrok-%s-%s-%s-tcp",
+            random.longs(1000000000000000L, 9999999999999999L)
+                .findFirst()
+                .getAsLong(),
+            System.getProperty("java.version").replaceAll("\\.|_", ""), NgrokInstaller.getSystem().toLowerCase());
     }
 
     protected void mockSystemProperty(final String key, final String value) {

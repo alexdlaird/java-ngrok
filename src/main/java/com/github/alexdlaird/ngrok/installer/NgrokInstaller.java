@@ -15,12 +15,13 @@ import com.github.alexdlaird.http.HttpClientException;
 import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.google.gson.JsonParseException;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,13 +38,17 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.yaml.snakeyaml.Yaml;
+
 import static com.github.alexdlaird.util.StringUtils.isBlank;
+import static java.util.Objects.nonNull;
 
 /**
  * A helper for downloading and installing the <code>ngrok</code> for the current system.
  *
  * <h2>Config File</h2>
- * By default, <code>ngrok</code> will look for its config file in <a href="https://ngrok.com/docs/ngrok-agent/config" target="_blank">the default location</a>.
+ * By default, <code>ngrok</code> will look for its config file in
+ * <a href="https://ngrok.com/docs/ngrok-agent/config" target="_blank">the default location</a>.
  * We can override this behavior with {@link JavaNgrokConfig.Builder#withConfigPath(Path)}.
  *
  * <h2>Binary Path</h2>
@@ -62,7 +67,8 @@ public class NgrokInstaller {
     public static final List<String> UNIX_BINARIES = Collections.unmodifiableList(
             Stream.of(MAC, LINUX, FREEBSD)
                     .collect(Collectors.toList()));
-    public static final Path DEFAULT_NGROK_PATH = Paths.get(getDefaultNgrokDir().toString(), NgrokInstaller.getNgrokBin());
+    public static final Path DEFAULT_NGROK_PATH = Paths.get(getDefaultNgrokDir().toString(),
+        NgrokInstaller.getNgrokBin());
     public static final Path DEFAULT_CONFIG_PATH = Paths.get(getDefaultNgrokDir().toString(), "ngrok.yml");
 
     private static final List<String> VALID_LOG_LEVELS = Collections.unmodifiableList(
@@ -114,7 +120,8 @@ public class NgrokInstaller {
      * @param configPath The path to where the <code>ngrok</code> config should be installed.
      * @param data       A map of things to add to the default config.
      */
-    public void installDefaultConfig(final Path configPath, final Map<String, Object> data, final NgrokVersion ngrokVersion) {
+    public void installDefaultConfig(final Path configPath, final Map<String, Object> data,
+                                     final NgrokVersion ngrokVersion) {
         try {
             Files.createDirectories(configPath.getParent());
             if (!Files.exists(configPath)) {
@@ -134,10 +141,11 @@ public class NgrokInstaller {
             final FileOutputStream out = new FileOutputStream(configPath.toFile());
             final StringWriter writer = new StringWriter();
             yaml.dump(config, writer);
-            out.write(writer.toString().getBytes());
+            out.write(writer.toString().getBytes(StandardCharsets.UTF_8));
             out.close();
         } catch (final IOException e) {
-            throw new JavaNgrokInstallerException(String.format("An error while installing the default ngrok config to %s.", configPath), e);
+            throw new JavaNgrokInstallerException(String.format("An error while installing the default "
+                + "ngrok config to %s.", configPath), e);
         }
     }
 
@@ -158,7 +166,8 @@ public class NgrokInstaller {
     public void installNgrok(final Path ngrokPath, final NgrokVersion ngrokVersion) {
         final NgrokCDNUrl ngrokCDNUrl = getNgrokCDNUrl(ngrokVersion);
 
-        LOGGER.fine(String.format("Installing ngrok %s to %s%s ...", ngrokVersion, ngrokPath, Files.exists(ngrokPath) ? ", overwriting" : ""));
+        LOGGER.fine(String.format("Installing ngrok %s to %s%s ...", ngrokVersion, ngrokPath,
+            Files.exists(ngrokPath) ? ", overwriting" : ""));
 
         final Path ngrokZip = Paths.get(ngrokPath.getParent().toString(), "ngrok.zip");
         downloadFile(ngrokCDNUrl.getUrl(), ngrokZip);
@@ -210,7 +219,8 @@ public class NgrokInstaller {
      */
     public void validateConfig(final Map<String, Object> data) {
         if (data.getOrDefault("web_addr", "127.0.0.1:4040").equals("false")) {
-            throw new JavaNgrokException("\"web_addr\" cannot be false, as the ngrok API is a dependency for java-ngrok");
+            throw new JavaNgrokException("\"web_addr\" cannot be false, as the ngrok API is a "
+                + "dependency for java-ngrok");
         }
         if (data.getOrDefault("log_format", "term").equals("json")) {
             throw new JavaNgrokException("\"log_format\" must be \"term\" to be compatible with java-ngrok");
@@ -260,7 +270,8 @@ public class NgrokInstaller {
      * @param useCache   Use the cached version of the config (if populated).
      * @return A map of the <code>ngrok</code> config.
      */
-    public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache, final NgrokVersion ngrokVersion) {
+    public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache,
+                                              final NgrokVersion ngrokVersion) {
         final String key = configPath.toString();
         if (!configCache.containsKey(key) || !useCache) {
             try {
@@ -272,11 +283,26 @@ public class NgrokInstaller {
                     configCache.put(key, yaml.load(config));
                 }
             } catch (final IOException | JsonParseException e) {
-                throw new JavaNgrokInstallerException(String.format("An error occurred while parsing the config file: %s", configPath), e);
+                throw new JavaNgrokInstallerException(String.format("An error occurred while parsing "
+                    + "the config file: %s", configPath), e);
             }
         }
 
         return configCache.get(key);
+    }
+
+    /**
+     * See {@link #getNgrokConfig(Path, boolean, NgrokVersion)}.
+     */
+    public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache) {
+        return getNgrokConfig(configPath, useCache, NgrokVersion.V3);
+    }
+
+    /**
+     * See {@link #getNgrokConfig(Path, boolean, NgrokVersion)}.
+     */
+    public Map<String, Object> getNgrokConfig(final Path configPath) {
+        return getNgrokConfig(configPath, true);
     }
 
     /**
@@ -296,20 +322,6 @@ public class NgrokInstaller {
         }
     }
 
-    /**
-     * See {@link #getNgrokConfig(Path, boolean, NgrokVersion)}.
-     */
-    public Map<String, Object> getNgrokConfig(final Path configPath) {
-        return getNgrokConfig(configPath, true);
-    }
-
-    /**
-     * See {@link #getNgrokConfig(Path, boolean, NgrokVersion)}.
-     */
-    public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache) {
-        return getNgrokConfig(configPath, useCache, NgrokVersion.V3);
-    }
-
     private void installNgrokZip(final Path zipPath, final Path ngrokPath) {
         try {
             final Path dir = ngrokPath.getParent();
@@ -321,7 +333,7 @@ public class NgrokInstaller {
             final byte[] buffer = new byte[1024];
             final ZipInputStream in = new ZipInputStream(new FileInputStream(zipPath.toFile()));
             ZipEntry zipEntry;
-            while ((zipEntry = in.getNextEntry()) != null) {
+            while (nonNull(zipEntry = in.getNextEntry())) {
                 final Path file = Paths.get(dir.toString(), zipEntry.getName());
                 if (!file.normalize().startsWith(dir)) {
                     throw new JavaNgrokSecurityException("Bad zip entry, paths don't match");
@@ -348,7 +360,8 @@ public class NgrokInstaller {
             in.close();
 
             if (ngrokPath.getFileSystem().supportedFileAttributeViews().contains("posix")) {
-                final Set<PosixFilePermission> perms = Files.readAttributes(ngrokPath, PosixFileAttributes.class).permissions();
+                final Set<PosixFilePermission> perms = Files.readAttributes(ngrokPath, PosixFileAttributes.class)
+                    .permissions();
                 perms.add(PosixFilePermission.OWNER_EXECUTE);
                 perms.add(PosixFilePermission.GROUP_EXECUTE);
                 perms.add(PosixFilePermission.OTHERS_EXECUTE);
@@ -367,7 +380,8 @@ public class NgrokInstaller {
 
             httpClient.get(url, Collections.emptyList(), Collections.emptyMap(), dest);
         } catch (final IOException | HttpClientException | InterruptedException e) {
-            throw new JavaNgrokInstallerException(String.format("An error occurred while downloading ngrok from %s.", url), e);
+            throw new JavaNgrokInstallerException(String.format("An error occurred while downloading "
+                + "ngrok from %s.", url), e);
         }
     }
 
