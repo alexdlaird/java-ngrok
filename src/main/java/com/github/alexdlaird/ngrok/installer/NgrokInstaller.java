@@ -167,7 +167,7 @@ public class NgrokInstaller {
     }
 
     /**
-     * See {@link #getNgrokCDNUrl}.
+     * See {@link #getNgrokCDNUrl(NgrokVersion)}.
      */
     public NgrokCDNUrl getNgrokCDNUrl() {
         return getNgrokCDNUrl(NgrokVersion.V3);
@@ -179,7 +179,7 @@ public class NgrokInstaller {
      * @param ngrokVersion The major version of <code>ngrok</code> to install.
      * @return The <code>ngrok</code> CDN URL.
      */
-    public NgrokCDNUrl getNgrokCDNUrl(NgrokVersion ngrokVersion) {
+    public NgrokCDNUrl getNgrokCDNUrl(final NgrokVersion ngrokVersion) {
         final String arch = getArch();
         final String system = getSystem();
         final String plat = String.format("%s_%s", system, arch);

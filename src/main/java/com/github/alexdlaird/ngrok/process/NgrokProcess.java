@@ -44,7 +44,7 @@ public class NgrokProcess {
 
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokInstaller ngrokInstaller;
-    
+
     private Process process;
     private ProcessMonitor processMonitor;
 
@@ -187,6 +187,13 @@ public class NgrokProcess {
         processMonitor.stop();
         process.descendants().forEach(ProcessHandle::destroy);
         process.destroy();
+        try {
+            if (nonNull(processMonitor.reader)) {
+                processMonitor.reader.close();
+            }
+        } catch (final IOException ex) {
+            LOGGER.log(Level.WARNING, "An error occurred when closing \"ProcessMonitor.reader\"", ex);
+        }
 
         process = null;
         processMonitor = null;

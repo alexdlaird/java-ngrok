@@ -234,7 +234,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testGetThrowsException() throws IOException {
+    public void testGetThrowsException() throws UnsupportedEncodingException {
         // GIVEN
         doAnswer(invocation -> {
             throw new UnsupportedEncodingException("Bad input params");
