@@ -129,13 +129,7 @@ public class NgrokProcess {
         processBuilder.command(command);
         try {
             process = processBuilder.start();
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                try {
-                    stop();
-                } catch (final IOException ex) {
-                    LOGGER.log(Level.INFO, "An error occurred when stopping the process", ex);
-                }
-            }));
+            Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
 
             LOGGER.fine("ngrok process starting");
 
@@ -183,7 +177,7 @@ public class NgrokProcess {
      * Terminate the <code>ngrok</code> processes, if running. This method will not block, it will just issue a kill
      * request.
      */
-    public void stop() throws IOException {
+    public void stop() {
         if (!isRunning()) {
             LOGGER.info(String.format("\"ngrokPath\" %s is not running a process", javaNgrokConfig.getNgrokPath()));
 
@@ -194,9 +188,6 @@ public class NgrokProcess {
 
         processMonitor.stop();
         process.destroy();
-        if (nonNull(processMonitor.reader)) {
-            processMonitor.reader.close();
-        }
 
         process = null;
         processMonitor = null;
@@ -372,9 +363,8 @@ public class NgrokProcess {
 
         @Override
         public void run() {
-            try {
-                final InputStreamReader inputStream = new InputStreamReader(process.getInputStream(),
-                    StandardCharsets.UTF_8);
+            try (final InputStreamReader inputStream = new InputStreamReader(process.getInputStream(),
+                    StandardCharsets.UTF_8)) {
                 reader = new BufferedReader(inputStream);
 
                 String line;
