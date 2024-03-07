@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.14...HEAD)
+
+## [2.2.15](https://github.com/alexdlaird/java-ngrok/compare/2.2.14...2.2.15) - TBD
 ### Added
 - Build and stability improvements.
 - Documentation improvements.
@@ -176,6 +178,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.12...1.4.x)
 The `1.4.x` branch is where support for Java 8 of `java-ngrok` is passively maintained. It is available through the `java8-ngrok` artifact on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
+
+## [1.4.13](https://github.com/alexdlaird/java-ngrok/compare/1.4.12...1.4.13) - TBD
+### Added
+- Build and stability improvements.
+- Documentation improvements.
+
+### Fixed
+- Minor bugs.
 
 ## [1.4.12](https://github.com/alexdlaird/java-ngrok/compare/1.4.11...1.4.12) - 2024-03-06
 ### Added
