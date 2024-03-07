@@ -16,6 +16,7 @@ import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.http.HttpClientException;
 import com.github.alexdlaird.http.Response;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
+import com.github.alexdlaird.ngrok.conf.JavaNgrokVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
@@ -72,13 +73,13 @@ import java.util.logging.Logger;
  *
  *
  * <p><p><code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
- * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}
- * and {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
+ * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
+ * {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
  *
  * <p><strong>Note:</strong> <code>ngrok</code> v2's default behavior for <code>http</code> when no additional
- * properties are passed is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This
- * method will return a reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed,
- * call {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
+ * properties are passed is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This method
+ * will return a reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed, call
+ * {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
  * <code>https</code> tunnel will be returned.
  * <h3><code>ngrok</code>'s Cloud Edge</h3>
  * To use <a href="https://ngrok.com/docs/cloud-edge/" target="_blank"><code>ngrok</code>'s Cloud Edge</a> with
@@ -108,16 +109,16 @@ import java.util.logging.Logger;
  * Once a Cloud Edge tunnel is started, it can be managed through
  * <a href="https://dashboard.ngrok.com/cloud-edge/edges" target="_blank"><code>ngrok</code>'s dashboard</a>.
  * <h2>Get Active Tunnels</h2>
- * It can be useful to ask the <code>ngrok</code> client what tunnels are currently open. This can be accomplished
- * with the {@link NgrokClient#getTunnels()} method, which returns a list of {@link Tunnel} objects.
+ * It can be useful to ask the <code>ngrok</code> client what tunnels are currently open. This can be accomplished with
+ * the {@link NgrokClient#getTunnels()} method, which returns a list of {@link Tunnel} objects.
  *
  * <p><pre>
  * [&lt;Tunnel: "https://&lt;public_sub&gt;.ngrok.io" -&gt; "http://localhost:80"&gt;]
  * final List&lt;Tunnel&gt; tunnels = ngrokClient.getTunnels();
  * </pre>
  * <h2>Close a Tunnel</h2>
- * All open tunnels will automatically be closed when the Java process terminates, but we can also close them
- * manually with {@link NgrokClient#disconnect(String)}.
+ * All open tunnels will automatically be closed when the Java process terminates, but we can also close them manually
+ * with {@link NgrokClient#disconnect(String)}.
  *
  * <p><pre>
  * // The Tunnel returned from methods like connect(), getTunnels(), etc. contains the public URL
@@ -141,8 +142,8 @@ import java.util.logging.Logger;
  * </pre>
  *
  * <p>We can also serve up local directories via
- * <a href="https://ngrok.com/docs/secure-tunnels/tunnels/http-tunnels/#file-url"
- * target="_blank">ngrok’s built-in fileserver</a>.
+ * <a href="https://ngrok.com/docs/secure-tunnels/tunnels/http-tunnels/#file-url" target="_blank">ngrok’s built-in
+ * fileserver</a>.
  *
  * <p><pre>
  * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
@@ -172,45 +173,44 @@ public class NgrokClient {
 
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokClient.class));
 
-    private static final String VERSION = "1.4.12";
-
+    private final String javaNgrokVersion;
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokProcess ngrokProcess;
     private final HttpClient httpClient;
-
     private final Map<String, Tunnel> currentTunnels = new HashMap<>();
 
     private NgrokClient(final Builder builder) {
+        this.javaNgrokVersion = builder.javaNgrokVersion;
         this.javaNgrokConfig = builder.javaNgrokConfig;
         this.ngrokProcess = builder.ngrokProcess;
         this.httpClient = builder.httpClient;
     }
 
     /**
-     * Establish a new <code>ngrok</code> tunnel for the Tunnel creation request, returning an object representing
-     * the connected tunnel.
+     * Establish a new <code>ngrok</code> tunnel for the Tunnel creation request, returning an object representing the
+     * connected tunnel.
      *
      * <p>If a <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions"
      * target="_blank">tunnel definition in ngrok's config file</a> matches the given
-     * {@link CreateTunnel.Builder#withName(String)}, it will be loaded and used to start the tunnel.
-     * When {@link CreateTunnel.Builder#withName(String)} is not set and a "java-ngrok-default" tunnel
-     * definition exists in <code>ngrok</code>'s config, it will be loaded and use. Any properties defined on
-     * {@link CreateTunnel} will override properties from the loaded tunnel definition.
+     * {@link CreateTunnel.Builder#withName(String)}, it will be loaded and used to start the tunnel. When
+     * {@link CreateTunnel.Builder#withName(String)} is not set and a "java-ngrok-default" tunnel definition exists in
+     * <code>ngrok</code>'s config, it will be loaded and use. Any properties defined on {@link CreateTunnel} will
+     * override properties from the loaded tunnel definition.
      *
      * <p>If <code>ngrok</code> is not installed at {@link JavaNgrokConfig}'s <code>ngrokPath</code>, calling this
      * method will first download and install <code>ngrok</code>.
      *
      * <p><code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v2.
-     * To install v3 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}
-     * and {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
+     * To install v3 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
+     * {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
      *
      * <p>If <code>ngrok</code> is not running, calling this method will first start a process with
      * {@link JavaNgrokConfig}.
      *
      * <p><strong>Note:</strong> <code>ngrok</code> v2's default behavior for <code>http</code> when no additional
-     * properties are passed is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>.
-     * This method will return a reference to the <code>http</code> tunnel in this case. If only a single tunnel is
-     * needed, call {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
+     * properties are passed is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This
+     * method will return a reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed,
+     * call {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
      * <code>https</code> tunnel will be returned.
      *
      * @param createTunnel The tunnel definition.
@@ -264,7 +264,7 @@ public class NgrokClient {
 
     private void applyCloudEdgeToTunnel(final Tunnel tunnel) {
         if ((isNull(tunnel.getPublicUrl()) || tunnel.getPublicUrl().isEmpty())
-                && nonNull(javaNgrokConfig.getApiKey()) && nonNull(tunnel.getId())) {
+            && nonNull(javaNgrokConfig.getApiKey()) && nonNull(tunnel.getId())) {
             final Map<String, String> ngrokApiHeaders = new HashMap<>();
             ngrokApiHeaders.put("Authorization", String.format("Bearer %s", javaNgrokConfig.getApiKey()));
             ngrokApiHeaders.put("Ngrok-Version", "2");
@@ -366,7 +366,7 @@ public class NgrokClient {
             return Collections.unmodifiableList(sortedTunnels);
         } catch (final HttpClientException e) {
             throw new JavaNgrokHTTPException("An error occurred when GETing the tunnels.", e, e.getUrl(),
-                    e.getStatusCode(), e.getBody());
+                e.getStatusCode(), e.getBody());
         }
     }
 
@@ -387,8 +387,8 @@ public class NgrokClient {
     }
 
     /**
-     * Terminate the <code>ngrok</code> processes, if running. This method will not block, it will
-     * just issue a kill request.
+     * Terminate the <code>ngrok</code> processes, if running. This method will not block, it will just issue a kill
+     * request.
      */
     public void kill() throws IOException {
         ngrokProcess.stop();
@@ -397,8 +397,8 @@ public class NgrokClient {
     }
 
     /**
-     * Set the <code>ngrok</code> auth token in the config file, enabling authenticated features (for instance,
-     * more concurrent tunnels, custom subdomains, etc.).
+     * Set the <code>ngrok</code> auth token in the config file, enabling authenticated features (for instance, more
+     * concurrent tunnels, custom subdomains, etc.).
      *
      * @param authToken The auth token.
      */
@@ -421,7 +421,7 @@ public class NgrokClient {
     public Version getVersion() {
         final String ngrokVersion = ngrokProcess.getVersion();
 
-        return new Version(ngrokVersion, VERSION);
+        return new Version(ngrokVersion, javaNgrokVersion);
     }
 
     /**
@@ -483,6 +483,7 @@ public class NgrokClient {
      */
     public static class Builder {
 
+        private String javaNgrokVersion;
         private JavaNgrokConfig javaNgrokConfig;
         private NgrokInstaller ngrokInstaller;
         private NgrokProcess ngrokProcess;
@@ -525,6 +526,8 @@ public class NgrokClient {
          * Build the {@link NgrokClient}.
          */
         public NgrokClient build() {
+            javaNgrokVersion = JavaNgrokVersion.getInstance().getVersion();
+
             if (isNull(javaNgrokConfig)) {
                 javaNgrokConfig = new JavaNgrokConfig.Builder().build();
             }

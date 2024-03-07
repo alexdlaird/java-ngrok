@@ -153,6 +153,9 @@ public class JavaNgrokConfig {
         private NgrokVersion ngrokVersion = NgrokVersion.V3;
         private String apiKey;
 
+        /**
+         * Default constructor for {@link JavaNgrokConfig.Builder}.
+         */
         public Builder() {
         }
 

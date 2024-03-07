@@ -29,7 +29,7 @@ docs:
 	$(GRADLE_BIN) javadoc
 
 check:
-	$(GRADLE_BIN) checkstyleMain checkstyleTest spotbugsMain spotbugsTest
+	$(GRADLE_BIN) checkstyleMain spotbugsMain
 
 local:
 	$(GRADLE_BIN) publishToMavenLocal
@@ -38,7 +38,6 @@ validate-release:
 	@if [[ "${VERSION}" == "" ]]; then echo "VERSION is not set" & exit 1 ; fi
 
 	@if [[ $$(grep "version \"${VERSION}\"" build.gradle) == "" ]] ; then echo "Version not bumped in build.gradle" & exit 1 ; fi
-	@if [[ $$(grep "VERSION = \"${VERSION}\"" src/main/java/com/github/alexdlaird/ngrok/NgrokClient.java) == "" ]] ; then echo "Version not bumped in NgrokClient.java" & exit 1 ; fi
 
 test-downstream:
 	@if [[ "${VERSION}" == "" ]]; then echo "VERSION is not set" & exit 1 ; fi

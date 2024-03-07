@@ -12,6 +12,7 @@ import com.github.alexdlaird.ngrok.process.NgrokProcess;
  * Thrown from {@link NgrokProcess} when a security error occurs.
  */
 public class JavaNgrokSecurityException extends JavaNgrokException {
+
     /**
      * An exception with a message.
      *

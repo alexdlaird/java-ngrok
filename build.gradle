@@ -31,6 +31,13 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.2"
 }
 
+tasks.register("createProperties", WriteProperties) {
+    outputFile new File(projectDir, "src/main/resources/version.properties")
+    property "version", version
+    finalizedBy sourcesJar
+}
+processResources.dependsOn createProperties
+
 test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
@@ -47,14 +54,20 @@ jacocoTestReport {
     }
 }
 
+checkstyle {
+    ignoreFailures = false
+    maxWarnings = 0
+}
+
 spotbugs {
     ignoreFailures = true
+    excludeFilter = file("config/spotbugs/exclude.xml")
 }
 
 spotbugsMain {
     reports {
         html {
-            enabled = true
+            required = true
         }
     }
 }
@@ -62,7 +75,7 @@ spotbugsMain {
 spotbugsTest {
     reports {
         html {
-            enabled = true
+            required = true
         }
     }
 }
@@ -126,5 +139,5 @@ signing {
 
 javadoc {
     options.overview = "src/main/java/overview.html"
-    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption("Xdoclint:none", "-quiet")
 }

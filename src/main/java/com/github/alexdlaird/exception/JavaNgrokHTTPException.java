@@ -12,6 +12,7 @@ import com.github.alexdlaird.ngrok.NgrokClient;
  * Thrown from {@link NgrokClient} when an error occurs making a request to the <code>ngrok</code> web interface.
  */
 public class JavaNgrokHTTPException extends JavaNgrokException {
+
     private final String url;
     private final int statusCode;
     private final String body;

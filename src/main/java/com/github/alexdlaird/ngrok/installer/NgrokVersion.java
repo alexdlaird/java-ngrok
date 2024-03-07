@@ -10,5 +10,7 @@ package com.github.alexdlaird.ngrok.installer;
  * An enum for the list of supported major <code>ngrok</code> versions.
  */
 public enum NgrokVersion {
-    V2, V3
+
+    V2,
+    V3
 }

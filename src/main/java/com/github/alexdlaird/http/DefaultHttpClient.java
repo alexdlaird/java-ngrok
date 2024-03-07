@@ -27,7 +27,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -69,8 +68,8 @@ public class DefaultHttpClient implements HttpClient {
         this.timeout = builder.timeout;
         this.retryCount = builder.retryCount;
         this.gson = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .create();
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .create();
     }
 
     @Override
@@ -80,7 +79,7 @@ public class DefaultHttpClient implements HttpClient {
                                final Class<B> clazz) {
         try {
             return execute(urlWithParameters(url, parameters), null, "GET",
-                    additionalHeaders, clazz);
+                additionalHeaders, clazz);
         } catch (final IOException e) {
             throw new HttpClientException("HTTP GET error", e);
         }
@@ -93,13 +92,13 @@ public class DefaultHttpClient implements HttpClient {
                     final Path dest,
                     final int retries) throws InterruptedException {
         HttpURLConnection httpUrlConnection = null;
-        InputStream inputStream = null;
 
         try {
             httpUrlConnection = createHttpUrlConnection(urlWithParameters(url, parameters));
 
-            inputStream = getInputStream(httpUrlConnection, null, "GET", additionalHeaders);
-            Files.copy(inputStream, dest, StandardCopyOption.REPLACE_EXISTING);
+            try (final InputStream inputStream = getInputStream(httpUrlConnection, null, "GET", additionalHeaders)) {
+                Files.copy(inputStream, dest, StandardCopyOption.REPLACE_EXISTING);
+            }
         } catch (final Exception ex) {
             if (retries < retryCount) {
                 LOGGER.warning("GET failed, retrying in 0.5 seconds ...");
@@ -132,13 +131,6 @@ public class DefaultHttpClient implements HttpClient {
             if (nonNull(httpUrlConnection)) {
                 httpUrlConnection.disconnect();
             }
-            try {
-                if (nonNull(inputStream)) {
-                    inputStream.close();
-                }
-            } catch (final IOException ex) {
-                LOGGER.log(Level.INFO, "Unable to close connection", ex);
-            }
         }
     }
 
@@ -150,7 +142,7 @@ public class DefaultHttpClient implements HttpClient {
                                    final Class<B> clazz) {
         try {
             return execute(urlWithParameters(url, parameters), convertRequestToString(request), "POST",
-                    additionalHeaders, clazz);
+                additionalHeaders, clazz);
         } catch (final IOException e) {
             throw new HttpClientException("HTTP POST error", e);
         }
@@ -164,7 +156,7 @@ public class DefaultHttpClient implements HttpClient {
                                   final Class<B> clazz) {
         try {
             return execute(urlWithParameters(url, parameters), convertRequestToString(request), "PUT",
-                    additionalHeaders, clazz);
+                additionalHeaders, clazz);
         } catch (final IOException e) {
             throw new HttpClientException("HTTP PUT error", e);
         }
@@ -177,7 +169,7 @@ public class DefaultHttpClient implements HttpClient {
                                   final Class<B> clazz) {
         try {
             return execute(urlWithParameters(url, parameters), null, "DELETE",
-                    additionalHeaders, clazz);
+                additionalHeaders, clazz);
         } catch (final IOException e) {
             throw new HttpClientException("HTTP DELETE error", e);
         }
@@ -226,7 +218,7 @@ public class DefaultHttpClient implements HttpClient {
 
     protected String urlWithParameters(final String url,
                                        final List<Parameter> parameters)
-            throws UnsupportedEncodingException {
+        throws UnsupportedEncodingException {
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(url);
 
@@ -282,18 +274,18 @@ public class DefaultHttpClient implements HttpClient {
                                     final Map<String, String> additionalHeaders,
                                     final Class<B> clazz) throws IOException {
         HttpURLConnection httpUrlConnection = null;
-        InputStream inputStream = null;
 
         try {
             httpUrlConnection = createHttpUrlConnection(url);
 
-            inputStream = getInputStream(httpUrlConnection, body, method, additionalHeaders);
-            final String responseBody = StringUtils.streamToString(inputStream, Charset.forName(encoding));
+            try (final InputStream inputStream = getInputStream(httpUrlConnection, body, method, additionalHeaders)) {
+                final String responseBody = StringUtils.streamToString(inputStream, Charset.forName(encoding));
 
-            return new Response<>(httpUrlConnection.getResponseCode(),
+                return new Response<>(httpUrlConnection.getResponseCode(),
                     convertResponseFromString(responseBody, clazz),
                     responseBody,
                     httpUrlConnection.getHeaderFields());
+            }
         } catch (final Exception ex) {
             String msg = "An unknown error occurred when performing the operation";
 
@@ -317,13 +309,6 @@ public class DefaultHttpClient implements HttpClient {
             if (nonNull(httpUrlConnection)) {
                 httpUrlConnection.disconnect();
             }
-            try {
-                if (nonNull(inputStream)) {
-                    inputStream.close();
-                }
-            } catch (final IOException ex) {
-                LOGGER.log(Level.INFO, "Unable to close connection", ex);
-            }
         }
     }
 
@@ -331,6 +316,7 @@ public class DefaultHttpClient implements HttpClient {
      * Builder for a {@link DefaultHttpClient}, see docs for that class for example usage.
      */
     public static class Builder {
+
         private String encoding = "UTF-8";
         private String contentType = "application/json";
         public int timeout = 4000;

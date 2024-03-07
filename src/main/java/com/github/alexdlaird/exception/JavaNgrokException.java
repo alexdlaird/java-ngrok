@@ -12,6 +12,7 @@ import com.github.alexdlaird.ngrok.NgrokClient;
  * Root exception for the {@link NgrokClient} and the <code>java-ngrok</code> library.
  */
 public class JavaNgrokException extends RuntimeException {
+
     /**
      * An exception with a message.
      *
