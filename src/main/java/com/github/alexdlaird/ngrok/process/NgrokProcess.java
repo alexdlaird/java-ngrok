@@ -46,7 +46,7 @@ public class NgrokProcess {
 
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokInstaller ngrokInstaller;
-    
+
     private Process process;
     private ProcessMonitor processMonitor;
 
@@ -188,6 +188,13 @@ public class NgrokProcess {
 
         processMonitor.stop();
         process.destroy();
+        try {
+            if (nonNull(processMonitor.reader)) {
+                processMonitor.reader.close();
+            }
+        } catch (final IOException ex) {
+            LOGGER.log(Level.WARNING, "An error occurred when closing \"ProcessMonitor.reader\"", ex);
+        }
 
         process = null;
         processMonitor = null;
@@ -363,9 +370,9 @@ public class NgrokProcess {
 
         @Override
         public void run() {
-            try (final InputStreamReader inputStream = new InputStreamReader(process.getInputStream(),
-                    StandardCharsets.UTF_8)) {
-                reader = new BufferedReader(inputStream);
+            try {
+                reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
 
                 String line;
                 while (nonNull(line = reader.readLine())) {

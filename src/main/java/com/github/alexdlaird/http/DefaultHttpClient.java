@@ -80,7 +80,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), null, "GET",
                 additionalHeaders, clazz);
-        } catch (final IOException e) {
+        } catch (final UnsupportedEncodingException e) {
             throw new HttpClientException("HTTP GET error", e);
         }
     }
@@ -143,7 +143,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), convertRequestToString(request), "POST",
                 additionalHeaders, clazz);
-        } catch (final IOException e) {
+        } catch (final UnsupportedEncodingException e) {
             throw new HttpClientException("HTTP POST error", e);
         }
     }
@@ -157,7 +157,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), convertRequestToString(request), "PUT",
                 additionalHeaders, clazz);
-        } catch (final IOException e) {
+        } catch (final UnsupportedEncodingException e) {
             throw new HttpClientException("HTTP PUT error", e);
         }
     }
@@ -170,7 +170,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), null, "DELETE",
                 additionalHeaders, clazz);
-        } catch (final IOException e) {
+        } catch (final UnsupportedEncodingException e) {
             throw new HttpClientException("HTTP DELETE error", e);
         }
     }
@@ -272,7 +272,7 @@ public class DefaultHttpClient implements HttpClient {
                                     final String body,
                                     final String method,
                                     final Map<String, String> additionalHeaders,
-                                    final Class<B> clazz) throws IOException {
+                                    final Class<B> clazz) {
         HttpURLConnection httpUrlConnection = null;
 
         try {

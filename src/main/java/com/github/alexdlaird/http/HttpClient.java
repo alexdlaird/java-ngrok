@@ -16,6 +16,7 @@ import java.util.Map;
  * A simple interface for executing HTTP requests.
  */
 public interface HttpClient {
+
     /**
      * Perform GET operation against an endpoint.
      *
@@ -44,6 +45,7 @@ public interface HttpClient {
      * @param additionalHeaders Additional headers for the request.
      * @param dest              The destination to which the file will be downloaded.
      * @param retries           The retry attempt index, if download fails.
+     * @throws InterruptedException The thread is interrupted during retries.
      */
     void get(final String url, final List<Parameter> parameters,
              final Map<String, String> additionalHeaders, final Path dest, final int retries)

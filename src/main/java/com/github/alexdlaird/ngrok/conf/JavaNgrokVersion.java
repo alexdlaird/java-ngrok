@@ -26,7 +26,9 @@ public class JavaNgrokVersion {
     }
 
     /**
-     * Get the singleton instance.
+     * Get or initialize the singleton instance.
+     *
+     * @return The singleton instance.
      */
     public static synchronized JavaNgrokVersion getInstance() {
         if (instance == null) {
