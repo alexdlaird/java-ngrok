@@ -331,6 +331,7 @@ public class DefaultHttpClient implements HttpClient {
      * Builder for a {@link DefaultHttpClient}, see docs for that class for example usage.
      */
     public static class Builder {
+
         private String encoding = "UTF-8";
         private String contentType = "application/json";
         public int timeout = 4000;

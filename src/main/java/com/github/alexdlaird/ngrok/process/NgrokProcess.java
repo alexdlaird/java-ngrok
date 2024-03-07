@@ -44,6 +44,7 @@ public class NgrokProcess {
 
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokInstaller ngrokInstaller;
+    
     private Process process;
     private ProcessMonitor processMonitor;
 

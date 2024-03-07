@@ -53,7 +53,6 @@ import org.yaml.snakeyaml.Yaml;
 public class NgrokInstaller {
 
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokInstaller.class));
-
     public static final String MAC = "DARWIN";
     public static final String WINDOWS = "WINDOWS";
     public static final String LINUX = "LINUX";
@@ -62,13 +61,10 @@ public class NgrokInstaller {
     public static final Path DEFAULT_NGROK_PATH = Paths.get(getDefaultNgrokDir().toString(),
         NgrokInstaller.getNgrokBin());
     public static final Path DEFAULT_CONFIG_PATH = Paths.get(getDefaultNgrokDir().toString(), "ngrok.yml");
-
     private static final List<String> VALID_LOG_LEVELS = List.of("info", "debug");
 
     private final Yaml yaml = new Yaml();
-
     private final Map<String, Map<String, Object>> configCache = new HashMap<>();
-
     private final HttpClient httpClient;
 
     /**

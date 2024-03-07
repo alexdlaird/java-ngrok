@@ -14,6 +14,7 @@ import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokLog;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Region;
+import com.github.alexdlaird.ngrok.protocol.TunnelHeader;
 import java.nio.file.Path;
 import java.util.function.Function;
 
@@ -153,6 +154,9 @@ public class JavaNgrokConfig {
         private NgrokVersion ngrokVersion = NgrokVersion.V3;
         private String apiKey;
 
+        /**
+         * Default constructor for {@link JavaNgrokConfig.Builder}.
+         */
         public Builder() {
         }
 

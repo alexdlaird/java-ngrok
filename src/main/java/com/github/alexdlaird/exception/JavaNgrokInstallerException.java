@@ -13,6 +13,7 @@ import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
  * binary.
  */
 public class JavaNgrokInstallerException extends JavaNgrokException {
+
     /**
      * An exception with a message.
      *

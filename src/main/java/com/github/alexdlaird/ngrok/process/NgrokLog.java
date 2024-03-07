@@ -21,6 +21,7 @@ import java.util.List;
 public class NgrokLog extends HashMap<String, String> {
 
     private final String line;
+
     private String t;
     private String lvl = INFO.getName();
     private String msg;

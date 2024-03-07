@@ -16,6 +16,7 @@ import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.http.HttpClientException;
 import com.github.alexdlaird.http.Response;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
+import com.github.alexdlaird.ngrok.conf.JavaNgrokVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
@@ -178,7 +179,6 @@ public class NgrokClient {
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokProcess ngrokProcess;
     private final HttpClient httpClient;
-
     private final Map<String, Tunnel> currentTunnels = new HashMap<>();
 
     private NgrokClient(final Builder builder) {
@@ -527,18 +527,7 @@ public class NgrokClient {
          * Build the {@link NgrokClient}.
          */
         public NgrokClient build() {
-            // TODO: validating the principles of this concept, may not stick with this implementation
-            try {
-                final InputStream resourceStream = Builder.class.getResourceAsStream("/version.properties");
-                if (nonNull(resourceStream)) {
-                    final Properties properties = new Properties();
-                    properties.load(resourceStream);
-                    javaNgrokVersion = properties.getProperty("version");
-                    resourceStream.close();
-                }
-            } catch (final IOException | NullPointerException ex) {
-                LOGGER.log(Level.WARNING, "An error occurred trying to read \"version\" from resource properties", ex);
-            }
+            javaNgrokVersion = JavaNgrokVersion.getInstance().getVersion();
 
             if (isNull(javaNgrokConfig)) {
                 javaNgrokConfig = new JavaNgrokConfig.Builder().build();
