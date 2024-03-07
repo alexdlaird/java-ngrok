@@ -43,28 +43,56 @@ import java.util.function.Function;
  */
 public class JavaNgrokConfig {
 
+    private final NgrokVersion ngrokVersion;
+    private final int maxLogs;
+    private final int startupTimeout;
+    private final boolean keepMonitoring;
     private final Path ngrokPath;
     private final Path configPath;
     private final String authToken;
     private final Region region;
-    private final boolean keepMonitoring;
-    private final int maxLogs;
     private final Function<NgrokLog, Void> logEventCallback;
-    private final int startupTimeout;
-    private final NgrokVersion ngrokVersion;
     private final String apiKey;
 
     private JavaNgrokConfig(final Builder builder) {
+        this.ngrokVersion = builder.ngrokVersion;
+        this.maxLogs = builder.maxLogs;
+        this.startupTimeout = builder.startupTimeout;
+        this.keepMonitoring = builder.keepMonitoring;
         this.ngrokPath = builder.ngrokPath;
         this.configPath = builder.configPath;
         this.authToken = builder.authToken;
         this.region = builder.region;
-        this.keepMonitoring = builder.keepMonitoring;
-        this.maxLogs = builder.maxLogs;
         this.logEventCallback = builder.logEventCallback;
-        this.startupTimeout = builder.startupTimeout;
-        this.ngrokVersion = builder.ngrokVersion;
         this.apiKey = builder.apiKey;
+    }
+
+    /**
+     * Get the major <code>ngrok</code> version to be used.
+     */
+    public NgrokVersion getNgrokVersion() {
+        return ngrokVersion;
+    }
+
+    /**
+     * Get the maximum number of <code>ngrok</code> logs to retain in the monitoring thread.
+     */
+    public int getMaxLogs() {
+        return maxLogs;
+    }
+
+    /**
+     * Get the startup timeout before <code>ngrok</code> times out on boot.
+     */
+    public int getStartupTimeout() {
+        return startupTimeout;
+    }
+
+    /**
+     * Get whether the <code>ngrok</code> process will continue to be monitored after it finishes starting up.
+     */
+    public boolean isKeepMonitoring() {
+        return keepMonitoring;
     }
 
     /**
@@ -96,38 +124,10 @@ public class JavaNgrokConfig {
     }
 
     /**
-     * Get whether the <code>ngrok</code> process will continue to be monitored after it finishes starting up.
-     */
-    public boolean isKeepMonitoring() {
-        return keepMonitoring;
-    }
-
-    /**
-     * Get the maximum number of <code>ngrok</code> logs to retain in the monitoring thread.
-     */
-    public int getMaxLogs() {
-        return maxLogs;
-    }
-
-    /**
      * Get the log event callback that will be invoked each time <code>ngrok</code> emits a log.
      */
     public Function<NgrokLog, Void> getLogEventCallback() {
         return logEventCallback;
-    }
-
-    /**
-     * Get the startup time before <code>ngrok</code> times out on boot.
-     */
-    public int getStartupTime() {
-        return startupTimeout;
-    }
-
-    /**
-     * Get the major <code>ngrok</code> version to be used.
-     */
-    public NgrokVersion getNgrokVersion() {
-        return ngrokVersion;
     }
 
     /**
@@ -142,15 +142,16 @@ public class JavaNgrokConfig {
      */
     public static class Builder {
 
+        private NgrokVersion ngrokVersion = NgrokVersion.V3;
+        private int maxLogs = 100;
+        private int startupTimeout = 15;
+        private boolean keepMonitoring = true;
+
         private Path ngrokPath;
         private Path configPath;
         private String authToken;
         private Region region;
-        private boolean keepMonitoring = true;
-        private int maxLogs = 100;
         private Function<NgrokLog, Void> logEventCallback;
-        private int startupTimeout = 15;
-        private NgrokVersion ngrokVersion = NgrokVersion.V3;
         private String apiKey;
 
         /**
@@ -165,16 +166,56 @@ public class JavaNgrokConfig {
          * @param javaNgrokConfig The JavaNgrokConfig to copy.
          */
         public Builder(final JavaNgrokConfig javaNgrokConfig) {
+            this.ngrokVersion = javaNgrokConfig.ngrokVersion;
+            this.maxLogs = javaNgrokConfig.maxLogs;
+            this.startupTimeout = javaNgrokConfig.startupTimeout;
+            this.keepMonitoring = javaNgrokConfig.keepMonitoring;
             this.ngrokPath = javaNgrokConfig.ngrokPath;
             this.configPath = javaNgrokConfig.configPath;
             this.authToken = javaNgrokConfig.authToken;
             this.region = javaNgrokConfig.region;
-            this.keepMonitoring = javaNgrokConfig.keepMonitoring;
-            this.maxLogs = javaNgrokConfig.maxLogs;
             this.logEventCallback = javaNgrokConfig.logEventCallback;
-            this.startupTimeout = javaNgrokConfig.startupTimeout;
-            this.ngrokVersion = javaNgrokConfig.ngrokVersion;
             this.apiKey = javaNgrokConfig.apiKey;
+        }
+
+        /**
+         * The major version of <code>ngrok</code> to be used.
+         */
+        public Builder withNgrokVersion(final NgrokVersion ngrokVersion) {
+            this.ngrokVersion = ngrokVersion;
+            return this;
+        }
+
+        /**
+         * The maximum number of <code>ngrok</code> logs to retain in the monitoring thread.
+         */
+        public Builder withMaxLogs(final int maxLogs) {
+            if (maxLogs < 1) {
+                throw new IllegalArgumentException("\"maxLogs\" must be greater than 0.");
+            }
+
+            this.maxLogs = maxLogs;
+            return this;
+        }
+
+        /**
+         * The max number of seconds to wait for <code>ngrok</code> to start before timing out.
+         */
+        public Builder withStartupTimeout(final int startupTimeout) {
+            if (startupTimeout < 1) {
+                throw new IllegalArgumentException("\"startupTimeout\" must be greater than 0.");
+            }
+
+            this.startupTimeout = startupTimeout;
+            return this;
+        }
+
+        /**
+         * Don't keep monitoring <code>ngrok</code> (for logs, etc.) after startup is complete.
+         */
+        public Builder withoutMonitoring() {
+            this.keepMonitoring = false;
+            return this;
         }
 
         /**
@@ -212,51 +253,11 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * Don't keep monitoring <code>ngrok</code> (for logs, etc.) after startup is complete.
-         */
-        public Builder withoutMonitoring() {
-            this.keepMonitoring = false;
-            return this;
-        }
-
-        /**
-         * The maximum number of <code>ngrok</code> logs to retain in the monitoring thread.
-         */
-        public Builder withMaxLogs(final int maxLogs) {
-            if (maxLogs < 1) {
-                throw new IllegalArgumentException("\"maxLogs\" must be greater than 0.");
-            }
-
-            this.maxLogs = maxLogs;
-            return this;
-        }
-
-        /**
          * A callback that will be invoked each time <code>ngrok</code> emits a log. {@link #keepMonitoring} must be
          * set to <code>true</code> or the function will stop being called after <code>ngrok</code> finishes starting.
          */
         public Builder withLogEventCallback(final Function<NgrokLog, Void> logEventCallback) {
             this.logEventCallback = logEventCallback;
-            return this;
-        }
-
-        /**
-         * The max number of seconds to wait for <code>ngrok</code> to start before timing out.
-         */
-        public Builder withStartupTimeout(final int startupTimeout) {
-            if (startupTimeout < 1) {
-                throw new IllegalArgumentException("\"startupTimeout\" must be greater than 0.");
-            }
-
-            this.startupTimeout = startupTimeout;
-            return this;
-        }
-
-        /**
-         * The major version of <code>ngrok</code> to be used.
-         */
-        public Builder withNgrokVersion(final NgrokVersion ngrokVersion) {
-            this.ngrokVersion = ngrokVersion;
             return this;
         }
 

@@ -56,6 +56,7 @@ import org.yaml.snakeyaml.Yaml;
 public class NgrokInstaller {
 
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokInstaller.class));
+
     public static final String MAC = "DARWIN";
     public static final String WINDOWS = "WINDOWS";
     public static final String LINUX = "LINUX";
@@ -66,12 +67,13 @@ public class NgrokInstaller {
     public static final Path DEFAULT_NGROK_PATH = Paths.get(getDefaultNgrokDir().toString(),
         NgrokInstaller.getNgrokBin());
     public static final Path DEFAULT_CONFIG_PATH = Paths.get(getDefaultNgrokDir().toString(), "ngrok.yml");
-    private static final List<String> VALID_LOG_LEVELS = Collections.unmodifiableList(
-            Stream.of("info", "debug")
-                    .collect(Collectors.toList()));
 
+    private final List<String> validLogLevels = Collections.unmodifiableList(
+        Stream.of("info", "debug")
+            .collect(Collectors.toList()));
     private final Yaml yaml = new Yaml();
     private final Map<String, Map<String, Object>> configCache = new HashMap<>();
+
     private final HttpClient httpClient;
 
     /**
@@ -221,7 +223,7 @@ public class NgrokInstaller {
         if (data.getOrDefault("log_format", "term").equals("json")) {
             throw new JavaNgrokException("\"log_format\" must be \"term\" to be compatible with java-ngrok");
         }
-        if (!VALID_LOG_LEVELS.contains((String) data.getOrDefault("log_level", "info"))) {
+        if (!validLogLevels.contains((String) data.getOrDefault("log_level", "info"))) {
             throw new JavaNgrokException("\"log_level\" must be \"info\" to be compatible with java-ngrok");
         }
     }
@@ -244,18 +246,6 @@ public class NgrokInstaller {
             return FREEBSD;
         } else {
             throw new JavaNgrokInstallerException(String.format("Unknown os.name: %s", os));
-        }
-    }
-
-    private static Path getDefaultNgrokDir() {
-        final String system = getSystem();
-        final String userHome = System.getProperty("user.home");
-        if (system.equals(MAC)) {
-            return Paths.get(userHome, "Library", "Application Support", "ngrok");
-        } else if (system.equals(WINDOWS)) {
-            return Paths.get(userHome, "AppData", "Local", "ngrok");
-        } else {
-            return Paths.get(userHome, ".config", "ngrok");
         }
     }
 
@@ -315,6 +305,18 @@ public class NgrokInstaller {
             config.put("version", "2");
             config.put("region", "us");
             return config;
+        }
+    }
+
+    private static Path getDefaultNgrokDir() {
+        final String system = getSystem();
+        final String userHome = System.getProperty("user.home");
+        if (system.equals(MAC)) {
+            return Paths.get(userHome, "Library", "Application Support", "ngrok");
+        } else if (system.equals(WINDOWS)) {
+            return Paths.get(userHome, "AppData", "Local", "ngrok");
+        } else {
+            return Paths.get(userHome, ".config", "ngrok");
         }
     }
 

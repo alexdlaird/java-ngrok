@@ -59,6 +59,7 @@ public class CapturedRequest {
      * An object representing a nested Request from <code>ngrok</code>'s API.
      */
     public static class Request {
+
         private String method;
         private String proto;
         private Map<String, List<String>> headers;
@@ -90,6 +91,7 @@ public class CapturedRequest {
      * An object representing a nested Response from <code>ngrok</code>'s API.
      */
     public static class Response {
+
         private String status;
         private int statusCode;
         private String proto;

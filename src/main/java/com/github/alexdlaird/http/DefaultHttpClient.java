@@ -319,8 +319,8 @@ public class DefaultHttpClient implements HttpClient {
 
         private String encoding = "UTF-8";
         private String contentType = "application/json";
-        public int timeout = 4000;
-        public int retryCount = 0;
+        private int timeout = 4000;
+        private int retryCount = 0;
 
         /**
          * Default encoding for requests.

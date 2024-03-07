@@ -50,7 +50,7 @@ public class JavaNgrokConfigTest {
         assertFalse(javaNgrokConfig.isKeepMonitoring());
         assertEquals(50, javaNgrokConfig.getMaxLogs());
         assertEquals(logEventCallback, javaNgrokConfig.getLogEventCallback());
-        assertEquals(5, javaNgrokConfig.getStartupTime());
+        assertEquals(5, javaNgrokConfig.getStartupTimeout());
         assertEquals(NgrokVersion.V2, javaNgrokConfig.getNgrokVersion());
         assertEquals("api-key", javaNgrokConfig.getApiKey());
     }

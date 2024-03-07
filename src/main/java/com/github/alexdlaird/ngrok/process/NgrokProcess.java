@@ -73,6 +73,20 @@ public class NgrokProcess {
     }
 
     /**
+     * Get the class used to download and install <code>ngrok</code>.
+     */
+    public NgrokInstaller getNgrokInstaller() {
+        return ngrokInstaller;
+    }
+
+    /**
+     * Get the Runnable that is monitoring the <code>ngrok</code> thread.
+     */
+    public ProcessMonitor getProcessMonitor() {
+        return processMonitor;
+    }
+
+    /**
      * If not already running, start a <code>ngrok</code> process with no tunnels. This will start the
      * <code>ngrok</code> web interface, against which HTTP requests can be made to create, interact with, and
      * destroy tunnels.
@@ -129,7 +143,7 @@ public class NgrokProcess {
             new Thread(processMonitor).start();
 
             final Calendar timeout = Calendar.getInstance();
-            timeout.add(Calendar.SECOND, javaNgrokConfig.getStartupTime());
+            timeout.add(Calendar.SECOND, javaNgrokConfig.getStartupTimeout());
             while (Calendar.getInstance().before(timeout)) {
                 if (processMonitor.isHealthy()) {
                     LOGGER.info(String.format("ngrok process has started with API URL: %s", processMonitor.apiUrl));
@@ -251,17 +265,6 @@ public class NgrokProcess {
         }
     }
 
-    private String captureOutput(final BufferedReader reader) throws IOException {
-        final StringBuilder builder = new StringBuilder();
-
-        String line;
-        while (nonNull(line = reader.readLine())) {
-            builder.append(line).append("\n");
-        }
-
-        return builder.toString().trim();
-    }
-
     /**
      * Update <code>ngrok</code>, if an update is available.
      */
@@ -323,18 +326,15 @@ public class NgrokProcess {
         return processMonitor.apiUrl;
     }
 
-    /**
-     * Get the class used to download and install <code>ngrok</code>.
-     */
-    public NgrokInstaller getNgrokInstaller() {
-        return ngrokInstaller;
-    }
+    private String captureOutput(final BufferedReader reader) throws IOException {
+        final StringBuilder builder = new StringBuilder();
 
-    /**
-     * Get the Runnable that is monitoring the <code>ngrok</code> thread.
-     */
-    public ProcessMonitor getProcessMonitor() {
-        return processMonitor;
+        String line;
+        while (nonNull(line = reader.readLine())) {
+            builder.append(line).append("\n");
+        }
+
+        return builder.toString().trim();
     }
 
     /**
@@ -342,17 +342,20 @@ public class NgrokProcess {
      */
     public static class ProcessMonitor implements Runnable {
 
+        private final List<NgrokLog> logs = new ArrayList<>();
+
         private final Process process;
         private final JavaNgrokConfig javaNgrokConfig;
         private final HttpClient httpClient;
+
+        private boolean alive = true;
+
         private String apiUrl;
         private boolean tunnelStarted;
         private boolean clientConnected;
         private String startupError;
         private BufferedReader reader;
 
-        private final List<NgrokLog> logs = new ArrayList<>();
-        private boolean alive = true;
 
         public ProcessMonitor(final Process process,
                               final JavaNgrokConfig javaNgrokConfig) {

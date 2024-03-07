@@ -19,4 +19,30 @@
         <Class name="com.github.alexdlaird.ngrok.installer.NgrokInstaller"/>
         <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
     </Match>
+
+    <Match>
+        <Class name="com.github.alexdlaird.ngrok.NgrokClient"/>
+        <Method name="getHttpClient" />
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <Class name="com.github.alexdlaird.ngrok.NgrokClient"/>
+        <Method name="getNgrokProcess" />
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <Class name="com.github.alexdlaird.ngrok.NgrokClient$Builder"/>
+        <Method name="withHttpClient" />
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Class name="com.github.alexdlaird.ngrok.NgrokClient$Builder"/>
+        <Method name="withNgrokProcess" />
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Class name="com.github.alexdlaird.ngrok.installer.NgrokInstaller"/>
+        <Field name="httpClient" />
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
 </FindBugsFilter>

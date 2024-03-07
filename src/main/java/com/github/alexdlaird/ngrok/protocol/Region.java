@@ -13,6 +13,7 @@ import com.google.gson.annotations.SerializedName;
  * <a href="https://ngrok.com/docs/ngrok-agent/config#global-options" target="_blank"><code>ngrok</code>'s docs</a>.
  */
 public enum Region {
+
     @SerializedName("us")
     US,
     @SerializedName("eu")
