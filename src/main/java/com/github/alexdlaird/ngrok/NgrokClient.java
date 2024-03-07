@@ -172,11 +172,12 @@ public class NgrokClient {
 
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokClient.class));
 
+    private final Map<String, Tunnel> currentTunnels = new HashMap<>();
+
     private final String javaNgrokVersion;
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokProcess ngrokProcess;
     private final HttpClient httpClient;
-    private final Map<String, Tunnel> currentTunnels = new HashMap<>();
 
     private NgrokClient(final Builder builder) {
         this.javaNgrokVersion = builder.javaNgrokVersion;

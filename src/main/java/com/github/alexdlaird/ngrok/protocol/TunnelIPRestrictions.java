@@ -13,6 +13,7 @@ import java.util.Map;
  * An object that represents IP restrictions for a {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel}.
  */
 public class TunnelIPRestrictions {
+
     private final List<String> allowCidrs;
     private final List<String> denyCidrs;
 
@@ -39,6 +40,7 @@ public class TunnelIPRestrictions {
      * Builder for a {@link TunnelIPRestrictions}.
      */
     public static class Builder {
+
         public List<String> allowCidrs;
         public List<String> denyCidrs;
 

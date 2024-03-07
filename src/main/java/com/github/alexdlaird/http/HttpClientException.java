@@ -10,6 +10,7 @@ package com.github.alexdlaird.http;
  * Root exception for {@link DefaultHttpClient} interactions.
  */
 public class HttpClientException extends RuntimeException {
+    
     private final String url;
     private final int statusCode;
     private final String body;

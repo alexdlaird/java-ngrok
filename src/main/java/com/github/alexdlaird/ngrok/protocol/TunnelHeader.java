@@ -13,8 +13,8 @@ import java.util.Map;
  * An object that represents header configuration for a {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel}.
  */
 public class TunnelHeader {
-    private final List<String> add;
 
+    private final List<String> add;
     private final List<String> remove;
 
     private TunnelHeader(final TunnelHeader.Builder builder) {
@@ -40,6 +40,7 @@ public class TunnelHeader {
      * Builder for a {@link TunnelHeader}.
      */
     public static class Builder {
+
         private List<String> add;
         private List<String> remove;
 

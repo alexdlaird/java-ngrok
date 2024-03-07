@@ -103,6 +103,7 @@ public class Tunnel {
      * An object representing a nested TunnelConfig from <code>ngrok</code>'s API.
      */
     public static class TunnelConfig {
+
         private String addr;
         private boolean inspect;
 
@@ -125,6 +126,7 @@ public class Tunnel {
      * An object representing a nested Metrics from <code>ngrok</code>'s API.
      */
     public static class Metrics {
+
         private int count;
         private int gauge;
         private double rate1;

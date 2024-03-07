@@ -13,6 +13,7 @@ import java.util.Map;
  * {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel}.
  */
 public class TunnelVerifyWebhook {
+
     private final String provider;
     private final String secret;
 
@@ -39,6 +40,7 @@ public class TunnelVerifyWebhook {
      * Builder for a {@link TunnelVerifyWebhook}.
      */
     public static class Builder {
+
         public String provider;
         public String secret;
 

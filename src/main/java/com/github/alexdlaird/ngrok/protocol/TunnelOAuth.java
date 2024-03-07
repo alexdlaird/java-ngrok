@@ -13,6 +13,7 @@ import java.util.Map;
  * An object that represents the OAuth configuration for a {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel}.
  */
 public class TunnelOAuth {
+
     private final String provider;
     private final List<String> scopes;
     private final List<String> allowEmails;
@@ -59,6 +60,7 @@ public class TunnelOAuth {
      * See docs for that class for example usage.
      */
     public static class Builder {
+
         private String provider;
         private List<String> scopes;
         private List<String> allowEmails;

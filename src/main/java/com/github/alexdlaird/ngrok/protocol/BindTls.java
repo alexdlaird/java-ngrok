@@ -13,6 +13,7 @@ import com.google.gson.annotations.SerializedName;
  * <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions" target="_blank"><code>ngrok</code>'s docs</a>.
  */
 public enum BindTls {
+
     @SerializedName("true")
     TRUE,
     @SerializedName("false")

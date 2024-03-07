@@ -42,6 +42,7 @@ import java.util.UUID;
  * and {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
  */
 public class CreateTunnel {
+
     private final transient NgrokVersion ngrokVersion;
     private final String name;
     private final Proto proto;
@@ -314,6 +315,7 @@ public class CreateTunnel {
      * target="_blank"><code>ngrok</code>'s tunnel definition</a>. See docs for that class for example usage.
      */
     public static class Builder {
+
         private boolean setDefaults = false;
 
         private NgrokVersion ngrokVersion;
