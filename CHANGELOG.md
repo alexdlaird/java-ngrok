@@ -7,6 +7,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Added
 - Build and stability improvements.
 
+### Fixed
+- Minor bugs.
+
 ## [2.2.14](https://github.com/alexdlaird/java-ngrok/compare/2.2.13...2.2.14) - 2024-03-06
 ### Added
 - Build and stability improvements.
