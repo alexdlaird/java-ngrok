@@ -192,8 +192,8 @@ public class NgrokProcess {
             if (nonNull(processMonitor.reader)) {
                 processMonitor.reader.close();
             }
-        } catch (final IOException ex) {
-            LOGGER.log(Level.WARNING, "An error occurred when closing \"ProcessMonitor.reader\"", ex);
+        } catch (final IOException e) {
+            LOGGER.log(Level.WARNING, "An error occurred when closing \"ProcessMonitor.reader\"", e);
         }
 
         process = null;

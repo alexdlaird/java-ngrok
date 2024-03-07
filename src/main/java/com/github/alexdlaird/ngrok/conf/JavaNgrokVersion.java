@@ -49,8 +49,8 @@ public class JavaNgrokVersion {
                     return properties.getProperty("version");
                 }
             }
-        } catch (final IOException ex) {
-            LOGGER.log(Level.WARNING, "An error occurred trying to read \"version\" from resource properties", ex);
+        } catch (final IOException e) {
+            LOGGER.log(Level.WARNING, "An error occurred trying to read \"version\" from resource properties", e);
         }
 
         return null;
