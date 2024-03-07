@@ -1,5 +1,7 @@
 package com.github.alexdlaird.ngrok.conf;
 
+import static java.util.Objects.nonNull;
+
 import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.NgrokClient.Builder;
 import java.io.IOException;
@@ -38,16 +40,18 @@ public class JavaNgrokVersion {
     private static String getVersionFromProperties() {
         try {
             try (final InputStream resourceStream = Builder.class.getResourceAsStream("/version.properties")) {
-                final Properties properties = new Properties();
-                properties.load(resourceStream);
+                if (nonNull(resourceStream)) {
+                    final Properties properties = new Properties();
+                    properties.load(resourceStream);
 
-                return properties.getProperty("version");
+                    return properties.getProperty("version");
+                }
             }
-        } catch (final IOException | NullPointerException ex) {
+        } catch (final IOException ex) {
             LOGGER.log(Level.WARNING, "An error occurred trying to read \"version\" from resource properties", ex);
-
-            return null;
         }
+
+        return null;
     }
 
     /**

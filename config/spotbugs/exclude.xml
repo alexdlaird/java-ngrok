@@ -1,0 +1,22 @@
+<FindBugsFilter>
+    <Match>
+        <Package name="com.github.alexdlaird.ngrok.protocol"/>
+        <Bug pattern="UWF_UNWRITTEN_FIELD"/>
+    </Match>
+    <Match>
+        <Package name="com.github.alexdlaird.ngrok.protocol"/>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <Package name="com.github.alexdlaird.ngrok.protocol"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Class name="com.github.alexdlaird.http.DefaultHttpClient"/>
+        <Bug pattern="DCN_NULLPOINTER_EXCEPTION"/>
+    </Match>
+    <Match>
+        <Class name="com.github.alexdlaird.ngrok.installer.NgrokInstaller"/>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+    </Match>
+</FindBugsFilter>

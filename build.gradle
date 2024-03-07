@@ -61,6 +61,7 @@ checkstyle {
 
 spotbugs {
     ignoreFailures = true
+    excludeFilter = file("config/spotbugs/exclude.xml")
 }
 
 spotbugsMain {

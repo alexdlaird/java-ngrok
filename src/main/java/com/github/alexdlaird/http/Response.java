@@ -6,6 +6,7 @@
 
 package com.github.alexdlaird.http;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public class Response<T> {
         this.statusCode = statusCode;
         this.body = body;
         this.bodyRaw = bodyRaw;
-        this.headerFields = headerFields;
+        this.headerFields = Collections.unmodifiableMap(headerFields);
     }
 
     /**
