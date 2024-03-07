@@ -99,7 +99,7 @@ public class DefaultHttpClient implements HttpClient {
             try (final InputStream inputStream = getInputStream(httpUrlConnection, null, "GET", additionalHeaders)) {
                 Files.copy(inputStream, dest, StandardCopyOption.REPLACE_EXISTING);
             }
-        } catch (final Exception ex) {
+        } catch (final Exception e) {
             if (retries < retryCount) {
                 LOGGER.warning("GET failed, retrying in 0.5 seconds ...");
                 Thread.sleep(500);
@@ -125,7 +125,7 @@ public class DefaultHttpClient implements HttpClient {
                     }
                 }
 
-                throw new HttpClientException(msg, ex, url, statusCode, errorResponse);
+                throw new HttpClientException(msg, e, url, statusCode, errorResponse);
             }
         } finally {
             if (nonNull(httpUrlConnection)) {
@@ -208,7 +208,7 @@ public class DefaultHttpClient implements HttpClient {
         if (isNotBlank(response)) {
             try {
                 return gson.fromJson(response, clazz);
-            } catch (final JsonSyntaxException ex) {
+            } catch (final JsonSyntaxException e) {
                 return null;
             }
         } else {
@@ -286,7 +286,7 @@ public class DefaultHttpClient implements HttpClient {
                     responseBody,
                     httpUrlConnection.getHeaderFields());
             }
-        } catch (final Exception ex) {
+        } catch (final Exception e) {
             String msg = "An unknown error occurred when performing the operation";
 
             int statusCode = -1;
@@ -304,7 +304,7 @@ public class DefaultHttpClient implements HttpClient {
                 }
             }
 
-            throw new HttpClientException(msg, ex, url, statusCode, errorResponse);
+            throw new HttpClientException(msg, e, url, statusCode, errorResponse);
         } finally {
             if (nonNull(httpUrlConnection)) {
                 httpUrlConnection.disconnect();
