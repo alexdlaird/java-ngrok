@@ -89,27 +89,10 @@ and [`CreateTunnel.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/d
 [![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)](https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE)
 
 Java 8 support is not actively maintained, but on a periodic basis, `main` may be rebased in to the `1.4.x`
-branch, where a compatible build of this project does exist for Java 8. To use it, include the `java8-ngrok`
+branch, where a compatible build of this project exists for Java 8. To use it, include the `java8-ngrok`
 dependency from [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
 
-The [Process API](https://docs.oracle.com/javase/9/docs/api/java/lang/ProcessHandle.html) was introduced in Java 9, so  certain convenience methods around managing
-the `ngrok` process are not available in the Java 8 build. For instance, without the Process API,
-`java8-ngrok` cannot teardown the external `ngrok` process for us. So even though the Java process
-will terminate gracefully, `ngrok` will not. On a Unix-like system, we can remedy this with:
-
-```java
-Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-    try {
-        // Java 8 doesn't properly manage its child processes, so ensure it's killed
-        Runtime.getRuntime().exec("killall -9 ngrok");
-    } catch (final IOException e) {
-        LOG.error("An error occurred while shutting down ngrok", e);
-    }
-}));
-```
-
-But `killall` is not available on all platforms, and even on Unix-like systems this workaround is
-is limited and has side effects.
+For more details on what differs in the `java8-ngrok` dependency, [see the docs](https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok/latest/index.html#java8).
 
 ## Contributing
 
