@@ -365,9 +365,9 @@ public class NgrokProcess {
 
         @Override
         public void run() {
-            try (final InputStreamReader inputStream = new InputStreamReader(process.getInputStream(),
-                    StandardCharsets.UTF_8)) {
-                reader = new BufferedReader(inputStream);
+            try {
+                reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
 
                 String line;
                 while (nonNull(line = reader.readLine())) {
