@@ -54,6 +54,11 @@ jacocoTestReport {
     }
 }
 
+checkstyle {
+    ignoreFailures = false
+    maxWarnings = 0
+}
+
 spotbugs {
     ignoreFailures = true
 }
