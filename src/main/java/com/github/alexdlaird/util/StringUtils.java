@@ -25,7 +25,7 @@ public class StringUtils {
      * @param inputStream The Input Stream to read from.
      * @param charset     The charset of the Input Stream.
      * @return The resulting String.
-     * @throws IOException An I/O error has occurred.
+     * @throws IOException An I/O exception occurred.
      */
     public static String streamToString(final InputStream inputStream, final Charset charset) throws IOException {
         if (inputStream == null) {

@@ -186,11 +186,11 @@ public class DefaultHttpClient implements HttpClient {
     }
 
     /**
-     * Override this method if you could like to implement a custom URL connection.
+     * Override this method if you would like to implement a custom URL connection.
      *
      * @param url The URL to connect to.
      * @return A URL connection.
-     * @throws IOException An I/O exception has occurred.
+     * @throws IOException An I/O exception occurred.
      */
     protected HttpURLConnection createHttpUrlConnection(final String url) throws IOException {
         return (HttpURLConnection) new URL(url).openConnection();
@@ -216,6 +216,14 @@ public class DefaultHttpClient implements HttpClient {
         }
     }
 
+    /**
+     * Rebuild the URL with parameters appended.
+     *
+     * @param url        The URL to rebuild.
+     * @param parameters The parameters to append.
+     * @return The parameter-appended URL.
+     * @throws UnsupportedEncodingException An encoding exception occurred.
+     */
     protected String urlWithParameters(final String url,
                                        final List<Parameter> parameters)
         throws UnsupportedEncodingException {
@@ -242,6 +250,16 @@ public class DefaultHttpClient implements HttpClient {
         return stringBuilder.toString();
     }
 
+    /**
+     * Initialize the connection with the given parameters, then return the provisioned input stream.
+     *
+     * @param httpUrlConnection The connection to initialize.
+     * @param body              The request body for the stream.
+     * @param method            The HTTP method.
+     * @param additionalHeaders Additional headers for the request.
+     * @return The provisioned input stream.
+     * @throws IOException An I/O exception occurred.
+     */
     protected InputStream getInputStream(final HttpURLConnection httpUrlConnection,
                                          final String body,
                                          final String method,
@@ -354,6 +372,9 @@ public class DefaultHttpClient implements HttpClient {
             return this;
         }
 
+        /**
+         * Build the {@link DefaultHttpClient}.
+         */
         public DefaultHttpClient build() {
             return new DefaultHttpClient(this);
         }

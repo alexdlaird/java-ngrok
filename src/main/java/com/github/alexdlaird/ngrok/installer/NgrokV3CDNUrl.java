@@ -30,6 +30,7 @@ public enum NgrokV3CDNUrl implements NgrokCDNUrl {
         this.url = CDN_URL_PREFIX + filename;
     }
 
+    @Override
     public String getUrl() {
         return url;
     }

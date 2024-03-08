@@ -11,6 +11,7 @@ import static java.util.Objects.nonNull;
 
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokHTTPException;
+import com.github.alexdlaird.exception.JavaNgrokSecurityException;
 import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.http.HttpClientException;
@@ -215,6 +216,10 @@ public class NgrokClient {
      *
      * @param createTunnel The tunnel definition.
      * @return The created Tunnel.
+     * @throws JavaNgrokException         The tunnel definition was invalid, or response was incompatible with
+     *                                    <code>java-ngrok</code>.
+     * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
+     * @throws JavaNgrokSecurityException The URL was not supported.
      */
     public Tunnel connect(final CreateTunnel createTunnel) {
         ngrokProcess.start();
@@ -310,6 +315,8 @@ public class NgrokClient {
      * Disconnect the <code>ngrok</code> tunnel for the given URL, if open.
      *
      * @param publicUrl The public URL of the tunnel to disconnect.
+     * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
+     * @throws JavaNgrokSecurityException The URL was not supported.
      */
     public void disconnect(final String publicUrl) {
         // If ngrok is not running, there are no tunnels to disconnect
@@ -347,6 +354,9 @@ public class NgrokClient {
      * {@link JavaNgrokConfig}.
      *
      * @return The active <code>ngrok</code> tunnels.
+     * @throws JavaNgrokException         The response was invalid or not compatible with <code>java-ngrok</code>.
+     * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
+     * @throws JavaNgrokSecurityException The URL was not supported.
      */
     public List<Tunnel> getTunnels() {
         ngrokProcess.start();
@@ -374,6 +384,8 @@ public class NgrokClient {
      * Get the latest metrics for the given {@link Tunnel} and update its <code>metrics</code> attribute.
      *
      * @param tunnel The Tunnel to update.
+     * @throws JavaNgrokException         The API did not return <code>metrics</code>.
+     * @throws JavaNgrokSecurityException The URL was not supported.
      */
     public void refreshMetrics(final Tunnel tunnel) {
         Response<Tunnel> latestTunnel = httpClient.get(String.format("%s%s", ngrokProcess.getApiUrl(),

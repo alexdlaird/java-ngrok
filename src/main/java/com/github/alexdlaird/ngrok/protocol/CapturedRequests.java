@@ -16,10 +16,16 @@ public class CapturedRequests {
     private List<CapturedRequest> requests;
     private String uri;
 
+    /**
+     * Get the list of {@link CapturedRequest}s.
+     */
     public List<CapturedRequest> getRequests() {
         return requests;
     }
 
+    /**
+     * Get the URI of the captured requests.
+     */
     public String getUri() {
         return uri;
     }

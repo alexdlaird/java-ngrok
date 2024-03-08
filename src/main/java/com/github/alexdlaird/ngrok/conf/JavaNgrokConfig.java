@@ -38,8 +38,8 @@ import java.util.function.Function;
  * </pre>
  * <h2><code>ngrok</code> Version Compatibility</h2>
  * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
- * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}
- * and {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
+ * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
+ * {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
  */
 public class JavaNgrokConfig {
 
@@ -155,7 +155,7 @@ public class JavaNgrokConfig {
         private String apiKey;
 
         /**
-         * Default constructor for {@link JavaNgrokConfig.Builder}.
+         * Construct a JavaNgrokConfig Builder.
          */
         public Builder() {
         }
@@ -188,6 +188,8 @@ public class JavaNgrokConfig {
 
         /**
          * The maximum number of <code>ngrok</code> logs to retain in the monitoring thread.
+         *
+         * @throws IllegalArgumentException The argument was invalid.
          */
         public Builder withMaxLogs(final int maxLogs) {
             if (maxLogs < 1) {
@@ -200,6 +202,8 @@ public class JavaNgrokConfig {
 
         /**
          * The max number of seconds to wait for <code>ngrok</code> to start before timing out.
+         *
+         * @throws IllegalArgumentException The argument was invalid.
          */
         public Builder withStartupTimeout(final int startupTimeout) {
             if (startupTimeout < 1) {
@@ -228,7 +232,9 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * The path to the <code>ngrok</code> config file, defaults to <a href="https://ngrok.com/docs/ngrok-agent/config" target="_blank"><code>ngrok's</code> default config location</a>.
+         * The path to the <code>ngrok</code> config file, defaults to <a
+         * href="https://ngrok.com/docs/ngrok-agent/config" target="_blank"><code>ngrok's</code> default config
+         * location</a>.
          */
         public Builder withConfigPath(final Path configPath) {
             this.configPath = configPath;

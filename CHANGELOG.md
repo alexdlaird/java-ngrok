@@ -7,11 +7,13 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [2.2.15](https://github.com/alexdlaird/java-ngrok/compare/2.2.14...2.2.15) - TBD
 ### Added
-- Build and stability improvements.
+- `obj` parsing in [`NgrokLog`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.15/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/process/NgrokLog.html).
+- `throws` for unchecked exceptions to documentation.
 - Documentation improvements.
+- Build and stability improvements.
 
 ### Fixed
-- Minor bugs.
+- Minor bugs, including a typo in the name of [JavaNgrokConfig.getStartupTimeout()](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.15/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html#getStartupTimeout()).
 
 ## [2.2.14](https://github.com/alexdlaird/java-ngrok/compare/2.2.13...2.2.14) - 2024-03-06
 ### Added
@@ -181,11 +183,13 @@ The `1.4.x` branch is where support for Java 8 of `java-ngrok` is passively main
 
 ## [1.4.13](https://github.com/alexdlaird/java-ngrok/compare/1.4.12...1.4.13) - TBD
 ### Added
-- Build and stability improvements.
+- `obj` parsing in [`NgrokLog`](https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok/1.4.13/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/process/NgrokLog.html).
+- `throws` for unchecked exceptions to documentation.
 - Documentation improvements.
+- Build and stability improvements.
 
 ### Fixed
-- Minor bugs.
+- Minor bugs, including a typo in the name of [JavaNgrokConfig.getStartupTimeout()](https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok/1.4.13/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html#getStartupTimeout()).
 
 ## [1.4.12](https://github.com/alexdlaird/java-ngrok/compare/1.4.11...1.4.12) - 2024-03-06
 ### Added

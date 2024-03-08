@@ -137,38 +137,65 @@ public class Tunnel {
         private double p95;
         private double p99;
 
+        /**
+         * Get the count metric.
+         */
         public int getCount() {
             return count;
         }
 
+        /**
+         * Get the gauge metric.
+         */
         public int getGauge() {
             return gauge;
         }
 
+        /**
+         * Get the rate1 metric.
+         */
         public double getRate1() {
             return rate1;
         }
 
+        /**
+         * Get the rate5 metric.
+         */
         public double getRate5() {
             return rate5;
         }
 
+        /**
+         * Get the rate15 metric.
+         */
         public double getRate15() {
             return rate15;
         }
 
+        /**
+         * Get the p50 metric.
+         */
         public double getP50() {
             return p50;
         }
 
+        /**
+         * Get the p90 metric.
+         */
         public double getP90() {
             return p90;
         }
 
+        /**
+         * Get the p95 metric.
+         */
         public double getP95() {
             return p95;
         }
 
+        /**
+         * Get the p99 metric.
+         */
         public double getP99() {
             return p99;
         }

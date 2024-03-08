@@ -14,6 +14,12 @@ public class Version {
     private final String ngrokVersion;
     private final String javaNgrokVersion;
 
+    /**
+     * Construct a version.
+     *
+     * @param ngrokVersion The <code>ngrok</code> version.
+     * @param javaNgrokVersion The <code>java-ngrok</code> version.
+     */
     public Version(final String ngrokVersion, final String javaNgrokVersion) {
         this.ngrokVersion = ngrokVersion;
         this.javaNgrokVersion = javaNgrokVersion;

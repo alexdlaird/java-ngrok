@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An object that represents IP restrictions for a {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel}.
+ * An object that represents IP restrictions for a {@link CreateTunnel}.
  */
 public class TunnelIPRestrictions {
 
     private final List<String> allowCidrs;
     private final List<String> denyCidrs;
 
-    public TunnelIPRestrictions(TunnelIPRestrictions.Builder builder) {
+    private TunnelIPRestrictions(final Builder builder) {
         this.allowCidrs = builder.allowCidrs;
         this.denyCidrs = builder.denyCidrs;
     }
@@ -41,18 +41,17 @@ public class TunnelIPRestrictions {
      */
     public static class Builder {
 
-        public List<String> allowCidrs;
-        public List<String> denyCidrs;
+        private List<String> allowCidrs;
+        private List<String> denyCidrs;
 
         /**
-         * Default constructor for {@link TunnelIPRestrictions.Builder}.
+         * Construct a TunnelIPRestrictions Builder.
          */
         public Builder() {
         }
 
         /**
-         * Constructor for {@link TunnelIPRestrictions.Builder} to be built from <code>ip_restrictions</code>
-         * portion of a tunnel definition.
+         * Construct a TunnelIPRestrictions Builder from tunnel definition of <code>ip_restrictions</code>.
          *
          * @param tunnelIPRestrictionsDefinitions The map of Tunnel IP restrictions attributes.
          */

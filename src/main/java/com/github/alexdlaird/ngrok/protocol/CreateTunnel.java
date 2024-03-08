@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * An object that represents a <code>ngrok</code> Tunnel creation request. This object can be serialized
- * and passed to the {@link HttpClient}.
+ * An object that represents a <code>ngrok</code> Tunnel creation request. This object can be serialized and passed to
+ * the {@link HttpClient}.
  *
  * <h3>Basic Usage</h3>
  * <pre>
@@ -41,11 +41,12 @@ import java.util.stream.Stream;
  * </pre>
  * <h2><code>ngrok</code> Version Compatibility</h2>
  * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
- * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}
- * and {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
+ * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
+ * {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
  */
 public class CreateTunnel {
 
+    // The ngrokVersion is transient so that it can be serialized to a valid request
     private final transient NgrokVersion ngrokVersion;
     private final String name;
     private final Proto proto;
@@ -193,8 +194,8 @@ public class CreateTunnel {
     }
 
     /**
-     * Get the PEM TLS certificate authority path that will be used to verify incoming TLS client
-     * connection certificates.
+     * Get the PEM TLS certificate authority path that will be used to verify incoming TLS client connection
+     * certificates.
      */
     public String getClientCas() {
         return clientCas;
@@ -313,8 +314,8 @@ public class CreateTunnel {
     }
 
     /**
-     * Builder for a {@link CreateTunnel}, which can be used to construct a request that conforms to
-     * <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions"
+     * Builder for a {@link CreateTunnel}, which can be used to construct a request that conforms to <a
+     * href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions"
      * target="_blank"><code>ngrok</code>'s tunnel definition</a>. See docs for that class for example usage.
      */
     public static class Builder {
@@ -362,8 +363,8 @@ public class CreateTunnel {
         }
 
         /**
-         * Use this constructor if default values should be populated in required attributes when {@link #build()}
-         * is called.
+         * Use this constructor if default values should be populated in required attributes when {@link #build()} is
+         * called.
          *
          * @param setDefaults <code>true</code> to populate defaults.
          */
@@ -419,8 +420,8 @@ public class CreateTunnel {
         }
 
         /**
-         * A friendly name for the tunnel, or the name of a
-         * <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions"
+         * A friendly name for the tunnel, or the name of a <a
+         * href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions"
          * target="_blank">ngrok tunnel definition</a> to be used.
          */
         public Builder withName(final String name) {
@@ -462,6 +463,8 @@ public class CreateTunnel {
 
         /**
          * HTTP basic authentication credentials to enforce on tunneled requests.
+         *
+         * @throws IllegalArgumentException The argument was invalid.
          */
         public Builder withAuth(final String auth) {
             if (nonNull(basicAuth)) {
@@ -481,8 +484,10 @@ public class CreateTunnel {
         }
 
         /**
-         * Bind an HTTPS ({@link BindTls#TRUE} or HTTP ({@link BindTls#FALSE}) endpoint, defaults
-         * to {@link BindTls#BOTH}.
+         * Bind an HTTPS ({@link BindTls#TRUE} or HTTP ({@link BindTls#FALSE}) endpoint, defaults to
+         * {@link BindTls#BOTH}.
+         *
+         * @throws IllegalArgumentException The argument was invalid.
          */
         public Builder withBindTls(final BindTls bindTls) {
             if (nonNull(schemes)) {
@@ -558,6 +563,8 @@ public class CreateTunnel {
 
         /**
          * The schemes to be bound.
+         *
+         * @throws IllegalArgumentException The argument was invalid.
          */
         public Builder withSchemes(final List<String> schemes) {
             if (nonNull(bindTls)) {
@@ -570,6 +577,8 @@ public class CreateTunnel {
 
         /**
          * List of HTTP basic authentication credentials to enforce on tunneled requests.
+         *
+         * @throws IllegalArgumentException The argument was invalid.
          */
         public Builder withBasicAuth(final List<String> basicAuth) {
             if (nonNull(auth)) {
@@ -669,10 +678,11 @@ public class CreateTunnel {
         }
 
         /**
-         * Populate any <code>null</code> attributes (with the exception of <code>name</code>) in this Builder with
-         * values from the given <code>tunnelDefinition</code>.
+         * Populate any <code>null</code> attributes (except for <code>name</code>) in this Builder with values from
+         * the given <code>tunnelDefinition</code>.
          *
          * @param tunnelDefinition The map from which <code>null</code> attributes will be populated.
+         * @throws IllegalArgumentException The argument was invalid.
          */
         public Builder withTunnelDefinition(Map<String, Object> tunnelDefinition) {
             if (isNull(this.proto) && tunnelDefinition.containsKey("proto")) {

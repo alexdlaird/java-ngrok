@@ -16,10 +16,16 @@ public class Tunnels {
     private List<Tunnel> tunnels;
     private String uri;
 
+    /**
+     * Get the list tunnels.
+     */
     public List<Tunnel> getTunnels() {
         return tunnels;
     }
 
+    /**
+     * Get the URI.
+     */
     public String getUri() {
         return uri;
     }
