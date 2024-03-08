@@ -25,6 +25,7 @@ public interface HttpClient {
      * @param clazz             The class for the Response's body.
      * @param <B>               The response body type.
      * @return The results of the query.
+     * @throws HttpClientException An error has occurred while executing the HTTP request.
      */
     <B> Response<B> get(final String url, final List<Parameter> parameters,
                         final Map<String, String> additionalHeaders, final Class<B> clazz);
@@ -45,6 +46,7 @@ public interface HttpClient {
      * @param dest              The destination to which the file will be downloaded.
      * @param retries           The retry attempt index, if download fails.
      * @throws InterruptedException The thread is interrupted during retries.
+     * @throws HttpClientException An error has occurred while executing the HTTP request.
      */
     void get(final String url, final List<Parameter> parameters,
              final Map<String, String> additionalHeaders, final Path dest, final int retries)
@@ -69,6 +71,7 @@ public interface HttpClient {
      * @param <R>               The Request type.
      * @param <B>               The Response body type.
      * @return The results of the query.
+     * @throws HttpClientException An error has occurred while executing the HTTP request.
      */
     <R, B> Response<B> post(final String url, final R request, final List<Parameter> parameters,
                             final Map<String, String> additionalHeaders, final Class<B> clazz);
@@ -91,6 +94,7 @@ public interface HttpClient {
      * @param <R>               The Request type.
      * @param <B>               The Response body type.
      * @return The results of the query.
+     * @throws HttpClientException An error has occurred while executing the HTTP request.
      */
     <R, B> Response<B> put(final String url, final R request, final List<Parameter> parameters,
                            final Map<String, String> additionalHeaders, final Class<B> clazz);
@@ -111,6 +115,7 @@ public interface HttpClient {
      * @param clazz             The class for the Response's body.
      * @param <B>               The Response body type.
      * @return The results of the query.
+     * @throws HttpClientException An error has occurred while executing the HTTP request.
      */
     <B> Response<B> delete(final String url, final List<Parameter> parameters,
                            final Map<String, String> additionalHeaders, final Class<B> clazz);

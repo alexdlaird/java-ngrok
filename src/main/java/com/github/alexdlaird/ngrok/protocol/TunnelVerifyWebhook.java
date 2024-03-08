@@ -17,7 +17,7 @@ public class TunnelVerifyWebhook {
     private final String provider;
     private final String secret;
 
-    public TunnelVerifyWebhook(TunnelVerifyWebhook.Builder builder) {
+    private TunnelVerifyWebhook(final Builder builder) {
         this.provider = builder.provider;
         this.secret = builder.secret;
     }
@@ -41,8 +41,8 @@ public class TunnelVerifyWebhook {
      */
     public static class Builder {
 
-        public String provider;
-        public String secret;
+        private String provider;
+        private String secret;
 
         /**
          * Default constructor for {@link TunnelVerifyWebhook.Builder}.

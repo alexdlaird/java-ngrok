@@ -53,7 +53,7 @@ public class NgrokProcess {
      * {@link NgrokInstaller} will install it. This will also provision a default <code>ngrok</code> config at
      * {@link JavaNgrokConfig#getConfigPath()}, if none exists.
      *
-     * @param javaNgrokConfig The <code>java-ngrok</code> to use when interacting with the <code>ngrok</code> binary.
+     * @param javaNgrokConfig The config to use when interacting with the <code>ngrok</code> binary.
      * @param ngrokInstaller  The class used to download and install <code>ngrok</code>.
      */
     public NgrokProcess(final JavaNgrokConfig javaNgrokConfig,
@@ -88,6 +88,9 @@ public class NgrokProcess {
      * If not already running, start a <code>ngrok</code> process with no tunnels. This will start the
      * <code>ngrok</code> web interface, against which HTTP requests can be made to create, interact with, and
      * destroy tunnels.
+     *
+     * @throws NgrokException             <code>ngrok</code> could not start.
+     * @throws JavaNgrokSecurityException The URL was not supported.
      */
     public void start() {
         if (isRunning()) {
@@ -221,6 +224,7 @@ public class NgrokProcess {
      * {@link NgrokClient.Builder}.
      *
      * @param authToken The auth token.
+     * @throws NgrokException <code>ngrok</code> could not start.
      */
     public void setAuthToken(final String authToken) {
         final ProcessBuilder processBuilder = new ProcessBuilder();
@@ -264,6 +268,8 @@ public class NgrokProcess {
 
     /**
      * Update <code>ngrok</code>, if an update is available.
+     *
+     * @throws NgrokException <code>ngrok</code> could not start.
      */
     public void update() {
         final ProcessBuilder processBuilder = new ProcessBuilder();
@@ -285,6 +291,7 @@ public class NgrokProcess {
      * Get the <code>ngrok</code> version.
      *
      * @return The version.
+     * @throws NgrokException <code>ngrok</code> could not start.
      */
     public String getVersion() {
         final ProcessBuilder processBuilder = new ProcessBuilder();
@@ -310,6 +317,8 @@ public class NgrokProcess {
 
     /**
      * Get the API URL for the <code>ngrok</code> web interface.
+     *
+     * @throws JavaNgrokSecurityException The URL was not supported.
      */
     public String getApiUrl() {
         if (!isRunning() || !processMonitor.isHealthy()) {
@@ -349,12 +358,24 @@ public class NgrokProcess {
         private String startupError;
         private BufferedReader reader;
 
-
+        /**
+         * Construct and monitor a {link @Process} monitor.
+         *
+         * @param process         The Process to monitor.
+         * @param javaNgrokConfig The config to use when monitoring the Process.
+         */
         public ProcessMonitor(final Process process,
                               final JavaNgrokConfig javaNgrokConfig) {
             this(process, javaNgrokConfig, new DefaultHttpClient.Builder().build());
         }
 
+        /**
+         * Construct and monitor a {@link Process} monitor with a custom {@link HttpClient}.
+         *
+         * @param process         The Process to monitor.
+         * @param javaNgrokConfig The config to use when monitoring the Process.
+         * @param httpClient      The custom HTTP client.
+         */
         protected ProcessMonitor(final Process process,
                                  final JavaNgrokConfig javaNgrokConfig,
                                  final HttpClient httpClient) {

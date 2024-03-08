@@ -27,6 +27,7 @@ public class NgrokLog extends HashMap<String, String> {
     private String lvl = INFO.getName();
     private String msg;
     private String err;
+    private String obj;
     private String addr;
 
     /**
@@ -80,6 +81,9 @@ public class NgrokLog extends HashMap<String, String> {
                 case "addr":
                     this.addr = value;
                     break;
+                case "obj":
+                    this.obj = value;
+                    break;
                 default:
             }
 
@@ -87,26 +91,51 @@ public class NgrokLog extends HashMap<String, String> {
         }
     }
 
+    /**
+     * Get the raw, unparsed log line.
+     */
     public String getLine() {
         return line;
     }
 
+    /**
+     * Get the log's ISO 8601 timestamp.
+     */
     public String getT() {
         return t;
     }
 
+    /**
+     * Get the log's level.
+     */
     public String getLvl() {
         return lvl;
     }
 
+    /**
+     * Get the log's msg.
+     */
     public String getMsg() {
         return msg;
     }
 
+    /**
+     * Get the log's error, if applicable.
+     */
     public String getErr() {
         return err;
     }
 
+    /**
+     * Get the log's type.
+     */
+    public String getObj() {
+        return obj;
+    }
+
+    /**
+     * Get The addr, which will be a URL if <code>obj</code> is "web".
+     */
     public String getAddr() {
         return addr;
     }

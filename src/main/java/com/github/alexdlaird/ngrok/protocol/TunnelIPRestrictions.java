@@ -17,7 +17,7 @@ public class TunnelIPRestrictions {
     private final List<String> allowCidrs;
     private final List<String> denyCidrs;
 
-    public TunnelIPRestrictions(TunnelIPRestrictions.Builder builder) {
+    private TunnelIPRestrictions(final Builder builder) {
         this.allowCidrs = builder.allowCidrs;
         this.denyCidrs = builder.denyCidrs;
     }
@@ -41,8 +41,8 @@ public class TunnelIPRestrictions {
      */
     public static class Builder {
 
-        public List<String> allowCidrs;
-        public List<String> denyCidrs;
+        private List<String> allowCidrs;
+        private List<String> denyCidrs;
 
         /**
          * Default constructor for {@link TunnelIPRestrictions.Builder}.

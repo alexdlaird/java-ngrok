@@ -47,8 +47,8 @@ import org.yaml.snakeyaml.Yaml;
  *
  * <h2>Binary Path</h2>
  * The <code>java-ngrok</code> package manages its own <code>ngrok</code> binary. We can use our <code>ngrok</code>
- * binary if we want by setting it with {@link JavaNgrokConfig.Builder#withNgrokPath(Path)} and passing that config
- * to {@link NgrokClient}.
+ * binary if we want by setting it with {@link JavaNgrokConfig.Builder#withNgrokPath(Path)} and passing that config to
+ * {@link NgrokClient}.
  */
 public class NgrokInstaller {
 
@@ -70,14 +70,19 @@ public class NgrokInstaller {
     private final HttpClient httpClient;
 
     /**
-     * Constructor that uses the {@link DefaultHttpClient}.
+     * Constructor with the {@link DefaultHttpClient}.
      */
     public NgrokInstaller() {
         this(new DefaultHttpClient.Builder()
-                .withTimeout(6000)
-                .build());
+            .withTimeout(6000)
+            .build());
     }
 
+    /**
+     * Construct with a custom {@link HttpClient}.
+     *
+     * @param httpClient The HTTP client.
+     */
     public NgrokInstaller(final HttpClient httpClient) {
         this.httpClient = httpClient;
     }
@@ -105,11 +110,12 @@ public class NgrokInstaller {
     }
 
     /**
-     * Install the default <code>ngrok</code> config. If a config is not already present for the given path,
-     * create one.
+     * Install the default <code>ngrok</code> config. If a config is not already present for the given path, create
+     * one.
      *
      * @param configPath The path to where the <code>ngrok</code> config should be installed.
      * @param data       A map of things to add to the default config.
+     * @throws JavaNgrokInstallerException An error occurred downloading <code>ngrok</code>.
      */
     public void installDefaultConfig(final Path configPath, final Map<String, Object> data,
                                      final NgrokVersion ngrokVersion) {
@@ -148,11 +154,13 @@ public class NgrokInstaller {
     }
 
     /**
-     * Download and install the latest <code>ngrok</code> for the current system, overwriting any existing contents
-     * at the given path.
+     * Download and install the latest <code>ngrok</code> for the current system, overwriting any existing contents at
+     * the given path.
      *
      * @param ngrokPath    The path to where the <code>ngrok</code> binary will be downloaded.
      * @param ngrokVersion The major <code>ngrok</code> version to install.
+     * @throws JavaNgrokInstallerException An error occurred installing <code>ngrok</code>.
+     * @throws JavaNgrokSecurityException  An error occurred unzipping the download.
      */
     public void installNgrok(final Path ngrokPath, final NgrokVersion ngrokVersion) {
         final NgrokCDNUrl ngrokCDNUrl = getNgrokCDNUrl(ngrokVersion);
@@ -207,6 +215,7 @@ public class NgrokInstaller {
      * Validate that the given map of config items are valid for <code>ngrok</code> and <code>java-ngrok</code>.
      *
      * @param data A map of things to be validated as config items.
+     * @throws JavaNgrokException A key or value failed validation.
      */
     public void validateConfig(final Map<String, Object> data) {
         if (data.getOrDefault("web_addr", "127.0.0.1:4040").equals("false")) {
@@ -225,6 +234,7 @@ public class NgrokInstaller {
      * Parse the name fo the OS from system properties and return a friendly name.
      *
      * @return The friendly name of the OS.
+     * @throws JavaNgrokInstallerException The OS is not supported.
      */
     public static String getSystem() {
         final String os = System.getProperty("os.name").replaceAll(" ", "").toLowerCase();
@@ -248,6 +258,7 @@ public class NgrokInstaller {
      * @param configPath The <code>ngrok</code> config path to read.
      * @param useCache   Use the cached version of the config (if populated).
      * @return A map of the <code>ngrok</code> config.
+     * @throws JavaNgrokInstallerException The config could not be parsed.
      */
     public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache,
                                               final NgrokVersion ngrokVersion) {

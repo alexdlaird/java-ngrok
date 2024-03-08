@@ -17,7 +17,7 @@ public class TunnelHeader {
     private final List<String> add;
     private final List<String> remove;
 
-    private TunnelHeader(final TunnelHeader.Builder builder) {
+    private TunnelHeader(final Builder builder) {
         this.add = builder.add;
         this.remove = builder.remove;
     }
