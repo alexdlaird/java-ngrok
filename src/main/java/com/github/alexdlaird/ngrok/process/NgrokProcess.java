@@ -359,7 +359,7 @@ public class NgrokProcess {
         private BufferedReader reader;
 
         /**
-         * Construct and monitor a {link @Process} monitor.
+         * Construct to monitor a {link @Process} monitor.
          *
          * @param process         The Process to monitor.
          * @param javaNgrokConfig The config to use when monitoring the Process.
@@ -370,7 +370,7 @@ public class NgrokProcess {
         }
 
         /**
-         * Construct and monitor a {@link Process} monitor with a custom {@link HttpClient}.
+         * Construct to monitor a {@link Process} monitor with a custom {@link HttpClient}.
          *
          * @param process         The Process to monitor.
          * @param javaNgrokConfig The config to use when monitoring the Process.

@@ -155,7 +155,7 @@ public class JavaNgrokConfig {
         private String apiKey;
 
         /**
-         * Default constructor for {@link JavaNgrokConfig.Builder}.
+         * Construct a JavaNgrokConfig Builder.
          */
         public Builder() {
         }

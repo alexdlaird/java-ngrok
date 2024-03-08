@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * An object that represents webhook signature verification for a
- * {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel}.
+ * {@link CreateTunnel}.
  */
 public class TunnelVerifyWebhook {
 
@@ -45,14 +45,13 @@ public class TunnelVerifyWebhook {
         private String secret;
 
         /**
-         * Default constructor for {@link TunnelVerifyWebhook.Builder}.
+         * Construct a TunnelVerifyWebhook Builder.
          */
         public Builder() {
         }
 
         /**
-         * Constructor for {@link TunnelVerifyWebhook.Builder} to be built from <code>verify_webhook</code>
-         * portion of a tunnel definition.
+         * Construct a TunnelVerifyWebhook Builder from tunnel definition of <code>verify_webhook</code>.
          *
          * @param tunnelVerifyWebhookDefinitions The map of Tunnel OAuth attributes.
          */

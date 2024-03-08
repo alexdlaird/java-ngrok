@@ -43,6 +43,7 @@ import java.util.UUID;
  */
 public class CreateTunnel {
 
+    // The ngrokVersion is transient so that it can be serialized to a valid request
     private final transient NgrokVersion ngrokVersion;
     private final String name;
     private final Proto proto;

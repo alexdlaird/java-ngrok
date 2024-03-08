@@ -70,7 +70,7 @@ public class NgrokInstaller {
     private final HttpClient httpClient;
 
     /**
-     * Constructor with the {@link DefaultHttpClient}.
+     * Construct with the {@link DefaultHttpClient}.
      */
     public NgrokInstaller() {
         this(new DefaultHttpClient.Builder()

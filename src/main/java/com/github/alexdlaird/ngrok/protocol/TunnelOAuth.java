@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An object that represents the OAuth configuration for a {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel}.
+ * An object that represents the OAuth configuration for a {@link CreateTunnel}.
  */
 public class TunnelOAuth {
 
@@ -67,14 +67,13 @@ public class TunnelOAuth {
         private List<String> allowDomains;
 
         /**
-         * Default constructor for {@link TunnelOAuth.Builder}.
+         * Construct TunnelOAuth Builder.
          */
         public Builder() {
         }
 
         /**
-         * Constructor for {@link TunnelOAuth.Builder} to be built from <code>oauth</code>
-         * portion of a tunnel definition.
+         * Construct a TunnelOAuth Builder from tunnel definition of <code>oauth</code>.
          *
          * @param tunnelOAuthDefinitions The map of Tunnel OAuth attributes.
          */

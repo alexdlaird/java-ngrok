@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An object that represents header configuration for a {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel}.
+ * An object that represents header configuration for a {@link CreateTunnel}.
  */
 public class TunnelHeader {
 
@@ -45,14 +45,14 @@ public class TunnelHeader {
         private List<String> remove;
 
         /**
-         * Default constructor for {@link TunnelHeader.Builder}.
+         * Construct a TunnelHeader Builder.
          */
         public Builder() {
         }
 
         /**
-         * Constructor for {@link TunnelHeader.Builder} to be built from <code>request_header</code> or
-         * <code>response_header</code> portion of a tunnel definition.
+         * Construct a TunnelHeader Builder from tunnel definition of <code>request_header</code>
+         * or <code>response_header</code>.
          *
          * @param tunnelHeaderDefinitions The map of Tunnel header attributes.
          */

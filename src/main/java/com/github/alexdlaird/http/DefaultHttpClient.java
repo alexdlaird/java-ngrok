@@ -217,7 +217,7 @@ public class DefaultHttpClient implements HttpClient {
     }
 
     /**
-     * Rebuild the URL with parameters append.
+     * Rebuild the URL with parameters appended.
      *
      * @param url        The URL to rebuild.
      * @param parameters The parameters to append.
