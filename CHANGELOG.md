@@ -3,9 +3,9 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.14...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.15...HEAD)
 
-## [2.2.15](https://github.com/alexdlaird/java-ngrok/compare/2.2.14...2.2.15) - TBD
+## [2.2.15](https://github.com/alexdlaird/java-ngrok/compare/2.2.14...2.2.15) - 2024-03-08
 ### Added
 - `obj` parsing in [`NgrokLog`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.15/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/process/NgrokLog.html).
 - `throws` for unchecked exceptions to documentation.
@@ -178,10 +178,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Java 8 support.
 - `reconnectSessionRetries` from [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.5.0/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), instead relying on `ngrok`'s own built-in retry mechanism on startup fails.
 
-## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.12...1.4.x)
+## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.13...1.4.x)
 The `1.4.x` branch is where support for Java 8 of `java-ngrok` is passively maintained. It is available through the `java8-ngrok` artifact on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
 
-## [1.4.13](https://github.com/alexdlaird/java-ngrok/compare/1.4.12...1.4.13) - TBD
+## [1.4.13](https://github.com/alexdlaird/java-ngrok/compare/1.4.12...1.4.13) - 2024-03-08
 ### Added
 - `obj` parsing in [`NgrokLog`](https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok/1.4.13/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/process/NgrokLog.html).
 - `throws` for unchecked exceptions to documentation.
