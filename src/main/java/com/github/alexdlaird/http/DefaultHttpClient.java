@@ -118,9 +118,9 @@ public class DefaultHttpClient implements HttpClient {
                                 Charset.forName(encoding));
                         }
 
-                        msg = "An error occurred when downloading the file ("
-                            + httpUrlConnection.getResponseCode() + "): "
-                            + errorResponse;
+                        msg = String.format("An error occurred when downloading the file (%s): %s",
+                            httpUrlConnection.getResponseCode(),
+                            errorResponse);
                     } catch (final IOException | NullPointerException ignored) {
                     }
                 }
