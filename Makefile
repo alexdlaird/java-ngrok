@@ -40,11 +40,11 @@ validate-release:
 	@if [[ $$(grep "version \"${VERSION}\"" build.gradle) == "" ]] ; then echo "Version not bumped in build.gradle" & exit 1 ; fi
 
 test-downstream:
-	@if [[ "${VERSION}" == "" ]]; then echo "VERSION is not set" & exit 1 ; fi
 	@( \
+		VERSION=$(shell ./gradlew -q printVersion); \
 		git clone https://github.com/alexdlaird/java-ngrok-example-dropwizard.git; \
 		( make local ) || exit $$?; \
-		mvn -f java-ngrok-example-dropwizard/pom.xml versions:set-property -Dproperty=java-ngrok.version -DnewVersion=${VERSION}; \
+		mvn -f java-ngrok-example-dropwizard/pom.xml versions:set-property -Dproperty=java-ngrok.version -DnewVersion=$$VERSION; \
 		( make -C java-ngrok-example-dropwizard build ) || exit $$?; \
 		( make -C java-ngrok-example-dropwizard test ) || exit $$?; \
 		rm -rf java-ngrok-example-dropwizard; \
