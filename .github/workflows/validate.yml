@@ -1,0 +1,40 @@
+name: Validate
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    name: Validate
+
+    env:
+      NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
+      NGROK_HTTP_EDGE: ${{ secrets.NGROK_HTTP_EDGE }}
+      NGROK_TCP_EDGE: ${{ secrets.NGROK_TCP_EDGE }}
+      NGROK_API_KEY: ${{ secrets.NGROK_API_KEY }}
+      NGROK_HTTP_EDGE_ENDPOINT: ${{ secrets.NGROK_HTTP_EDGE_ENDPOINT }}
+      NGROK_TCP_EDGE_ENDPOINT: ${{ secrets.NGROK_TCP_EDGE_ENDPOINT }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: adopt
+      - name: Build test coverage
+        run: make test
+      - name: Build docs
+        run: make docs
+      - name: Check code
+        run: make check
+      - name: Validate package
+        run: make local
+      - name: Test downstream
+        run: make test-downstream
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./build/reports/jacoco/report.xml

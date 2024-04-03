@@ -38,6 +38,12 @@ tasks.register("createProperties", WriteProperties) {
 }
 processResources.dependsOn createProperties
 
+tasks.register("printVersion") {
+    doLast {
+        println(project.findProperty('rootProject').version)
+    }
+}
+
 test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
