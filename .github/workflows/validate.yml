@@ -35,6 +35,6 @@ jobs:
       - name: Test downstream
         run: make test-downstream
       - name: Upload coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v3
         with:
           file: ./build/reports/jacoco/report.xml
