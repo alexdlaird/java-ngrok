@@ -19,8 +19,8 @@ machine, and more, and its made even more powerful with native Java integration 
 `java8-ngrok` is available
 on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
 
-If we want `ngrok` to be available from the command line, [pyngrok](https://github.com/alexdlaird/pyngrok) can be
-installed using `pip` to manage that for us.
+If we want `ngrok` to be available from the command line, [pyngrok](https://github.com/alexdlaird/pyngrok?tab=readme-ov-file#installation)
+can be installed using `pip` to manage that for us.
 
 ## Basic Usage
 
@@ -85,7 +85,7 @@ Java 8 support is not actively maintained, this is the custom `1.4.x` branch, wh
 exists for Java 8. Use the maintained `java-ngrok` dependency from [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/)
 and [the `main` branch](https://github.com/alexdlaird/java-ngrok) for Java 9 and above.
 
-For more details on what differs in the `java8-ngrok` dependency, [see the docs](https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok/latest/index.html#java8).
+For more details on what differs in the `java8-ngrok` dependency, see [the "Java 8" section of the docs](https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok/latest/index.html#java8).
 
 ## Contributing
 
