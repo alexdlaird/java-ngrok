@@ -41,7 +41,7 @@ validate-release:
 
 test-downstream:
 	@( \
-		VERSION=$(./gradlew -q printVersion); \
+		VERSION=$(shell ./gradlew -q printVersion); \
 		git clone https://github.com/alexdlaird/java-ngrok-example-dropwizard.git; \
 		( make local ) || exit $$?; \
 		mvn -f java-ngrok-example-dropwizard/pom.xml versions:set-property -Dproperty=java-ngrok.version -DnewVersion=$$VERSION; \
