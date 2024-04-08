@@ -73,6 +73,7 @@ public class CreateTunnel {
     private final TunnelHeader responseHeader;
     private final TunnelIPRestrictions ipRestrictions;
     private final TunnelVerifyWebhook verifyWebhook;
+    private final UserAgentFilter userAgentFilter;
     private final List<String> labels;
 
     private CreateTunnel(final Builder builder) {
@@ -105,6 +106,7 @@ public class CreateTunnel {
         this.responseHeader = builder.responseHeader;
         this.ipRestrictions = builder.ipRestrictions;
         this.verifyWebhook = builder.verifyWebhook;
+        this.userAgentFilter = builder.userAgentFilter;
         this.labels = builder.labels;
     }
 
@@ -313,6 +315,14 @@ public class CreateTunnel {
     }
 
     /**
+     * Get the UserAgent filters.
+     * @return
+     */
+    public UserAgentFilter getUserAgentFilter() {
+        return userAgentFilter;
+    }
+
+    /**
      * Get the labels.
      */
     public List<String> getLabels() {
@@ -357,6 +367,7 @@ public class CreateTunnel {
         private TunnelHeader responseHeader;
         private TunnelIPRestrictions ipRestrictions;
         private TunnelVerifyWebhook verifyWebhook;
+        private UserAgentFilter userAgentFilter;
         private List<String> labels;
 
         /**
@@ -417,6 +428,7 @@ public class CreateTunnel {
             this.responseHeader = createTunnel.responseHeader;
             this.ipRestrictions = createTunnel.ipRestrictions;
             this.verifyWebhook = createTunnel.verifyWebhook;
+            this.userAgentFilter = createTunnel.userAgentFilter;
         }
 
         /**
@@ -608,7 +620,7 @@ public class CreateTunnel {
         /**
          * Set of OAuth settings to enable OAuth authentication on the tunnel endpoint.
          */
-        public Builder withOAuth(TunnelOAuth oauth) {
+        public Builder withOAuth(final TunnelOAuth oauth) {
             this.oauth = oauth;
             return this;
         }
@@ -616,7 +628,7 @@ public class CreateTunnel {
         /**
          * The circuit breaker trigger.
          */
-        public Builder withCircuitBreaker(Float circuitBreaker) {
+        public Builder withCircuitBreaker(final Float circuitBreaker) {
             this.circuitBreaker = circuitBreaker;
             return this;
         }
@@ -624,7 +636,7 @@ public class CreateTunnel {
         /**
          * Whether compression is enabled on this tunnel.
          */
-        public Builder withCompression(Boolean compression) {
+        public Builder withCompression(final Boolean compression) {
             this.compression = compression;
             return this;
         }
@@ -632,7 +644,7 @@ public class CreateTunnel {
         /**
          * The path to the TLS certificate authority to verify client certs.
          */
-        public Builder withMutualTlsCas(String mutualTlsCas) {
+        public Builder withMutualTlsCas(final String mutualTlsCas) {
             this.mutualTlsCas = mutualTlsCas;
             return this;
         }
@@ -640,7 +652,7 @@ public class CreateTunnel {
         /**
          * The proxy proto.
          */
-        public Builder withProxyProto(String proxyProto) {
+        public Builder withProxyProto(final String proxyProto) {
             this.proxyProto = proxyProto;
             return this;
         }
@@ -648,7 +660,7 @@ public class CreateTunnel {
         /**
          * Whether ingress connections are converted to TCP upstream.
          */
-        public Builder withWebsocketTcpConverter(Boolean websocketTcpConverter) {
+        public Builder withWebsocketTcpConverter(final Boolean websocketTcpConverter) {
             this.websocketTcpConverter = websocketTcpConverter;
             return this;
         }
@@ -656,7 +668,7 @@ public class CreateTunnel {
         /**
          * The termination point.
          */
-        public Builder withTerminateAt(String terminateAt) {
+        public Builder withTerminateAt(final String terminateAt) {
             this.terminateAt = terminateAt;
             return this;
         }
@@ -664,7 +676,7 @@ public class CreateTunnel {
         /**
          * The Headers to be added or removed from requests.
          */
-        public Builder withRequestHeader(TunnelHeader requestHeader) {
+        public Builder withRequestHeader(final TunnelHeader requestHeader) {
             this.requestHeader = requestHeader;
             return this;
         }
@@ -672,7 +684,7 @@ public class CreateTunnel {
         /**
          * The Headers to be added or removed from responses.
          */
-        public Builder withResponseHeader(TunnelHeader responseHeader) {
+        public Builder withResponseHeader(final TunnelHeader responseHeader) {
             this.responseHeader = responseHeader;
             return this;
         }
@@ -680,7 +692,7 @@ public class CreateTunnel {
         /**
          * The IP restrictions for the tunnel.
          */
-        public Builder withIpRestrictions(TunnelIPRestrictions ipRestrictions) {
+        public Builder withIpRestrictions(final TunnelIPRestrictions ipRestrictions) {
             this.ipRestrictions = ipRestrictions;
             return this;
         }
@@ -688,8 +700,16 @@ public class CreateTunnel {
         /**
          * The signature for webhooks.
          */
-        public Builder withVerifyWebhook(TunnelVerifyWebhook verifyWebhook) {
+        public Builder withVerifyWebhook(final TunnelVerifyWebhook verifyWebhook) {
             this.verifyWebhook = verifyWebhook;
+            return this;
+        }
+
+        /**
+         * The UserAgent filter for the tunnel.
+         */
+        public Builder withUserAgentFilter(final UserAgentFilter userAgentFilter) {
+            this.userAgentFilter = userAgentFilter;
             return this;
         }
 
@@ -790,6 +810,11 @@ public class CreateTunnel {
             if (isNull(this.verifyWebhook) && tunnelDefinition.containsKey("verify_webhook")) {
                 this.verifyWebhook = new TunnelVerifyWebhook
                     .Builder((Map<String, Object>) tunnelDefinition.get("verify_webhook"))
+                    .build();
+            }
+            if (isNull(this.userAgentFilter) && tunnelDefinition.containsKey("user_agent_filter")) {
+                this.userAgentFilter = new UserAgentFilter
+                    .Builder((Map<String, Object>) tunnelDefinition.get("user_agent_filter"))
                     .build();
             }
             if (tunnelDefinition.containsKey("labels")) {
