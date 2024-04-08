@@ -188,7 +188,11 @@ public class CreateTunnelTest {
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
             .withTunnelDefinition(Map.ofEntries(
                 Map.entry("labels", List.of("edge=some-edge-id")),
-                Map.entry("auth", "auth-token"),
+                Map.entry("proto", "tcp"),
+                Map.entry("domain", "pyngrok.com"),
+                Map.entry("addr", "5000"),
+                Map.entry("inspect", "false"),
+                Map.entry("basic_auth", List.of("auth-token")),
                 Map.entry("host_header", "host-header"),
                 Map.entry("hostname", "hostname"),
                 Map.entry("crt", "crt"),
@@ -200,7 +204,6 @@ public class CreateTunnelTest {
                 Map.entry("mutual_tls_cas", "mutualTlsCas"),
                 Map.entry("proxy_proto", "proxyProto"),
                 Map.entry("websocket_tcp_converter", "false"),
-                Map.entry("domain", "pyngrok.com"),
                 Map.entry("terminate_at", "provider"),
                 Map.entry("request_header",
                     Map.of("add", List.of("req-addition"), "remove", List.of("req-subtraction"))),
@@ -227,8 +230,12 @@ public class CreateTunnelTest {
 
         // THEN
         assertEquals(1, createTunnel.getLabels().size());
+        assertEquals(Proto.TCP, createTunnel.getProto());
+        assertEquals("pyngrok.com", createTunnel.getDomain());
+        assertEquals("5000", createTunnel.getAddr());
+        assertFalse(createTunnel.isInspect());
         assertEquals("edge=some-edge-id", createTunnel.getLabels().get(0));
-        assertEquals("auth-token", createTunnel.getAuth());
+        assertTrue(createTunnel.getBasicAuth().contains("auth-token"));
         assertEquals("host-header", createTunnel.getHostHeader());
         assertEquals("hostname", createTunnel.getHostname());
         assertEquals("crt", createTunnel.getCrt());
@@ -240,7 +247,6 @@ public class CreateTunnelTest {
         assertEquals("mutualTlsCas", createTunnel.getMutualTlsCas());
         assertEquals("proxyProto", createTunnel.getProxyProto());
         assertFalse(createTunnel.isWebsocketTcpConverter());
-        assertEquals("pyngrok.com", createTunnel.getDomain());
         assertEquals("provider", createTunnel.getTerminateAt());
         assertTrue(createTunnel.getRequestHeader().getAdd().contains("req-addition"));
         assertTrue(createTunnel.getRequestHeader().getRemove().contains("req-subtraction"));
