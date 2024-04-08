@@ -55,7 +55,7 @@ public class TunnelVerifyWebhook {
          *
          * @param tunnelVerifyWebhookDefinitions The map of Tunnel OAuth attributes.
          */
-        public Builder(Map<String, Object> tunnelVerifyWebhookDefinitions) {
+        public Builder(final Map<String, Object> tunnelVerifyWebhookDefinitions) {
             if (tunnelVerifyWebhookDefinitions.containsKey("provider")) {
                 this.provider = (String) tunnelVerifyWebhookDefinitions.get("provider");
             }

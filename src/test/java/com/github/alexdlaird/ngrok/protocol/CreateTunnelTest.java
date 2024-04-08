@@ -56,13 +56,13 @@ public class CreateTunnelTest {
             .withResponseHeader(new TunnelHeader.Builder().withAdd(List.of("res-addition"))
                 .withRemove(List.of("res-subtraction"))
                 .build())
-            .withIpRestrictions(new TunnelIPRestrictions.Builder().withAllowCidrs(List.of("allowed"))
+            .withIpRestriction(new TunnelIPRestriction.Builder().withAllowCidrs(List.of("allowed"))
                 .withDenyCidrs(List.of("denied"))
                 .build())
             .withVerifyWebhook(new TunnelVerifyWebhook.Builder().withProvider("provider")
                 .withSecret("secret")
                 .build())
-            .withUserAgentFilter(new UserAgentFilter.Builder().withAllow(List.of("allow-user-agent"))
+            .withUserAgentFilter(new TunnelUserAgentFilter.Builder().withAllow(List.of("allow-user-agent"))
                 .withDeny(List.of("deny-user-agent"))
                 .build())
             .build();
@@ -98,8 +98,8 @@ public class CreateTunnelTest {
         assertTrue(createTunnel.getRequestHeader().getRemove().contains("req-subtraction"));
         assertTrue(createTunnel.getResponseHeader().getAdd().contains("res-addition"));
         assertTrue(createTunnel.getResponseHeader().getRemove().contains("res-subtraction"));
-        assertTrue(createTunnel.getIpRestrictions().getAllowCidrs().contains("allowed"));
-        assertTrue(createTunnel.getIpRestrictions().getDenyCidrs().contains("denied"));
+        assertTrue(createTunnel.getIpRestriction().getAllowCidrs().contains("allowed"));
+        assertTrue(createTunnel.getIpRestriction().getDenyCidrs().contains("denied"));
         assertEquals("provider", createTunnel.getVerifyWebhook().getProvider());
         assertEquals("secret", createTunnel.getVerifyWebhook().getSecret());
         assertTrue(createTunnel.getUserAgentFilter().getAllow().contains("allow-user-agent"));
@@ -186,7 +186,7 @@ public class CreateTunnelTest {
                     Map.of("add", List.of("req-addition"), "remove", List.of("req-subtraction"))),
                 Map.entry("response_header",
                     Map.of("add", List.of("res-addition"), "remove", List.of("res-subtraction"))),
-                Map.entry("ip_restrictions",
+                Map.entry("ip_restriction",
                     Map.of("allow_cidrs", List.of("allowed"), "deny_cidrs", List.of("denied"))),
                 Map.entry("verify_webhook",
                     Map.of("provider", "provider", "secret", "secret")),
@@ -215,8 +215,8 @@ public class CreateTunnelTest {
         assertTrue(createTunnel.getRequestHeader().getRemove().contains("req-subtraction"));
         assertTrue(createTunnel.getResponseHeader().getAdd().contains("res-addition"));
         assertTrue(createTunnel.getResponseHeader().getRemove().contains("res-subtraction"));
-        assertTrue(createTunnel.getIpRestrictions().getAllowCidrs().contains("allowed"));
-        assertTrue(createTunnel.getIpRestrictions().getDenyCidrs().contains("denied"));
+        assertTrue(createTunnel.getIpRestriction().getAllowCidrs().contains("allowed"));
+        assertTrue(createTunnel.getIpRestriction().getDenyCidrs().contains("denied"));
         assertEquals("provider", createTunnel.getVerifyWebhook().getProvider());
         assertEquals("secret", createTunnel.getVerifyWebhook().getSecret());
         assertTrue(createTunnel.getUserAgentFilter().getAllow().contains("allow-user-agent"));

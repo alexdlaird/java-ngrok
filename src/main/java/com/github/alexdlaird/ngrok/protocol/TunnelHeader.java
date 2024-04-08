@@ -56,7 +56,7 @@ public class TunnelHeader {
          *
          * @param tunnelHeaderDefinitions The map of Tunnel header attributes.
          */
-        public Builder(Map<String, Object> tunnelHeaderDefinitions) {
+        public Builder(final Map<String, Object> tunnelHeaderDefinitions) {
             if (tunnelHeaderDefinitions.containsKey("add")) {
                 this.add = (List<String>) tunnelHeaderDefinitions.get("add");
             }

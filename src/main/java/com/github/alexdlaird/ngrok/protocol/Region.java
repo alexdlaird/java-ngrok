@@ -16,6 +16,8 @@ public enum Region {
 
     @SerializedName("us")
     US,
+    @SerializedName("us-cal-1")
+    US_CAL_1,
     @SerializedName("eu")
     EU,
     @SerializedName("ap")

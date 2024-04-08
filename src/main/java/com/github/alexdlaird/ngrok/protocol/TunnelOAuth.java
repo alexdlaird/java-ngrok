@@ -77,7 +77,7 @@ public class TunnelOAuth {
          *
          * @param tunnelOAuthDefinitions The map of Tunnel OAuth attributes.
          */
-        public Builder(Map<String, Object> tunnelOAuthDefinitions) {
+        public Builder(final Map<String, Object> tunnelOAuthDefinitions) {
             if (tunnelOAuthDefinitions.containsKey("provider")) {
                 this.provider = (String) tunnelOAuthDefinitions.get("provider");
             }

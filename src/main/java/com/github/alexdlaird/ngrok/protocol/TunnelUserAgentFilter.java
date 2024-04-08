@@ -12,12 +12,12 @@ import java.util.Map;
 /**
  * An object that represents UserAgent filter for a {@link CreateTunnel}.
  */
-public class UserAgentFilter {
+public class TunnelUserAgentFilter {
 
     private final List<String> allow;
     private final List<String> deny;
 
-    private UserAgentFilter(final Builder builder) {
+    private TunnelUserAgentFilter(final Builder builder) {
         this.allow = builder.allow;
         this.deny = builder.deny;
     }
@@ -37,7 +37,7 @@ public class UserAgentFilter {
     }
 
     /**
-     * Builder for a {@link UserAgentFilter}.
+     * Builder for a {@link TunnelUserAgentFilter}.
      */
     public static class Builder {
 
@@ -53,21 +53,21 @@ public class UserAgentFilter {
         /**
          * Construct a UserAgentFilter Builder from tunnel definition of <code>user_agent_filters</code>.
          *
-         * @param userAgentFilterDefinitions The map of UserAgent filter attributes.
+         * @param tunnelUserAgentFilterDefinitions The map of UserAgent filter attributes.
          */
-        public Builder(Map<String, Object> userAgentFilterDefinitions) {
-            if (userAgentFilterDefinitions.containsKey("allow")) {
-                this.allow = (List<String>) userAgentFilterDefinitions.get("allow");
+        public Builder(final Map<String, Object> tunnelUserAgentFilterDefinitions) {
+            if (tunnelUserAgentFilterDefinitions.containsKey("allow")) {
+                this.allow = (List<String>) tunnelUserAgentFilterDefinitions.get("allow");
             }
-            if (userAgentFilterDefinitions.containsKey("deny")) {
-                this.deny = (List<String>) userAgentFilterDefinitions.get("deny");
+            if (tunnelUserAgentFilterDefinitions.containsKey("deny")) {
+                this.deny = (List<String>) tunnelUserAgentFilterDefinitions.get("deny");
             }
         }
 
         /**
          * The list of allowed UserAgent filters.
          */
-        public UserAgentFilter.Builder withAllow(final List<String> allow) {
+        public TunnelUserAgentFilter.Builder withAllow(final List<String> allow) {
             this.allow = allow;
             return this;
         }
@@ -75,16 +75,16 @@ public class UserAgentFilter {
         /**
          * The list of denied UserAgent filters.
          */
-        public UserAgentFilter.Builder withDeny(final List<String> deny) {
+        public TunnelUserAgentFilter.Builder withDeny(final List<String> deny) {
             this.deny = deny;
             return this;
         }
 
         /**
-         * Build the {@link UserAgentFilter}.
+         * Build the {@link TunnelUserAgentFilter}.
          */
-        public UserAgentFilter build() {
-            return new UserAgentFilter(this);
+        public TunnelUserAgentFilter build() {
+            return new TunnelUserAgentFilter(this);
         }
     }
 }

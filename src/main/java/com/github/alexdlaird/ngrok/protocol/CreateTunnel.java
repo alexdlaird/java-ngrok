@@ -71,9 +71,9 @@ public class CreateTunnel {
     private final String terminateAt;
     private final TunnelHeader requestHeader;
     private final TunnelHeader responseHeader;
-    private final TunnelIPRestrictions ipRestrictions;
+    private final TunnelIPRestriction ipRestriction;
     private final TunnelVerifyWebhook verifyWebhook;
-    private final UserAgentFilter userAgentFilter;
+    private final TunnelUserAgentFilter userAgentFilter;
     private final List<String> labels;
 
     private CreateTunnel(final Builder builder) {
@@ -104,7 +104,7 @@ public class CreateTunnel {
         this.terminateAt = builder.terminateAt;
         this.requestHeader = builder.requestHeader;
         this.responseHeader = builder.responseHeader;
-        this.ipRestrictions = builder.ipRestrictions;
+        this.ipRestriction = builder.ipRestriction;
         this.verifyWebhook = builder.verifyWebhook;
         this.userAgentFilter = builder.userAgentFilter;
         this.labels = builder.labels;
@@ -303,8 +303,8 @@ public class CreateTunnel {
     /**
      * Get the IP restrictions for the tunnel.
      */
-    public TunnelIPRestrictions getIpRestrictions() {
-        return ipRestrictions;
+    public TunnelIPRestriction getIpRestriction() {
+        return ipRestriction;
     }
 
     /**
@@ -316,9 +316,8 @@ public class CreateTunnel {
 
     /**
      * Get the UserAgent filters.
-     * @return
      */
-    public UserAgentFilter getUserAgentFilter() {
+    public TunnelUserAgentFilter getUserAgentFilter() {
         return userAgentFilter;
     }
 
@@ -365,9 +364,9 @@ public class CreateTunnel {
         private String terminateAt;
         private TunnelHeader requestHeader;
         private TunnelHeader responseHeader;
-        private TunnelIPRestrictions ipRestrictions;
+        private TunnelIPRestriction ipRestriction;
         private TunnelVerifyWebhook verifyWebhook;
-        private UserAgentFilter userAgentFilter;
+        private TunnelUserAgentFilter userAgentFilter;
         private List<String> labels;
 
         /**
@@ -426,7 +425,7 @@ public class CreateTunnel {
             this.terminateAt = createTunnel.terminateAt;
             this.requestHeader = createTunnel.requestHeader;
             this.responseHeader = createTunnel.responseHeader;
-            this.ipRestrictions = createTunnel.ipRestrictions;
+            this.ipRestriction = createTunnel.ipRestriction;
             this.verifyWebhook = createTunnel.verifyWebhook;
             this.userAgentFilter = createTunnel.userAgentFilter;
         }
@@ -692,8 +691,8 @@ public class CreateTunnel {
         /**
          * The IP restrictions for the tunnel.
          */
-        public Builder withIpRestrictions(final TunnelIPRestrictions ipRestrictions) {
-            this.ipRestrictions = ipRestrictions;
+        public Builder withIpRestriction(final TunnelIPRestriction ipRestriction) {
+            this.ipRestriction = ipRestriction;
             return this;
         }
 
@@ -708,7 +707,7 @@ public class CreateTunnel {
         /**
          * The UserAgent filter for the tunnel.
          */
-        public Builder withUserAgentFilter(final UserAgentFilter userAgentFilter) {
+        public Builder withUserAgentFilter(final TunnelUserAgentFilter userAgentFilter) {
             this.userAgentFilter = userAgentFilter;
             return this;
         }
@@ -802,9 +801,9 @@ public class CreateTunnel {
                     .Builder((Map<String, Object>) tunnelDefinition.get("response_header"))
                     .build();
             }
-            if (isNull(this.ipRestrictions) && tunnelDefinition.containsKey("ip_restrictions")) {
-                this.ipRestrictions = new TunnelIPRestrictions
-                    .Builder((Map<String, Object>) tunnelDefinition.get("ip_restrictions"))
+            if (isNull(this.ipRestriction) && tunnelDefinition.containsKey("ip_restriction")) {
+                this.ipRestriction = new TunnelIPRestriction
+                    .Builder((Map<String, Object>) tunnelDefinition.get("ip_restriction"))
                     .build();
             }
             if (isNull(this.verifyWebhook) && tunnelDefinition.containsKey("verify_webhook")) {
@@ -813,7 +812,7 @@ public class CreateTunnel {
                     .build();
             }
             if (isNull(this.userAgentFilter) && tunnelDefinition.containsKey("user_agent_filter")) {
-                this.userAgentFilter = new UserAgentFilter
+                this.userAgentFilter = new TunnelUserAgentFilter
                     .Builder((Map<String, Object>) tunnelDefinition.get("user_agent_filter"))
                     .build();
             }
