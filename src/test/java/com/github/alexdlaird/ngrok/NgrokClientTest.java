@@ -145,6 +145,48 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
+    public void testConnectTls() {
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+        assumeTrue(isNotBlank(System.getenv("NGROK_DOMAIN")), "NGROK_DOMAIN environment variable not set");
+
+        // GIVEN
+        assertFalse(ngrokClientV3.getNgrokProcess().isRunning());
+        final String domain = System.getenv("NGROK_DOMAIN");
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+            .withNgrokVersion(NgrokVersion.V3)
+            .withAddr(80)
+            .withProto(Proto.TLS)
+            .withDomain(domain)
+            .withTerminateAt("upstream")
+            .build();
+
+        // WHEN
+        final Tunnel tunnel = ngrokClientV3.connect(createTunnel);
+
+        // THEN
+        assertTrue(ngrokClientV3.getNgrokProcess().getVersion().startsWith("3"));
+        assertTrue(ngrokClientV3.getNgrokProcess().isRunning());
+        assertNotNull(tunnel.getId());
+        assertThat(tunnel.getName(), startsWith("tls-80-"));
+        assertEquals("tls", tunnel.getProto());
+        assertEquals("localhost:80", tunnel.getConfig().getAddr());
+        assertNotNull(tunnel.getPublicUrl());
+        assertThat(tunnel.getPublicUrl(), startsWith("tls://"));
+        assertEquals(tunnel.getPublicUrl(), String.format("tls://%s", domain));
+        assertNotNull(tunnel.getMetrics());
+        assertThat(tunnel.getMetrics(), hasKey("conns"));
+        assertEquals(0, tunnel.getMetrics().get("conns").getCount());
+        assertEquals(0, tunnel.getMetrics().get("conns").getGauge());
+        assertEquals(0, tunnel.getMetrics().get("conns").getP50());
+        assertEquals(0, tunnel.getMetrics().get("conns").getP90());
+        assertEquals(0, tunnel.getMetrics().get("conns").getP95());
+        assertEquals(0, tunnel.getMetrics().get("conns").getP99());
+        assertEquals(0, tunnel.getMetrics().get("conns").getRate1());
+        assertEquals(0, tunnel.getMetrics().get("conns").getRate5());
+        assertEquals(0, tunnel.getMetrics().get("conns").getRate15());
+    }
+
+    @Test
     public void testConnectName() {
         // GIVEN
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
@@ -715,6 +757,49 @@ class NgrokClientTest extends NgrokTestCase {
         assertEquals("localhost:22", sshTunnel.getConfig().getAddr());
         assertEquals("tcp", sshTunnel.getProto());
         assertThat(sshTunnel.getPublicUrl(), startsWith("tcp://"));
+    }
+
+    @Test
+    public void testTunnelDefinitionsTls() {
+        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+        assumeTrue(isNotBlank(System.getenv("NGROK_DOMAIN")), "NGROK_DOMAIN environment variable not set");
+
+        // GIVEN
+        final String domain = System.getenv("NGROK_DOMAIN");
+        final Map<String, Object> tlsTunnelConfig = Map.of(
+            "proto", "tls",
+            "addr", "80",
+            "domain", domain,
+            "terminate_at", "upstream");
+        final Map<String, Object> tunnelsConfig = Map.of("tls-tunnel", tlsTunnelConfig);
+        final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
+
+        final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
+        ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
+            .withConfigPath(configPath2)
+            .build();
+        ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+        final NgrokClient ngrokClient2 = new NgrokClient.Builder()
+            .withJavaNgrokConfig(javaNgrokConfig2)
+            .withNgrokProcess(ngrokProcessV3_2)
+            .build();
+
+        // WHEN
+        final CreateTunnel createTlsTunnel = new CreateTunnel.Builder()
+            .withNgrokVersion(NgrokVersion.V3)
+            .withName("tls-tunnel")
+            .build();
+        final Tunnel tlsTunnel = ngrokClient2.connect(createTlsTunnel);
+        final List<Tunnel> tunnels = ngrokClient2.getTunnels();
+
+        // THEN
+        assertEquals(1, tunnels.size());
+        assertEquals("tls-tunnel", tlsTunnel.getName());
+        assertEquals("localhost:80", tlsTunnel.getConfig().getAddr());
+        assertEquals("tls", tlsTunnel.getProto());
+        assertFalse(tlsTunnel.getConfig().isInspect());
+        assertEquals(tlsTunnel.getPublicUrl(), String.format("tls://%s", domain));
     }
 
     @Test

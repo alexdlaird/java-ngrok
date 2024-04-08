@@ -47,6 +47,7 @@ public class CreateTunnel {
     private final transient NgrokVersion ngrokVersion;
     private final String name;
     private final Proto proto;
+    private final String domain;
     private final String addr;
     private final Boolean inspect;
     private final String auth;
@@ -78,6 +79,7 @@ public class CreateTunnel {
         this.ngrokVersion = builder.ngrokVersion;
         this.name = builder.name;
         this.proto = builder.proto;
+        this.domain = builder.domain;
         this.addr = builder.addr;
         this.inspect = builder.inspect;
         this.auth = builder.auth;
@@ -125,6 +127,13 @@ public class CreateTunnel {
      */
     public Proto getProto() {
         return proto;
+    }
+
+    /**
+     * Get the tunnel domain.
+     */
+    public String getDomain() {
+        return domain;
     }
 
     /**
@@ -322,6 +331,7 @@ public class CreateTunnel {
         private NgrokVersion ngrokVersion;
         private String name;
         private Proto proto;
+        private String domain;
         private String addr;
         private Boolean inspect;
         private BindTls bindTls;
@@ -381,6 +391,7 @@ public class CreateTunnel {
             this.ngrokVersion = createTunnel.ngrokVersion;
             this.name = createTunnel.name;
             this.proto = createTunnel.proto;
+            this.domain = createTunnel.domain;
             this.addr = createTunnel.addr;
             this.inspect = createTunnel.inspect;
             this.bindTls = createTunnel.bindTls;
@@ -431,6 +442,14 @@ public class CreateTunnel {
          */
         public Builder withProto(final Proto proto) {
             this.proto = proto;
+            return this;
+        }
+
+        /**
+         * The tunnel domain.
+         */
+        public Builder withDomain(final String domain) {
+            this.domain = domain;
             return this;
         }
 
@@ -684,6 +703,9 @@ public class CreateTunnel {
         public Builder withTunnelDefinition(Map<String, Object> tunnelDefinition) {
             if (isNull(this.proto) && tunnelDefinition.containsKey("proto")) {
                 this.proto = Proto.valueOf(((String) tunnelDefinition.get("proto")).toUpperCase());
+            }
+            if (isNull(this.domain) && tunnelDefinition.containsKey("domain")) {
+                this.domain = (String) tunnelDefinition.get("domain");
             }
             if (isNull(this.addr) && tunnelDefinition.containsKey("addr")) {
                 this.addr = (String) tunnelDefinition.get("addr");
