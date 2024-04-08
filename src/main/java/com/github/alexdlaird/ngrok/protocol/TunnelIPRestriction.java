@@ -53,14 +53,14 @@ public class TunnelIPRestriction {
         /**
          * Construct a TunnelIPRestriction Builder from tunnel definition of <code>ip_restriction</code>.
          *
-         * @param tunnelIPRestrictionDefinitions The map of Tunnel IP restriction attributes.
+         * @param tunnelIPRestrictionDefinition The map of Tunnel IP restriction attributes.
          */
-        public Builder(final Map<String, Object> tunnelIPRestrictionDefinitions) {
-            if (tunnelIPRestrictionDefinitions.containsKey("allow_cidrs")) {
-                this.allowCidrs = (List<String>) tunnelIPRestrictionDefinitions.get("allow_cidrs");
+        public Builder(final Map<String, Object> tunnelIPRestrictionDefinition) {
+            if (tunnelIPRestrictionDefinition.containsKey("allow_cidrs")) {
+                this.allowCidrs = (List<String>) tunnelIPRestrictionDefinition.get("allow_cidrs");
             }
-            if (tunnelIPRestrictionDefinitions.containsKey("deny_cidrs")) {
-                this.denyCidrs = (List<String>) tunnelIPRestrictionDefinitions.get("deny_cidrs");
+            if (tunnelIPRestrictionDefinition.containsKey("deny_cidrs")) {
+                this.denyCidrs = (List<String>) tunnelIPRestrictionDefinition.get("deny_cidrs");
             }
         }
 

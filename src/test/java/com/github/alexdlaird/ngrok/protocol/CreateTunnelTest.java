@@ -65,6 +65,18 @@ public class CreateTunnelTest {
             .withUserAgentFilter(new TunnelUserAgentFilter.Builder().withAllow(List.of("allow-user-agent"))
                 .withDeny(List.of("deny-user-agent"))
                 .build())
+            .withPolicyInbound(new TunnelPolicy.Builder().withName("inbound-policy")
+                .withExpressions(List.of("inbound-policy-expression"))
+                .withActions(new TunnelPolicyActions.Builder().withType("inbound-policy-actions-type")
+                    .withConfig("inbound-policy-actions-config")
+                    .build())
+                .build())
+            .withPolicyOutbound(new TunnelPolicy.Builder().withName("outbound-policy")
+                .withExpressions(List.of("outbound-policy-expression"))
+                .withActions(new TunnelPolicyActions.Builder().withType("outbound-policy-actions-type")
+                    .withConfig("outbound-policy-actions-config")
+                    .build())
+                .build())
             .build();
 
         // THEN
@@ -104,6 +116,14 @@ public class CreateTunnelTest {
         assertEquals("secret", createTunnel.getVerifyWebhook().getSecret());
         assertTrue(createTunnel.getUserAgentFilter().getAllow().contains("allow-user-agent"));
         assertTrue(createTunnel.getUserAgentFilter().getDeny().contains("deny-user-agent"));
+        assertEquals("inbound-policy", createTunnel.getPolicyInbound().getName());
+        assertTrue(createTunnel.getPolicyInbound().getExpressions().contains("inbound-policy-expression"));
+        assertEquals("inbound-policy-actions-type", createTunnel.getPolicyInbound().getActions().getType());
+        assertEquals("inbound-policy-actions-config", createTunnel.getPolicyInbound().getActions().getConfig());
+        assertEquals("outbound-policy", createTunnel.getPolicyOutbound().getName());
+        assertTrue(createTunnel.getPolicyOutbound().getExpressions().contains("outbound-policy-expression"));
+        assertEquals("outbound-policy-actions-type", createTunnel.getPolicyOutbound().getActions().getType());
+        assertEquals("outbound-policy-actions-config", createTunnel.getPolicyOutbound().getActions().getConfig());
 
         assertNull(createTunnel.getSchemes());
     }
@@ -191,7 +211,18 @@ public class CreateTunnelTest {
                 Map.entry("verify_webhook",
                     Map.of("provider", "provider", "secret", "secret")),
                 Map.entry("user_agent_filter",
-                    Map.of("allow", List.of("allow-user-agent"), "deny", List.of("deny-user-agent"))))
+                    Map.of("allow", List.of("allow-user-agent"), "deny", List.of("deny-user-agent"))),
+                Map.entry("policy",
+                    Map.of("inbound",
+                        Map.of("name", "inbound-policy",
+                            "expressions", List.of("inbound-policy-expression"),
+                            "actions",
+                            Map.of("type", "inbound-policy-actions-type", "config", "inbound-policy-actions-config")),
+                        "outbound",
+                        Map.of("name", "outbound-policy",
+                            "expressions", List.of("outbound-policy-expression"),
+                            "actions",
+                            Map.of("type", "outbound-policy-actions-type", "config", "outbound-policy-actions-config")))))
             ).build();
 
         // THEN
@@ -221,6 +252,14 @@ public class CreateTunnelTest {
         assertEquals("secret", createTunnel.getVerifyWebhook().getSecret());
         assertTrue(createTunnel.getUserAgentFilter().getAllow().contains("allow-user-agent"));
         assertTrue(createTunnel.getUserAgentFilter().getDeny().contains("deny-user-agent"));
+        assertEquals("inbound-policy", createTunnel.getPolicyInbound().getName());
+        assertTrue(createTunnel.getPolicyInbound().getExpressions().contains("inbound-policy-expression"));
+        assertEquals("inbound-policy-actions-type", createTunnel.getPolicyInbound().getActions().getType());
+        assertEquals("inbound-policy-actions-config", createTunnel.getPolicyInbound().getActions().getConfig());
+        assertEquals("outbound-policy", createTunnel.getPolicyOutbound().getName());
+        assertTrue(createTunnel.getPolicyOutbound().getExpressions().contains("outbound-policy-expression"));
+        assertEquals("outbound-policy-actions-type", createTunnel.getPolicyOutbound().getActions().getType());
+        assertEquals("outbound-policy-actions-config", createTunnel.getPolicyOutbound().getActions().getConfig());
 
         assertNull(createTunnel.getBindTls());
     }

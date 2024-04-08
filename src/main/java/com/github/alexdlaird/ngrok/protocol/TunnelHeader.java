@@ -54,14 +54,14 @@ public class TunnelHeader {
          * Construct a TunnelHeader Builder from tunnel definition of <code>request_header</code>
          * or <code>response_header</code>.
          *
-         * @param tunnelHeaderDefinitions The map of Tunnel header attributes.
+         * @param tunnelHeaderDefinition The map of Tunnel header attributes.
          */
-        public Builder(final Map<String, Object> tunnelHeaderDefinitions) {
-            if (tunnelHeaderDefinitions.containsKey("add")) {
-                this.add = (List<String>) tunnelHeaderDefinitions.get("add");
+        public Builder(final Map<String, Object> tunnelHeaderDefinition) {
+            if (tunnelHeaderDefinition.containsKey("add")) {
+                this.add = (List<String>) tunnelHeaderDefinition.get("add");
             }
-            if (tunnelHeaderDefinitions.containsKey("remove")) {
-                this.remove = (List<String>) tunnelHeaderDefinitions.get("remove");
+            if (tunnelHeaderDefinition.containsKey("remove")) {
+                this.remove = (List<String>) tunnelHeaderDefinition.get("remove");
             }
         }
 

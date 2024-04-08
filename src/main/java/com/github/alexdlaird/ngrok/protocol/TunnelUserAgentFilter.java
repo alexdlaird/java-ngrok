@@ -53,14 +53,14 @@ public class TunnelUserAgentFilter {
         /**
          * Construct a UserAgentFilter Builder from tunnel definition of <code>user_agent_filters</code>.
          *
-         * @param tunnelUserAgentFilterDefinitions The map of UserAgent filter attributes.
+         * @param tunnelUserAgentFilterDefinition The map of UserAgent filter attributes.
          */
-        public Builder(final Map<String, Object> tunnelUserAgentFilterDefinitions) {
-            if (tunnelUserAgentFilterDefinitions.containsKey("allow")) {
-                this.allow = (List<String>) tunnelUserAgentFilterDefinitions.get("allow");
+        public Builder(final Map<String, Object> tunnelUserAgentFilterDefinition) {
+            if (tunnelUserAgentFilterDefinition.containsKey("allow")) {
+                this.allow = (List<String>) tunnelUserAgentFilterDefinition.get("allow");
             }
-            if (tunnelUserAgentFilterDefinitions.containsKey("deny")) {
-                this.deny = (List<String>) tunnelUserAgentFilterDefinitions.get("deny");
+            if (tunnelUserAgentFilterDefinition.containsKey("deny")) {
+                this.deny = (List<String>) tunnelUserAgentFilterDefinition.get("deny");
             }
         }
 

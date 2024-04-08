@@ -75,20 +75,20 @@ public class TunnelOAuth {
         /**
          * Construct a TunnelOAuth Builder from tunnel definition of <code>oauth</code>.
          *
-         * @param tunnelOAuthDefinitions The map of Tunnel OAuth attributes.
+         * @param tunnelOAuthDefinition The map of Tunnel OAuth attributes.
          */
-        public Builder(final Map<String, Object> tunnelOAuthDefinitions) {
-            if (tunnelOAuthDefinitions.containsKey("provider")) {
-                this.provider = (String) tunnelOAuthDefinitions.get("provider");
+        public Builder(final Map<String, Object> tunnelOAuthDefinition) {
+            if (tunnelOAuthDefinition.containsKey("provider")) {
+                this.provider = (String) tunnelOAuthDefinition.get("provider");
             }
-            if (tunnelOAuthDefinitions.containsKey("scopes")) {
-                this.scopes = (List<String>) tunnelOAuthDefinitions.get("scopes");
+            if (tunnelOAuthDefinition.containsKey("scopes")) {
+                this.scopes = (List<String>) tunnelOAuthDefinition.get("scopes");
             }
-            if (tunnelOAuthDefinitions.containsKey("allow_emails")) {
-                this.allowEmails = (List<String>) tunnelOAuthDefinitions.get("allow_emails");
+            if (tunnelOAuthDefinition.containsKey("allow_emails")) {
+                this.allowEmails = (List<String>) tunnelOAuthDefinition.get("allow_emails");
             }
-            if (tunnelOAuthDefinitions.containsKey("allow_domains")) {
-                this.allowDomains = (List<String>) tunnelOAuthDefinitions.get("allow_domains");
+            if (tunnelOAuthDefinition.containsKey("allow_domains")) {
+                this.allowDomains = (List<String>) tunnelOAuthDefinition.get("allow_domains");
             }
         }
 

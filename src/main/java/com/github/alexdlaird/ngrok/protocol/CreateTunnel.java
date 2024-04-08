@@ -74,6 +74,8 @@ public class CreateTunnel {
     private final TunnelIPRestriction ipRestriction;
     private final TunnelVerifyWebhook verifyWebhook;
     private final TunnelUserAgentFilter userAgentFilter;
+    private final TunnelPolicy policyInbound;
+    private final TunnelPolicy policyOutbound;
     private final List<String> labels;
 
     private CreateTunnel(final Builder builder) {
@@ -107,6 +109,8 @@ public class CreateTunnel {
         this.ipRestriction = builder.ipRestriction;
         this.verifyWebhook = builder.verifyWebhook;
         this.userAgentFilter = builder.userAgentFilter;
+        this.policyInbound = builder.policyInbound;
+        this.policyOutbound = builder.policyOutbound;
         this.labels = builder.labels;
     }
 
@@ -322,6 +326,20 @@ public class CreateTunnel {
     }
 
     /**
+     * Get the inbound policy.
+     */
+    public TunnelPolicy getPolicyInbound() {
+        return policyInbound;
+    }
+
+    /**
+     * Get the outbound policy.
+     */
+    public TunnelPolicy getPolicyOutbound() {
+        return policyOutbound;
+    }
+
+    /**
      * Get the labels.
      */
     public List<String> getLabels() {
@@ -367,6 +385,8 @@ public class CreateTunnel {
         private TunnelIPRestriction ipRestriction;
         private TunnelVerifyWebhook verifyWebhook;
         private TunnelUserAgentFilter userAgentFilter;
+        private TunnelPolicy policyInbound;
+        private TunnelPolicy policyOutbound;
         private List<String> labels;
 
         /**
@@ -428,6 +448,8 @@ public class CreateTunnel {
             this.ipRestriction = createTunnel.ipRestriction;
             this.verifyWebhook = createTunnel.verifyWebhook;
             this.userAgentFilter = createTunnel.userAgentFilter;
+            this.policyInbound = createTunnel.policyInbound;
+            this.policyOutbound = createTunnel.policyOutbound;
         }
 
         /**
@@ -713,6 +735,22 @@ public class CreateTunnel {
         }
 
         /**
+         * The inbound policy for the tunnel.
+         */
+        public Builder withPolicyInbound(final TunnelPolicy policyInbound) {
+            this.policyInbound = policyInbound;
+            return this;
+        }
+
+        /**
+         * The outbound policy for the tunnel.
+         */
+        public Builder withPolicyOutbound(final TunnelPolicy policyOutbound) {
+            this.policyOutbound = policyOutbound;
+            return this;
+        }
+
+        /**
          * Populate any <code>null</code> attributes (except for <code>name</code>) in this Builder with values from
          * the given <code>tunnelDefinition</code>.
          *
@@ -815,6 +853,19 @@ public class CreateTunnel {
                 this.userAgentFilter = new TunnelUserAgentFilter
                     .Builder((Map<String, Object>) tunnelDefinition.get("user_agent_filter"))
                     .build();
+            }
+            if (tunnelDefinition.containsKey("policy")) {
+                Map<String, Object> policy = (Map<String, Object>) tunnelDefinition.get("policy");
+                if (isNull(this.policyInbound) && policy.containsKey("inbound")) {
+                    this.policyInbound = new TunnelPolicy
+                        .Builder((Map<String, Object>) policy.get("inbound"))
+                        .build();
+                }
+                if (isNull(this.policyOutbound) && policy.containsKey("outbound")) {
+                    this.policyOutbound = new TunnelPolicy
+                        .Builder((Map<String, Object>) policy.get("outbound"))
+                        .build();
+                }
             }
             if (tunnelDefinition.containsKey("labels")) {
                 if (nonNull(bindTls)) {
