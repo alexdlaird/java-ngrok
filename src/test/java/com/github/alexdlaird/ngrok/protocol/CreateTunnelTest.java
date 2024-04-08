@@ -56,14 +56,26 @@ public class CreateTunnelTest {
             .withResponseHeader(new TunnelHeader.Builder().withAdd(List.of("res-addition"))
                 .withRemove(List.of("res-subtraction"))
                 .build())
-            .withIpRestrictions(new TunnelIPRestrictions.Builder().withAllowCidrs(List.of("allowed"))
+            .withIpRestriction(new TunnelIPRestriction.Builder().withAllowCidrs(List.of("allowed"))
                 .withDenyCidrs(List.of("denied"))
                 .build())
             .withVerifyWebhook(new TunnelVerifyWebhook.Builder().withProvider("provider")
                 .withSecret("secret")
                 .build())
-            .withUserAgentFilter(new UserAgentFilter.Builder().withAllow(List.of("allow-user-agent"))
+            .withUserAgentFilter(new TunnelUserAgentFilter.Builder().withAllow(List.of("allow-user-agent"))
                 .withDeny(List.of("deny-user-agent"))
+                .build())
+            .withPolicyInbound(new TunnelPolicy.Builder().withName("inbound-policy")
+                .withExpressions(List.of("inbound-policy-expression"))
+                .withActions(new TunnelPolicyActions.Builder().withType("inbound-policy-actions-type")
+                    .withConfig("inbound-policy-actions-config")
+                    .build())
+                .build())
+            .withPolicyOutbound(new TunnelPolicy.Builder().withName("outbound-policy")
+                .withExpressions(List.of("outbound-policy-expression"))
+                .withActions(new TunnelPolicyActions.Builder().withType("outbound-policy-actions-type")
+                    .withConfig("outbound-policy-actions-config")
+                    .build())
                 .build())
             .build();
 
@@ -98,12 +110,20 @@ public class CreateTunnelTest {
         assertTrue(createTunnel.getRequestHeader().getRemove().contains("req-subtraction"));
         assertTrue(createTunnel.getResponseHeader().getAdd().contains("res-addition"));
         assertTrue(createTunnel.getResponseHeader().getRemove().contains("res-subtraction"));
-        assertTrue(createTunnel.getIpRestrictions().getAllowCidrs().contains("allowed"));
-        assertTrue(createTunnel.getIpRestrictions().getDenyCidrs().contains("denied"));
+        assertTrue(createTunnel.getIpRestriction().getAllowCidrs().contains("allowed"));
+        assertTrue(createTunnel.getIpRestriction().getDenyCidrs().contains("denied"));
         assertEquals("provider", createTunnel.getVerifyWebhook().getProvider());
         assertEquals("secret", createTunnel.getVerifyWebhook().getSecret());
         assertTrue(createTunnel.getUserAgentFilter().getAllow().contains("allow-user-agent"));
         assertTrue(createTunnel.getUserAgentFilter().getDeny().contains("deny-user-agent"));
+        assertEquals("inbound-policy", createTunnel.getPolicyInbound().getName());
+        assertTrue(createTunnel.getPolicyInbound().getExpressions().contains("inbound-policy-expression"));
+        assertEquals("inbound-policy-actions-type", createTunnel.getPolicyInbound().getActions().getType());
+        assertEquals("inbound-policy-actions-config", createTunnel.getPolicyInbound().getActions().getConfig());
+        assertEquals("outbound-policy", createTunnel.getPolicyOutbound().getName());
+        assertTrue(createTunnel.getPolicyOutbound().getExpressions().contains("outbound-policy-expression"));
+        assertEquals("outbound-policy-actions-type", createTunnel.getPolicyOutbound().getActions().getType());
+        assertEquals("outbound-policy-actions-config", createTunnel.getPolicyOutbound().getActions().getConfig());
 
         assertNull(createTunnel.getSchemes());
     }
@@ -186,12 +206,23 @@ public class CreateTunnelTest {
                     Map.of("add", List.of("req-addition"), "remove", List.of("req-subtraction"))),
                 Map.entry("response_header",
                     Map.of("add", List.of("res-addition"), "remove", List.of("res-subtraction"))),
-                Map.entry("ip_restrictions",
+                Map.entry("ip_restriction",
                     Map.of("allow_cidrs", List.of("allowed"), "deny_cidrs", List.of("denied"))),
                 Map.entry("verify_webhook",
                     Map.of("provider", "provider", "secret", "secret")),
                 Map.entry("user_agent_filter",
-                    Map.of("allow", List.of("allow-user-agent"), "deny", List.of("deny-user-agent"))))
+                    Map.of("allow", List.of("allow-user-agent"), "deny", List.of("deny-user-agent"))),
+                Map.entry("policy",
+                    Map.of("inbound",
+                        Map.of("name", "inbound-policy",
+                            "expressions", List.of("inbound-policy-expression"),
+                            "actions",
+                            Map.of("type", "inbound-policy-actions-type", "config", "inbound-policy-actions-config")),
+                        "outbound",
+                        Map.of("name", "outbound-policy",
+                            "expressions", List.of("outbound-policy-expression"),
+                            "actions",
+                            Map.of("type", "outbound-policy-actions-type", "config", "outbound-policy-actions-config")))))
             ).build();
 
         // THEN
@@ -215,12 +246,20 @@ public class CreateTunnelTest {
         assertTrue(createTunnel.getRequestHeader().getRemove().contains("req-subtraction"));
         assertTrue(createTunnel.getResponseHeader().getAdd().contains("res-addition"));
         assertTrue(createTunnel.getResponseHeader().getRemove().contains("res-subtraction"));
-        assertTrue(createTunnel.getIpRestrictions().getAllowCidrs().contains("allowed"));
-        assertTrue(createTunnel.getIpRestrictions().getDenyCidrs().contains("denied"));
+        assertTrue(createTunnel.getIpRestriction().getAllowCidrs().contains("allowed"));
+        assertTrue(createTunnel.getIpRestriction().getDenyCidrs().contains("denied"));
         assertEquals("provider", createTunnel.getVerifyWebhook().getProvider());
         assertEquals("secret", createTunnel.getVerifyWebhook().getSecret());
         assertTrue(createTunnel.getUserAgentFilter().getAllow().contains("allow-user-agent"));
         assertTrue(createTunnel.getUserAgentFilter().getDeny().contains("deny-user-agent"));
+        assertEquals("inbound-policy", createTunnel.getPolicyInbound().getName());
+        assertTrue(createTunnel.getPolicyInbound().getExpressions().contains("inbound-policy-expression"));
+        assertEquals("inbound-policy-actions-type", createTunnel.getPolicyInbound().getActions().getType());
+        assertEquals("inbound-policy-actions-config", createTunnel.getPolicyInbound().getActions().getConfig());
+        assertEquals("outbound-policy", createTunnel.getPolicyOutbound().getName());
+        assertTrue(createTunnel.getPolicyOutbound().getExpressions().contains("outbound-policy-expression"));
+        assertEquals("outbound-policy-actions-type", createTunnel.getPolicyOutbound().getActions().getType());
+        assertEquals("outbound-policy-actions-config", createTunnel.getPolicyOutbound().getActions().getConfig());
 
         assertNull(createTunnel.getBindTls());
     }

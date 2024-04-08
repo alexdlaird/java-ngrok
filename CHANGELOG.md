@@ -3,10 +3,19 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.2.16...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.0...HEAD)
+
+## [2.3.0](https://github.com/alexdlaird/java-ngrok/compare/2.2.16...2.3.0) - 2024-04-08
 ### Added
-- Support for `domain ` configuration when building [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.2.17/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withDomain(java.lang.String)).
+- Support for `domain ` configuration when building [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.3.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withDomain(java.lang.String)).
+- Support for `user_agent_filter ` configuration when building [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.3.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withUserAgentFilter(com.github.alexdlaird.ngrok.protocol.TunnelUserAgentFilter)).
+- Support for `policy ` configuration when building [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.3.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withPolicy(com.github.alexdlaird.ngrok.protocol.TunnelPolicy)).
+- `us-cal-1` to [Region](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/Region.html).
 - Test cases for TLS tunnels.
+- Build improvements.
+
+### Fixed
+- `ngrok` config value `ip_restriction` was incorrectly plural in previous versions of `java-ngrok`. Value is now interpreted as singular to align with [the `ngrok` docs](https://ngrok.com/docs/agent/config/#http-configuration), and classes and methods associated with it, like [TunnelIPRestriction](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/TunnelIPRestriction.html), have been renamed.
 
 ## [2.2.16](https://github.com/alexdlaird/java-ngrok/compare/2.2.15...2.2.16) - 2024-03-24
 ### Added

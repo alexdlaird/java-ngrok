@@ -6,6 +6,7 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -54,14 +55,18 @@ public class TunnelHeader {
          * Construct a TunnelHeader Builder from tunnel definition of <code>request_header</code>
          * or <code>response_header</code>.
          *
-         * @param tunnelHeaderDefinitions The map of Tunnel header attributes.
+         * @param tunnelHeaderDefinition The map of Tunnel header attributes.
          */
-        public Builder(Map<String, Object> tunnelHeaderDefinitions) {
-            if (tunnelHeaderDefinitions.containsKey("add")) {
-                this.add = (List<String>) tunnelHeaderDefinitions.get("add");
+        public Builder(final Map<String, Object> tunnelHeaderDefinition) {
+            if (tunnelHeaderDefinition.containsKey("add")) {
+                this.add = Collections.unmodifiableList(
+                    (List<String>) tunnelHeaderDefinition.get("add")
+                );
             }
-            if (tunnelHeaderDefinitions.containsKey("remove")) {
-                this.remove = (List<String>) tunnelHeaderDefinitions.get("remove");
+            if (tunnelHeaderDefinition.containsKey("remove")) {
+                this.remove = Collections.unmodifiableList(
+                    (List<String>) tunnelHeaderDefinition.get("remove")
+                );
             }
         }
 
@@ -69,7 +74,7 @@ public class TunnelHeader {
          * The list of headers to add.
          */
         public TunnelHeader.Builder withAdd(final List<String> add) {
-            this.add = add;
+            this.add = Collections.unmodifiableList(add);
             return this;
         }
 
@@ -77,7 +82,7 @@ public class TunnelHeader {
          * The list of headers to remove.
          */
         public TunnelHeader.Builder withRemove(final List<String> remove) {
-            this.remove = remove;
+            this.remove = Collections.unmodifiableList(remove);
             return this;
         }
 

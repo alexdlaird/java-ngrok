@@ -53,14 +53,14 @@ public class TunnelVerifyWebhook {
         /**
          * Construct a TunnelVerifyWebhook Builder from tunnel definition of <code>verify_webhook</code>.
          *
-         * @param tunnelVerifyWebhookDefinitions The map of Tunnel OAuth attributes.
+         * @param tunnelVerifyWebhookDefinition The map of Tunnel OAuth attributes.
          */
-        public Builder(Map<String, Object> tunnelVerifyWebhookDefinitions) {
-            if (tunnelVerifyWebhookDefinitions.containsKey("provider")) {
-                this.provider = (String) tunnelVerifyWebhookDefinitions.get("provider");
+        public Builder(final Map<String, Object> tunnelVerifyWebhookDefinition) {
+            if (tunnelVerifyWebhookDefinition.containsKey("provider")) {
+                this.provider = (String) tunnelVerifyWebhookDefinition.get("provider");
             }
-            if (tunnelVerifyWebhookDefinitions.containsKey("secret")) {
-                this.secret = (String) tunnelVerifyWebhookDefinitions.get("secret");
+            if (tunnelVerifyWebhookDefinition.containsKey("secret")) {
+                this.secret = (String) tunnelVerifyWebhookDefinition.get("secret");
             }
         }
 
