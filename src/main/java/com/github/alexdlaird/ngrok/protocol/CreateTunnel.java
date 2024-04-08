@@ -861,7 +861,7 @@ public class CreateTunnel {
                     .build();
             }
             if (tunnelDefinition.containsKey("policy")) {
-                Map<String, Object> policy = (Map<String, Object>) tunnelDefinition.get("policy");
+                final Map<String, Object> policy = (Map<String, Object>) tunnelDefinition.get("policy");
                 if (isNull(this.policyInbound) && policy.containsKey("inbound")) {
                     this.policyInbound = new TunnelPolicy
                         .Builder((Map<String, Object>) policy.get("inbound"))
