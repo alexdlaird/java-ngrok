@@ -6,6 +6,7 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -55,9 +56,9 @@ public class TunnelOAuth {
     }
 
     /**
-     * Builder for OAuth configuration that conforms to
-     * <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions" target="_blank"><code>ngrok</code>'s tunnel definition</a>.
-     * See docs for that class for example usage.
+     * Builder for OAuth configuration that conforms to <a
+     * href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions"
+     * target="_blank"><code>ngrok</code>'s tunnel definition</a>. See docs for that class for example usage.
      */
     public static class Builder {
 
@@ -75,20 +76,26 @@ public class TunnelOAuth {
         /**
          * Construct a TunnelOAuth Builder from tunnel definition of <code>oauth</code>.
          *
-         * @param tunnelOAuthDefinitions The map of Tunnel OAuth attributes.
+         * @param tunnelOAuthDefinition The map of Tunnel OAuth attributes.
          */
-        public Builder(Map<String, Object> tunnelOAuthDefinitions) {
-            if (tunnelOAuthDefinitions.containsKey("provider")) {
-                this.provider = (String) tunnelOAuthDefinitions.get("provider");
+        public Builder(final Map<String, Object> tunnelOAuthDefinition) {
+            if (tunnelOAuthDefinition.containsKey("provider")) {
+                this.provider = (String) tunnelOAuthDefinition.get("provider");
             }
-            if (tunnelOAuthDefinitions.containsKey("scopes")) {
-                this.scopes = (List<String>) tunnelOAuthDefinitions.get("scopes");
+            if (tunnelOAuthDefinition.containsKey("scopes")) {
+                this.scopes = Collections.unmodifiableList(
+                    (List<String>) tunnelOAuthDefinition.get("scopes")
+                );
             }
-            if (tunnelOAuthDefinitions.containsKey("allow_emails")) {
-                this.allowEmails = (List<String>) tunnelOAuthDefinitions.get("allow_emails");
+            if (tunnelOAuthDefinition.containsKey("allow_emails")) {
+                this.allowEmails = Collections.unmodifiableList(
+                    (List<String>) tunnelOAuthDefinition.get("allow_emails")
+                );
             }
-            if (tunnelOAuthDefinitions.containsKey("allow_domains")) {
-                this.allowDomains = (List<String>) tunnelOAuthDefinitions.get("allow_domains");
+            if (tunnelOAuthDefinition.containsKey("allow_domains")) {
+                this.allowDomains = Collections.unmodifiableList(
+                    (List<String>) tunnelOAuthDefinition.get("allow_domains")
+                );
             }
         }
 
@@ -105,7 +112,7 @@ public class TunnelOAuth {
          * The list of OAuth scopes.
          */
         public Builder withScopes(final List<String> scopes) {
-            this.scopes = scopes;
+            this.scopes = Collections.unmodifiableList(scopes);
             return this;
         }
 
@@ -113,7 +120,7 @@ public class TunnelOAuth {
          * The list of allowed OAuth emails.
          */
         public Builder withAllowEmails(final List<String> emails) {
-            this.allowEmails = emails;
+            this.allowEmails = Collections.unmodifiableList(emails);
             return this;
         }
 
@@ -121,7 +128,7 @@ public class TunnelOAuth {
          * The list of allowed OAuth domains.
          */
         public Builder withAllowDomains(final List<String> domains) {
-            this.allowDomains = domains;
+            this.allowDomains = Collections.unmodifiableList(domains);
             return this;
         }
 

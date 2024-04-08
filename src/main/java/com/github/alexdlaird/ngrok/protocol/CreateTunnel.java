@@ -13,6 +13,7 @@ import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -71,8 +72,11 @@ public class CreateTunnel {
     private final String terminateAt;
     private final TunnelHeader requestHeader;
     private final TunnelHeader responseHeader;
-    private final TunnelIPRestrictions ipRestrictions;
+    private final TunnelIPRestriction ipRestriction;
     private final TunnelVerifyWebhook verifyWebhook;
+    private final TunnelUserAgentFilter userAgentFilter;
+    private final TunnelPolicy policyInbound;
+    private final TunnelPolicy policyOutbound;
     private final List<String> labels;
 
     private CreateTunnel(final Builder builder) {
@@ -103,8 +107,11 @@ public class CreateTunnel {
         this.terminateAt = builder.terminateAt;
         this.requestHeader = builder.requestHeader;
         this.responseHeader = builder.responseHeader;
-        this.ipRestrictions = builder.ipRestrictions;
+        this.ipRestriction = builder.ipRestriction;
         this.verifyWebhook = builder.verifyWebhook;
+        this.userAgentFilter = builder.userAgentFilter;
+        this.policyInbound = builder.policyInbound;
+        this.policyOutbound = builder.policyOutbound;
         this.labels = builder.labels;
     }
 
@@ -301,8 +308,8 @@ public class CreateTunnel {
     /**
      * Get the IP restrictions for the tunnel.
      */
-    public TunnelIPRestrictions getIpRestrictions() {
-        return ipRestrictions;
+    public TunnelIPRestriction getIpRestriction() {
+        return ipRestriction;
     }
 
     /**
@@ -313,7 +320,29 @@ public class CreateTunnel {
     }
 
     /**
-     * Get the labels.
+     * Get the UserAgent filters.
+     */
+    public TunnelUserAgentFilter getUserAgentFilter() {
+        return userAgentFilter;
+    }
+
+    /**
+     * Get the inbound policy.
+     */
+    public TunnelPolicy getPolicyInbound() {
+        return policyInbound;
+    }
+
+    /**
+     * Get the outbound policy.
+     */
+    public TunnelPolicy getPolicyOutbound() {
+        return policyOutbound;
+    }
+
+    /**
+     * Get the labels. Note that labels can only be provisioned from the <code>ngrok</code> config file and not the
+     * Builder.
      */
     public List<String> getLabels() {
         return labels;
@@ -355,8 +384,11 @@ public class CreateTunnel {
         private String terminateAt;
         private TunnelHeader requestHeader;
         private TunnelHeader responseHeader;
-        private TunnelIPRestrictions ipRestrictions;
+        private TunnelIPRestriction ipRestriction;
         private TunnelVerifyWebhook verifyWebhook;
+        private TunnelUserAgentFilter userAgentFilter;
+        private TunnelPolicy policyInbound;
+        private TunnelPolicy policyOutbound;
         private List<String> labels;
 
         /**
@@ -415,8 +447,11 @@ public class CreateTunnel {
             this.terminateAt = createTunnel.terminateAt;
             this.requestHeader = createTunnel.requestHeader;
             this.responseHeader = createTunnel.responseHeader;
-            this.ipRestrictions = createTunnel.ipRestrictions;
+            this.ipRestriction = createTunnel.ipRestriction;
             this.verifyWebhook = createTunnel.verifyWebhook;
+            this.userAgentFilter = createTunnel.userAgentFilter;
+            this.policyInbound = createTunnel.policyInbound;
+            this.policyOutbound = createTunnel.policyOutbound;
         }
 
         /**
@@ -587,7 +622,7 @@ public class CreateTunnel {
                 throw new IllegalArgumentException("Cannot set both 'schemes' and 'bindTls'.");
             }
 
-            this.schemes = schemes;
+            this.schemes = Collections.unmodifiableList(schemes);
             return this;
         }
 
@@ -601,14 +636,14 @@ public class CreateTunnel {
                 throw new IllegalArgumentException("Cannot set both 'auth' and 'basicAuth'.");
             }
 
-            this.basicAuth = basicAuth;
+            this.basicAuth = Collections.unmodifiableList(basicAuth);
             return this;
         }
 
         /**
          * Set of OAuth settings to enable OAuth authentication on the tunnel endpoint.
          */
-        public Builder withOAuth(TunnelOAuth oauth) {
+        public Builder withOAuth(final TunnelOAuth oauth) {
             this.oauth = oauth;
             return this;
         }
@@ -616,7 +651,7 @@ public class CreateTunnel {
         /**
          * The circuit breaker trigger.
          */
-        public Builder withCircuitBreaker(Float circuitBreaker) {
+        public Builder withCircuitBreaker(final Float circuitBreaker) {
             this.circuitBreaker = circuitBreaker;
             return this;
         }
@@ -624,7 +659,7 @@ public class CreateTunnel {
         /**
          * Whether compression is enabled on this tunnel.
          */
-        public Builder withCompression(Boolean compression) {
+        public Builder withCompression(final Boolean compression) {
             this.compression = compression;
             return this;
         }
@@ -632,7 +667,7 @@ public class CreateTunnel {
         /**
          * The path to the TLS certificate authority to verify client certs.
          */
-        public Builder withMutualTlsCas(String mutualTlsCas) {
+        public Builder withMutualTlsCas(final String mutualTlsCas) {
             this.mutualTlsCas = mutualTlsCas;
             return this;
         }
@@ -640,7 +675,7 @@ public class CreateTunnel {
         /**
          * The proxy proto.
          */
-        public Builder withProxyProto(String proxyProto) {
+        public Builder withProxyProto(final String proxyProto) {
             this.proxyProto = proxyProto;
             return this;
         }
@@ -648,7 +683,7 @@ public class CreateTunnel {
         /**
          * Whether ingress connections are converted to TCP upstream.
          */
-        public Builder withWebsocketTcpConverter(Boolean websocketTcpConverter) {
+        public Builder withWebsocketTcpConverter(final Boolean websocketTcpConverter) {
             this.websocketTcpConverter = websocketTcpConverter;
             return this;
         }
@@ -656,7 +691,7 @@ public class CreateTunnel {
         /**
          * The termination point.
          */
-        public Builder withTerminateAt(String terminateAt) {
+        public Builder withTerminateAt(final String terminateAt) {
             this.terminateAt = terminateAt;
             return this;
         }
@@ -664,7 +699,7 @@ public class CreateTunnel {
         /**
          * The Headers to be added or removed from requests.
          */
-        public Builder withRequestHeader(TunnelHeader requestHeader) {
+        public Builder withRequestHeader(final TunnelHeader requestHeader) {
             this.requestHeader = requestHeader;
             return this;
         }
@@ -672,7 +707,7 @@ public class CreateTunnel {
         /**
          * The Headers to be added or removed from responses.
          */
-        public Builder withResponseHeader(TunnelHeader responseHeader) {
+        public Builder withResponseHeader(final TunnelHeader responseHeader) {
             this.responseHeader = responseHeader;
             return this;
         }
@@ -680,16 +715,40 @@ public class CreateTunnel {
         /**
          * The IP restrictions for the tunnel.
          */
-        public Builder withIpRestrictions(TunnelIPRestrictions ipRestrictions) {
-            this.ipRestrictions = ipRestrictions;
+        public Builder withIpRestriction(final TunnelIPRestriction ipRestriction) {
+            this.ipRestriction = ipRestriction;
             return this;
         }
 
         /**
          * The signature for webhooks.
          */
-        public Builder withVerifyWebhook(TunnelVerifyWebhook verifyWebhook) {
+        public Builder withVerifyWebhook(final TunnelVerifyWebhook verifyWebhook) {
             this.verifyWebhook = verifyWebhook;
+            return this;
+        }
+
+        /**
+         * The UserAgent filter for the tunnel.
+         */
+        public Builder withUserAgentFilter(final TunnelUserAgentFilter userAgentFilter) {
+            this.userAgentFilter = userAgentFilter;
+            return this;
+        }
+
+        /**
+         * The inbound policy for the tunnel.
+         */
+        public Builder withPolicyInbound(final TunnelPolicy policyInbound) {
+            this.policyInbound = policyInbound;
+            return this;
+        }
+
+        /**
+         * The outbound policy for the tunnel.
+         */
+        public Builder withPolicyOutbound(final TunnelPolicy policyOutbound) {
+            this.policyOutbound = policyOutbound;
             return this;
         }
 
@@ -744,10 +803,14 @@ public class CreateTunnel {
                 this.metadata = (String) tunnelDefinition.get("metadata");
             }
             if (isNull(this.schemes) && tunnelDefinition.containsKey("schemes")) {
-                this.schemes = (List<String>) tunnelDefinition.get("schemes");
+                this.schemes = Collections.unmodifiableList(
+                    (List<String>) tunnelDefinition.get("schemes")
+                );
             }
             if (isNull(this.basicAuth) && tunnelDefinition.containsKey("basic_auth")) {
-                this.basicAuth = (List<String>) tunnelDefinition.get("basic_auth");
+                this.basicAuth = Collections.unmodifiableList(
+                    (List<String>) tunnelDefinition.get("basic_auth")
+                );
             }
             if (isNull(this.oauth) && tunnelDefinition.containsKey("oauth")) {
                 this.oauth = new TunnelOAuth.Builder((Map<String, Object>) tunnelDefinition.get("oauth")).build();
@@ -782,9 +845,9 @@ public class CreateTunnel {
                     .Builder((Map<String, Object>) tunnelDefinition.get("response_header"))
                     .build();
             }
-            if (isNull(this.ipRestrictions) && tunnelDefinition.containsKey("ip_restrictions")) {
-                this.ipRestrictions = new TunnelIPRestrictions
-                    .Builder((Map<String, Object>) tunnelDefinition.get("ip_restrictions"))
+            if (isNull(this.ipRestriction) && tunnelDefinition.containsKey("ip_restriction")) {
+                this.ipRestriction = new TunnelIPRestriction
+                    .Builder((Map<String, Object>) tunnelDefinition.get("ip_restriction"))
                     .build();
             }
             if (isNull(this.verifyWebhook) && tunnelDefinition.containsKey("verify_webhook")) {
@@ -792,12 +855,32 @@ public class CreateTunnel {
                     .Builder((Map<String, Object>) tunnelDefinition.get("verify_webhook"))
                     .build();
             }
+            if (isNull(this.userAgentFilter) && tunnelDefinition.containsKey("user_agent_filter")) {
+                this.userAgentFilter = new TunnelUserAgentFilter
+                    .Builder((Map<String, Object>) tunnelDefinition.get("user_agent_filter"))
+                    .build();
+            }
+            if (tunnelDefinition.containsKey("policy")) {
+                final Map<String, Object> policy = (Map<String, Object>) tunnelDefinition.get("policy");
+                if (isNull(this.policyInbound) && policy.containsKey("inbound")) {
+                    this.policyInbound = new TunnelPolicy
+                        .Builder((Map<String, Object>) policy.get("inbound"))
+                        .build();
+                }
+                if (isNull(this.policyOutbound) && policy.containsKey("outbound")) {
+                    this.policyOutbound = new TunnelPolicy
+                        .Builder((Map<String, Object>) policy.get("outbound"))
+                        .build();
+                }
+            }
             if (tunnelDefinition.containsKey("labels")) {
                 if (nonNull(bindTls)) {
                     throw new IllegalArgumentException("'bindTls' cannot be set when 'labels' is also on the "
                         + "tunnel definition.");
                 }
-                this.labels = (List<String>) tunnelDefinition.get("labels");
+                this.labels = Collections.unmodifiableList(
+                    (List<String>) tunnelDefinition.get("labels")
+                );
             }
 
             // Returning this to allow chained configuration of
