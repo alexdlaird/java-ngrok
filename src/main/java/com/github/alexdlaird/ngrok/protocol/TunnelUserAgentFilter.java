@@ -6,6 +6,7 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -57,10 +58,14 @@ public class TunnelUserAgentFilter {
          */
         public Builder(final Map<String, Object> tunnelUserAgentFilterDefinition) {
             if (tunnelUserAgentFilterDefinition.containsKey("allow")) {
-                this.allow = (List<String>) tunnelUserAgentFilterDefinition.get("allow");
+                this.allow = Collections.unmodifiableList(
+                    (List<String>) tunnelUserAgentFilterDefinition.get("allow")
+                );
             }
             if (tunnelUserAgentFilterDefinition.containsKey("deny")) {
-                this.deny = (List<String>) tunnelUserAgentFilterDefinition.get("deny");
+                this.deny = Collections.unmodifiableList(
+                    (List<String>) tunnelUserAgentFilterDefinition.get("deny")
+                );
             }
         }
 
@@ -68,7 +73,7 @@ public class TunnelUserAgentFilter {
          * The list of allowed UserAgent filters.
          */
         public TunnelUserAgentFilter.Builder withAllow(final List<String> allow) {
-            this.allow = allow;
+            this.allow = Collections.unmodifiableList(allow);
             return this;
         }
 
@@ -76,7 +81,7 @@ public class TunnelUserAgentFilter {
          * The list of denied UserAgent filters.
          */
         public TunnelUserAgentFilter.Builder withDeny(final List<String> deny) {
-            this.deny = deny;
+            this.deny = Collections.unmodifiableList(deny);
             return this;
         }
 

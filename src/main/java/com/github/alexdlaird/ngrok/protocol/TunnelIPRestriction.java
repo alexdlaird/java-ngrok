@@ -6,6 +6,7 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -57,10 +58,14 @@ public class TunnelIPRestriction {
          */
         public Builder(final Map<String, Object> tunnelIPRestrictionDefinition) {
             if (tunnelIPRestrictionDefinition.containsKey("allow_cidrs")) {
-                this.allowCidrs = (List<String>) tunnelIPRestrictionDefinition.get("allow_cidrs");
+                this.allowCidrs = Collections.unmodifiableList(
+                    (List<String>) tunnelIPRestrictionDefinition.get("allow_cidrs")
+                );
             }
             if (tunnelIPRestrictionDefinition.containsKey("deny_cidrs")) {
-                this.denyCidrs = (List<String>) tunnelIPRestrictionDefinition.get("deny_cidrs");
+                this.denyCidrs = Collections.unmodifiableList(
+                    (List<String>) tunnelIPRestrictionDefinition.get("deny_cidrs")
+                );
             }
         }
 
@@ -68,7 +73,7 @@ public class TunnelIPRestriction {
          * The list of allowed CIDRs.
          */
         public TunnelIPRestriction.Builder withAllowCidrs(final List<String> allowCidrs) {
-            this.allowCidrs = allowCidrs;
+            this.allowCidrs = Collections.unmodifiableList(allowCidrs);
             return this;
         }
 
@@ -76,7 +81,7 @@ public class TunnelIPRestriction {
          * The list of denied CIDRs.
          */
         public TunnelIPRestriction.Builder withDenyCidrs(final List<String> denyCidrs) {
-            this.denyCidrs = denyCidrs;
+            this.denyCidrs = Collections.unmodifiableList(denyCidrs);
             return this;
         }
 

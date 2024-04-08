@@ -6,6 +6,7 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -70,7 +71,9 @@ public class TunnelPolicy {
                 this.name = (String) tunnelPolicyDefinition.get("name");
             }
             if (tunnelPolicyDefinition.containsKey("expressions")) {
-                this.expressions = (List<String>) tunnelPolicyDefinition.get("expressions");
+                this.expressions = Collections.unmodifiableList(
+                    (List<String>) tunnelPolicyDefinition.get("expressions")
+                );
             }
             if (tunnelPolicyDefinition.containsKey("actions")) {
                 this.actions = new TunnelPolicyActions
@@ -91,7 +94,7 @@ public class TunnelPolicy {
          * The list of policy expressions.
          */
         public TunnelPolicy.Builder withExpressions(final List<String> expressions) {
-            this.expressions = expressions;
+            this.expressions = Collections.unmodifiableList(expressions);
             return this;
         }
 

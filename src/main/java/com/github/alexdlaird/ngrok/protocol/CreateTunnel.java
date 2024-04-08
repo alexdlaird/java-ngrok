@@ -13,6 +13,7 @@ import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -340,7 +341,8 @@ public class CreateTunnel {
     }
 
     /**
-     * Get the labels.
+     * Get the labels. Note that labels can only be provisioned from the <code>ngrok</code> config file and not the
+     * Builder.
      */
     public List<String> getLabels() {
         return labels;
@@ -620,7 +622,7 @@ public class CreateTunnel {
                 throw new IllegalArgumentException("Cannot set both 'schemes' and 'bindTls'.");
             }
 
-            this.schemes = schemes;
+            this.schemes = Collections.unmodifiableList(schemes);
             return this;
         }
 
@@ -634,7 +636,7 @@ public class CreateTunnel {
                 throw new IllegalArgumentException("Cannot set both 'auth' and 'basicAuth'.");
             }
 
-            this.basicAuth = basicAuth;
+            this.basicAuth = Collections.unmodifiableList(basicAuth);
             return this;
         }
 
@@ -801,10 +803,14 @@ public class CreateTunnel {
                 this.metadata = (String) tunnelDefinition.get("metadata");
             }
             if (isNull(this.schemes) && tunnelDefinition.containsKey("schemes")) {
-                this.schemes = (List<String>) tunnelDefinition.get("schemes");
+                this.schemes = Collections.unmodifiableList(
+                    (List<String>) tunnelDefinition.get("schemes")
+                );
             }
             if (isNull(this.basicAuth) && tunnelDefinition.containsKey("basic_auth")) {
-                this.basicAuth = (List<String>) tunnelDefinition.get("basic_auth");
+                this.basicAuth = Collections.unmodifiableList(
+                    (List<String>) tunnelDefinition.get("basic_auth")
+                );
             }
             if (isNull(this.oauth) && tunnelDefinition.containsKey("oauth")) {
                 this.oauth = new TunnelOAuth.Builder((Map<String, Object>) tunnelDefinition.get("oauth")).build();
@@ -872,7 +878,9 @@ public class CreateTunnel {
                     throw new IllegalArgumentException("'bindTls' cannot be set when 'labels' is also on the "
                         + "tunnel definition.");
                 }
-                this.labels = (List<String>) tunnelDefinition.get("labels");
+                this.labels = Collections.unmodifiableList(
+                    (List<String>) tunnelDefinition.get("labels")
+                );
             }
 
             // Returning this to allow chained configuration of
