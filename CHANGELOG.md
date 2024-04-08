@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.0...HEAD)
+### Added
+- Test improvements.
 
 ## [2.3.0](https://github.com/alexdlaird/java-ngrok/compare/2.2.16...2.3.0) - 2024-04-08
 ### Added
