@@ -6,12 +6,6 @@
 
 package com.github.alexdlaird.ngrok.process;
 
-import static com.github.alexdlaird.util.StringUtils.isBlank;
-import static java.net.HttpURLConnection.HTTP_OK;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static java.util.logging.Level.SEVERE;
-
 import com.github.alexdlaird.exception.JavaNgrokSecurityException;
 import com.github.alexdlaird.exception.NgrokException;
 import com.github.alexdlaird.http.DefaultHttpClient;
@@ -33,6 +27,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.github.alexdlaird.util.StringUtils.isBlank;
+import static java.net.HttpURLConnection.HTTP_OK;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static java.util.logging.Level.SEVERE;
 
 /**
  * An object containing information about the <code>ngrok</code> process. Can be configured with
@@ -99,7 +99,8 @@ public class NgrokProcess {
 
         if (!Files.exists(javaNgrokConfig.getNgrokPath())) {
             throw new NgrokException(String.format("ngrok binary was not found. "
-                    + "Be sure to call \"NgrokInstaller.installNgrok()\" first for \"ngrokPath\": %s",
+                                                   + "Be sure to call \"NgrokInstaller.installNgrok()\" first for "
+                                                   + "\"ngrokPath\": %s",
                 javaNgrokConfig.getNgrokPath()));
         }
         ngrokInstaller.validateConfig(javaNgrokConfig.getConfigPath());
@@ -328,7 +329,8 @@ public class NgrokProcess {
         return processMonitor.apiUrl;
     }
 
-    private String captureOutput(final BufferedReader reader) throws IOException {
+    private String captureOutput(final BufferedReader reader)
+        throws IOException {
         final StringBuilder builder = new StringBuilder();
 
         String line;
@@ -403,8 +405,8 @@ public class NgrokProcess {
                 }
 
                 while (alive && process.isAlive()
-                    && javaNgrokConfig.isKeepMonitoring()
-                    && nonNull(line = reader.readLine())) {
+                       && javaNgrokConfig.isKeepMonitoring()
+                       && nonNull(line = reader.readLine())) {
                     logLine(line);
                 }
 

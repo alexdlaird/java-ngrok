@@ -52,8 +52,8 @@ public class TunnelHeader {
         }
 
         /**
-         * Construct a TunnelHeader Builder from tunnel definition of <code>request_header</code>
-         * or <code>response_header</code>.
+         * Construct a TunnelHeader Builder from tunnel definition of <code>request_header</code> or
+         * <code>response_header</code>.
          *
          * @param tunnelHeaderDefinition The map of Tunnel header attributes.
          */

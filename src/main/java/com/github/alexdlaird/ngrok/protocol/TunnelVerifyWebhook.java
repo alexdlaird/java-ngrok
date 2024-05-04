@@ -9,8 +9,7 @@ package com.github.alexdlaird.ngrok.protocol;
 import java.util.Map;
 
 /**
- * An object that represents webhook signature verification for a
- * {@link CreateTunnel}.
+ * An object that represents webhook signature verification for a {@link CreateTunnel}.
  */
 public class TunnelVerifyWebhook {
 

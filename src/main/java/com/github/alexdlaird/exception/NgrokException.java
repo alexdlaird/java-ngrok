@@ -57,8 +57,7 @@ public class NgrokException extends JavaNgrokException {
     }
 
     /**
-     * An exception with a message, <code>ngrok</code> logs, and the error that caused <code>ngrok</code> to
-     * fail.
+     * An exception with a message, <code>ngrok</code> logs, and the error that caused <code>ngrok</code> to fail.
      *
      * @param message    The message describing the exception.
      * @param ngrokLogs  The <code>ngrok</code> logs.

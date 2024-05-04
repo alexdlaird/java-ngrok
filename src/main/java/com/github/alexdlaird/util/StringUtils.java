@@ -27,7 +27,8 @@ public class StringUtils {
      * @return The resulting String.
      * @throws IOException An I/O exception occurred.
      */
-    public static String streamToString(final InputStream inputStream, final Charset charset) throws IOException {
+    public static String streamToString(final InputStream inputStream, final Charset charset)
+        throws IOException {
         if (inputStream == null) {
             return null;
         }

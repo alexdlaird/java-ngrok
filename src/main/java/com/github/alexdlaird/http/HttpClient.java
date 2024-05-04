@@ -46,7 +46,7 @@ public interface HttpClient {
      * @param dest              The destination to which the file will be downloaded.
      * @param retries           The retry attempt index, if download fails.
      * @throws InterruptedException The thread is interrupted during retries.
-     * @throws HttpClientException An error has occurred while executing the HTTP request.
+     * @throws HttpClientException  An error has occurred while executing the HTTP request.
      */
     void get(final String url, final List<Parameter> parameters,
              final Map<String, String> additionalHeaders, final Path dest, final int retries)
@@ -56,7 +56,8 @@ public interface HttpClient {
      * See {@link #get(String, List, Map, Path, int)}.
      */
     default void get(final String url, final List<Parameter> parameters,
-                     final Map<String, String> additionalHeaders, final Path dest) throws InterruptedException {
+                     final Map<String, String> additionalHeaders, final Path dest)
+        throws InterruptedException {
         get(url, parameters, additionalHeaders, dest, 0);
     }
 
