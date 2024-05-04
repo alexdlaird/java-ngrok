@@ -6,9 +6,6 @@
 
 package com.github.alexdlaird.http;
 
-import static com.github.alexdlaird.util.StringUtils.isNotBlank;
-import static java.util.Objects.nonNull;
-
 import com.github.alexdlaird.util.StringUtils;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -28,6 +25,9 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import static com.github.alexdlaird.util.StringUtils.isNotBlank;
+import static java.util.Objects.nonNull;
 
 /**
  * A default client for executing JSON-based HTTP requests.
@@ -90,7 +90,8 @@ public class DefaultHttpClient implements HttpClient {
                     final List<Parameter> parameters,
                     final Map<String, String> additionalHeaders,
                     final Path dest,
-                    final int retries) throws InterruptedException {
+                    final int retries)
+        throws InterruptedException {
         HttpURLConnection httpUrlConnection = null;
 
         try {
@@ -185,17 +186,6 @@ public class DefaultHttpClient implements HttpClient {
         }
     }
 
-    /**
-     * Override this method if you would like to implement a custom URL connection.
-     *
-     * @param url The URL to connect to.
-     * @return A URL connection.
-     * @throws IOException An I/O exception occurred.
-     */
-    protected HttpURLConnection createHttpUrlConnection(final String url) throws IOException {
-        return (HttpURLConnection) new URL(url).openConnection();
-    }
-
     private <T> String convertRequestToString(final T request) {
         if (nonNull(request)) {
             return gson.toJson(request);
@@ -214,76 +204,6 @@ public class DefaultHttpClient implements HttpClient {
         } else {
             return null;
         }
-    }
-
-    /**
-     * Rebuild the URL with parameters appended.
-     *
-     * @param url        The URL to rebuild.
-     * @param parameters The parameters to append.
-     * @return The parameter-appended URL.
-     * @throws UnsupportedEncodingException An encoding exception occurred.
-     */
-    protected String urlWithParameters(final String url,
-                                       final List<Parameter> parameters)
-        throws UnsupportedEncodingException {
-        final StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(url);
-
-        if (nonNull(parameters) && !parameters.isEmpty()) {
-            boolean first = true;
-            for (final Parameter parameter : parameters) {
-                if (!first) {
-                    stringBuilder.append("&");
-                } else {
-                    stringBuilder.append("?");
-
-                    first = false;
-                }
-
-                stringBuilder.append(URLEncoder.encode(parameter.getName(), encoding));
-                stringBuilder.append("=");
-                stringBuilder.append(URLEncoder.encode(parameter.getValue(), encoding));
-            }
-        }
-
-        return stringBuilder.toString();
-    }
-
-    /**
-     * Initialize the connection with the given parameters, then return the provisioned input stream.
-     *
-     * @param httpUrlConnection The connection to initialize.
-     * @param body              The request body for the stream.
-     * @param method            The HTTP method.
-     * @param additionalHeaders Additional headers for the request.
-     * @return The provisioned input stream.
-     * @throws IOException An I/O exception occurred.
-     */
-    protected InputStream getInputStream(final HttpURLConnection httpUrlConnection,
-                                         final String body,
-                                         final String method,
-                                         final Map<String, String> additionalHeaders) throws IOException {
-        httpUrlConnection.setRequestMethod(method);
-        httpUrlConnection.setConnectTimeout(timeout);
-        httpUrlConnection.setReadTimeout(timeout);
-
-        appendDefaultsToConnection(httpUrlConnection, additionalHeaders);
-        modifyConnection(httpUrlConnection);
-
-        if (isNotBlank(body)) {
-            httpUrlConnection.setDoOutput(true);
-            httpUrlConnection.connect();
-
-            final OutputStream outputStream = httpUrlConnection.getOutputStream();
-            outputStream.write(body.getBytes(Charset.forName(encoding)));
-            outputStream.close();
-        } else {
-            httpUrlConnection.setRequestProperty("Content-Length", "0");
-            httpUrlConnection.connect();
-        }
-
-        return httpUrlConnection.getInputStream();
     }
 
     private <B> Response<B> execute(final String url,
@@ -316,8 +236,8 @@ public class DefaultHttpClient implements HttpClient {
                         Charset.forName(encoding));
 
                     msg = "An error occurred when performing the operation ("
-                        + httpUrlConnection.getResponseCode() + "): "
-                        + errorResponse;
+                          + httpUrlConnection.getResponseCode() + "): "
+                          + errorResponse;
                 } catch (final IOException | NullPointerException ignored) {
                 }
             }
@@ -378,5 +298,88 @@ public class DefaultHttpClient implements HttpClient {
         public DefaultHttpClient build() {
             return new DefaultHttpClient(this);
         }
+    }
+
+    /**
+     * Override this method if you would like to implement a custom URL connection.
+     *
+     * @param url The URL to connect to.
+     * @return A URL connection.
+     * @throws IOException An I/O exception occurred.
+     */
+    protected HttpURLConnection createHttpUrlConnection(final String url)
+        throws IOException {
+        return (HttpURLConnection) new URL(url).openConnection();
+    }
+
+    /**
+     * Rebuild the URL with parameters appended.
+     *
+     * @param url        The URL to rebuild.
+     * @param parameters The parameters to append.
+     * @return The parameter-appended URL.
+     * @throws UnsupportedEncodingException An encoding exception occurred.
+     */
+    protected String urlWithParameters(final String url,
+                                       final List<Parameter> parameters)
+        throws UnsupportedEncodingException {
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(url);
+
+        if (nonNull(parameters) && !parameters.isEmpty()) {
+            boolean first = true;
+            for (final Parameter parameter : parameters) {
+                if (!first) {
+                    stringBuilder.append("&");
+                } else {
+                    stringBuilder.append("?");
+
+                    first = false;
+                }
+
+                stringBuilder.append(URLEncoder.encode(parameter.getName(), encoding));
+                stringBuilder.append("=");
+                stringBuilder.append(URLEncoder.encode(parameter.getValue(), encoding));
+            }
+        }
+
+        return stringBuilder.toString();
+    }
+
+    /**
+     * Initialize the connection with the given parameters, then return the provisioned input stream.
+     *
+     * @param httpUrlConnection The connection to initialize.
+     * @param body              The request body for the stream.
+     * @param method            The HTTP method.
+     * @param additionalHeaders Additional headers for the request.
+     * @return The provisioned input stream.
+     * @throws IOException An I/O exception occurred.
+     */
+    protected InputStream getInputStream(final HttpURLConnection httpUrlConnection,
+                                         final String body,
+                                         final String method,
+                                         final Map<String, String> additionalHeaders)
+        throws IOException {
+        httpUrlConnection.setRequestMethod(method);
+        httpUrlConnection.setConnectTimeout(timeout);
+        httpUrlConnection.setReadTimeout(timeout);
+
+        appendDefaultsToConnection(httpUrlConnection, additionalHeaders);
+        modifyConnection(httpUrlConnection);
+
+        if (isNotBlank(body)) {
+            httpUrlConnection.setDoOutput(true);
+            httpUrlConnection.connect();
+
+            final OutputStream outputStream = httpUrlConnection.getOutputStream();
+            outputStream.write(body.getBytes(Charset.forName(encoding)));
+            outputStream.close();
+        } else {
+            httpUrlConnection.setRequestProperty("Content-Length", "0");
+            httpUrlConnection.connect();
+        }
+
+        return httpUrlConnection.getInputStream();
     }
 }

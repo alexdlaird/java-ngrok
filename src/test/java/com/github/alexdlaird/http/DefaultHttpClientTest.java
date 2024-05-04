@@ -6,6 +6,27 @@
 
 package com.github.alexdlaird.http;
 
+import com.github.alexdlaird.exception.JavaNgrokHTTPException;
+import com.github.alexdlaird.ngrok.NgrokClient;
+import com.github.alexdlaird.ngrok.NgrokTestCase;
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
+import com.github.alexdlaird.ngrok.protocol.CapturedRequest;
+import com.github.alexdlaird.ngrok.protocol.CapturedRequests;
+import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
+import com.github.alexdlaird.ngrok.protocol.Tunnel;
+import com.github.alexdlaird.ngrok.protocol.Tunnels;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static java.net.HttpURLConnection.HTTP_BAD_METHOD;
 import static java.net.HttpURLConnection.HTTP_CREATED;
@@ -28,27 +49,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.github.alexdlaird.exception.JavaNgrokHTTPException;
-import com.github.alexdlaird.ngrok.NgrokClient;
-import com.github.alexdlaird.ngrok.NgrokTestCase;
-import com.github.alexdlaird.ngrok.installer.NgrokVersion;
-import com.github.alexdlaird.ngrok.protocol.CapturedRequest;
-import com.github.alexdlaird.ngrok.protocol.CapturedRequests;
-import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
-import com.github.alexdlaird.ngrok.protocol.Tunnel;
-import com.github.alexdlaird.ngrok.protocol.Tunnels;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 public class DefaultHttpClientTest extends NgrokTestCase {
 
     private DefaultHttpClient defaultHttpClient;
@@ -58,8 +58,8 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         super.setUp();
 
         defaultHttpClient = spy(new DefaultHttpClient.Builder()
-                .withRetryCount(3)
-                .build());
+            .withRetryCount(3)
+            .build());
     }
 
     @Test
@@ -69,9 +69,9 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         // GIVEN
         ngrokProcessV3.start();
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
-                .withNgrokVersion(NgrokVersion.V3)
-                .withName("my-tunnel")
-                .build();
+            .withNgrokVersion(NgrokVersion.V3)
+            .withName("my-tunnel")
+            .build();
 
         // WHEN
         final Response<Tunnel> postResponse = defaultHttpClient.post(String.format("%s/api/tunnels",
@@ -89,10 +89,10 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         // GIVEN
         ngrokProcessV3.start();
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
-                .withNgrokVersion(NgrokVersion.V3)
-                .withName("my-tunnel")
-                .withBindTls(true)
-                .build();
+            .withNgrokVersion(NgrokVersion.V3)
+            .withName("my-tunnel")
+            .withBindTls(true)
+            .build();
         defaultHttpClient.post(String.format("%s/api/tunnels",
             ngrokProcessV3.getApiUrl()), createTunnel, Tunnel.class);
 
@@ -119,8 +119,8 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         // GIVEN
         ngrokProcessV3.start();
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
-                .withNgrokVersion(NgrokVersion.V3)
-                .build();
+            .withNgrokVersion(NgrokVersion.V3)
+            .build();
         final Tunnel tunnel = defaultHttpClient.post(String.format("%s/api/tunnels",
             ngrokProcessV3.getApiUrl()), createTunnel, Tunnel.class).getBody();
 
@@ -139,10 +139,10 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         // GIVEN
         ngrokProcessV3.start();
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
-                .withNgrokVersion(NgrokVersion.V3)
-                .withName("my-tunnel")
-                .withBindTls(true)
-                .build();
+            .withNgrokVersion(NgrokVersion.V3)
+            .withName("my-tunnel")
+            .withBindTls(true)
+            .build();
 
         // WHEN
         final HttpClientException exception = assertThrows(HttpClientException.class, () -> defaultHttpClient.put(
@@ -153,17 +153,18 @@ public class DefaultHttpClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testGetWithQueryParameters() throws InterruptedException, MalformedURLException {
+    public void testGetWithQueryParameters()
+        throws InterruptedException, MalformedURLException {
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
 
         // GIVEN
         ngrokProcessV3.start();
         final CreateTunnel request = new CreateTunnel.Builder(true)
-                .withNgrokVersion(NgrokVersion.V3)
-                .withName("my-tunnel")
-                .withAddr(new URL(ngrokProcessV3.getApiUrl()).getPort())
-                .withBindTls(true)
-                .build();
+            .withNgrokVersion(NgrokVersion.V3)
+            .withName("my-tunnel")
+            .withAddr(new URL(ngrokProcessV3.getApiUrl()).getPort())
+            .withBindTls(true)
+            .build();
         final Response<Tunnel> createResponse = defaultHttpClient.post(String.format("%s/api/tunnels",
             ngrokProcessV3.getApiUrl()), request, Tunnel.class);
         final String publicUrl = createResponse.getBody().getPublicUrl();
@@ -216,7 +217,8 @@ public class DefaultHttpClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testGetRetries() throws IOException, InterruptedException {
+    public void testGetRetries()
+        throws IOException, InterruptedException {
         // GIVEN
         final HttpURLConnection mockHttpUrlConnection = mock(HttpURLConnection.class);
         doReturn(mockHttpUrlConnection).when(defaultHttpClient).createHttpUrlConnection(any());
@@ -234,7 +236,8 @@ public class DefaultHttpClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testGetThrowsException() throws UnsupportedEncodingException {
+    public void testGetThrowsException()
+        throws UnsupportedEncodingException {
         // GIVEN
         doAnswer(invocation -> {
             throw new UnsupportedEncodingException("Bad input params");
@@ -246,15 +249,16 @@ public class DefaultHttpClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testGetTunnelsThrowsException() throws IOException {
+    public void testGetTunnelsThrowsException()
+        throws IOException {
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
 
         // GIVEN
         final NgrokClient ngrokClientV3 = new NgrokClient.Builder()
-                .withJavaNgrokConfig(javaNgrokConfigV3)
-                .withNgrokProcess(ngrokProcessV3)
-                .withHttpClient(defaultHttpClient)
-                .build();
+            .withJavaNgrokConfig(javaNgrokConfigV3)
+            .withNgrokProcess(ngrokProcessV3)
+            .withHttpClient(defaultHttpClient)
+            .build();
         final HttpURLConnection mockHttpUrlConnection = mock(HttpURLConnection.class);
         doReturn(mockHttpUrlConnection).when(defaultHttpClient).createHttpUrlConnection(any());
         doAnswer(invocation -> {

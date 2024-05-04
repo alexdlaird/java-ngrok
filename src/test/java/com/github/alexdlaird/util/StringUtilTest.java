@@ -6,17 +6,18 @@
 
 package com.github.alexdlaird.util;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class StringUtilTest {
     @Test
-    public void testStreamToStringNullInputStream() throws IOException {
+    public void testStreamToStringNullInputStream()
+        throws IOException {
         // GIVEN
         final InputStream is = null;
 

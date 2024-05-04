@@ -6,16 +6,16 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import com.github.alexdlaird.ngrok.installer.NgrokVersion;
-import java.util.List;
-import java.util.Map;
-import org.junit.jupiter.api.Test;
 
 public class CreateTunnelTest {
 
@@ -40,10 +40,10 @@ public class CreateTunnelTest {
             .withRemoteAddr("remoteAddr")
             .withMetadata("metadata")
             .withOAuth(new TunnelOAuth.Builder().withProvider("testcase")
-                .withAllowDomains(List.of("one.domain", "two.domain"))
-                .withAllowEmails(List.of("one@email", "two@email"))
-                .withScopes(List.of("ascope", "bscope"))
-                .build())
+                                                .withAllowDomains(List.of("one.domain", "two.domain"))
+                                                .withAllowEmails(List.of("one@email", "two@email"))
+                                                .withScopes(List.of("ascope", "bscope"))
+                                                .build())
             .withCircuitBreaker(0.5f)
             .withCompression(false)
             .withMutualTlsCas("mutualTlsCas")
@@ -51,32 +51,54 @@ public class CreateTunnelTest {
             .withWebsocketTcpConverter(false)
             .withTerminateAt("provider")
             .withRequestHeader(new TunnelHeader.Builder().withAdd(List.of("req-addition"))
-                .withRemove(List.of("req-subtraction"))
-                .build())
+                                                         .withRemove(List.of("req-subtraction"))
+                                                         .build())
             .withResponseHeader(new TunnelHeader.Builder().withAdd(List.of("res-addition"))
-                .withRemove(List.of("res-subtraction"))
-                .build())
+                                                          .withRemove(List.of("res-subtraction"))
+                                                          .build())
             .withIpRestriction(new TunnelIPRestriction.Builder().withAllowCidrs(List.of("allowed"))
-                .withDenyCidrs(List.of("denied"))
-                .build())
+                                                                .withDenyCidrs(List.of("denied"))
+                                                                .build())
             .withVerifyWebhook(new TunnelVerifyWebhook.Builder().withProvider("provider")
-                .withSecret("secret")
-                .build())
+                                                                .withSecret("secret")
+                                                                .build())
             .withUserAgentFilter(new TunnelUserAgentFilter.Builder().withAllow(List.of("allow-user-agent"))
-                .withDeny(List.of("deny-user-agent"))
-                .build())
+                                                                    .withDeny(List.of("deny-user-agent"))
+                                                                    .build())
             .withPolicyInbound(new TunnelPolicy.Builder().withName("inbound-policy")
-                .withExpressions(List.of("inbound-policy-expression"))
-                .withActions(new TunnelPolicyActions.Builder().withType("inbound-policy-actions-type")
-                    .withConfig("inbound-policy-actions-config")
-                    .build())
-                .build())
+                                                         .withExpressions(List.of("inbound-policy-expression"))
+                                                         .withActions(new TunnelPolicyActions.Builder().withType(
+                                                                                                           "inbound"
+                                                                                                           + "-policy"
+                                                                                                           +
+                                                                                                           "-actions"
+                                                                                                           + "-type")
+                                                                                                       .withConfig(
+                                                                                                           "inbound"
+                                                                                                           + "-policy"
+                                                                                                           +
+                                                                                                           "-actions"
+                                                                                                           + "-config")
+                                                                                                       .build())
+                                                         .build())
             .withPolicyOutbound(new TunnelPolicy.Builder().withName("outbound-policy")
-                .withExpressions(List.of("outbound-policy-expression"))
-                .withActions(new TunnelPolicyActions.Builder().withType("outbound-policy-actions-type")
-                    .withConfig("outbound-policy-actions-config")
-                    .build())
-                .build())
+                                                          .withExpressions(List.of("outbound-policy-expression"))
+                                                          .withActions(new TunnelPolicyActions.Builder().withType(
+                                                                                                            "outbound"
+                                                                                                            +
+                                                                                                            "-policy"
+                                                                                                            +
+                                                                                                            "-actions"
+                                                                                                            + "-type")
+                                                                                                        .withConfig(
+                                                                                                            "outbound"
+                                                                                                            +
+                                                                                                            "-policy"
+                                                                                                            +
+                                                                                                            "-actions"
+                                                                                                            + "-config")
+                                                                                                        .build())
+                                                          .build())
             .build();
 
         // THEN
@@ -225,7 +247,8 @@ public class CreateTunnelTest {
                         Map.of("name", "outbound-policy",
                             "expressions", List.of("outbound-policy-expression"),
                             "actions",
-                            Map.of("type", "outbound-policy-actions-type", "config", "outbound-policy-actions-config")))))
+                            Map.of("type", "outbound-policy-actions-type", "config",
+                                "outbound-policy-actions-config")))))
             ).build();
 
         // THEN

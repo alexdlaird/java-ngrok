@@ -17,7 +17,7 @@ public class Version {
     /**
      * Construct a version.
      *
-     * @param ngrokVersion The <code>ngrok</code> version.
+     * @param ngrokVersion     The <code>ngrok</code> version.
      * @param javaNgrokVersion The <code>java-ngrok</code> version.
      */
     public Version(final String ngrokVersion, final String javaNgrokVersion) {

@@ -1,7 +1,5 @@
 package com.github.alexdlaird.ngrok.conf;
 
-import static java.util.Objects.nonNull;
-
 import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.NgrokClient.Builder;
 import java.io.IOException;
@@ -9,6 +7,8 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static java.util.Objects.nonNull;
 
 /**
  * A singleton object that represents the <code>java-ngrok</code> library version.

@@ -6,9 +6,6 @@
 
 package com.github.alexdlaird.ngrok.conf;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokLog;
@@ -16,6 +13,9 @@ import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Region;
 import java.nio.file.Path;
 import java.util.function.Function;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * An object for managing <code>java-ngrok</code>'s configuration to interact the <code>ngrok</code> binary.
@@ -259,8 +259,8 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * A callback that will be invoked each time <code>ngrok</code> emits a log. {@link #keepMonitoring} must be
-         * set to <code>true</code> or the function will stop being called after <code>ngrok</code> finishes starting.
+         * A callback that will be invoked each time <code>ngrok</code> emits a log. {@link #keepMonitoring} must be set
+         * to <code>true</code> or the function will stop being called after <code>ngrok</code> finishes starting.
          */
         public Builder withLogEventCallback(final Function<NgrokLog, Void> logEventCallback) {
             this.logEventCallback = logEventCallback;

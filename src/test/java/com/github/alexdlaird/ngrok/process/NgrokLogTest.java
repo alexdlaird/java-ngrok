@@ -6,17 +6,17 @@
 
 package com.github.alexdlaird.ngrok.process;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-
-import org.junit.jupiter.api.Test;
 
 public class NgrokLogTest {
     @Test
     public void testNgrokLog() {
         // GIVEN
         final String logLine = "t=2024-03-08T08:45:07-0600 lvl=info msg=\"starting web service\" "
-            + "obj=web addr=127.0.0.1:4040 allow_hosts=[]";
+                               + "obj=web addr=127.0.0.1:4040 allow_hosts=[]";
 
         // WHEN
         final NgrokLog ngrokLog = new NgrokLog(logLine);

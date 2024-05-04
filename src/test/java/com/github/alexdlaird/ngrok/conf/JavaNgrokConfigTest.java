@@ -6,12 +6,6 @@
 
 package com.github.alexdlaird.ngrok.conf;
 
-import static com.github.alexdlaird.util.StringUtils.isNotBlank;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokLog;
 import com.github.alexdlaird.ngrok.protocol.Region;
@@ -19,6 +13,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
+
+import static com.github.alexdlaird.util.StringUtils.isNotBlank;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class JavaNgrokConfigTest {
     @Test
@@ -30,17 +30,17 @@ public class JavaNgrokConfigTest {
 
         // WHEN
         final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-                .withNgrokPath(ngrokPath)
-                .withConfigPath(configPath)
-                .withAuthToken("auth-token")
-                .withRegion(Region.EU)
-                .withoutMonitoring()
-                .withMaxLogs(50)
-                .withLogEventCallback(logEventCallback)
-                .withStartupTimeout(5)
-                .withNgrokVersion(NgrokVersion.V2)
-                .withApiKey("api-key")
-                .build();
+            .withNgrokPath(ngrokPath)
+            .withConfigPath(configPath)
+            .withAuthToken("auth-token")
+            .withRegion(Region.EU)
+            .withoutMonitoring()
+            .withMaxLogs(50)
+            .withLogEventCallback(logEventCallback)
+            .withStartupTimeout(5)
+            .withNgrokVersion(NgrokVersion.V2)
+            .withApiKey("api-key")
+            .build();
 
         // THEN
         assertEquals(ngrokPath, javaNgrokConfig.getNgrokPath());
@@ -75,7 +75,7 @@ public class JavaNgrokConfigTest {
 
         // WHEN
         final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-                .build();
+            .build();
 
         // THEN
         assertEquals(ngrokAuthToken, javaNgrokConfig.getAuthToken());

@@ -6,6 +6,19 @@
 
 package com.github.alexdlaird.ngrok.process;
 
+import com.github.alexdlaird.exception.NgrokException;
+import com.github.alexdlaird.ngrok.NgrokTestCase;
+import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
+import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.function.Function;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static java.util.Objects.isNull;
@@ -19,19 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.Mockito.mock;
-
-import com.github.alexdlaird.exception.NgrokException;
-import com.github.alexdlaird.ngrok.NgrokTestCase;
-import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
-import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
-import java.util.function.Function;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 public class NgrokProcessTest extends NgrokTestCase {
 
@@ -62,7 +62,8 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testStartPortInUseV2() throws InterruptedException {
+    public void testStartPortInUseV2()
+        throws InterruptedException {
         // GIVEN
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
         assertFalse(ngrokProcessV2.isRunning());
@@ -74,9 +75,9 @@ public class NgrokProcessTest extends NgrokTestCase {
         final Path configPath2 = Paths.get(javaNgrokConfigV2.getConfigPath().getParent().toString(),
             "config2.yml");
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV2)
-                .withNgrokPath(ngrokPath2)
-                .withConfigPath(configPath2)
-                .build();
+            .withNgrokPath(ngrokPath2)
+            .withConfigPath(configPath2)
+            .build();
         ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(), Map.of("web_addr",
             ngrokProcessV2.getApiUrl().substring(7)), javaNgrokConfig2.getNgrokVersion());
 
@@ -106,7 +107,8 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testStartPortInUseV3() throws InterruptedException {
+    public void testStartPortInUseV3()
+        throws InterruptedException {
         // GIVEN
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
         assertFalse(ngrokProcessV3.isRunning());
@@ -117,9 +119,9 @@ public class NgrokProcessTest extends NgrokTestCase {
             NgrokInstaller.getNgrokBin());
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
-                .withNgrokPath(ngrokPath2)
-                .withConfigPath(configPath2)
-                .build();
+            .withNgrokPath(ngrokPath2)
+            .withConfigPath(configPath2)
+            .build();
         ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(),
             Map.of("web_addr", ngrokProcessV3.getApiUrl().substring(7)), javaNgrokConfigV3.getNgrokVersion());
 
@@ -149,7 +151,8 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testExternalKill() throws InterruptedException {
+    public void testExternalKill()
+        throws InterruptedException {
         // GIVEN
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
         ngrokProcessV3.start();
@@ -157,8 +160,12 @@ public class NgrokProcessTest extends NgrokTestCase {
 
         // WHEN
         final ProcessHandle processHandle = ProcessHandle.allProcesses()
-                .filter(p -> p.info().command().orElse("").contains(javaNgrokConfigV3.getNgrokPath().toString()))
-                .findFirst().orElse(null);
+                                                         .filter(p -> p.info()
+                                                                       .command()
+                                                                       .orElse("")
+                                                                       .contains(
+                                                                           javaNgrokConfigV3.getNgrokPath().toString()))
+                                                         .findFirst().orElse(null);
 
         // THEN
         assertNotNull(processHandle);
@@ -187,9 +194,9 @@ public class NgrokProcessTest extends NgrokTestCase {
         final Path configPathV2_2 = Paths.get(javaNgrokConfigV2.getConfigPath().getParent().toString(),
             "configV2_2.yml");
         final JavaNgrokConfig javaNgrokConfigV2_2 = new JavaNgrokConfig.Builder(javaNgrokConfigV2)
-                .withNgrokPath(ngrokPathV2_2)
-                .withConfigPath(configPathV2_2)
-                .build();
+            .withNgrokPath(ngrokPathV2_2)
+            .withConfigPath(configPathV2_2)
+            .build();
         ngrokInstaller.installDefaultConfig(javaNgrokConfigV2_2.getConfigPath(), Map.of("web_addr", "localhost:4041"),
             javaNgrokConfigV2.getNgrokVersion());
         ngrokProcessV2_2 = new NgrokProcess(javaNgrokConfigV2_2, ngrokInstaller);
@@ -202,9 +209,9 @@ public class NgrokProcessTest extends NgrokTestCase {
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(),
             "configV3_2.yml");
         final JavaNgrokConfig javaNgrokConfigV3_2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
-                .withNgrokPath(ngrokPath2)
-                .withConfigPath(configPath2)
-                .build();
+            .withNgrokPath(ngrokPath2)
+            .withConfigPath(configPath2)
+            .build();
         ngrokInstaller.installDefaultConfig(javaNgrokConfigV3_2.getConfigPath(),
             Map.of("web_addr", "localhost:4043"), javaNgrokConfigV3.getNgrokVersion());
         ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfigV3_2, ngrokInstaller);
@@ -244,14 +251,15 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testLogEventCallbackAndMaxLogs() throws InterruptedException {
+    public void testLogEventCallbackAndMaxLogs()
+        throws InterruptedException {
         // GIVEN
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
         final Function<NgrokLog, Void> logEventCallbackMock = mock(Function.class);
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
-                .withLogEventCallback(logEventCallbackMock)
-                .withMaxLogs(5)
-                .build();
+            .withLogEventCallback(logEventCallbackMock)
+            .withMaxLogs(5)
+            .build();
         ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
 
         // WHEN
@@ -265,12 +273,13 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testNoMonitorThread() throws InterruptedException {
+    public void testNoMonitorThread()
+        throws InterruptedException {
         // GIVEN
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
-                .withoutMonitoring()
-                .build();
+            .withoutMonitoring()
+            .build();
         ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
 
         // WHEN
@@ -283,7 +292,8 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testStartProcessNoBinary() throws IOException, InterruptedException {
+    public void testStartProcessNoBinary()
+        throws IOException, InterruptedException {
         // Due to Windows file locking behavior, wait a beat
         if (NgrokInstaller.getSystem().equals(WINDOWS)) {
             Thread.sleep(1000);

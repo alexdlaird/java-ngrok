@@ -6,9 +6,6 @@
 
 package com.github.alexdlaird.ngrok;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokHTTPException;
 import com.github.alexdlaird.exception.JavaNgrokSecurityException;
@@ -34,6 +31,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * A client for interacting with <a href="https://ngrok.com/docs" target="_blank">ngrok</a>, its binary, and its APIs.
@@ -242,7 +242,8 @@ public class NgrokClient {
             && finalTunnel.getBindTls() == BindTls.BOTH) {
             try {
                 final Response<Tunnel> getResponse = httpClient.get(ngrokProcess.getApiUrl()
-                    + response.getBody().getUri() + "%20%28http%29", Tunnel.class);
+                                                                    + response.getBody().getUri() + "%20%28http%29",
+                    Tunnel.class);
                 tunnel = getResponse.getBody();
             } catch (final HttpClientException e) {
                 throw new JavaNgrokHTTPException(String.format("An error occurred when GETing the HTTP tunnel %s.",
@@ -264,50 +265,6 @@ public class NgrokClient {
      */
     public Tunnel connect() {
         return connect(new CreateTunnel.Builder().withNgrokVersion(javaNgrokConfig.getNgrokVersion()).build());
-    }
-
-    private void applyCloudEdgeToTunnel(final Tunnel tunnel) {
-        if ((isNull(tunnel.getPublicUrl()) || tunnel.getPublicUrl().isEmpty())
-            && nonNull(javaNgrokConfig.getApiKey()) && nonNull(tunnel.getId())) {
-            final Map<String, String> ngrokApiHeaders = Map.of(
-                "Authorization", String.format("Bearer %s", javaNgrokConfig.getApiKey()),
-                "Ngrok-Version", "2");
-            final Response<Map> tunnelResponse = httpClient.get(String.format("https://api.ngrok.com/tunnels/%s",
-                tunnel.getId()), List.of(), ngrokApiHeaders, Map.class);
-
-            if (!tunnelResponse.getBody().containsKey("labels")
-                || !(tunnelResponse.getBody().get("labels") instanceof Map)
-                || !((Map) tunnelResponse.getBody().get("labels")).containsKey("edge")) {
-                throw new JavaNgrokException(String.format("Tunnel %s does not have 'labels', use a Tunnel "
-                    + "configured on Cloud Edge.", tunnel.getId()));
-            }
-
-            final String edge = (String) ((Map) tunnelResponse.getBody().get("labels")).get("edge");
-            final String edgesPrefix;
-            if (edge.startsWith("edghts_")) {
-                edgesPrefix = "https";
-            } else if (edge.startsWith("edgtcp")) {
-                edgesPrefix = "tcp";
-            } else if (edge.startsWith("edgtls")) {
-                edgesPrefix = "tls";
-            } else {
-                throw new JavaNgrokException(String.format("Unknown Edge prefix: %s.", edge));
-            }
-
-            final Response<Map> edgeResponse = httpClient.get(String.format("https://api.ngrok.com/edges/%s/%s",
-                edgesPrefix, edge), List.of(), ngrokApiHeaders, Map.class);
-
-            if (!edgeResponse.getBody().containsKey("hostports")
-                || !(edgeResponse.getBody().get("hostports") instanceof List)
-                || ((List) edgeResponse.getBody().get("hostports")).isEmpty()) {
-                throw new JavaNgrokException(String.format("No Endpoint is attached to your Cloud Edge %s, "
-                    + "login to the ngrok dashboard to attach an Endpoint to your Edge first.", edge));
-            }
-
-            tunnel.setPublicUrl(String.format("%s://%s", edgesPrefix,
-                ((List) edgeResponse.getBody().get("hostports")).get(0)));
-            tunnel.setProto(edgesPrefix);
-        }
     }
 
     /**
@@ -456,6 +413,52 @@ public class NgrokClient {
         return httpClient;
     }
 
+    private void applyCloudEdgeToTunnel(final Tunnel tunnel) {
+        if ((isNull(tunnel.getPublicUrl()) || tunnel.getPublicUrl().isEmpty())
+            && nonNull(javaNgrokConfig.getApiKey()) && nonNull(tunnel.getId())) {
+            final Map<String, String> ngrokApiHeaders = Map.of(
+                "Authorization", String.format("Bearer %s", javaNgrokConfig.getApiKey()),
+                "Ngrok-Version", "2");
+            final Response<Map> tunnelResponse = httpClient.get(String.format("https://api.ngrok.com/tunnels/%s",
+                tunnel.getId()), List.of(), ngrokApiHeaders, Map.class);
+
+            if (!tunnelResponse.getBody().containsKey("labels")
+                || !(tunnelResponse.getBody().get("labels") instanceof Map)
+                || !((Map) tunnelResponse.getBody().get("labels")).containsKey("edge")) {
+                throw new JavaNgrokException(String.format("Tunnel %s does not have 'labels', use a Tunnel "
+                                                           + "configured on Cloud Edge.", tunnel.getId()));
+            }
+
+            final String edge = (String) ((Map) tunnelResponse.getBody().get("labels")).get("edge");
+            final String edgesPrefix;
+            if (edge.startsWith("edghts_")) {
+                edgesPrefix = "https";
+            } else if (edge.startsWith("edgtcp")) {
+                edgesPrefix = "tcp";
+            } else if (edge.startsWith("edgtls")) {
+                edgesPrefix = "tls";
+            } else {
+                throw new JavaNgrokException(String.format("Unknown Edge prefix: %s.", edge));
+            }
+
+            final Response<Map> edgeResponse = httpClient.get(String.format("https://api.ngrok.com/edges/%s/%s",
+                edgesPrefix, edge), List.of(), ngrokApiHeaders, Map.class);
+
+            if (!edgeResponse.getBody().containsKey("hostports")
+                || !(edgeResponse.getBody().get("hostports") instanceof List)
+                || ((List) edgeResponse.getBody().get("hostports")).isEmpty()) {
+                throw new JavaNgrokException(String.format("No Endpoint is attached to your Cloud Edge %s, "
+                                                           + "login to the ngrok dashboard to attach an Endpoint to "
+                                                           + "your Edge first.",
+                    edge));
+            }
+
+            tunnel.setPublicUrl(String.format("%s://%s", edgesPrefix,
+                ((List) edgeResponse.getBody().get("hostports")).get(0)));
+            tunnel.setProto(edgesPrefix);
+        }
+    }
+
     private CreateTunnel interpolateTunnelDefinition(final CreateTunnel createTunnel) {
         final CreateTunnel.Builder createTunnelBuilder = new CreateTunnel.Builder(createTunnel);
 
@@ -479,7 +482,7 @@ public class NgrokClient {
             if (((Map<String, Object>) tunnelDefinitions.get(name)).containsKey("labels")
                 && isNull(javaNgrokConfig.getApiKey())) {
                 throw new JavaNgrokException("'JavaNgrokConfig.apiKey' must be set when 'labels' is "
-                    + "on the tunnel definition.");
+                                             + "on the tunnel definition.");
             }
 
             createTunnelBuilder.withTunnelDefinition((Map<String, Object>) tunnelDefinitions.get(name));

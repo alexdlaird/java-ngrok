@@ -6,9 +6,6 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
@@ -17,6 +14,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * An object that represents a <code>ngrok</code> Tunnel creation request. This object can be serialized and passed to
@@ -412,8 +412,8 @@ public class CreateTunnel {
         }
 
         /**
-         * Copy a {@link CreateTunnel} in to a new Builder. Using this constructor will also set default attributes
-         * when {@link #build} is called.
+         * Copy a {@link CreateTunnel} in to a new Builder. Using this constructor will also set default attributes when
+         * {@link #build} is called.
          *
          * @param createTunnel The CreateTunnel to copy.
          */
@@ -753,8 +753,8 @@ public class CreateTunnel {
         }
 
         /**
-         * Populate any <code>null</code> attributes (except for <code>name</code>) in this Builder with values from
-         * the given <code>tunnelDefinition</code>.
+         * Populate any <code>null</code> attributes (except for <code>name</code>) in this Builder with values from the
+         * given <code>tunnelDefinition</code>.
          *
          * @param tunnelDefinition The map from which <code>null</code> attributes will be populated.
          * @throws IllegalArgumentException The argument was invalid.
@@ -876,7 +876,7 @@ public class CreateTunnel {
             if (tunnelDefinition.containsKey("labels")) {
                 if (nonNull(bindTls)) {
                     throw new IllegalArgumentException("'bindTls' cannot be set when 'labels' is also on the "
-                        + "tunnel definition.");
+                                                       + "tunnel definition.");
                 }
                 this.labels = Collections.unmodifiableList(
                     (List<String>) tunnelDefinition.get("labels")
