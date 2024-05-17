@@ -1,0 +1,19 @@
+name: Enable auto-merge on Dependabot PRs
+
+on:
+  pull_request:
+
+jobs:
+  automerge:
+    name: Enable auto-merge on Dependabot PRs
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+      contents: write
+
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Enable auto-merge
+        run: gh pr merge --merge --auto "1"
