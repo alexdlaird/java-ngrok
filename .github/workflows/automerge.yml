@@ -20,7 +20,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Enable auto-merge
-        run:
+        run: |
           gh pr review --approve "$PR_URL"
           gh pr merge --squash --auto "$PR_URL"
         env:
