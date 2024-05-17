@@ -1,11 +1,11 @@
-name: Enable auto-merge on Dependabot PRs
+name: Auto-Merge Dependabot PRs
 
 on:
   pull_request:
 
 jobs:
   automerge:
-    name: Enable auto-merge on Dependabot PRs
+    name: Auto-Merge Dependabot PRs
 
     runs-on: ubuntu-latest
 
