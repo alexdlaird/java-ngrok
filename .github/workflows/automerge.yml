@@ -16,4 +16,8 @@ jobs:
     if: github.actor == 'dependabot[bot]'
     steps:
       - name: Enable auto-merge
-        run: gh pr merge --merge --auto "1"
+        run: |
+#          gh pr review --approve
+          gh pr merge --merge --auto "1"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
