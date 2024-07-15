@@ -7,7 +7,7 @@ plugins {
     id "idea"
     id "com.adarshr.test-logger" version "4.0.0"
     id "checkstyle"
-    id "com.github.spotbugs" version "6.0.18"
+    id "com.github.spotbugs" version "6.0.19"
 }
 
 group "com.github.alexdlaird"
