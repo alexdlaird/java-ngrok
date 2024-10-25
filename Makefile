@@ -11,7 +11,7 @@ else
 	GRADLE_BIN := ./gradlew
 endif
 
-all: build
+all: test
 
 install: local
 
