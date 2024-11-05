@@ -67,7 +67,7 @@ import static java.util.Objects.nonNull;
  *
  * <p>The {@link NgrokClient#connect(CreateTunnel) NgrokClient.connect()} method can also take a {@link CreateTunnel}
  * (which can be built through {@link CreateTunnel.Builder its Builder}) that allows us to pass additional properties
- * that are <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions"
+ * that are <a href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
  * target="_blank">supported by ngrok</a>.
  *
  *
@@ -80,11 +80,11 @@ import static java.util.Objects.nonNull;
  * will return a reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed, call
  * {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
  * <code>https</code> tunnel will be returned.
- * <h3><code>ngrok</code>'s Cloud Edge</h3>
- * To use <a href="https://ngrok.com/docs/cloud-edge/" target="_blank"><code>ngrok</code>'s Cloud Edge</a> with
- * <code>java-ngrok</code>, first <a href="https://dashboard.ngrok.com/cloud-edge/edges" target="_blank">configure an
+ * <h3><code>ngrok</code>'s Edge</h3>
+ * To use <a href="https://ngrok.com/docs/network-edge/edges/" target="_blank"><code>ngrok</code>'s Edges</a> with
+ * <code>java-ngrok</code>, first <a href="ttps://dashboard.ngrok.com/edges" target="_blank">configure an
  * Edge on <code>ngrok</code>'s dashboard</a> (with at least one Endpoint mapped to the Edge), and define a labeled
- * tunnel in <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#define-two-labeled-tunnels"
+ * tunnel in <a href="https://ngrok.com/docs/agent/config/v2/#define-two-labeled-tunnels"
  * target="_blank">the <code>ngrok</code> config file</a> that points to the Edge.
  *
  * <p><pre>
@@ -105,8 +105,8 @@ import static java.util.Objects.nonNull;
  *         .build();
  * final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
  * </pre>
- * Once a Cloud Edge tunnel is started, it can be managed through
- * <a href="https://dashboard.ngrok.com/cloud-edge/edges" target="_blank"><code>ngrok</code>'s dashboard</a>.
+ * Once an Edge tunnel is started, it can be managed through
+ * <a href="ttps://dashboard.ngrok.com/edges" target="_blank"><code>ngrok</code>'s dashboard</a>.
  * <h2>Get Active Tunnels</h2>
  * It can be useful to ask the <code>ngrok</code> client what tunnels are currently open. This can be accomplished with
  * the {@link NgrokClient#getTunnels()} method, which returns a list of {@link Tunnel} objects.
@@ -141,7 +141,7 @@ import static java.util.Objects.nonNull;
  * </pre>
  *
  * <p>We can also serve up local directories via
- * <a href="https://ngrok.com/docs/secure-tunnels/tunnels/http-tunnels/#file-url" target="_blank">ngrok’s built-in
+ * <a href="https://ngrok.com/docs/http/#file-serving" target="_blank">ngrok’s built-in
  * fileserver</a>.
  *
  * <p><pre>
@@ -190,7 +190,7 @@ public class NgrokClient {
      * Establish a new <code>ngrok</code> tunnel for the Tunnel creation request, returning an object representing the
      * connected tunnel.
      *
-     * <p>If a <a href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions"
+     * <p>If a <a href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
      * target="_blank">tunnel definition in ngrok's config file</a> matches the given
      * {@link CreateTunnel.Builder#withName(String)}, it will be loaded and used to start the tunnel. When
      * {@link CreateTunnel.Builder#withName(String)} is not set and a "java-ngrok-default" tunnel definition exists in
@@ -426,7 +426,7 @@ public class NgrokClient {
                 || !(tunnelResponse.getBody().get("labels") instanceof Map)
                 || !((Map) tunnelResponse.getBody().get("labels")).containsKey("edge")) {
                 throw new JavaNgrokException(String.format("Tunnel %s does not have 'labels', use a Tunnel "
-                                                           + "configured on Cloud Edge.", tunnel.getId()));
+                                                           + "configured on an Edge.", tunnel.getId()));
             }
 
             final String edge = (String) ((Map) tunnelResponse.getBody().get("labels")).get("edge");
@@ -447,7 +447,7 @@ public class NgrokClient {
             if (!edgeResponse.getBody().containsKey("hostports")
                 || !(edgeResponse.getBody().get("hostports") instanceof List)
                 || ((List) edgeResponse.getBody().get("hostports")).isEmpty()) {
-                throw new JavaNgrokException(String.format("No Endpoint is attached to your Cloud Edge %s, "
+                throw new JavaNgrokException(String.format("No Endpoint is attached to your Edge %s, "
                                                            + "login to the ngrok dashboard to attach an Endpoint to "
                                                            + "your Edge first.",
                     edge));

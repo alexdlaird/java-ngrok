@@ -84,7 +84,7 @@ public class Tunnel {
     }
 
     /**
-     * Get the <a href="https://ngrok.com/docs/ngrok-agent/api#list-tunnels" target="_blank">tunnel metrics</a>.
+     * Get the <a href="https://ngrok.com/docs/agent/api#list-tunnels" target="_blank">tunnel metrics</a>.
      */
     public Map<String, Metrics> getMetrics() {
         return metrics;

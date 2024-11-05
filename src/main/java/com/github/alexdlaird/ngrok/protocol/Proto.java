@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * An enum representing <code>ngrok</code>'s valid protos, as defined in <a
- * href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions"
+ * href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
  * target="_blank"><code>ngrok</code>'s docs</a>.
  */
 public enum Proto {

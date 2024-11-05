@@ -57,7 +57,7 @@ public class TunnelOAuth {
 
     /**
      * Builder for OAuth configuration that conforms to <a
-     * href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions"
+     * href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
      * target="_blank"><code>ngrok</code>'s tunnel definition</a>. See docs for that class for example usage.
      */
     public static class Builder {
@@ -101,7 +101,7 @@ public class TunnelOAuth {
 
         /**
          * The OAuth provider. This setting is <b>required</b>. For a list of valid providers, see
-         * <a href="https://ngrok.com/docs/cloud-edge/modules/oauth/"><code>ngrok</code>'s docs</a>.
+         * <a href="https://ngrok.com/docs/http/oauth/"><code>ngrok</code>'s docs</a>.
          */
         public Builder withProvider(final String provider) {
             this.provider = provider;
