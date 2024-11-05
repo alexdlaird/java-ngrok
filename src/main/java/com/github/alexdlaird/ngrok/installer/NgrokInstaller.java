@@ -42,7 +42,7 @@ import static java.util.Objects.nonNull;
  *
  * <h2>Config File</h2>
  * By default, <code>ngrok</code> will look for its config file in
- * <a href="https://ngrok.com/docs/ngrok-agent/config" target="_blank">the default location</a>.
+ * <a href="https://ngrok.com/docs/agent/config/v2" target="_blank">the default location</a>.
  * We can override this behavior with {@link JavaNgrokConfig.Builder#withConfigPath(Path)}.
  *
  * <h2>Binary Path</h2>

@@ -26,6 +26,8 @@ can be installed using `pip` to manage that for us.
 
 ## Basic Usage
 
+### Open a Tunnel
+
 All `ngrok` functionality is available through
 the [`NgrokClient`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html).
 To open a tunnel, use
@@ -62,7 +64,37 @@ a [`CreateTunnel`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/lates
 which can be built
 through [its Builder](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html))
 that allows us to pass additional properties that
-are [supported by `ngrok`](https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions).
+are [supported by `ngrok`](https://ngrok.com/docs/agent/config/v2/#tunnel-configurations).
+
+### `ngrok`'s Edge
+To use [`ngrok`'s Edge](https://ngrok.com/docs/network-edge/edges/) with `java-ngrok`, first
+[configure an Edge](https://dashboard.ngrok.com/edges) [on ngrok's dashboard](https://dashboard.ngrok.com/edges) (with
+at least one Endpoint mapped to the Edge), and define a labeled tunnel in
+[the `ngrok` config file](https://ngrok.com/docs/agent/config/v2/#define-two-labeled-tunnels) that points to the Edge.
+
+```yaml
+tunnels:
+  some-edge-tunnel:
+    labels:
+      - edge=my_edge_id
+    addr: http://localhost:80
+```
+
+To start a labeled tunnel in `java-ngrok`, set [withName(String)](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withName(java.lang.String)).
+
+```java
+final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+
+// Open a named tunnel from the config file
+final CreateTunnel createNamedTunnel = new CreateTunnel.Builder()
+        .withName("some-edge-tunnel")
+        .build();
+final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
+```
+
+Once an Edge tunnel is started, it can be managed through [`ngrok`'s dashboard](https://dashboard.ngrok.com/edges).
+
+### Command Line Usage
 
 Assuming we have also installed [pyngrok](https://github.com/alexdlaird/pyngrok), all features of `ngrok` are available
 on the command line.
@@ -72,7 +104,7 @@ ngrok http 80
 ```
 
 For details on how to fully leverage `ngrok` from the command line,
-see [`ngrok`'s official documentation](https://ngrok.com/docs).
+see [`ngrok`'s official documentation](https://ngrok.com/docs/agent/cli/).
 
 ## Documentation
 

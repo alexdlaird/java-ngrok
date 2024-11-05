@@ -350,7 +350,7 @@ public class CreateTunnel {
 
     /**
      * Builder for a {@link CreateTunnel}, which can be used to construct a request that conforms to <a
-     * href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions"
+     * href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
      * target="_blank"><code>ngrok</code>'s tunnel definition</a>. See docs for that class for example usage.
      */
     public static class Builder {
@@ -464,7 +464,7 @@ public class CreateTunnel {
 
         /**
          * A friendly name for the tunnel, or the name of a <a
-         * href="https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions"
+         * href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
          * target="_blank">ngrok tunnel definition</a> to be used.
          */
         public Builder withName(final String name) {
@@ -490,7 +490,7 @@ public class CreateTunnel {
 
         /**
          * The local port to which the tunnel will forward traffic, or a
-         * <a href="https://ngrok.com/docs#http-file-urls">local directory or network address</a>, defaults to "80".
+         * <a href="https://ngrok.com/docs/http/#file-serving">local directory or network address</a>, defaults to "80".
          */
         public Builder withAddr(final String addr) {
             this.addr = addr;

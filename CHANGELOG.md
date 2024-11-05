@@ -6,6 +6,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.0...HEAD)
 ### Added
+
+- Documentation improvements update links to `ngrok`'s documentation.
 - Test improvements.
 
 ## [2.3.0](https://github.com/alexdlaird/java-ngrok/compare/2.2.16...2.3.0) - 2024-04-08
@@ -26,7 +28,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Fixed
 
 - `ngrok` config value `ip_restriction` was incorrectly plural in previous versions of `java-ngrok`. Value is now
-  interpreted as singular to align with [the `ngrok` docs](https://ngrok.com/docs/agent/config/#http-configuration), and
+  interpreted as singular to align with [the `ngrok` docs](https://ngrok.com/docs/agent/config/v2/#http-configuration), and
   classes and methods associated with it,
   like [TunnelIPRestriction](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/TunnelIPRestriction.html),
   have been renamed.
@@ -160,11 +162,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Added
 
 - Support for `labels`,
-  so [`ngrok`'s Labeled Tunnel Configuration](https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#labeled-tunnel-configuration-properties)
-  is now supported, which enables basic support for [`ngrok`'s Cloud Edge](https://ngrok.com/docs/cloud-edge/).
+  so [`ngrok`'s Labeled Tunnel Configuration](https://ngrok.com/docs/agent/config/v2/#labeled-tunnel-configuration)
+  is now supported, which enables basic support for [`ngrok`'s Edge](https://ngrok.com/docs/network-edge/edges/).
 - `apiKey`
   to [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html),
-  which can be set so `java-ngrok` can interface with Cloud Edge `labels`.
+  which can be set so `java-ngrok` can interface with Edges `labels`.
 - `id`
   to [Tunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/Tunnel.html).
 - `timeout`
@@ -240,7 +242,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- Support for [`ngrok` v3](https://ngrok.com/docs/guides/upgrade-v2-v3) (v2 is still used by default).
+- Support for [`ngrok` v3](https://ngrok.com/docs/guides/other-guides/upgrade-v2-v3/) (v2 is still used by default).
 - Documentation and examples for using `java-ngrok` with `ngrok` v3.
 
 ### Fixed
@@ -411,12 +413,12 @@ on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.a
 ### Added
 
 - Support
-  for [`ngrok`'s tunnel definitions](https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions)
+  for [`ngrok`'s tunnel definitions](https://ngrok.com/docs/agent/config/v2/#tunnel-configurations)
   when
   calling [NgrokClient.connect()](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/1.1.0/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)).
   If a tunnel definition in `ngrok`'s config matches the given `name`, it will be used to start the tunnel.
 - Support for
-  a [`ngrok` tunnel definition](https://ngrok.com/docs/secure-tunnels/ngrok-agent/reference/config/#tunnel-definitions)
+  a [`ngrok` tunnel definition](https://ngrok.com/docs/agent/config/v2/#tunnel-configurations)
   named "java-ngrok-default" when
   calling [NgrokClient.connect()](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/1.1.0/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)).
   When `name` is `None` and a "java-ngrok-default" tunnel definition exists it `ngrok`'s config, it will be used.
