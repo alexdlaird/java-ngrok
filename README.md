@@ -21,7 +21,7 @@ machine, and more, and its made even more powerful with native Java integration 
 on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/).
 
 If we want `ngrok` to be available from the command
-line, [pyngrok](https://github.com/alexdlaird/pyngrok?tab=readme-ov-file#installation)
+line, [pyngrok](https://pyngrok.readthedocs.io/en/latest/#installation)
 can be installed using `pip` to manage that for us.
 
 ## Basic Usage
@@ -96,7 +96,7 @@ Once an Edge tunnel is started, it can be managed through [`ngrok`'s dashboard](
 
 ### Command Line Usage
 
-Assuming we have also installed [pyngrok](https://github.com/alexdlaird/pyngrok), all features of `ngrok` are available
+Assuming we have also installed [pyngrok](https://pyngrok.readthedocs.io/en/latest/#installation), all features of `ngrok` are available
 on the command line.
 
 ```sh
