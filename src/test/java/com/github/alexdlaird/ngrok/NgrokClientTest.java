@@ -806,7 +806,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testTunnelDefinitionsV3CloudEdge() {
+    public void testTunnelDefinitionsV3Edge() {
         assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")),
             "NGROK_AUTHTOKEN environment variable not set");
         final String ngrokHttpEdge = System.getenv("NGROK_HTTP_EDGE");

@@ -253,7 +253,7 @@ public class NgrokClient {
             tunnel = response.getBody();
         }
 
-        applyCloudEdgeToTunnel(tunnel);
+        applyEdgeToTunnel(tunnel);
 
         currentTunnels.put(tunnel.getPublicUrl(), tunnel);
 
@@ -323,7 +323,7 @@ public class NgrokClient {
 
             currentTunnels.clear();
             for (final Tunnel tunnel : response.getBody().getTunnels()) {
-                applyCloudEdgeToTunnel(tunnel);
+                applyEdgeToTunnel(tunnel);
                 currentTunnels.put(tunnel.getPublicUrl(), tunnel);
             }
 
@@ -413,7 +413,7 @@ public class NgrokClient {
         return httpClient;
     }
 
-    private void applyCloudEdgeToTunnel(final Tunnel tunnel) {
+    private void applyEdgeToTunnel(final Tunnel tunnel) {
         if ((isNull(tunnel.getPublicUrl()) || tunnel.getPublicUrl().isEmpty())
             && nonNull(javaNgrokConfig.getApiKey()) && nonNull(tunnel.getId())) {
             final Map<String, String> ngrokApiHeaders = Map.of(
