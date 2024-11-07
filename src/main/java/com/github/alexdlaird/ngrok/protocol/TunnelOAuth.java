@@ -82,9 +82,9 @@ public class TunnelOAuth {
             if (tunnelOAuthDefinition.containsKey("provider")) {
                 this.provider = (String) tunnelOAuthDefinition.get("provider");
             }
-            if (tunnelOAuthDefinition.containsKey("oauth_scopes")) {
+            if (tunnelOAuthDefinition.containsKey("scopes")) {
                 this.scopes = Collections.unmodifiableList(
-                    (List<String>) tunnelOAuthDefinition.get("oauth_scopes")
+                    (List<String>) tunnelOAuthDefinition.get("scopes")
                 );
             }
             if (tunnelOAuthDefinition.containsKey("allow_emails")) {
