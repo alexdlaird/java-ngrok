@@ -317,7 +317,6 @@ public class NgrokInstaller {
         } else {
             final HashMap<String, Object> config = new HashMap<>();
             config.put("version", "2");
-            config.put("region", "us");
             return config;
         }
     }
