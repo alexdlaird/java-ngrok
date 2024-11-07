@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.1...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.2...HEAD)
+
+## [2.3.2](https://github.com/alexdlaird/java-ngrok/compare/2.3.1...2.3.2) - 2024-11-07
+
+### Fixed
+
+- Incorrect key name in tunnel definition of `oauth.scopes`, [now properly `oauth.oauth_scopes`](https://ngrok.com/docs/agent/config/v2/#http-configuration).
 
 ## [2.3.1](https://github.com/alexdlaird/java-ngrok/compare/2.3.0...2.3.1) - 2024-11-04
 
