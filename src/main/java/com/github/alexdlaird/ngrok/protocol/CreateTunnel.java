@@ -22,7 +22,7 @@ import static java.util.Objects.nonNull;
  * An object that represents a <code>ngrok</code> Tunnel creation request. This object can be serialized and passed to
  * the {@link HttpClient}.
  *
- * <h3>Basic Usage</h3>
+ * <h2>Basic Usage</h2>
  * <pre>
  * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
  *

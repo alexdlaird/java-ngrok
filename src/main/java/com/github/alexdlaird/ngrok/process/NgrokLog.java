@@ -6,6 +6,7 @@
 
 package com.github.alexdlaird.ngrok.process;
 
+import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,7 @@ import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
 
 /**
- * An object containing a parsed log from the <code>ngrok</code> process.
+ * An object containing a parsed log from the <code>ngrok</code> process. See {@link JavaNgrokConfig} for example usage.
  */
 public class NgrokLog extends HashMap<String, String> {
 
