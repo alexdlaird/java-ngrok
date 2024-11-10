@@ -66,10 +66,9 @@ import static java.util.Objects.nonNull;
  * </pre>
  *
  * <p>The {@link NgrokClient#connect(CreateTunnel) NgrokClient.connect()} method can also take a {@link CreateTunnel}
- * (which can be built through {@link CreateTunnel.Builder its Builder}) that allows us to pass additional properties
- * that are <a href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
- * target="_blank">supported by ngrok</a>.
- *
+ * (which can be built through {@link CreateTunnel.Builder its Builder}) that allows us to pass additional
+ * <a href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations" target="_blank">tunnel configurations that
+ * are supported by ngrok</a>.
  *
  * <p><p><code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
  * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
@@ -84,8 +83,8 @@ import static java.util.Objects.nonNull;
  * To use <a href="https://ngrok.com/docs/network-edge/edges/" target="_blank"><code>ngrok</code>'s Edges</a> with
  * <code>java-ngrok</code>, first <a href="ttps://dashboard.ngrok.com/edges" target="_blank">configure an
  * Edge on <code>ngrok</code>'s dashboard</a> (with at least one Endpoint mapped to the Edge), and define a labeled
- * tunnel in <a href="https://ngrok.com/docs/agent/config/v2/#define-two-labeled-tunnels"
- * target="_blank">the <code>ngrok</code> config file</a> that points to the Edge.
+ * tunnel in <a href="https://ngrok.com/docs/agent/config/v2/#define-two-labeled-tunnels" target="_blank">the
+ * <code>ngrok</code> config file</a> that points to the Edge.
  *
  * <p><pre>
  * tunnels:
