@@ -66,7 +66,8 @@ import static java.util.Objects.nonNull;
  * </pre>
  *
  * <p>The {@link NgrokClient#connect(CreateTunnel) NgrokClient.connect()} method can also take a {@link CreateTunnel}
- * (which can be built through {@link CreateTunnel.Builder its Builder}) that allows us to pass additional
+ * (which can be built through {@link CreateTunnel.Builder its Builder}), which allows us to configure the tunnel when
+ * it is created, for instance adding authentication, a subdomain, or other additional
  * <a href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations" target="_blank">tunnel configurations that
  * are supported by ngrok</a>.
  *
