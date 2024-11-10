@@ -64,7 +64,7 @@ a [`CreateTunnel`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/lates
 which can be built
 through [its Builder](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html))
 that allows us to pass additional properties that
-are [supported by `ngrok`](https://ngrok.com/docs/agent/config/v2/#tunnel-configurations).
+are supported by `ngrok`, [as documented here](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#tunnel-configurations).
 
 ### `ngrok`'s Edge
 To use [`ngrok`'s Edge](https://ngrok.com/docs/network-edge/edges/) with `java-ngrok`, first

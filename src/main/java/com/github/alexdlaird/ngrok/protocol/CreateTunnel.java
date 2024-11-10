@@ -32,10 +32,7 @@ import static java.util.Objects.nonNull;
  *         .withAddr(5000)
  *         .build();
  *
- * final HttpClient httpClient = new DefaultHttpClient.Builder().build()
- * final Response&lt;SomePOJOResponse&gt; postResponse = httpClient.post("http://localhost:4040/api/tunnels",
- *                                                                 createTunnel,
- *                                                                 Tunnel.class);
+ * final Tunnel httpTunnel = ngrokClient.connect(createTunnel);
  * </pre>
  * <h2><code>ngrok</code> Version Compatibility</h2>
  * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
