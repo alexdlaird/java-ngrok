@@ -4,11 +4,17 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.1...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.2...HEAD)
 
-- Changed
+## [2.3.2](https://github.com/alexdlaird/java-ngrok/compare/2.3.1...2.3.2) - 2024-11-08
 
-`region` parameter is no longer provisioned in default v2 config, as [it is deprecated by `ngrok`](https://ngrok.com/docs/agent/config/v2/#region).
+### Added
+
+- Documentation improvements.
+
+### Fixed
+
+- [NgrokProcess.ProcessMonitor.stop()](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.3.2/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/process/NgrokProcess.ProcessMonitor.html#stop()) is now public (it was already documented as such).
 
 ## [2.3.1](https://github.com/alexdlaird/java-ngrok/compare/2.3.0...2.3.1) - 2024-11-04
 
@@ -357,9 +363,7 @@ on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.a
 
 ### Removed
 
-- `NgrokProcess.stopMonitorThread()`,
-  use [NgrokProcess.stop()](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.8/com/github/alexdlaird/ngrok/process/NgrokProcess.html#stop--)
-  instead.
+- `NgrokProcess.stopMonitorThread()`, use `NgrokProcess.ProcessMonitor.stop()` instead.
 
 ## [1.4.6](https://github.com/alexdlaird/java-ngrok/compare/1.4.5...1.4.6) - 2024-02-15
 

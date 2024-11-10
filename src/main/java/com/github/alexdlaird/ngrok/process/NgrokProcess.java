@@ -37,6 +37,18 @@ import static java.util.logging.Level.SEVERE;
 /**
  * An object containing information about the <code>ngrok</code> process. Can be configured with
  * {@link JavaNgrokConfig}.
+ *
+ * <h2>Basic Usage</h2>
+ * Opening a tunnel will start the <code>ngrok</code> process. This process will remain alive, and the tunnels open,
+ * until {@link NgrokProcess#stop()} is invoked, or until the Java process terminates.
+ *
+ * <h3>Event Logs</h3>
+ * When <code>ngrok</code> emits logs, <code>java-ngrok</code> can surface them to a callback function. To register
+ * this callback, use {@link JavaNgrokConfig.Builder#withLogEventCallback}.
+ *
+ * <p>If these events aren’t necessary for our use case, some resources can be freed up by turning them off.
+ * {@link JavaNgrokConfig.Builder#withoutMonitoring} will disable logging, or we can call
+ * {@link NgrokProcess.ProcessMonitor#stop()} to stop monitoring on a running process.
  */
 public class NgrokProcess {
 
@@ -430,7 +442,15 @@ public class NgrokProcess {
             return alive;
         }
 
-        private void stop() {
+        /**
+         * Set the monitor thread to stop monitoring the ngrok process after the next log event. This will not
+         * necessarily terminate the process immediately, as the process may currently be idle, rather it sets a flag
+         * on the thread telling it to terminate the next time it wakes up.
+         *
+         * <p>This has no impact on the ngrok process itself, only <code>java-ngrok</code>’s monitor of the process and
+         * its logs.
+         */
+        public void stop() {
             this.alive = false;
         }
 

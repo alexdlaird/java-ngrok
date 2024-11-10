@@ -20,7 +20,7 @@ import static java.util.Objects.nonNull;
 /**
  * An object for managing <code>java-ngrok</code>'s configuration to interact the <code>ngrok</code> binary.
  *
- * <h3>Basic Usage</h3>
+ * <h2>Basic Usage</h2>
  * <pre>
  * final Function&lt;NgrokLog, Void&gt; logEventCallback = ngrokLog -&gt; {
  *     System.out.println(ngrokLog.getLine());
@@ -261,6 +261,7 @@ public class JavaNgrokConfig {
         /**
          * A callback that will be invoked each time <code>ngrok</code> emits a log. {@link #keepMonitoring} must be set
          * to <code>true</code> or the function will stop being called after <code>ngrok</code> finishes starting.
+         * See {@link JavaNgrokConfig} for example usage.
          */
         public Builder withLogEventCallback(final Function<NgrokLog, Void> logEventCallback) {
             this.logEventCallback = logEventCallback;

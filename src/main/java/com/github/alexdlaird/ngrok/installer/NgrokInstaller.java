@@ -38,11 +38,11 @@ import static com.github.alexdlaird.util.StringUtils.isBlank;
 import static java.util.Objects.nonNull;
 
 /**
- * A helper for downloading and installing the <code>ngrok</code> for the current system.
+ * A helper for downloading and installing <code>ngrok</code> for the current system.
  *
  * <h2>Config File</h2>
  * By default, <code>ngrok</code> will look for its config file in
- * <a href="https://ngrok.com/docs/agent/config/v2" target="_blank">the default location</a>.
+ * <a href="https://ngrok.com/docs/agent/config/#default-locations" target="_blank">the default location</a>.
  * We can override this behavior with {@link JavaNgrokConfig.Builder#withConfigPath(Path)}.
  *
  * <h2>Binary Path</h2>
@@ -317,6 +317,7 @@ public class NgrokInstaller {
         } else {
             final HashMap<String, Object> config = new HashMap<>();
             config.put("version", "2");
+            config.put("region", "us");
             return config;
         }
     }
