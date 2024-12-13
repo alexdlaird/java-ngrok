@@ -781,7 +781,7 @@ class NgrokClientTest extends NgrokTestCase {
         final String domain = System.getenv("NGROK_DOMAIN");
         final Map<String, Object> tlsTunnelConfig = Map.of(
             "proto", "tls",
-            "addr", "80",
+            "addr", "443",
             "domain", domain,
             "terminate_at", "upstream");
         final Map<String, Object> tunnelsConfig = Map.of("tls-tunnel", tlsTunnelConfig);
@@ -809,7 +809,7 @@ class NgrokClientTest extends NgrokTestCase {
         // THEN
         assertEquals(1, tunnels.size());
         assertEquals("tls-tunnel", tlsTunnel.getName());
-        assertEquals("localhost:80", tlsTunnel.getConfig().getAddr());
+        assertEquals("localhost:443", tlsTunnel.getConfig().getAddr());
         assertEquals("tls", tlsTunnel.getProto());
         assertFalse(tlsTunnel.getConfig().isInspect());
         assertEquals(tlsTunnel.getPublicUrl(), String.format("tls://%s", domain));
@@ -897,7 +897,7 @@ class NgrokClientTest extends NgrokTestCase {
         assertEquals("tcp", tcpEdgeTunnel.getProto());
         assertEquals(ngrokTcpEdgeEndpoint, tcpEdgeTunnel.getPublicUrl());
         assertEquals("edge-tls-tunnel", tlsEdgeTunnel.getName());
-        assertEquals("https://localhost:443", tlsEdgeTunnel.getConfig().getAddr());
+        assertEquals("tls://localhost:443", tlsEdgeTunnel.getConfig().getAddr());
         assertEquals("tls", tlsEdgeTunnel.getProto());
         assertEquals(ngrokTlsEdgeEndpoint, tlsEdgeTunnel.getPublicUrl());
         assertEquals(3, tunnels.size());
@@ -910,7 +910,7 @@ class NgrokClientTest extends NgrokTestCase {
         assertEquals("tcp", tunnels.get(1).getProto());
         assertEquals(ngrokTcpEdgeEndpoint, tunnels.get(1).getPublicUrl());
         assertEquals("edge-tls-tunnel", tunnels.get(2).getName());
-        assertEquals("https://localhost:443", tunnels.get(2).getConfig().getAddr());
+        assertEquals("tls://localhost:443", tunnels.get(2).getConfig().getAddr());
         assertEquals("tls", tunnels.get(2).getProto());
         assertEquals(ngrokTlsEdgeEndpoint, tunnels.get(2).getPublicUrl());
     }
