@@ -910,7 +910,7 @@ class NgrokClientTest extends NgrokTestCase {
         assertEquals("tcp", tunnels.get(1).getProto());
         assertEquals(ngrokTcpEdgeEndpoint, tunnels.get(1).getPublicUrl());
         assertEquals("edge-tls-tunnel", tunnels.get(2).getName());
-        assertEquals("tls://localhost:443", tunnels.get(2).getConfig().getAddr());
+        assertEquals("https://localhost:443", tunnels.get(2).getConfig().getAddr());
         assertEquals("tls", tunnels.get(2).getProto());
         assertEquals(ngrokTlsEdgeEndpoint, tunnels.get(2).getPublicUrl());
     }
