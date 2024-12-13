@@ -809,7 +809,7 @@ class NgrokClientTest extends NgrokTestCase {
         // THEN
         assertEquals(1, tunnels.size());
         assertEquals("tls-tunnel", tlsTunnel.getName());
-        assertEquals("localhost:443", tlsTunnel.getConfig().getAddr());
+        assertEquals("tls://localhost:443", tlsTunnel.getConfig().getAddr());
         assertEquals("tls", tlsTunnel.getProto());
         assertFalse(tlsTunnel.getConfig().isInspect());
         assertEquals(tlsTunnel.getPublicUrl(), String.format("tls://%s", domain));
@@ -897,7 +897,7 @@ class NgrokClientTest extends NgrokTestCase {
         assertEquals("tcp", tcpEdgeTunnel.getProto());
         assertEquals(ngrokTcpEdgeEndpoint, tcpEdgeTunnel.getPublicUrl());
         assertEquals("edge-tls-tunnel", tlsEdgeTunnel.getName());
-        assertEquals("tls://localhost:443", tlsEdgeTunnel.getConfig().getAddr());
+        assertEquals("https://localhost:443", tlsEdgeTunnel.getConfig().getAddr());
         assertEquals("tls", tlsEdgeTunnel.getProto());
         assertEquals(ngrokTlsEdgeEndpoint, tlsEdgeTunnel.getPublicUrl());
         assertEquals(3, tunnels.size());
