@@ -27,7 +27,7 @@ import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.getNgrokBin;
 import static java.util.Objects.nonNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class NgrokTestCase {
+public class NgrokTestCase extends TestCase {
 
     protected final JavaNgrokConfig javaNgrokConfigV2 = new JavaNgrokConfig.Builder()
         .withConfigPath(Paths.get("build", ".ngrok", "config_v2.yml").toAbsolutePath())

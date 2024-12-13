@@ -27,7 +27,6 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static java.net.HttpURLConnection.HTTP_BAD_METHOD;
 import static java.net.HttpURLConnection.HTTP_CREATED;
 import static java.net.HttpURLConnection.HTTP_NO_CONTENT;
@@ -39,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doAnswer;
@@ -66,7 +64,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
     @Test
     public void testPost() {
-        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+        testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
         ngrokProcessV3.start();
@@ -86,7 +84,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
     @Test
     public void testGet() {
-        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+        testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
         ngrokProcessV3.start();
@@ -116,7 +114,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
     @Test
     public void testDelete() {
-        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+        testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
         ngrokProcessV3.start();
@@ -136,7 +134,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
     @Test
     public void testPut() {
-        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+        testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
         ngrokProcessV3.start();
@@ -157,7 +155,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
     @Test
     public void testGetWithQueryParameters()
         throws InterruptedException, MalformedURLException {
-        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+        testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
         ngrokProcessV3.start();
@@ -253,7 +251,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
     @Test
     public void testGetTunnelsThrowsException()
         throws IOException {
-        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+        testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
         final NgrokClient ngrokClientV3 = new NgrokClient.Builder()

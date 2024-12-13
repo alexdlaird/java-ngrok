@@ -6,6 +6,7 @@
 
 package com.github.alexdlaird.ngrok.conf;
 
+import com.github.alexdlaird.ngrok.TestCase;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokLog;
 import com.github.alexdlaird.ngrok.protocol.Region;
@@ -14,13 +15,11 @@ import java.nio.file.Paths;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
-import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class JavaNgrokConfigTest {
+public class JavaNgrokConfigTest extends TestCase {
     @Test
     public void testJavaNgrokConfig() {
         // GIVEN
@@ -70,8 +69,7 @@ public class JavaNgrokConfigTest {
     @Test
     public void testAuthTokenSetFromEnv() {
         // GIVEN
-        final String ngrokAuthToken = System.getenv("NGROK_AUTHTOKEN");
-        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+        final String ngrokAuthToken = testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // WHEN
         final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
