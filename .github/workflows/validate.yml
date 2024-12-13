@@ -48,4 +48,4 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: ./build/test-results
-          files: "**"
+          files: "*.xml"
