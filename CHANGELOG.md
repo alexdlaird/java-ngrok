@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.3...HEAD)
 
+### Changed
+
+- Limit permission scope so only current user can execute installed binary.
+
 ## [2.3.3](https://github.com/alexdlaird/java-ngrok/compare/2.3.2...2.3.3) - 2024-11-10
 
 ### Added
