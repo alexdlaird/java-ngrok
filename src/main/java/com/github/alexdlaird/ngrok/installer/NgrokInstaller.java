@@ -363,8 +363,6 @@ public class NgrokInstaller {
                 final Set<PosixFilePermission> perms = Files.readAttributes(ngrokPath, PosixFileAttributes.class)
                                                             .permissions();
                 perms.add(PosixFilePermission.OWNER_EXECUTE);
-                perms.add(PosixFilePermission.GROUP_EXECUTE);
-                perms.add(PosixFilePermission.OTHERS_EXECUTE);
                 Files.setPosixFilePermissions(ngrokPath, perms);
             }
         } catch (final IOException e) {
