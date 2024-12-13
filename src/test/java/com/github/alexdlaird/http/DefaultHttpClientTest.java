@@ -58,6 +58,8 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         super.setUp();
 
         defaultHttpClient = spy(new DefaultHttpClient.Builder()
+            .withEncoding("UTF-8")
+            .withContentType("application/json")
             .withRetryCount(3)
             .build());
     }
@@ -267,5 +269,46 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
         // WHEN
         assertThrows(JavaNgrokHTTPException.class, () -> ngrokClientV3.getTunnels());
+    }
+
+    @Test
+    public void testPostThrowsException()
+        throws UnsupportedEncodingException {
+        // GIVEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder().build();
+        doAnswer(invocation -> {
+            throw new UnsupportedEncodingException("Bad input params");
+        }).when(defaultHttpClient).urlWithParameters(any(), any());
+
+        // WHEN
+        assertThrows(HttpClientException.class, () -> defaultHttpClient.post(
+            "/some-url", createTunnel, List.of(), Map.of(), Tunnel.class));
+    }
+
+    @Test
+    public void testDeleteThrowsException()
+        throws UnsupportedEncodingException {
+        // GIVEN
+        doAnswer(invocation -> {
+            throw new UnsupportedEncodingException("Bad input params");
+        }).when(defaultHttpClient).urlWithParameters(any(), any());
+
+        // WHEN
+        assertThrows(HttpClientException.class, () -> defaultHttpClient.delete(
+            "/some-url", List.of(), Map.of(), Tunnel.class));
+    }
+
+    @Test
+    public void testPutThrowsException()
+        throws UnsupportedEncodingException {
+        // GIVEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder().build();
+        doAnswer(invocation -> {
+            throw new UnsupportedEncodingException("Bad input params");
+        }).when(defaultHttpClient).urlWithParameters(any(), any());
+
+        // WHEN
+        assertThrows(HttpClientException.class, () -> defaultHttpClient.put(
+            "/some-url", createTunnel, List.of(), Map.of(), Tunnel.class));
     }
 }
