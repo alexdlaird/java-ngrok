@@ -7,6 +7,10 @@
 package com.github.alexdlaird.ngrok;
 
 import com.github.alexdlaird.exception.JavaNgrokException;
+import com.github.alexdlaird.exception.JavaNgrokHTTPException;
+import com.github.alexdlaird.http.DefaultHttpClient;
+import com.github.alexdlaird.http.HttpClient;
+import com.github.alexdlaird.http.HttpClientException;
 import com.github.alexdlaird.http.Response;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
@@ -19,6 +23,7 @@ import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Version;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,6 +47,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 class NgrokClientTest extends NgrokTestCase {
 
@@ -815,6 +825,9 @@ class NgrokClientTest extends NgrokTestCase {
         final String ngrokTcpEdge = System.getenv("NGROK_TCP_EDGE");
         assumeTrue(isNotBlank(System.getenv("NGROK_TCP_EDGE")),
             "NGROK_TCP_EDGE environment variable not set");
+        final String ngrokTlsEdge = System.getenv("NGROK_TLS_EDGE");
+        assumeTrue(isNotBlank(System.getenv("NGROK_TLS_EDGE")),
+            "NGROK_TCP_EDGE environment variable not set");
         final String ngrokApiKey = System.getenv("NGROK_API_KEY");
         assumeTrue(isNotBlank(System.getenv("NGROK_API_KEY")),
             "NGROK_API_KEY environment variable not set");
@@ -824,6 +837,9 @@ class NgrokClientTest extends NgrokTestCase {
         final String ngrokTcpEdgeEndpoint = System.getenv("NGROK_TCP_EDGE_ENDPOINT");
         assumeTrue(isNotBlank(System.getenv("NGROK_TCP_EDGE_ENDPOINT")),
             "NGROK_TCP_EDGE_ENDPOINT environment variable not set");
+        final String ngrokTlsEdgeEndpoint = System.getenv("NGROK_TLS_EDGE_ENDPOINT");
+        assumeTrue(isNotBlank(System.getenv("NGROK_TLS_EDGE_ENDPOINT")),
+            "NGROK_TLS_EDGE_ENDPOINT environment variable not set");
 
         // GIVEN
         final Map<String, Object> edgeHttpTunnelConfig = Map.of(
@@ -832,9 +848,13 @@ class NgrokClientTest extends NgrokTestCase {
         final Map<String, Object> edgeTcpTunnelConfig = Map.of(
             "addr", "22",
             "labels", List.of(String.format("edge=%s", ngrokTcpEdge)));
+        final Map<String, Object> edgeTlsTunnelConfig = Map.of(
+            "addr", "443",
+            "labels", List.of(String.format("edge=%s", ngrokTlsEdge)));
         final Map<String, Object> tunnelsConfig = Map.of(
             "edge-http-tunnel", edgeHttpTunnelConfig,
-            "edge-tcp-tunnel", edgeTcpTunnelConfig);
+            "edge-tcp-tunnel", edgeTcpTunnelConfig,
+            "edge-tls-tunnel", edgeTlsTunnelConfig);
         final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
@@ -858,8 +878,13 @@ class NgrokClientTest extends NgrokTestCase {
             .withNgrokVersion(NgrokVersion.V3)
             .withName("edge-tcp-tunnel")
             .build();
+        final CreateTunnel createTlsEdgeTunnel = new CreateTunnel.Builder()
+            .withNgrokVersion(NgrokVersion.V3)
+            .withName("edge-tls-tunnel")
+            .build();
         final Tunnel httpEdgeTunnel = ngrokClient2.connect(createHttpEdgeTunnel);
         final Tunnel tcpEdgeTunnel = ngrokClient2.connect(createTcpEdgeTunnel);
+        final Tunnel tlsEdgeTunnel = ngrokClient2.connect(createTlsEdgeTunnel);
         final List<Tunnel> tunnels = ngrokClient2.getTunnels();
 
         // THEN
@@ -871,7 +896,11 @@ class NgrokClientTest extends NgrokTestCase {
         assertEquals("tcp://localhost:22", tcpEdgeTunnel.getConfig().getAddr());
         assertEquals("tcp", tcpEdgeTunnel.getProto());
         assertEquals(ngrokTcpEdgeEndpoint, tcpEdgeTunnel.getPublicUrl());
-        assertEquals(2, tunnels.size());
+        assertEquals("edge-tls-tunnel", tlsEdgeTunnel.getName());
+        assertEquals("https://localhost:443", tlsEdgeTunnel.getConfig().getAddr());
+        assertEquals("tls", tlsEdgeTunnel.getProto());
+        assertEquals(ngrokTlsEdgeEndpoint, tlsEdgeTunnel.getPublicUrl());
+        assertEquals(3, tunnels.size());
         assertEquals("edge-http-tunnel", tunnels.get(0).getName());
         assertEquals("http://localhost:80", tunnels.get(0).getConfig().getAddr());
         assertEquals("https", tunnels.get(0).getProto());
@@ -880,6 +909,10 @@ class NgrokClientTest extends NgrokTestCase {
         assertEquals("tcp://localhost:22", tunnels.get(1).getConfig().getAddr());
         assertEquals("tcp", tunnels.get(1).getProto());
         assertEquals(ngrokTcpEdgeEndpoint, tunnels.get(1).getPublicUrl());
+        assertEquals("edge-tls-tunnel", tunnels.get(2).getName());
+        assertEquals("https://localhost:443", tunnels.get(2).getConfig().getAddr());
+        assertEquals("tls", tunnels.get(2).getProto());
+        assertEquals(ngrokTlsEdgeEndpoint, tunnels.get(2).getPublicUrl());
     }
 
     @Test
@@ -1040,5 +1073,98 @@ class NgrokClientTest extends NgrokTestCase {
 
         // THEN
         assertFalse(ngrokClientV3.getNgrokProcess().isRunning());
+    }
+
+    @Test
+    public void testNgrokConnectHttpClientCreateTunnelFails() {
+        // GIVEN
+        final HttpClient httpClient = mock(HttpClient.class);
+        final HttpClientException httpClientException = new HttpClientException(
+            "some message",
+            new SocketTimeoutException(),
+            "http://localhost:4040/api/tunnels",
+            500,
+            "error body");
+        final NgrokClient ngrokClient = new NgrokClient.Builder()
+            .withJavaNgrokConfig(javaNgrokConfigV3)
+            .withNgrokProcess(ngrokProcessV3)
+            .withHttpClient(httpClient)
+            .build();
+        when(httpClient.post(any(), any(), any())).thenThrow(httpClientException);
+
+        // WHEN
+        final JavaNgrokHTTPException javaNgrokHTTPException = assertThrows(JavaNgrokHTTPException.class,
+            ngrokClient::connect);
+
+        // THEN
+        assertThat(javaNgrokHTTPException.getMessage(), startsWith("An error occurred when POSTing to create the "
+                                                                   + "tunnel "));
+        assertEquals("http://localhost:4040/api/tunnels", javaNgrokHTTPException.getUrl());
+        assertEquals(500, javaNgrokHTTPException.getStatusCode());
+        assertEquals("error body", javaNgrokHTTPException.getBody());
+    }
+
+    @Test
+    public void testNgrokConnectHttpClientGetTunnelsFails() {
+        // GIVEN
+        final HttpClient httpClient = mock(HttpClient.class);
+        final Response response = mock(Response.class);
+        final Tunnel tunnel = mock(Tunnel.class);
+        final HttpClientException httpClientException = new HttpClientException(
+            "some message",
+            new SocketTimeoutException(),
+            "http://localhost:4040/api/tunnels",
+            500,
+            "error body");
+        final NgrokClient ngrokClient = new NgrokClient.Builder()
+            .withJavaNgrokConfig(javaNgrokConfigV2)
+            .withNgrokProcess(ngrokProcessV2)
+            .withHttpClient(httpClient)
+            .build();
+        when(tunnel.getName()).thenReturn("my-tunnel");
+        when(tunnel.getUri()).thenReturn("/api/tunnels/my-tunnel");
+        when(response.getBody()).thenReturn(tunnel);
+        when(httpClient.post(any(), any(), any())).thenReturn(response);
+        when(httpClient.get(any(), any())).thenThrow(httpClientException);
+
+        // WHEN
+        final JavaNgrokHTTPException javaNgrokHTTPException = assertThrows(JavaNgrokHTTPException.class,
+            ngrokClient::connect);
+
+        // THEN
+        assertEquals("An error occurred when GETing the HTTP tunnel my-tunnel.",
+            javaNgrokHTTPException.getMessage());
+        assertEquals("http://localhost:4040/api/tunnels", javaNgrokHTTPException.getUrl());
+        assertEquals(500, javaNgrokHTTPException.getStatusCode());
+        assertEquals("error body", javaNgrokHTTPException.getBody());
+    }
+
+    @Test
+    public void testNgrokConnectHttpClientDeleteTunnelsFails() {
+        // GIVEN
+        final HttpClient httpClient = spy(new DefaultHttpClient.Builder()
+            .withRetryCount(3)
+            .build());
+        final Response response = mock(Response.class);
+        final HttpClientException httpClientException = new HttpClientException(
+            "some message",
+            new SocketTimeoutException(),
+            "http://localhost:4040/api/tunnels",
+            500,
+            "error body");
+        final NgrokClient ngrokClient = new NgrokClient.Builder()
+            .withJavaNgrokConfig(javaNgrokConfigV2)
+            .withNgrokProcess(ngrokProcessV2)
+            .withHttpClient(httpClient)
+            .build();
+        doThrow(HttpClientException.class).when(httpClient).delete(any());
+        final Tunnel tunnel = ngrokClient.connect();
+
+        // WHEN
+        final JavaNgrokHTTPException javaNgrokHTTPException = assertThrows(JavaNgrokHTTPException.class,
+            () -> ngrokClient.disconnect(tunnel.getPublicUrl()));
+
+        // THEN
+        assertThat(javaNgrokHTTPException.getMessage(), startsWith("An error occurred when DELETing the tunnel"));
     }
 }
