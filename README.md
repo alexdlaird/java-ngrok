@@ -4,6 +4,7 @@
 [![Java Versions](https://img.shields.io/badge/Java-11+-blue)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/)
 [![Coverage](https://img.shields.io/codecov/c/github/alexdlaird/java-ngrok)](https://codecov.io/gh/alexdlaird/java-ngrok)
 [![Build](https://img.shields.io/github/actions/workflow/status/alexdlaird/java-ngrok/build.yml)](https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml)
+[![Code Quality](https://api.codacy.com/project/badge/Grade/940d16178f8f4e8abfcf9bf2873894b3)](https://app.codacy.com/gh/alexdlaird/java-ngrok?utm_source=github.com&utm_medium=referral&utm_content=alexdlaird/java-ngrok&utm_campaign=Badge_Grade)
 [![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok)
 [![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)](https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE)
 
