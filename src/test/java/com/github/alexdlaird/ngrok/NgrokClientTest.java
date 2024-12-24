@@ -1121,6 +1121,8 @@ class NgrokClientTest extends NgrokTestCase {
 
     @Test
     public void testNgrokConnectHttpClientCreateTunnelFails() {
+        testRequiresEnvVar("NGROK_AUTHTOKEN");
+
         // GIVEN
         final HttpClient httpClient = mock(HttpClient.class);
         final HttpClientException httpClientException = new HttpClientException(
@@ -1150,6 +1152,8 @@ class NgrokClientTest extends NgrokTestCase {
 
     @Test
     public void testNgrokConnectHttpClientGetTunnelsFails() {
+        testRequiresEnvVar("NGROK_AUTHTOKEN");
+
         // GIVEN
         final HttpClient httpClient = mock(HttpClient.class);
         final Response response = mock(Response.class);
@@ -1185,6 +1189,8 @@ class NgrokClientTest extends NgrokTestCase {
 
     @Test
     public void testNgrokConnectHttpClientDeleteTunnelsFails() {
+        testRequiresEnvVar("NGROK_AUTHTOKEN");
+        
         // GIVEN
         final HttpClient httpClient = spy(new DefaultHttpClient.Builder()
             .withRetryCount(3)
