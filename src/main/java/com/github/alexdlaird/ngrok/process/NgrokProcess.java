@@ -16,7 +16,6 @@ import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

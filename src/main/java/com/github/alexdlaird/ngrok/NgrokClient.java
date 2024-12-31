@@ -24,7 +24,6 @@ import com.github.alexdlaird.ngrok.protocol.Proto;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import com.github.alexdlaird.ngrok.protocol.Version;
-
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -486,7 +485,8 @@ public class NgrokClient {
         if (Files.exists(javaNgrokConfig.getConfigPath())) {
             config = ngrokProcess.getNgrokInstaller().getNgrokConfig(javaNgrokConfig.getConfigPath());
         } else {
-            config = ngrokProcess.getNgrokInstaller().getDefaultConfig(javaNgrokConfig.getNgrokVersion(), javaNgrokConfig.getConfigVersion());
+            config = ngrokProcess.getNgrokInstaller().getDefaultConfig(javaNgrokConfig.getNgrokVersion(),
+                    javaNgrokConfig.getConfigVersion());
         }
 
         final String name;
