@@ -52,10 +52,8 @@ public class CreateTunnel {
     private final String hostHeader;
     private final BindTls bindTls;
     private final String subdomain;
-    private final String hostname;
     private final String crt;
     private final String key;
-    private final String clientCas;
     private final String remoteAddr;
     private final String metadata;
     private final List<String> schemes;
@@ -87,10 +85,8 @@ public class CreateTunnel {
         this.hostHeader = builder.hostHeader;
         this.bindTls = builder.bindTls;
         this.subdomain = builder.subdomain;
-        this.hostname = builder.hostname;
         this.crt = builder.crt;
         this.key = builder.key;
-        this.clientCas = builder.clientCas;
         this.remoteAddr = builder.remoteAddr;
         this.metadata = builder.metadata;
         this.schemes = builder.schemes;
@@ -183,13 +179,6 @@ public class CreateTunnel {
     }
 
     /**
-     * Get the hostname.
-     */
-    public String getHostname() {
-        return hostname;
-    }
-
-    /**
      * Get the PEM TLS certificate path that will be used to terminate TLS traffic before forwarding locally.
      */
     public String getCrt() {
@@ -201,14 +190,6 @@ public class CreateTunnel {
      */
     public String getKey() {
         return key;
-    }
-
-    /**
-     * Get the PEM TLS certificate authority path that will be used to verify incoming TLS client connection
-     * certificates.
-     */
-    public String getClientCas() {
-        return clientCas;
     }
 
     /**
@@ -364,10 +345,8 @@ public class CreateTunnel {
         private String auth;
         private String hostHeader;
         private String subdomain;
-        private String hostname;
         private String crt;
         private String key;
-        private String clientCas;
         private String remoteAddr;
         private String metadata;
         private List<String> schemes;
@@ -427,10 +406,8 @@ public class CreateTunnel {
             this.auth = createTunnel.auth;
             this.hostHeader = createTunnel.hostHeader;
             this.subdomain = createTunnel.subdomain;
-            this.hostname = createTunnel.hostname;
             this.crt = createTunnel.crt;
             this.key = createTunnel.key;
-            this.clientCas = createTunnel.clientCas;
             this.remoteAddr = createTunnel.remoteAddr;
             this.metadata = createTunnel.metadata;
             this.schemes = createTunnel.schemes;
@@ -562,14 +539,6 @@ public class CreateTunnel {
         }
 
         /**
-         * Hostname to request (requires reserved name and DNS CNAME).
-         */
-        public Builder withHostname(final String hostname) {
-            this.hostname = hostname;
-            return this;
-        }
-
-        /**
          * PEM TLS certificate at this path to terminate TLS traffic before forwarding locally.
          */
         public Builder withCrt(final String crt) {
@@ -582,14 +551,6 @@ public class CreateTunnel {
          */
         public Builder withKey(final String key) {
             this.key = key;
-            return this;
-        }
-
-        /**
-         * PEM TLS certificate authority at this path will verify incoming TLS client connection certificates.
-         */
-        public Builder withClientCas(final String clientCas) {
-            this.clientCas = clientCas;
             return this;
         }
 
@@ -781,17 +742,11 @@ public class CreateTunnel {
             if (isNull(this.subdomain) && tunnelDefinition.containsKey("subdomain")) {
                 this.subdomain = (String) tunnelDefinition.get("subdomain");
             }
-            if (isNull(this.hostname) && tunnelDefinition.containsKey("hostname")) {
-                this.hostname = (String) tunnelDefinition.get("hostname");
-            }
             if (isNull(this.crt) && tunnelDefinition.containsKey("crt")) {
                 this.crt = (String) tunnelDefinition.get("crt");
             }
             if (isNull(this.key) && tunnelDefinition.containsKey("key")) {
                 this.key = (String) tunnelDefinition.get("key");
-            }
-            if (isNull(this.clientCas) && tunnelDefinition.containsKey("client_cas")) {
-                this.clientCas = (String) tunnelDefinition.get("client_cas");
             }
             if (isNull(this.remoteAddr) && tunnelDefinition.containsKey("remote_addr")) {
                 this.remoteAddr = (String) tunnelDefinition.get("remote_addr");
@@ -857,17 +812,31 @@ public class CreateTunnel {
                     .Builder((Map<String, Object>) tunnelDefinition.get("user_agent_filter"))
                     .build();
             }
-            if (tunnelDefinition.containsKey("policy")) {
-                final Map<String, Object> policy = (Map<String, Object>) tunnelDefinition.get("policy");
+            if (tunnelDefinition.containsKey("policy") || tunnelDefinition.containsKey("traffic_policy")) {
+                final String policyKey = tunnelDefinition.containsKey("policy") ? "policy" : "traffic_policy";
+
+                final Map<String, Object> policy = (Map<String, Object>) tunnelDefinition.get(policyKey);
                 if (isNull(this.policyInbound) && policy.containsKey("inbound")) {
                     this.policyInbound = new TunnelPolicy
                         .Builder((Map<String, Object>) policy.get("inbound"))
                         .build();
                 }
+                // For HTTP, ngrok has renamed this key to "on_http_request", but it functions the same
+                if (isNull(this.policyInbound) && policy.containsKey("on_http_request")) {
+                    this.policyInbound = new TunnelPolicy
+                            .Builder((Map<String, Object>) policy.get("on_http_request"))
+                            .build();
+                }
                 if (isNull(this.policyOutbound) && policy.containsKey("outbound")) {
                     this.policyOutbound = new TunnelPolicy
                         .Builder((Map<String, Object>) policy.get("outbound"))
                         .build();
+                }
+                // For HTTP, ngrok has renamed this key to "on_http_response", but it functions the same
+                if (isNull(this.policyOutbound) && policy.containsKey("on_http_response")) {
+                    this.policyOutbound = new TunnelPolicy
+                            .Builder((Map<String, Object>) policy.get("on_http_response"))
+                            .build();
                 }
             }
             if (tunnelDefinition.containsKey("labels")) {
