@@ -99,7 +99,7 @@ class NgrokInstallerTest extends NgrokTestCase {
     }
 
     @Test
-    public void testGetDefaultNgrokConfig() {
+    public void testGetDefaultNgrokV2Config() {
         // GIVEN
         final JavaNgrokConfig javaNgrokConfigV3Tmp = new JavaNgrokConfig.Builder()
             .withConfigPath(Paths.get("build", ".ngrok", "config_v2_tmp.yml").toAbsolutePath())
@@ -116,6 +116,7 @@ class NgrokInstallerTest extends NgrokTestCase {
         // THEN
         assertNotNull(ngrokConfig);
         assertEquals(2, ngrokConfig.size());
+        assertEquals("2", ngrokConfig.get("version"));
         assertEquals("2", ngrokConfig.get("version"));
         assertTrue(Files.exists(javaNgrokConfigV3Tmp.getConfigPath()));
     }
