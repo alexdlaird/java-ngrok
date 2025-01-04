@@ -34,6 +34,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.ClearEnvironmentVariable;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -965,6 +966,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
+    @ClearEnvironmentVariable(key="NGROK_API_KEY")
     public void testLabelsNoApiKeyFails() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
         final String ngrokHttpEdge = testRequiresEnvVar("NGROK_HTTP_EDGE");
