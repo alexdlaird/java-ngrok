@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import static com.github.alexdlaird.util.StringUtils.isBlank;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -509,7 +510,7 @@ public class NgrokClient {
 
         if (nonNull(name) && tunnelDefinitions.containsKey(name)) {
             if (((Map<String, Object>) tunnelDefinitions.get(name)).containsKey("labels")
-                    && isNull(javaNgrokConfig.getApiKey())) {
+                    && isBlank(javaNgrokConfig.getApiKey())) {
                 throw new JavaNgrokException("'JavaNgrokConfig.apiKey' must be set when 'labels' is "
                         + "on the tunnel definition.");
             }

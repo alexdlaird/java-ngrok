@@ -26,7 +26,6 @@ dependencies {
     implementation "com.google.code.gson:gson:2.11.0"
     implementation "org.yaml:snakeyaml:2.3"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.11.3"
-    testImplementation "org.junit-pioneer:junit-pioneer:2.3.0"
     testImplementation "org.mockito:mockito-core:5.14.2"
     testImplementation "org.hamcrest:hamcrest:3.0"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.11.3"
@@ -47,10 +46,6 @@ tasks.register("printVersion") {
 
 test {
     useJUnitPlatform()
-    jvmArgs([
-            "--add-opens java.base/java.util=ALL-UNNAMED",
-            "--add-opens java.base/java.lang=ALL-UNNAMED"
-    ])
     finalizedBy jacocoTestReport
 }
 
