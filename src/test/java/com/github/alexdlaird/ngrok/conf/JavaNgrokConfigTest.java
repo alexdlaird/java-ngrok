@@ -78,4 +78,17 @@ public class JavaNgrokConfigTest extends TestCase {
         // THEN
         assertEquals(ngrokAuthToken, javaNgrokConfig.getAuthToken());
     }
+
+    @Test
+    public void testApiKeySetFromEnv() {
+        // GIVEN
+        final String ngrokApiKey = testRequiresEnvVar("NGROK_API_KEY");
+
+        // WHEN
+        final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+            .build();
+
+        // THEN
+        assertEquals(ngrokApiKey, javaNgrokConfig.getApiKey());
+    }
 }

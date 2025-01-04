@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Support for `ngrok` config version 3, and `endpoints` tunnel definitions.
 - Support for `traffic_policy` tunnel definition, which `ngrok` renamed from `policy`.
 - Support for `traffic_policy.on_http_request` and `traffic_policy.on_http_response`, which `ngrok` added unique keys for in HTTP tunnels.
+- If a value for `apiKey` is not set in [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.5/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html), it will attempt to use the environment variable `NGROK_API_KEY` if it is set.
 
 ### Remove
 

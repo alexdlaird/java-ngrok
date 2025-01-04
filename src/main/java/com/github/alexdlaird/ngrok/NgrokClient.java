@@ -394,6 +394,15 @@ public class NgrokClient {
     }
 
     /**
+     * Set the <code>ngrok</code> API key in the config file, enabling more features (for instance, labeled tunnels).
+     *
+     * @param apiKey The API key.
+     */
+    public void setApiKey(final String apiKey) {
+        ngrokProcess.setApiKey(apiKey);
+    }
+
+    /**
      * Update <code>ngrok</code>, if an update is available.
      */
     public void update() {

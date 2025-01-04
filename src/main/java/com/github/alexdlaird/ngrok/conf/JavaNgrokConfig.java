@@ -281,7 +281,8 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * A <code>ngrok</code> API key.
+         * A <code>ngrok</code> API key. If not set here, the {@link Builder} will attempt to use the environment
+         * variable <code>NGROK_API_KEY</code> if it is set.
          */
         public Builder withApiKey(final String apiKey) {
             this.apiKey = apiKey;
@@ -309,6 +310,10 @@ public class JavaNgrokConfig {
             final String envAuthToken = System.getenv("NGROK_AUTHTOKEN");
             if (isNull(authToken) && nonNull(envAuthToken)) {
                 authToken = envAuthToken;
+            }
+            final String envApiKey = System.getenv("NGROK_API_KEY");
+            if (isNull(apiKey) && nonNull(envApiKey)) {
+                apiKey = envApiKey;
             }
 
             return new JavaNgrokConfig(this);
