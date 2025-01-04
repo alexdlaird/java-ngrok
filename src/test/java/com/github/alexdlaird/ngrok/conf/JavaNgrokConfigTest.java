@@ -7,6 +7,7 @@
 package com.github.alexdlaird.ngrok.conf;
 
 import com.github.alexdlaird.ngrok.TestCase;
+import com.github.alexdlaird.ngrok.installer.ConfigVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokLog;
 import com.github.alexdlaird.ngrok.protocol.Region;
@@ -39,6 +40,7 @@ public class JavaNgrokConfigTest extends TestCase {
             .withStartupTimeout(5)
             .withNgrokVersion(NgrokVersion.V2)
             .withApiKey("api-key")
+            .withConfigVersion(ConfigVersion.V2)
             .build();
 
         // THEN
@@ -52,6 +54,7 @@ public class JavaNgrokConfigTest extends TestCase {
         assertEquals(5, javaNgrokConfig.getStartupTimeout());
         assertEquals(NgrokVersion.V2, javaNgrokConfig.getNgrokVersion());
         assertEquals("api-key", javaNgrokConfig.getApiKey());
+        assertEquals(ConfigVersion.V2, javaNgrokConfig.getConfigVersion());
     }
 
     @Test
@@ -77,5 +80,18 @@ public class JavaNgrokConfigTest extends TestCase {
 
         // THEN
         assertEquals(ngrokAuthToken, javaNgrokConfig.getAuthToken());
+    }
+
+    @Test
+    public void testApiKeySetFromEnv() {
+        // GIVEN
+        final String ngrokApiKey = testRequiresEnvVar("NGROK_API_KEY");
+
+        // WHEN
+        final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+            .build();
+
+        // THEN
+        assertEquals(ngrokApiKey, javaNgrokConfig.getApiKey());
     }
 }

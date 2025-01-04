@@ -6,6 +6,7 @@
 
 package com.github.alexdlaird.ngrok.process;
 
+import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokSecurityException;
 import com.github.alexdlaird.exception.NgrokException;
 import com.github.alexdlaird.http.DefaultHttpClient;
@@ -78,7 +79,7 @@ public class NgrokProcess {
         }
         if (!Files.exists(javaNgrokConfig.getConfigPath())) {
             ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Map.of(),
-                javaNgrokConfig.getNgrokVersion());
+                    javaNgrokConfig.getNgrokVersion());
         }
     }
 
@@ -111,9 +112,9 @@ public class NgrokProcess {
 
         if (!Files.exists(javaNgrokConfig.getNgrokPath())) {
             throw new NgrokException(String.format("ngrok binary was not found. "
-                                                   + "Be sure to call \"NgrokInstaller.installNgrok()\" first for "
-                                                   + "\"ngrokPath\": %s",
-                javaNgrokConfig.getNgrokPath()));
+                            + "Be sure to call \"NgrokInstaller.installNgrok()\" first for "
+                            + "\"ngrokPath\": %s",
+                    javaNgrokConfig.getNgrokPath()));
         }
         ngrokInstaller.validateConfig(javaNgrokConfig.getConfigPath());
 
@@ -170,7 +171,7 @@ public class NgrokProcess {
 
                 if (nonNull(processMonitor.startupError)) {
                     throw new NgrokException(String.format("The ngrok process errored on start: %s.",
-                        processMonitor.startupError), processMonitor.logs, processMonitor.startupError);
+                            processMonitor.startupError), processMonitor.logs, processMonitor.startupError);
                 } else {
                     throw new NgrokException("The ngrok process was unable to start.", processMonitor.logs);
                 }
@@ -268,7 +269,7 @@ public class NgrokProcess {
             process.waitFor();
 
             final BufferedReader reader = new BufferedReader(
-                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
             final String result = captureOutput(reader);
             reader.close();
             if (!result.contains("Authtoken saved")) {
@@ -276,6 +277,56 @@ public class NgrokProcess {
             }
         } catch (final IOException | InterruptedException e) {
             throw new NgrokException("An error occurred while setting the auth token for ngrok.", e);
+        }
+    }
+
+    /**
+     * Set the <code>ngrok</code> API key in the config file, enabling more features (for instance, labeled tunnels).
+     *
+     * <p>The API key can also be set in the {@link JavaNgrokConfig} that is passed to the
+     * {@link NgrokClient.Builder}.
+     *
+     * @param apiKey The API key.
+     * @throws NgrokException <code>ngrok</code> could not start.
+     */
+    public void setApiKey(final String apiKey) {
+        final ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.redirectErrorStream(true);
+        processBuilder.inheritIO().redirectOutput(ProcessBuilder.Redirect.PIPE);
+
+        final List<String> command = new ArrayList<>();
+        command.add(javaNgrokConfig.getNgrokPath().toString());
+        if (javaNgrokConfig.getNgrokVersion() == NgrokVersion.V3) {
+            command.add("config");
+            command.add("add-api-key");
+            command.add(apiKey);
+        } else {
+            throw new JavaNgrokException(String.format("ngrok %s does not have this command.",
+                javaNgrokConfig.getNgrokVersion()));
+        }
+        command.add("--log=stdout");
+
+        if (nonNull(javaNgrokConfig.getConfigPath())) {
+            command.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().toString()));
+        }
+
+        LOGGER.info(String.format("Updating API key for \"configPath\": %s", javaNgrokConfig.getConfigPath()));
+
+        processBuilder.command(command);
+        try {
+            final Process process = processBuilder.start();
+            process.waitFor();
+
+            final BufferedReader reader = new BufferedReader(
+                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+            final String result = captureOutput(reader);
+            reader.close();
+            if (!result.contains("API key saved")) {
+                throw new NgrokException(String.format("An error occurred while setting the API key: %s",
+                    result));
+            }
+        } catch (final IOException | InterruptedException e) {
+            throw new NgrokException("An error occurred while setting the API key for ngrok.", e);
         }
     }
 
@@ -319,7 +370,7 @@ public class NgrokProcess {
             process.waitFor();
 
             final BufferedReader reader = new BufferedReader(
-                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
             final String result = captureOutput(reader);
             reader.close();
             return result.split("version ")[1];
@@ -342,7 +393,7 @@ public class NgrokProcess {
     }
 
     private String captureOutput(final BufferedReader reader)
-        throws IOException {
+            throws IOException {
         final StringBuilder builder = new StringBuilder();
 
         String line;
@@ -402,7 +453,7 @@ public class NgrokProcess {
         public void run() {
             try {
                 reader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+                        new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
 
                 String line;
                 while (nonNull(line = reader.readLine())) {
@@ -417,8 +468,8 @@ public class NgrokProcess {
                 }
 
                 while (alive && process.isAlive()
-                       && javaNgrokConfig.isKeepMonitoring()
-                       && nonNull(line = reader.readLine())) {
+                        && javaNgrokConfig.isKeepMonitoring()
+                        && nonNull(line = reader.readLine())) {
                     logLine(line);
                 }
 
@@ -464,7 +515,7 @@ public class NgrokProcess {
             }
 
             final Response<Tunnels> tunnelsResponse = httpClient.get(String.format("%s/api/tunnels", apiUrl),
-                Tunnels.class);
+                    Tunnels.class);
             if (tunnelsResponse.getStatusCode() != HTTP_OK) {
                 return false;
             }

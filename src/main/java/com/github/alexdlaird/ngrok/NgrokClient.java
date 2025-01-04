@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import static com.github.alexdlaird.util.StringUtils.isBlank;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -249,24 +250,24 @@ public class NgrokClient {
         final Response<Tunnel> response;
         try {
             response = httpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), finalTunnel,
-                Tunnel.class);
+                    Tunnel.class);
         } catch (final HttpClientException e) {
             throw new JavaNgrokHTTPException(String.format("An error occurred when POSTing to create the tunnel %s.",
-                finalTunnel.getName()), e, e.getUrl(), e.getStatusCode(), e.getBody());
+                    finalTunnel.getName()), e, e.getUrl(), e.getStatusCode(), e.getBody());
         }
 
         final Tunnel tunnel;
         if (javaNgrokConfig.getNgrokVersion() == NgrokVersion.V2
-            && finalTunnel.getProto() == Proto.HTTP
-            && finalTunnel.getBindTls() == BindTls.BOTH) {
+                && finalTunnel.getProto() == Proto.HTTP
+                && finalTunnel.getBindTls() == BindTls.BOTH) {
             try {
                 final Response<Tunnel> getResponse = httpClient.get(ngrokProcess.getApiUrl()
-                                                                    + response.getBody().getUri() + "%20%28http%29",
-                    Tunnel.class);
+                                + response.getBody().getUri() + "%20%28http%29",
+                        Tunnel.class);
                 tunnel = getResponse.getBody();
             } catch (final HttpClientException e) {
                 throw new JavaNgrokHTTPException(String.format("An error occurred when GETing the HTTP tunnel %s.",
-                    response.getBody().getName()), e, e.getUrl(), e.getStatusCode(), e.getBody());
+                        response.getBody().getName()), e, e.getUrl(), e.getStatusCode(), e.getBody());
             }
         } else {
             tunnel = response.getBody();
@@ -318,7 +319,7 @@ public class NgrokClient {
             httpClient.delete(ngrokProcess.getApiUrl() + tunnel.getUri());
         } catch (final HttpClientException e) {
             throw new JavaNgrokHTTPException(String.format("An error occurred when DELETing the tunnel %s.",
-                publicUrl), e, e.getUrl(), e.getStatusCode(), e.getBody());
+                    publicUrl), e, e.getUrl(), e.getStatusCode(), e.getBody());
         }
     }
 
@@ -338,7 +339,7 @@ public class NgrokClient {
 
         try {
             final Response<Tunnels> response = httpClient.get(String.format("%s/api/tunnels",
-                ngrokProcess.getApiUrl()), Tunnels.class);
+                    ngrokProcess.getApiUrl()), Tunnels.class);
 
             currentTunnels.clear();
             for (final Tunnel tunnel : response.getBody().getTunnels()) {
@@ -351,7 +352,7 @@ public class NgrokClient {
             return List.of(sortedTunnels.toArray(new Tunnel[]{}));
         } catch (final HttpClientException e) {
             throw new JavaNgrokHTTPException("An error occurred when GETing the tunnels.", e, e.getUrl(),
-                e.getStatusCode(), e.getBody());
+                    e.getStatusCode(), e.getBody());
         }
     }
 
@@ -364,7 +365,7 @@ public class NgrokClient {
      */
     public void refreshMetrics(final Tunnel tunnel) {
         Response<Tunnel> latestTunnel = httpClient.get(String.format("%s%s", ngrokProcess.getApiUrl(),
-            tunnel.getUri()), Tunnel.class);
+                tunnel.getUri()), Tunnel.class);
 
         if (isNull(latestTunnel.getBody().getMetrics()) || latestTunnel.getBody().getMetrics().isEmpty()) {
             throw new JavaNgrokException("The ngrok API did not return \"metrics\" in the response");
@@ -391,6 +392,15 @@ public class NgrokClient {
      */
     public void setAuthToken(final String authToken) {
         ngrokProcess.setAuthToken(authToken);
+    }
+
+    /**
+     * Set the <code>ngrok</code> API key in the config file, enabling more features (for instance, labeled tunnels).
+     *
+     * @param apiKey The API key.
+     */
+    public void setApiKey(final String apiKey) {
+        ngrokProcess.setApiKey(apiKey);
     }
 
     /**
@@ -434,18 +444,18 @@ public class NgrokClient {
 
     private void applyEdgeToTunnel(final Tunnel tunnel) {
         if ((isNull(tunnel.getPublicUrl()) || tunnel.getPublicUrl().isEmpty())
-            && nonNull(javaNgrokConfig.getApiKey()) && nonNull(tunnel.getId())) {
+                && nonNull(javaNgrokConfig.getApiKey()) && nonNull(tunnel.getId())) {
             final Map<String, String> ngrokApiHeaders = Map.of(
-                "Authorization", String.format("Bearer %s", javaNgrokConfig.getApiKey()),
-                "Ngrok-Version", "2");
+                    "Authorization", String.format("Bearer %s", javaNgrokConfig.getApiKey()),
+                    "Ngrok-Version", "2");
             final Response<Map> tunnelResponse = httpClient.get(String.format("https://api.ngrok.com/tunnels/%s",
-                tunnel.getId()), List.of(), ngrokApiHeaders, Map.class);
+                    tunnel.getId()), List.of(), ngrokApiHeaders, Map.class);
 
             if (!tunnelResponse.getBody().containsKey("labels")
-                || !(tunnelResponse.getBody().get("labels") instanceof Map)
-                || !((Map) tunnelResponse.getBody().get("labels")).containsKey("edge")) {
+                    || !(tunnelResponse.getBody().get("labels") instanceof Map)
+                    || !((Map) tunnelResponse.getBody().get("labels")).containsKey("edge")) {
                 throw new JavaNgrokException(String.format("Tunnel %s does not have 'labels', use a Tunnel "
-                                                           + "configured on an Edge.", tunnel.getId()));
+                        + "configured on an Edge.", tunnel.getId()));
             }
 
             final String edge = (String) ((Map) tunnelResponse.getBody().get("labels")).get("edge");
@@ -461,19 +471,19 @@ public class NgrokClient {
             }
 
             final Response<Map> edgeResponse = httpClient.get(String.format("https://api.ngrok.com/edges/%s/%s",
-                edgesPrefix, edge), List.of(), ngrokApiHeaders, Map.class);
+                    edgesPrefix, edge), List.of(), ngrokApiHeaders, Map.class);
 
             if (!edgeResponse.getBody().containsKey("hostports")
-                || !(edgeResponse.getBody().get("hostports") instanceof List)
-                || ((List) edgeResponse.getBody().get("hostports")).isEmpty()) {
+                    || !(edgeResponse.getBody().get("hostports") instanceof List)
+                    || ((List) edgeResponse.getBody().get("hostports")).isEmpty()) {
                 throw new JavaNgrokException(String.format("No Endpoint is attached to your Edge %s, "
-                                                           + "login to the ngrok dashboard to attach an Endpoint to "
-                                                           + "your Edge first.",
-                    edge));
+                                + "login to the ngrok dashboard to attach an Endpoint to "
+                                + "your Edge first.",
+                        edge));
             }
 
             tunnel.setPublicUrl(String.format("%s://%s", edgesPrefix,
-                ((List) edgeResponse.getBody().get("hostports")).get(0)));
+                    ((List) edgeResponse.getBody().get("hostports")).get(0)));
             tunnel.setProto(edgesPrefix);
         }
     }
@@ -485,7 +495,8 @@ public class NgrokClient {
         if (Files.exists(javaNgrokConfig.getConfigPath())) {
             config = ngrokProcess.getNgrokInstaller().getNgrokConfig(javaNgrokConfig.getConfigPath());
         } else {
-            config = ngrokProcess.getNgrokInstaller().getDefaultConfig(javaNgrokConfig.getNgrokVersion());
+            config = ngrokProcess.getNgrokInstaller().getDefaultConfig(javaNgrokConfig.getNgrokVersion(),
+                    javaNgrokConfig.getConfigVersion());
         }
 
         final String name;
@@ -499,9 +510,9 @@ public class NgrokClient {
 
         if (nonNull(name) && tunnelDefinitions.containsKey(name)) {
             if (((Map<String, Object>) tunnelDefinitions.get(name)).containsKey("labels")
-                && isNull(javaNgrokConfig.getApiKey())) {
+                    && isBlank(javaNgrokConfig.getApiKey())) {
                 throw new JavaNgrokException("'JavaNgrokConfig.apiKey' must be set when 'labels' is "
-                                             + "on the tunnel definition.");
+                        + "on the tunnel definition.");
             }
 
             createTunnelBuilder.withTunnelDefinition((Map<String, Object>) tunnelDefinitions.get(name));

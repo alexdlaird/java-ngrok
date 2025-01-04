@@ -6,6 +6,7 @@
 
 package com.github.alexdlaird.ngrok.conf;
 
+import com.github.alexdlaird.ngrok.installer.ConfigVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokLog;
@@ -53,6 +54,7 @@ public class JavaNgrokConfig {
     private final Region region;
     private final Function<NgrokLog, Void> logEventCallback;
     private final String apiKey;
+    private final ConfigVersion configVersion;
 
     private JavaNgrokConfig(final Builder builder) {
         this.ngrokVersion = builder.ngrokVersion;
@@ -65,6 +67,7 @@ public class JavaNgrokConfig {
         this.region = builder.region;
         this.logEventCallback = builder.logEventCallback;
         this.apiKey = builder.apiKey;
+        this.configVersion = builder.configVersion;
     }
 
     /**
@@ -138,6 +141,13 @@ public class JavaNgrokConfig {
     }
 
     /**
+     * The <code>ngrok</code> config version.
+     */
+    public ConfigVersion getConfigVersion() {
+        return configVersion;
+    }
+
+    /**
      * Builder for a {@link JavaNgrokConfig}, see docs for that class for example usage.
      */
     public static class Builder {
@@ -146,6 +156,7 @@ public class JavaNgrokConfig {
         private int maxLogs = 100;
         private int startupTimeout = 15;
         private boolean keepMonitoring = true;
+        private ConfigVersion configVersion = ConfigVersion.V2;
 
         private Path ngrokPath;
         private Path configPath;
@@ -176,6 +187,7 @@ public class JavaNgrokConfig {
             this.region = javaNgrokConfig.region;
             this.logEventCallback = javaNgrokConfig.logEventCallback;
             this.apiKey = javaNgrokConfig.apiKey;
+            this.configVersion = javaNgrokConfig.configVersion;
         }
 
         /**
@@ -269,10 +281,19 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * A <code>ngrok</code> API key.
+         * A <code>ngrok</code> API key. If not set here, the {@link Builder} will attempt to use the environment
+         * variable <code>NGROK_API_KEY</code> if it is set.
          */
         public Builder withApiKey(final String apiKey) {
             this.apiKey = apiKey;
+            return this;
+        }
+
+        /**
+         * The <code>ngrok</code> config version.
+         */
+        public Builder withConfigVersion(final ConfigVersion configVersion) {
+            this.configVersion = configVersion;
             return this;
         }
 
@@ -289,6 +310,10 @@ public class JavaNgrokConfig {
             final String envAuthToken = System.getenv("NGROK_AUTHTOKEN");
             if (isNull(authToken) && nonNull(envAuthToken)) {
                 authToken = envAuthToken;
+            }
+            final String envApiKey = System.getenv("NGROK_API_KEY");
+            if (isNull(apiKey) && nonNull(envApiKey)) {
+                apiKey = envApiKey;
             }
 
             return new JavaNgrokConfig(this);

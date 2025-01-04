@@ -21,6 +21,7 @@ import com.github.alexdlaird.ngrok.protocol.Proto;
 import com.github.alexdlaird.ngrok.protocol.Region;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Version;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -30,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -979,6 +981,7 @@ class NgrokClientTest extends NgrokTestCase {
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
             .withConfigPath(configPath2)
+            .withApiKey("")
             .build();
         ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
         final NgrokClient ngrokClient2 = new NgrokClient.Builder()
@@ -1090,11 +1093,11 @@ class NgrokClientTest extends NgrokTestCase {
     public void testSetAuthTokenV2()
         throws IOException {
         // WHEN
-        ngrokClientV2.setAuthToken("807ad30a-73be-48d8");
+        ngrokClientV2.setAuthToken("some-auth-token");
         final String contents = Files.readString(javaNgrokConfigV2.getConfigPath());
 
         // THEN
-        assertThat(contents, containsString("807ad30a-73be-48d8"));
+        assertThat(contents, containsString("some-auth-token"));
         assertFalse(ngrokClientV2.getNgrokProcess().isRunning());
     }
 
@@ -1102,11 +1105,29 @@ class NgrokClientTest extends NgrokTestCase {
     public void testSetAuthTokenV3()
         throws IOException {
         // WHEN
-        ngrokClientV3.setAuthToken("807ad30a-73be-48d8");
+        ngrokClientV3.setAuthToken("some-auth-token");
         final String contents = Files.readString(javaNgrokConfigV3.getConfigPath());
 
         // THEN
-        assertThat(contents, containsString("807ad30a-73be-48d8"));
+        assertThat(contents, containsString("some-auth-token"));
+        assertFalse(ngrokClientV3.getNgrokProcess().isRunning());
+    }
+
+    @Test
+    public void testSetApiKeyV2Fails() {
+        // WHEN
+        assertThrows(JavaNgrokException.class, () -> ngrokClientV2.setApiKey("some-api-key"));
+    }
+
+    @Test
+    public void testSetApiKeyV3()
+        throws IOException {
+        // WHEN
+        ngrokClientV3.setApiKey("some-api-key");
+        final String contents = Files.readString(javaNgrokConfigV3.getConfigPath());
+
+        // THEN
+        assertThat(contents, containsString("some-api-key"));
         assertFalse(ngrokClientV3.getNgrokProcess().isRunning());
     }
 
@@ -1190,7 +1211,7 @@ class NgrokClientTest extends NgrokTestCase {
     @Test
     public void testNgrokConnectHttpClientDeleteTunnelsFails() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
-        
+
         // GIVEN
         final HttpClient httpClient = spy(new DefaultHttpClient.Builder()
             .withRetryCount(3)

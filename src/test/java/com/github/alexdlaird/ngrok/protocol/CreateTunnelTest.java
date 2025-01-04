@@ -33,10 +33,8 @@ public class CreateTunnelTest {
             .withHostHeader("host-header")
             .withBindTls(false)
             .withSubdomain("subdomain")
-            .withHostname("hostname")
             .withCrt("crt")
             .withKey("key")
-            .withClientCas("clientCas")
             .withRemoteAddr("remoteAddr")
             .withMetadata("metadata")
             .withOAuth(new TunnelOAuth.Builder().withProvider("testcase")
@@ -112,10 +110,8 @@ public class CreateTunnelTest {
         assertEquals("host-header", createTunnel.getHostHeader());
         assertEquals(BindTls.FALSE, createTunnel.getBindTls());
         assertEquals("subdomain", createTunnel.getSubdomain());
-        assertEquals("hostname", createTunnel.getHostname());
         assertEquals("crt", createTunnel.getCrt());
         assertEquals("key", createTunnel.getKey());
-        assertEquals("clientCas", createTunnel.getClientCas());
         assertEquals("remoteAddr", createTunnel.getRemoteAddr());
         assertEquals("metadata", createTunnel.getMetadata());
         assertEquals("testcase", createTunnel.getOauth().getProvider());
@@ -216,10 +212,8 @@ public class CreateTunnelTest {
                 Map.entry("inspect", "false"),
                 Map.entry("basic_auth", List.of("auth-token")),
                 Map.entry("host_header", "host-header"),
-                Map.entry("hostname", "hostname"),
                 Map.entry("crt", "crt"),
                 Map.entry("key", "key"),
-                Map.entry("client_cas", "clientCas"),
                 Map.entry("remote_addr", "remoteAddr"),
                 Map.entry("metadata", "metadata"),
                 Map.entry("compression", "false"),
@@ -260,10 +254,8 @@ public class CreateTunnelTest {
         assertEquals("edge=some-edge-id", createTunnel.getLabels().get(0));
         assertTrue(createTunnel.getBasicAuth().contains("auth-token"));
         assertEquals("host-header", createTunnel.getHostHeader());
-        assertEquals("hostname", createTunnel.getHostname());
         assertEquals("crt", createTunnel.getCrt());
         assertEquals("key", createTunnel.getKey());
-        assertEquals("clientCas", createTunnel.getClientCas());
         assertEquals("remoteAddr", createTunnel.getRemoteAddr());
         assertEquals("metadata", createTunnel.getMetadata());
         assertFalse(createTunnel.isCompression());
