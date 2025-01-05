@@ -54,18 +54,17 @@ final Tunnel sshTunnel = ngrokClient.connect(sshCreateTunnel);
 
 // Open a named tunnel from the config file
 final CreateTunnel createNamedTunnel = new CreateTunnel.Builder()
-        .withName("my_tunnel_name")
+        .withName("my-config-file-tunnel")
         .build();
 final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
 ```
 
 The [`connect`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel))
 method can also take
-a [`CreateTunnel`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html) (
-which can be built
-through [its Builder](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html))
+a [`CreateTunnel`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html) (which can be built through [its Builder](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html))
 that allows us to pass additional properties that
-are supported by `ngrok`, [as documented here](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#tunnel-configurations).
+are supported by `ngrok` (or [`withName()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withName(java.lang.String))
+to use a tunnel defined in `ngrok`'s config file), [as documented here](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#tunnel-configurations).
 
 ### `ngrok`'s Edge
 To use [`ngrok`'s Edge](https://ngrok.com/docs/network-edge/edges/) with `java-ngrok`, first

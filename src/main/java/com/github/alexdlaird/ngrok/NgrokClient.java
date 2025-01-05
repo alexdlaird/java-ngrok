@@ -62,14 +62,15 @@ import static java.util.Objects.nonNull;
  *
  * // Open a named tunnel from the config file
  * final CreateTunnel createNamedTunnel = new CreateTunnel.Builder()
- *         .withName("my_tunnel_name")
+ *         .withName("my-config-file-tunnel")
  *         .build();
  * final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
  * </pre>
  *
  * <p>The {@link NgrokClient#connect(CreateTunnel) NgrokClient.connect()} method can also take a {@link CreateTunnel}
  * (which can be built through {@link CreateTunnel.Builder its Builder}), which allows us to pass additional tunnel
- * configurations that are supported by ngrok, <a href="#tunnel-configurations">as documented here</a>.
+ * configurations that are supported by <code>ngrok</code> (or {@link CreateTunnel.Builder#withName(String)} to use a
+ * tunnel defined in <code>ngrok</code>`'s config file), <a href="#tunnel-configurations">as documented here</a>.
  *
  * <p><p><code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
  * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
@@ -156,9 +157,9 @@ import static java.util.Objects.nonNull;
  * </pre>
  * <h3 id="tunnel-configurations">Tunnel Configurations</h3>
  * It is possible to configure the tunnel when it is created, for instance adding authentication, a subdomain, or other
- * additional <a href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations" target="_blank">tunnel
- * configurations that are supported by ngrok</a>. This is accomplished by using {@link CreateTunnel.Builder} to set
- * what properties will be used when the tunnel is created.
+ * additional <a href="https://ngrok.com/docs/agent/config/v2/#common-tunnel-configuration-properties"
+ * target="_blank">tunnel configurations that are supported by ngrok</a>. This is accomplished by using
+ * {@link CreateTunnel.Builder} to set what properties will be used when the tunnel is created.
  *
  * <p>Here is an example that opens a tunnel with subdomain <code>foo</code>, requires basic authentication for
  * requests, and defines a circuit breaker.
@@ -170,6 +171,20 @@ import static java.util.Objects.nonNull;
  *         .withSubdomain("foo")
  *         .withAuth("username:password"")
  *         .withCircuitBreaker(50)
+ *         .build();
+ *
+ * final Tunnel tunnel = ngrokClient.connect(createTunnel);
+ * </pre>
+ *
+ * <p>If we already have a tunnel
+ * <a href ="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations" target="_blank">defined in
+ * <code>ngrok</code>'s config file</a>, we can start it by its <code>name</code>.</p>
+ *
+ * <pre>
+ * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+ *
+ * final CreateTunnel createTunnel = new CreateTunnel.Builder()
+ *         .withName("my-config-file-tunnel")
  *         .build();
  *
  * final Tunnel tunnel = ngrokClient.connect(createTunnel);
@@ -385,8 +400,8 @@ public class NgrokClient {
     }
 
     /**
-     * Set the <code>ngrok</code> auth token in the config file, enabling authenticated features (for instance, more
-     * concurrent tunnels, custom subdomains, etc.).
+     * Set the <code>ngrok</code> auth token in the config file, enabling authenticated features (for instance,
+     * opening multiple concurrent tunnels, custom domains, etc.).
      *
      * @param authToken The auth token.
      */
