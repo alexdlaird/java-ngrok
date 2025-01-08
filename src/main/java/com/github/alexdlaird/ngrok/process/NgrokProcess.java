@@ -217,8 +217,8 @@ public class NgrokProcess {
     }
 
     /**
-     * Set the <code>ngrok</code> auth token in the config file, enabling authenticated features (for instance, more
-     * concurrent tunnels, custom subdomains, etc.).
+     * Set the <code>ngrok</code> auth token in the config file, enabling authenticated features (for instance, opening
+     * multiple concurrent tunnels, custom domains, etc.).
      *
      * <pre>
      * // Setting an auth token allows us to do things like open multiple tunnels at the same time

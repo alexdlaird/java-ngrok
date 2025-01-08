@@ -29,6 +29,7 @@ import static java.util.Objects.nonNull;
  * };
  * final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
  *         .withAuthToken("&lt;NGROK_AUTHTOKEN&gt;")
+ *         .withApiKey("&lt;NGROK_API_KEY&gt;")
  *         .withRegion(Region.AU)
  *         .withLogEventCallback(logEventCallback)
  *         .withMaxLogs(10);
