@@ -7,7 +7,7 @@ plugins {
     id "idea"
     id "com.adarshr.test-logger" version "4.0.0"
     id "checkstyle"
-    id "com.github.spotbugs" version "6.0.26"
+    id "com.github.spotbugs" version "6.0.27"
 }
 
 group "com.github.alexdlaird"
@@ -25,10 +25,10 @@ repositories {
 dependencies {
     implementation "com.google.code.gson:gson:2.11.0"
     implementation "org.yaml:snakeyaml:2.3"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.11.3"
-    testImplementation "org.mockito:mockito-core:5.14.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.11.4"
+    testImplementation "org.mockito:mockito-core:5.15.2"
     testImplementation "org.hamcrest:hamcrest:3.0"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.11.3"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.11.4"
 }
 
 tasks.register("createProperties", WriteProperties) {
