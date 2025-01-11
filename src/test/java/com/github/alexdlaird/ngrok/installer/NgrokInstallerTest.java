@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Alex Laird
+ * Copyright (c) 2021-2025 Alex Laird
  *
  * SPDX-License-Identifier: MIT
  */
