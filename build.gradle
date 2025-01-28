@@ -11,7 +11,7 @@ plugins {
 }
 
 group "com.github.alexdlaird"
-version "2.3.5"
+version "2.3.6"
 
 java {
     withJavadocJar()
@@ -146,4 +146,6 @@ javadoc {
     options.overview = "src/main/java/overview.html"
     options.addStringOption("Xdoclint:none", "-quiet")
     options.addBooleanOption("html5", true)
+    options.addBooleanOption("-allow-script-in-comments", true)
+    options.header(file("src/main/resources/header.html").text)
 }
