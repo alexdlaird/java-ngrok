@@ -24,7 +24,7 @@ repositories {
 
 dependencies {
     implementation "com.google.code.gson:gson:2.12.1"
-    implementation "org.yaml:snakeyaml:2.3"
+    implementation "org.yaml:snakeyaml:2.4"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.11.4"
     testImplementation "org.mockito:mockito-core:5.15.2"
     testImplementation "org.hamcrest:hamcrest:3.0"
