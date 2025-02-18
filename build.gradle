@@ -11,7 +11,7 @@ plugins {
 }
 
 group "com.github.alexdlaird"
-version "2.3.6"
+version "2.3.7"
 
 java {
     withJavadocJar()
@@ -99,7 +99,7 @@ publishing {
             }
             pom {
                 name = Project.getName()
-                description = "A Java wrapper for ngrok"
+                description = "A Java wrapper for ngrok that manages its own binary, making ngrok available via a convenient Java API"
                 url = "http://github.com/alexdlaird/java-ngrok"
                 licenses {
                     license {
