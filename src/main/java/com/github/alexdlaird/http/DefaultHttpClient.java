@@ -107,7 +107,8 @@ public class DefaultHttpClient implements HttpClient {
 
                 get(url, parameters, additionalHeaders, dest, retries + 1);
             } else {
-                String msg = "An unknown error occurred when downloading the file";
+                final String retriesMsg = retries > 0 ? String.format(", %s retries exhausted", retries) : "";
+                String msg = String.format("An unknown error occurred when downloading the file%s", retriesMsg);
 
                 int statusCode = -1;
                 String errorResponse = null;
@@ -119,7 +120,8 @@ public class DefaultHttpClient implements HttpClient {
                                 Charset.forName(encoding));
                         }
 
-                        msg = String.format("An error occurred when downloading the file (%s): %s",
+                        msg = String.format("An error occurred when downloading the file%s (%s): %s",
+                            retriesMsg,
                             httpUrlConnection.getResponseCode(),
                             errorResponse);
                     } catch (final IOException | NullPointerException ignored) {
@@ -234,7 +236,9 @@ public class DefaultHttpClient implements HttpClient {
 
                 return execute(url, body, method, additionalHeaders, clazz, retries + 1);
             } else {
-                String msg = "An unknown error occurred when performing the operation";
+                final String retriesMsg = retries > 0 ? String.format(", %s retries exhausted", retries) : "";
+                String msg =
+                    String.format("An unknown error occurred when performing the operation%s", retriesMsg);
 
                 int statusCode = -1;
                 String errorResponse = null;
@@ -244,9 +248,10 @@ public class DefaultHttpClient implements HttpClient {
                         errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(),
                             Charset.forName(encoding));
 
-                        msg = "An error occurred when performing the operation ("
-                              + httpUrlConnection.getResponseCode() + "): "
-                              + errorResponse;
+                        msg = String.format("An error occurred when performing the operation%s (%s): %s",
+                            retriesMsg,
+                            httpUrlConnection.getResponseCode(),
+                            errorResponse);
                     } catch (final IOException | NullPointerException ignored) {
                     }
                 }
