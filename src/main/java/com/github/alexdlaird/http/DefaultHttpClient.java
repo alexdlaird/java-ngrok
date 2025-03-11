@@ -229,8 +229,8 @@ public class DefaultHttpClient implements HttpClient {
                     httpUrlConnection.getHeaderFields());
             }
         } catch (final Exception e) {
-            if (method.equals("GET") &&
-                retries < retryCount) {
+            if (method.equals("GET")
+                && retries < retryCount) {
                 LOGGER.warning("GET failed, retrying in 0.5 seconds ...");
                 Thread.sleep(500);
 
