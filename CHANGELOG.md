@@ -10,10 +10,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - [`DefaultHttpClient`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.8/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html#get(java.lang.String,java.util.List,java.util.Map,java.lang.Class)) now respects `retryCount`, so API `GET` operations also retry if configured.
 
-### Changed
-
-- Default `timeout` for `DefaultHttpClient` to 6s (from 4s), matching `pyngrok`, reducing instability.
-
 ## [2.3.7](https://github.com/alexdlaird/java-ngrok/compare/2.3.6...2.3.7) - 2025-02-18
 
 ### Added
