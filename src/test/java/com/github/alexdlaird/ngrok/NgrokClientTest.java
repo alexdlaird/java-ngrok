@@ -998,7 +998,8 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testTunnelDefinitionsV3OAuth() {
+    public void testTunnelDefinitionsV3OAuth()
+        throws InterruptedException {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
@@ -1034,8 +1035,9 @@ class NgrokClientTest extends NgrokTestCase {
         final Tunnel httpTunnel = ngrokClient2.connect(createHttpTunnel);
         final List<Tunnel> tunnels = ngrokClient2.getTunnels();
 
-        final Response<Object> response = ngrokClientV3.getHttpClient().get(String.format(httpTunnel.getPublicUrl()),
-            Object.class);
+        Thread.sleep(1000);
+        final String responseBody = ngrokClientV3.getHttpClient().get(String.format(httpTunnel.getPublicUrl()),
+            Object.class).getBodyRaw();
 
         // THEN
         assertEquals(1, tunnels.size());
@@ -1043,7 +1045,7 @@ class NgrokClientTest extends NgrokTestCase {
         assertEquals("http://localhost:8000", httpTunnel.getConfig().getAddr());
         assertEquals("https", httpTunnel.getProto());
         assertEquals(String.format("https://%s.ngrok.io", subdomain), httpTunnel.getPublicUrl());
-        assertTrue(response.getBodyRaw().contains("Sign in - Google Accounts"));
+        assertTrue(responseBody.contains("Sign in - Google Accounts"));
     }
 
     @Test
