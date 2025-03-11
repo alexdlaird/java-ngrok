@@ -66,10 +66,12 @@ class NgrokClientTest extends NgrokTestCase {
         ngrokClientV2 = new NgrokClient.Builder()
             .withJavaNgrokConfig(javaNgrokConfigV2)
             .withNgrokProcess(ngrokProcessV2)
+            .withHttpClient(retryHttpClient)
             .build();
         ngrokClientV3 = new NgrokClient.Builder()
             .withJavaNgrokConfig(javaNgrokConfigV3)
             .withNgrokProcess(ngrokProcessV3)
+            .withHttpClient(retryHttpClient)
             .build();
     }
 
@@ -1035,7 +1037,6 @@ class NgrokClientTest extends NgrokTestCase {
         final Tunnel httpTunnel = ngrokClient2.connect(createHttpTunnel);
         final List<Tunnel> tunnels = ngrokClient2.getTunnels();
 
-        Thread.sleep(1000);
         final String responseBody = ngrokClientV3.getHttpClient().get(String.format(httpTunnel.getPublicUrl()),
             Object.class).getBodyRaw();
 

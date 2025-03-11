@@ -8,6 +8,7 @@ package com.github.alexdlaird.ngrok;
 
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.http.DefaultHttpClient;
+import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
@@ -41,9 +42,11 @@ public class NgrokTestCase extends TestCase {
         .withNgrokVersion(NgrokVersion.V3)
         .build();
 
-    protected final NgrokInstaller ngrokInstaller = new NgrokInstaller(new DefaultHttpClient.Builder()
+    protected final HttpClient retryHttpClient = new DefaultHttpClient.Builder()
         .withRetryCount(3)
-        .build());
+        .build();
+
+    protected final NgrokInstaller ngrokInstaller = new NgrokInstaller(retryHttpClient);
 
     protected NgrokProcess ngrokProcessV2;
 
