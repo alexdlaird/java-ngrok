@@ -58,7 +58,7 @@ public class NgrokInstaller {
     public static final String FREEBSD = "FREEBSD";
     public static final List<String> UNIX_BINARIES = List.of(MAC, LINUX, FREEBSD);
     public static final Path DEFAULT_NGROK_PATH = Paths.get(getDefaultNgrokDir().toString(),
-            NgrokInstaller.getNgrokBin());
+        NgrokInstaller.getNgrokBin());
     public static final Path DEFAULT_CONFIG_PATH = Paths.get(getDefaultNgrokDir().toString(), "ngrok.yml");
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokInstaller.class));
     private final List<String> validLogLevels = List.of("info", "debug");
@@ -72,7 +72,8 @@ public class NgrokInstaller {
      */
     public NgrokInstaller() {
         this(new DefaultHttpClient.Builder()
-                .build());
+            .withTimeout(6000)
+            .build());
     }
 
     /**
@@ -186,7 +187,7 @@ public class NgrokInstaller {
             out.close();
         } catch (final IOException e) {
             throw new JavaNgrokInstallerException(String.format("An error while installing the default "
-                    + "ngrok config to %s.", configPath), e);
+                                                                + "ngrok config to %s.", configPath), e);
         }
     }
 
@@ -210,7 +211,7 @@ public class NgrokInstaller {
         final NgrokCDNUrl ngrokCDNUrl = getNgrokCDNUrl(ngrokVersion);
 
         LOGGER.fine(String.format("Installing ngrok %s to %s%s ...", ngrokVersion, ngrokPath,
-                Files.exists(ngrokPath) ? ", overwriting" : ""));
+            Files.exists(ngrokPath) ? ", overwriting" : ""));
 
         final Path ngrokZip = Paths.get(ngrokPath.getParent().toString(), "ngrok.zip");
         downloadFile(ngrokCDNUrl.getUrl(), ngrokZip);
@@ -264,7 +265,7 @@ public class NgrokInstaller {
     public void validateConfig(final Map<String, Object> data) {
         if (data.getOrDefault("web_addr", "127.0.0.1:4040").equals("false")) {
             throw new JavaNgrokException("\"web_addr\" cannot be false, as the ngrok API is a "
-                    + "dependency for java-ngrok");
+                                         + "dependency for java-ngrok");
         }
         if (data.getOrDefault("log_format", "term").equals("json")) {
             throw new JavaNgrokException("\"log_format\" must be \"term\" to be compatible with java-ngrok");
@@ -300,7 +301,7 @@ public class NgrokInstaller {
                 }
             } catch (final IOException | JsonParseException e) {
                 throw new JavaNgrokInstallerException(String.format("An error occurred while parsing "
-                        + "the config file: %s", configPath), e);
+                                                                    + "the config file: %s", configPath), e);
             }
         }
 
@@ -381,7 +382,7 @@ public class NgrokInstaller {
 
             if (ngrokPath.getFileSystem().supportedFileAttributeViews().contains("posix")) {
                 final Set<PosixFilePermission> perms = Files.readAttributes(ngrokPath, PosixFileAttributes.class)
-                        .permissions();
+                                                            .permissions();
                 perms.add(PosixFilePermission.OWNER_EXECUTE);
                 Files.setPosixFilePermissions(ngrokPath, perms);
             }
@@ -399,7 +400,7 @@ public class NgrokInstaller {
             httpClient.get(url, List.of(), Map.of(), dest);
         } catch (final IOException | HttpClientException | InterruptedException e) {
             throw new JavaNgrokInstallerException(String.format("An error occurred while downloading "
-                    + "ngrok from %s.", url), e);
+                                                                + "ngrok from %s.", url), e);
         }
     }
 

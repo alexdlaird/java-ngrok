@@ -43,6 +43,7 @@ public class NgrokTestCase extends TestCase {
         .build();
 
     protected final HttpClient retryHttpClient = new DefaultHttpClient.Builder()
+        .withTimeout(10000)
         .withRetryCount(3)
         .build();
 

@@ -276,7 +276,7 @@ public class DefaultHttpClient implements HttpClient {
 
         private String encoding = "UTF-8";
         private String contentType = "application/json";
-        private int timeout = 6000;
+        private int timeout = 4000;
         private int retryCount = 0;
 
         /**
@@ -296,7 +296,7 @@ public class DefaultHttpClient implements HttpClient {
         }
 
         /**
-         * Default timeout in ms for requests.
+         * Default timeout, in ms, for requests.
          */
         public Builder withTimeout(final int timeout) {
             this.timeout = timeout;

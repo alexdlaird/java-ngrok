@@ -86,7 +86,7 @@ public class JavaNgrokConfig {
     }
 
     /**
-     * Get the startup timeout before <code>ngrok</code> times out on boot.
+     * Get the max timeout, in seconds, to wait for <code>ngrok</code> to start.
      */
     public int getStartupTimeout() {
         return startupTimeout;
@@ -214,7 +214,7 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * The max number of seconds to wait for <code>ngrok</code> to start before timing out.
+         * The max timeout, in seconds, to wait for <code>ngrok</code> to start.
          *
          * @throws IllegalArgumentException The argument was invalid.
          */
