@@ -23,7 +23,7 @@ clean:
 	@rm -rf java-ngrok-example-dropwizard
 
 test:
-	$(GRADLE_BIN) test -S
+	$(GRADLE_BIN) test
 
 docs:
 	$(GRADLE_BIN) javadoc

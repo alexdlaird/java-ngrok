@@ -47,9 +47,6 @@ tasks.register("printVersion") {
 test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
-    testLogging {
-        exceptionFormat = 'full'
-    }
 }
 
 jacoco {

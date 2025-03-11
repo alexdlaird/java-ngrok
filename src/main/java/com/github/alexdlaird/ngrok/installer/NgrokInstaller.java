@@ -72,7 +72,6 @@ public class NgrokInstaller {
      */
     public NgrokInstaller() {
         this(new DefaultHttpClient.Builder()
-                .withTimeout(6000)
                 .build());
     }
 
