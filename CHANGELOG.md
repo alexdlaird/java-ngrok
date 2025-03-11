@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.7...HEAD)
 
+### Added
+
+- [`DefaultHttpClient`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.8/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html#get(java.lang.String,java.util.List,java.util.Map,java.lang.Class)) now respects `retryCount`, so API `GET` operations also retry if configured.
+
 ## [2.3.7](https://github.com/alexdlaird/java-ngrok/compare/2.3.6...2.3.7) - 2025-02-18
 
 ### Added
@@ -132,9 +136,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
-- Moved evaluation of HTTP `GET` retry logic from `DefaultHttpClient`'
-  s [`getInputStream()`](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.2.10/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html#getInputStream(java.net.HttpURLConnection,java.lang.String,java.lang.String,java.util.Map))
-  to [`get()`](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.2.10/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html#get(java.lang.String,java.util.List,java.util.Map,java.nio.file.Path,int)).
+- Moved evaluation of HTTP `GET` retry logic from `DefaultHttpClient`'s [`getInputStream()`](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.2.10/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html#getInputStream(java.net.HttpURLConnection,java.lang.String,java.lang.String,java.util.Map)) to [`get()`](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.2.10/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html#get(java.lang.String,java.util.List,java.util.Map,java.nio.file.Path,int)).
 - Build and stability improvements.
 
 ## [2.2.9](https://github.com/alexdlaird/java-ngrok/compare/2.2.8...2.2.9) - 2024-02-14
@@ -187,9 +189,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- `retryCount` added
-  to [`DefaultHttpClient`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.3/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html),
-  so `GET` options can now support retries.
+- `retryCount` added to [`DefaultHttpClient`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.3/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html), so `GET` options can now support retries.
 - Documentation improvements.
 - Test improvements.
 

@@ -80,7 +80,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), null, "GET",
                 additionalHeaders, clazz);
-        } catch (final UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException | InterruptedException e) {
             throw new HttpClientException("HTTP GET error", e);
         }
     }
@@ -144,7 +144,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), convertRequestToString(request), "POST",
                 additionalHeaders, clazz);
-        } catch (final UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException | InterruptedException e) {
             throw new HttpClientException("HTTP POST error", e);
         }
     }
@@ -158,7 +158,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), convertRequestToString(request), "PUT",
                 additionalHeaders, clazz);
-        } catch (final UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException | InterruptedException e) {
             throw new HttpClientException("HTTP PUT error", e);
         }
     }
@@ -171,7 +171,7 @@ public class DefaultHttpClient implements HttpClient {
         try {
             return execute(urlWithParameters(url, parameters), null, "DELETE",
                 additionalHeaders, clazz);
-        } catch (final UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException | InterruptedException e) {
             throw new HttpClientException("HTTP DELETE error", e);
         }
     }
@@ -210,7 +210,9 @@ public class DefaultHttpClient implements HttpClient {
                                     final String body,
                                     final String method,
                                     final Map<String, String> additionalHeaders,
-                                    final Class<B> clazz) {
+                                    final Class<B> clazz,
+                                    final int retries)
+        throws InterruptedException {
         HttpURLConnection httpUrlConnection = null;
 
         try {
@@ -225,29 +227,46 @@ public class DefaultHttpClient implements HttpClient {
                     httpUrlConnection.getHeaderFields());
             }
         } catch (final Exception e) {
-            String msg = "An unknown error occurred when performing the operation";
+            if (method.equals("GET") &&
+                retries < retryCount) {
+                LOGGER.warning("GET failed, retrying in 0.5 seconds ...");
+                Thread.sleep(500);
 
-            int statusCode = -1;
-            String errorResponse = null;
-            if (nonNull(httpUrlConnection)) {
-                try {
-                    statusCode = httpUrlConnection.getResponseCode();
-                    errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(),
-                        Charset.forName(encoding));
+                return execute(url, body, method, additionalHeaders, clazz, retries + 1);
+            } else {
+                String msg = "An unknown error occurred when performing the operation";
 
-                    msg = "An error occurred when performing the operation ("
-                          + httpUrlConnection.getResponseCode() + "): "
-                          + errorResponse;
-                } catch (final IOException | NullPointerException ignored) {
+                int statusCode = -1;
+                String errorResponse = null;
+                if (nonNull(httpUrlConnection)) {
+                    try {
+                        statusCode = httpUrlConnection.getResponseCode();
+                        errorResponse = StringUtils.streamToString(httpUrlConnection.getErrorStream(),
+                            Charset.forName(encoding));
+
+                        msg = "An error occurred when performing the operation ("
+                              + httpUrlConnection.getResponseCode() + "): "
+                              + errorResponse;
+                    } catch (final IOException | NullPointerException ignored) {
+                    }
                 }
-            }
 
-            throw new HttpClientException(msg, e, url, statusCode, errorResponse);
+                throw new HttpClientException(msg, e, url, statusCode, errorResponse);
+            }
         } finally {
             if (nonNull(httpUrlConnection)) {
                 httpUrlConnection.disconnect();
             }
         }
+    }
+
+    private <B> Response<B> execute(final String url,
+                                    final String body,
+                                    final String method,
+                                    final Map<String, String> additionalHeaders,
+                                    final Class<B> clazz)
+        throws InterruptedException {
+        return execute(url, body, method, additionalHeaders, clazz, 0);
     }
 
     /**
