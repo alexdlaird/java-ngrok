@@ -160,7 +160,7 @@ public class NgrokProcess {
                     processMonitor.startupError = null;
 
                     break;
-                } else if (!process.isAlive()) {
+                } else if (!isRunning()) {
                     break;
                 }
             }
@@ -211,9 +211,6 @@ public class NgrokProcess {
         } catch (final IOException e) {
             LOGGER.log(Level.WARNING, "An error occurred when closing \"ProcessMonitor.reader\"", e);
         }
-
-        process = null;
-        processMonitor = null;
     }
 
     /**
@@ -520,7 +517,7 @@ public class NgrokProcess {
                 return false;
             }
 
-            return process.isAlive();
+            return nonNull(process) && process.isAlive();
         }
 
         private void logStartupLine(final String line) {

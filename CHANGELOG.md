@@ -4,11 +4,17 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.7...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.8...HEAD)
+
+## [2.3.8](https://github.com/alexdlaird/java-ngrok/compare/2.3.7...2.3.8) - 2025-03-16
 
 ### Added
 
 - [`DefaultHttpClient`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.8/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html#get(java.lang.String,java.util.List,java.util.Map,java.lang.Class)) now respects `retryCount`, so API `GET` operations also retry if configured.
+
+### Fixed
+
+- `process` and `processMonitor` are no longer set to `null` when [NgrokProcess.stop()](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.8/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/process/NgrokProcess.html#stop()) is called, as this was error prone behavior that also suppressed useful information.
 
 ## [2.3.7](https://github.com/alexdlaird/java-ngrok/compare/2.3.6...2.3.7) - 2025-02-18
 

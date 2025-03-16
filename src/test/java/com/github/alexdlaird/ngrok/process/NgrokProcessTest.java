@@ -48,7 +48,8 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testStop() {
+    public void testStop()
+        throws InterruptedException {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
@@ -56,6 +57,7 @@ public class NgrokProcessTest extends NgrokTestCase {
 
         // WHEN
         ngrokProcessV3.stop();
+        Thread.sleep(1000);
 
         // THEN
         assertFalse(ngrokProcessV3.isRunning());

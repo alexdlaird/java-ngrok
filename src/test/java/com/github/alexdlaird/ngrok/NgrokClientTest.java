@@ -409,7 +409,8 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testKill() {
+    public void testKill()
+        throws InterruptedException {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
@@ -418,6 +419,7 @@ class NgrokClientTest extends NgrokTestCase {
 
         // WHEN
         ngrokClientV3.kill();
+        Thread.sleep(1000);
 
         // THEN
         assertFalse(ngrokClientV3.getNgrokProcess().isRunning());
