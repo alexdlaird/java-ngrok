@@ -6,6 +6,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.8...HEAD)
 
+### Added
+
+- Migrate build from OSSRH to Central publishing. 
+- Updates to Maven Central badge links.
+
 ## [2.3.8](https://github.com/alexdlaird/java-ngrok/compare/2.3.7...2.3.8) - 2025-03-16
 
 ### Added

@@ -2,12 +2,12 @@ plugins {
     id "java-library"
     id "maven-publish"
     id "signing"
-    id "io.github.gradle-nexus.publish-plugin" version "2.0.0"
     id "jacoco"
     id "idea"
     id "com.adarshr.test-logger" version "4.0.0"
     id "checkstyle"
     id "com.github.spotbugs" version "6.1.7"
+    id "org.jreleaser" version "1.17.0"
 }
 
 group "com.github.alexdlaird"
@@ -125,21 +125,30 @@ publishing {
     }
 }
 
-nexusPublishing {
-    repositories {
-        sonatype {
-            username = System.getenv("SONATYPE_USERNAME")
-            password = System.getenv("SONATYPE_PASSWORD")
-        }
-    }
-}
-
 signing {
     required { gradle.taskGraph.hasTask("publish") }
     def signingKey = System.getenv("GPG_PRIVATE_KEY")
     def signingPassword = System.getenv("GPG_PASSPHRASE")
     useInMemoryPgpKeys(signingKey, signingPassword)
     sign publishing.publications.javaLibrary
+}
+
+jreleaser {
+    signing {
+        active = "ALWAYS"
+        armored = true
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                sonatype {
+                    active = "ALWAYS"
+                    url = "https://central.sonatype.com/api/v1/publisher"
+                    stagingRepository("target/staging-deploy")
+                }
+            }
+        }
+    }
 }
 
 javadoc {

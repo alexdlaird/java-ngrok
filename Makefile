@@ -51,4 +51,4 @@ test-downstream:
 	)
 
 upload:
-	$(GRADLE_BIN) publishToSonatype closeAndReleaseSonatypeStagingRepository
+	$(GRADLE_BIN) publish jreleaserFullRelease
