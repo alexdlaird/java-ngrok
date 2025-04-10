@@ -1,7 +1,7 @@
 <p align="center"><img alt="java-ngrok - a Java wrapper for ngrok" src="https://github.com/alexdlaird/java-ngrok/raw/main/logo.png" /></p>
 
-[![Version](https://img.shields.io/maven-central/v/com.github.alexdlaird/java-ngrok)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/)
-[![Java Versions](https://img.shields.io/badge/Java-11+-blue)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/)
+[![Version](https://img.shields.io/maven-central/v/com.github.alexdlaird/java-ngrok)](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok)
+[![Java Versions](https://img.shields.io/badge/Java-11+-blue)](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok)
 [![Coverage](https://img.shields.io/codecov/c/github/alexdlaird/java-ngrok)](https://codecov.io/gh/alexdlaird/java-ngrok)
 [![Build](https://img.shields.io/github/actions/workflow/status/alexdlaird/java-ngrok/build.yml)](https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml)
 [![Code Quality](https://api.codacy.com/project/badge/Grade/940d16178f8f4e8abfcf9bf2873894b3)](https://app.codacy.com/gh/alexdlaird/java-ngrok?utm_source=github.com&utm_medium=referral&utm_content=alexdlaird/java-ngrok&utm_campaign=Badge_Grade)
@@ -19,7 +19,7 @@ machine, and more, and its made even more powerful with native Java integration 
 ## Installation
 
 `java-ngrok` is available
-on [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/).
+on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok).
 
 If we want `ngrok` to be available from the command
 line, [pyngrok](https://pyngrok.readthedocs.io/en/latest/#installation)
@@ -120,8 +120,8 @@ and [`CreateTunnel.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/d
 
 ### Java 8
 
-[![Version](https://img.shields.io/maven-central/v/com.github.alexdlaird/java8-ngrok)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/)
-[![Java Versions](https://img.shields.io/badge/Java-8+-blue)](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/)
+[![Version](https://img.shields.io/maven-central/v/com.github.alexdlaird/java8-ngrok)](https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok)
+[![Java Versions](https://img.shields.io/badge/Java-8+-blue)](https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok)
 [![Coverage](https://img.shields.io/codecov/c/github/alexdlaird/java-ngrok/1.4.x)](https://codecov.io/gh/alexdlaird/java-ngrok/tree/1.4.x)
 [![Build](https://img.shields.io/github/actions/workflow/status/alexdlaird/java-ngrok/build.yml?branch=1.4.x)](https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml?query=branch%3A1.4.x)
 [![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok)
@@ -129,7 +129,7 @@ and [`CreateTunnel.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/d
 
 Java 8 support is not actively maintained, but on a periodic basis, `main` may be rebased in to the `1.4.x`
 branch, where a compatible build of this project exists for Java 8. To use it, include the `java8-ngrok`
-dependency from [Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/).
+dependency from [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok).
 
 For more details on what differs in the `java8-ngrok` dependency,
 see [the "Java 8" section of the docs](https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok/latest/index.html#java8).
