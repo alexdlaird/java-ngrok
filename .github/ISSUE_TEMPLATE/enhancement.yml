@@ -22,7 +22,7 @@ body:
 - type: textarea
   id: describe-the-enhancement
   attributes:
-    label: Describe the Feature
+    label: Describe the Enhancement
     description: A clear and concise description of the how and why of the feature you'd like to see, or what specifically should be added to the documentation. If possible, include possible code snippets of interfaces you'd like to see and how you might interact with them.
   validations:
     required: true
