@@ -49,6 +49,10 @@ test {
     finalizedBy jacocoTestReport
 }
 
+testlogger {
+    slowThreshold 2000
+}
+
 jacoco {
     toolVersion = "0.8.11"
 }
