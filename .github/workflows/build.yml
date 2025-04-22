@@ -11,7 +11,7 @@ on:
   workflow_call:
 
 concurrency:
-  group: java-ngrok-${{ github.workflow }}-singleton
+  group: java-ngrok-singleton
 
 jobs:
   build:

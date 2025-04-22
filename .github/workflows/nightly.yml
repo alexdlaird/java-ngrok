@@ -5,7 +5,7 @@ on:
     - cron: "0 10 * * *"
 
 concurrency:
-  group: java-ngrok-${{ github.workflow }}-singleton
+  group: java-ngrok-singleton
 
 jobs:
   test:
