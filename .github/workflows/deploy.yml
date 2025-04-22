@@ -7,7 +7,7 @@ on:
     types: [ created ]
 
 concurrency:
-  group: java-ngrok-${{ github.workflow }}-${{ github.ref }}-singleton
+  group: java-ngrok-${{ github.workflow }}-singleton
 
 jobs:
   build:
