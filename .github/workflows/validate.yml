@@ -3,6 +3,9 @@ name: Validate
 on:
   workflow_call:
 
+concurrency:
+  group: java-ngrok-workflow-singleton
+
 jobs:
   build:
     name: Validate

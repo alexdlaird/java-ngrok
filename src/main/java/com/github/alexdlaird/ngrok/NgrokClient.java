@@ -142,7 +142,7 @@ import static java.util.Objects.nonNull;
  * </pre>
  *
  * <p>We can also serve up local directories via
- * <a href="https://ngrok.com/docs/http/#file-serving" target="_blank">ngrok’s built-in
+ * <a href="https://ngrok.com/docs/http/#file-serving" target="_blank">ngrok's built-in
  * fileserver</a>.
  *
  * <p><pre>

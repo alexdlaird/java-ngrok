@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: "0 10 * * *"
 
+concurrency:
+  group: java-ngrok-workflow-singleton
+
 jobs:
   test:
     name: Nightly Test
