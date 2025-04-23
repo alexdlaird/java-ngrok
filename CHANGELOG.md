@@ -4,12 +4,17 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.8...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.9...HEAD)
+
+## [2.3.9](https://github.com/alexdlaird/java-ngrok/compare/2.3.8...2.3.9) - 2025-04-23
 
 ### Added
 
+- Deprecation warning when using Labeled Tunnels, since `ngrok` Edges, which will be sunset December 31st, 2025. See [this issue](https://github.com/alexdlaird/java-ngrok/issues/158) for more details.
 - Migrate build from OSSRH to Central publishing. 
 - Updates to Maven Central badge links.
+- Documentation improvements.
+- Build improvements.
 
 ## [2.3.8](https://github.com/alexdlaird/java-ngrok/compare/2.3.7...2.3.8) - 2025-03-16
 
