@@ -132,7 +132,7 @@ branch, where a compatible build of this project exists for Java 8. To use it, i
 dependency from [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok).
 
 For more details on what differs in the `java8-ngrok` dependency,
-see [the "Java 8" section of the docs](https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok/latest/index.html#java8).
+see [the "Java 8" section of the docs](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.13/overview-summary.html#java8).
 
 ## Contributing
 

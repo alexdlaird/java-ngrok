@@ -380,7 +380,7 @@ on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/j
 ### Added
 
 - `obj` parsing
-  in [`NgrokLog`](https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok/1.4.13/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/process/NgrokLog.html).
+  in [`NgrokLog`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.13/com/github/alexdlaird/ngrok/process/NgrokLog.html).
 - `throws` for unchecked exceptions to documentation.
 - Documentation improvements.
 - Build and stability improvements.
@@ -388,7 +388,7 @@ on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/j
 ### Fixed
 
 - Minor bugs, including a typo in the name
-  of [JavaNgrokConfig.getStartupTimeout()](https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok/1.4.13/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html#getStartupTimeout()).
+  of [JavaNgrokConfig.getStartupTimeout()](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.13/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html#getStartupTimeout--).
 
 ## [1.4.12](https://github.com/alexdlaird/java-ngrok/compare/1.4.11...1.4.12) - 2024-03-06
 
