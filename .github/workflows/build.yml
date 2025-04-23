@@ -11,7 +11,7 @@ on:
   workflow_call:
 
 concurrency:
-  group: java-ngrok-singleton
+  group: java-ngrok-1.4.x-singleton
 
 jobs:
   build:
