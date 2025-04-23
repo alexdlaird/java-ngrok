@@ -463,7 +463,7 @@ public class NgrokClient {
      * <p>This particular code path, as well as support for labels in ngrok's config file, will become dead code after
      * Edges are sunset, so support for these things will be removed from java-ngrok in a subsequent release.
      *
-     * <p>Deprecation notice: https://ngrok.com/docs/universal-gateway/edges/?utm_campaign=deprecation_notice_edges_04_2025&utm_medium=email&_hsenc=p2ANqtz-9z77Owmk44wHAXaBTjCfbEVHxKMPO7w9E8W-F284lO0FIrIEnvCtbhSLQ9o9NaZCFkrHfAxRyOtHAj02mli4ZMLAbMNg&_hsmi=357901456&utm_content=docs_edges&utm_source=email
+     * <p>The docs for Edges includes a migration guide: https://ngrok.com/docs/universal-gateway/edges
      */
     private void applyEdgeToTunnel(final Tunnel tunnel) {
         if ((isNull(tunnel.getPublicUrl()) || tunnel.getPublicUrl().isEmpty())
