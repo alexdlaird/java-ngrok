@@ -1,7 +1,6 @@
 plugins {
     id "java-library"
     id "maven-publish"
-    id "signing"
     id "jacoco"
     id "idea"
     id "com.adarshr.test-logger" version "4.0.0"
@@ -129,19 +128,12 @@ publishing {
     }
 }
 
-signing {
-    required { gradle.taskGraph.hasTask("publish") }
-    def signingKey = System.getenv("GPG_PRIVATE_KEY")
-    def signingPassword = System.getenv("GPG_PASSPHRASE")
-    useInMemoryPgpKeys(signingKey, signingPassword)
-    sign publishing.publications.javaLibrary
-}
-
 jreleaser {
     signing {
         active = "ALWAYS"
         armored = true
     }
+
     deploy {
         maven {
             mavenCentral {
