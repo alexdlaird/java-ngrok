@@ -1,5 +1,6 @@
 <p align="center"><img alt="java-ngrok - a Java wrapper for ngrok" src="https://github.com/alexdlaird/java-ngrok/raw/main/logo.png" /></p>
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/940d16178f8f4e8abfcf9bf2873894b3)](https://app.codacy.com/gh/alexdlaird/java-ngrok?utm_source=github.com&utm_medium=referral&utm_content=alexdlaird/java-ngrok&utm_campaign=Badge_Grade)
 [![Version](https://img.shields.io/maven-central/v/com.github.alexdlaird/java-ngrok)](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok)
 [![Java Versions](https://img.shields.io/badge/Java-11+-blue)](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok)
 [![Coverage](https://img.shields.io/codecov/c/github/alexdlaird/java-ngrok)](https://codecov.io/gh/alexdlaird/java-ngrok)
