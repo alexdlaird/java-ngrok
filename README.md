@@ -123,7 +123,7 @@ exists for Java 8. Use the maintained `java-ngrok` dependency from [Maven Centra
 and the [`main`](https://github.com/alexdlaird/java-ngrok) for Java 11 and above.
 
 For more details on what differs in the `java8-ngrok` dependency,
-see [the "Java 8" section of the docs](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.3/overview-summary.html#java8).
+see [the "Java 8" section of the docs](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.13/overview-summary.html#java8).
 
 ## Contributing
 
