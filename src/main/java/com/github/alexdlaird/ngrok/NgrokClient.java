@@ -87,7 +87,7 @@ import static java.util.Objects.nonNull;
  * <p><strong>Note:</strong> <code>ngrok</code> has deprecated Edges and will sunset Labeled Tunnels on December 31st,
  * 2025. See <a href="https://github.com/alexdlaird/java-ngrok/issues/158" target="_blank">this issue</a> for more
  * details.
- * 
+ *
  * <p>To use <a href="https://ngrok.com/docs/universal-gateway/edges/" target="_blank"><code>ngrok</code>'s Edges</a>
  * with
  * <code>java-ngrok</code>, first <a href="ttps://dashboard.ngrok.com/edges" target="_blank">configure an
@@ -464,6 +464,7 @@ public class NgrokClient {
         return httpClient;
     }
 
+    @Deprecated
     private void applyEdgeToTunnel(final Tunnel tunnel) {
         if ((isNull(tunnel.getPublicUrl()) || tunnel.getPublicUrl().isEmpty())
                 && nonNull(javaNgrokConfig.getApiKey()) && nonNull(tunnel.getId())) {
