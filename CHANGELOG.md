@@ -228,7 +228,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - Support for `labels`,
   so [`ngrok`'s Labeled Tunnel Configuration](https://ngrok.com/docs/agent/config/v2/#labeled-tunnel-configuration)
-  is now supported, which enables basic support for [`ngrok`'s Edge](https://ngrok.com/docs/network-edge/edges/).
+  is now supported, which enables basic support for [`ngrok`'s Edge](https://ngrok.com/docs/universal-gateway/edges/).
 - `apiKey`
   to [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html),
   which can be set so `java-ngrok` can interface with Edges `labels`.

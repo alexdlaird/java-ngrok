@@ -66,7 +66,7 @@ are supported by `ngrok` (or [`withName()`](https://javadoc.io/static/com.github
 to use a tunnel defined in `ngrok`'s config file), [as documented here](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.13/com/github/alexdlaird/ngrok/NgrokClient.html#tunnel-configurations).
 
 ### `ngrok`'s Edge
-To use [`ngrok`'s Edge](https://ngrok.com/docs/network-edge/edges/) with `java-ngrok`, first
+To use [`ngrok`'s Edge](https://ngrok.com/docs/universal-gateway/edges/) with `java-ngrok`, first
 [configure an Edge](https://dashboard.ngrok.com/edges) [on ngrok's dashboard](https://dashboard.ngrok.com/edges) (with
 at least one Endpoint mapped to the Edge), and define a labeled tunnel in
 [the `ngrok` config file](https://ngrok.com/docs/agent/config/v2/#define-two-labeled-tunnels) that points to the Edge.
