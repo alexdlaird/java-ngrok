@@ -303,50 +303,6 @@ public class NgrokClient {
         return connect(new CreateTunnel.Builder().withNgrokVersion(javaNgrokConfig.getNgrokVersion()).build());
     }
 
-    private void applyCloudEdgeToTunnel(final Tunnel tunnel) {
-        if ((isNull(tunnel.getPublicUrl()) || tunnel.getPublicUrl().isEmpty())
-            && nonNull(javaNgrokConfig.getApiKey()) && nonNull(tunnel.getId())) {
-            final Map<String, String> ngrokApiHeaders = new HashMap<>();
-            ngrokApiHeaders.put("Authorization", String.format("Bearer %s", javaNgrokConfig.getApiKey()));
-            ngrokApiHeaders.put("Ngrok-Version", "2");
-            final Response<Map> tunnelResponse = httpClient.get(String.format("https://api.ngrok.com/tunnels/%s",
-                tunnel.getId()), Collections.emptyList(), ngrokApiHeaders, Map.class);
-
-            if (!tunnelResponse.getBody().containsKey("labels")
-                || !(tunnelResponse.getBody().get("labels") instanceof Map)
-                || !((Map) tunnelResponse.getBody().get("labels")).containsKey("edge")) {
-                throw new JavaNgrokException(String.format("Tunnel %s does not have 'labels', use a Tunnel "
-                    + "configured on Cloud Edge.", tunnel.getId()));
-            }
-
-            final String edge = (String) ((Map) tunnelResponse.getBody().get("labels")).get("edge");
-            final String edgesPrefix;
-            if (edge.startsWith("edghts_")) {
-                edgesPrefix = "https";
-            } else if (edge.startsWith("edgtcp")) {
-                edgesPrefix = "tcp";
-            } else if (edge.startsWith("edgtls")) {
-                edgesPrefix = "tls";
-            } else {
-                throw new JavaNgrokException(String.format("Unknown Edge prefix: %s.", edge));
-            }
-
-            final Response<Map> edgeResponse = httpClient.get(String.format("https://api.ngrok.com/edges/%s/%s",
-                edgesPrefix, edge), Collections.emptyList(), ngrokApiHeaders, Map.class);
-
-            if (!edgeResponse.getBody().containsKey("hostports")
-                || !(edgeResponse.getBody().get("hostports") instanceof List)
-                || ((List) edgeResponse.getBody().get("hostports")).isEmpty()) {
-                throw new JavaNgrokException(String.format("No Endpoint is attached to your Cloud Edge %s, "
-                    + "login to the ngrok dashboard to attach an Endpoint to your Edge first.", edge));
-            }
-
-            tunnel.setPublicUrl(String.format("%s://%s", edgesPrefix,
-                ((List) edgeResponse.getBody().get("hostports")).get(0)));
-            tunnel.setProto(edgesPrefix);
-        }
-    }
-
     /**
      * Disconnect the <code>ngrok</code> tunnel for the given URL, if open.
      *
