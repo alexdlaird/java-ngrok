@@ -18,7 +18,7 @@ jobs:
       NGROK_TLS_EDGE: ${{ secrets.NGROK_TLS_EDGE }}
       NGROK_TLS_EDGE_ENDPOINT: ${{ secrets.NGROK_TLS_EDGE_ENDPOINT }}
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 8
-          distribution: adopt
+          distribution: zulu
       - name: Build test coverage
         run: make test
       - name: Build docs

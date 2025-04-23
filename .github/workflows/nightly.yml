@@ -30,7 +30,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 21
-          distribution: adopt
+          distribution: zulu
       - name: Test
         uses: nick-fields/retry@v3
         with:
