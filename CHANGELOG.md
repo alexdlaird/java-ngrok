@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- Deprecation warning when using Labeled Tunnels, since `ngrok` Edges, which will be sunset December 31st, 2025. See [this issue](https://github.com/alexdlaird/java-ngrok/issues/158) for more details.
+- Deprecation warning when using Labeled Tunnels, since `ngrok` Edges will be sunset December 31st, 2025. See [this issue](https://github.com/alexdlaird/java-ngrok/issues/158) for more details.
 - Migrate build from OSSRH to Central publishing. 
 - Updates to Maven Central badge links.
 - Documentation improvements.
@@ -374,11 +374,26 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   from [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.5.0/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html),
   instead relying on `ngrok`'s own built-in retry mechanism on startup fails.
 
-## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.13...1.4.x)
+## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.14...1.4.x)
 
 The `1.4.x` branch is where support for Java 8 of `java-ngrok` is passively maintained. It is available through
 the `java8-ngrok` artifact
 on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok).
+
+## [1.4.14](https://github.com/alexdlaird/java-ngrok/compare/1.4.13...1.4.14) - 2025-04-23
+
+### Added
+
+- Rebased the `1.4.x` branch with Java 8-compatible changes from `main` between `2.2.15` and `2.3.9`. See
+  the [`main` changelog](https://github.com/alexdlaird/java-ngrok/blob/main/CHANGELOG.md#230---2024-04-08) for full
+  details.
+- Biggest changes include support for `ngrok`'s v3 config (including `traffic_policy`), support for latest fields in tunnel definitions, `ip_restriction`
+- Deprecation warning when using Labeled Tunnels, since `ngrok` Edges will be sunset December 31st, 2025. See [this issue](https://github.com/alexdlaird/java-ngrok/issues/158) for more details.
+
+### Fixed
+
+- `ip_restriction` was incorrectly plural, config [and class](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/TunnelIPRestriction.html)
+  are now singular to match `ngrok`.
 
 ## [1.4.13](https://github.com/alexdlaird/java-ngrok/compare/1.4.12...1.4.13) - 2024-03-08
 
