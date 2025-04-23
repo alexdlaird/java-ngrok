@@ -1,13 +1,10 @@
 /*
- * Copyright (c) 2021-2024 Alex Laird
+ * Copyright (c) 2021-2025 Alex Laird
  *
  * SPDX-License-Identifier: MIT
  */
 
 package com.github.alexdlaird.ngrok.installer;
-
-import static com.github.alexdlaird.util.StringUtils.isBlank;
-import static java.util.Objects.nonNull;
 
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokInstallerException;
@@ -40,12 +37,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.yaml.snakeyaml.Yaml;
 
+import static com.github.alexdlaird.util.StringUtils.isBlank;
+import static java.util.Objects.nonNull;
+
 /**
- * A helper for downloading and installing the <code>ngrok</code> for the current system.
+ * A helper for downloading and installing <code>ngrok</code> for the current system.
  *
  * <h2>Config File</h2>
  * By default, <code>ngrok</code> will look for its config file in
- * <a href="https://ngrok.com/docs/ngrok-agent/config" target="_blank">the default location</a>.
+ * <a href="https://ngrok.com/docs/agent/config/#default-locations" target="_blank">the default location</a>.
  * We can override this behavior with {@link JavaNgrokConfig.Builder#withConfigPath(Path)}.
  *
  * <h2>Binary Path</h2>
@@ -54,8 +54,6 @@ import org.yaml.snakeyaml.Yaml;
  * {@link NgrokClient}.
  */
 public class NgrokInstaller {
-
-    private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokInstaller.class));
 
     public static final String MAC = "DARWIN";
     public static final String WINDOWS = "WINDOWS";
@@ -67,10 +65,10 @@ public class NgrokInstaller {
     public static final Path DEFAULT_NGROK_PATH = Paths.get(getDefaultNgrokDir().toString(),
         NgrokInstaller.getNgrokBin());
     public static final Path DEFAULT_CONFIG_PATH = Paths.get(getDefaultNgrokDir().toString(), "ngrok.yml");
-
+    private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokInstaller.class));
     private final List<String> validLogLevels = Collections.unmodifiableList(
-        Stream.of("info", "debug")
-            .collect(Collectors.toList()));
+        Stream.of("info", "debug").collect(
+        Collectors.toList()));
     private final Yaml yaml = new Yaml();
     private final Map<String, Map<String, Object>> configCache = new HashMap<>();
 
@@ -110,31 +108,78 @@ public class NgrokInstaller {
     }
 
     /**
-     * See {@link #installDefaultConfig(Path, Map, NgrokVersion)}.
+     * Parse the name fo the OS from system properties and return a friendly name.
+     *
+     * @return The friendly name of the OS.
+     * @throws JavaNgrokInstallerException The OS is not supported.
+     */
+    public static String getSystem() {
+        final String os = System.getProperty("os.name").replaceAll(" ", "").toLowerCase();
+
+        if (os.startsWith("mac")) {
+            return MAC;
+        } else if (os.startsWith("windows") || os.contains("cygwin")) {
+            return WINDOWS;
+        } else if (os.startsWith("linux")) {
+            return LINUX;
+        } else if (os.startsWith("freebsd")) {
+            return FREEBSD;
+        } else {
+            throw new JavaNgrokInstallerException(String.format("Unknown os.name: %s", os));
+        }
+    }
+
+    private static Path getDefaultNgrokDir() {
+        final String system = getSystem();
+        final String userHome = System.getProperty("user.home");
+        if (system.equals(MAC)) {
+            return Paths.get(userHome, "Library", "Application Support", "ngrok");
+        } else if (system.equals(WINDOWS)) {
+            return Paths.get(userHome, "AppData", "Local", "ngrok");
+        } else {
+            return Paths.get(userHome, ".config", "ngrok");
+        }
+    }
+
+    /**
+     * See {@link #installDefaultConfig(Path, Map, NgrokVersion, ConfigVersion)}.
      */
     public void installDefaultConfig(final Path configPath, final Map<String, Object> data) {
-        installDefaultConfig(configPath, data, NgrokVersion.V3);
+        installDefaultConfig(configPath, data, NgrokVersion.V3, ConfigVersion.V2);
+    }
+
+    /**
+     * See {@link #installDefaultConfig(Path, Map, NgrokVersion, ConfigVersion)}.
+     */
+    public void installDefaultConfig(final Path configPath,
+                                     final Map<String, Object> data,
+                                     final NgrokVersion ngrokVersion) {
+        installDefaultConfig(configPath, data, ngrokVersion, ConfigVersion.V2);
     }
 
     /**
      * Install the default <code>ngrok</code> config. If a config is not already present for the given path, create
      * one.
      *
-     * @param configPath The path to where the <code>ngrok</code> config should be installed.
-     * @param data       A map of things to add to the default config.
+     * @param configPath    The path to where the <code>ngrok</code> config should be installed.
+     * @param data          A map of things to add to the default config.
+     * @param ngrokVersion  The major version of <code>ngrok</code> installed.
+     * @param configVersion The <code>ngrok</code> config version.
      * @throws JavaNgrokInstallerException An error occurred downloading <code>ngrok</code>.
      */
-    public void installDefaultConfig(final Path configPath, final Map<String, Object> data,
-                                     final NgrokVersion ngrokVersion) {
+    public void installDefaultConfig(final Path configPath,
+                                     final Map<String, Object> data,
+                                     final NgrokVersion ngrokVersion,
+                                     final ConfigVersion configVersion) {
         try {
             Files.createDirectories(configPath.getParent());
             if (!Files.exists(configPath)) {
                 Files.createFile(configPath);
             }
 
-            final Map<String, Object> config = getNgrokConfig(configPath, false, ngrokVersion);
+            final Map<String, Object> config = getNgrokConfig(configPath, false, ngrokVersion, configVersion);
 
-            config.putAll(getDefaultConfig(ngrokVersion));
+            config.putAll(getDefaultConfig(ngrokVersion, configVersion));
 
             config.putAll(data);
 
@@ -149,7 +194,7 @@ public class NgrokInstaller {
             out.close();
         } catch (final IOException e) {
             throw new JavaNgrokInstallerException(String.format("An error while installing the default "
-                + "ngrok config to %s.", configPath), e);
+                                                                + "ngrok config to %s.", configPath), e);
         }
     }
 
@@ -227,7 +272,7 @@ public class NgrokInstaller {
     public void validateConfig(final Map<String, Object> data) {
         if (data.getOrDefault("web_addr", "127.0.0.1:4040").equals("false")) {
             throw new JavaNgrokException("\"web_addr\" cannot be false, as the ngrok API is a "
-                + "dependency for java-ngrok");
+                                         + "dependency for java-ngrok");
         }
         if (data.getOrDefault("log_format", "term").equals("json")) {
             throw new JavaNgrokException("\"log_format\" must be \"term\" to be compatible with java-ngrok");
@@ -238,50 +283,32 @@ public class NgrokInstaller {
     }
 
     /**
-     * Parse the name fo the OS from system properties and return a friendly name.
-     *
-     * @return The friendly name of the OS.
-     * @throws JavaNgrokInstallerException The OS is not supported.
-     */
-    public static String getSystem() {
-        final String os = System.getProperty("os.name").replaceAll(" ", "").toLowerCase();
-
-        if (os.startsWith("mac")) {
-            return MAC;
-        } else if (os.startsWith("windows") || os.contains("cygwin")) {
-            return WINDOWS;
-        } else if (os.startsWith("linux")) {
-            return LINUX;
-        } else if (os.startsWith("freebsd")) {
-            return FREEBSD;
-        } else {
-            throw new JavaNgrokInstallerException(String.format("Unknown os.name: %s", os));
-        }
-    }
-
-    /**
      * Get the <code>ngrok</code> config from the given path.
      *
-     * @param configPath The <code>ngrok</code> config path to read.
-     * @param useCache   Use the cached version of the config (if populated).
+     * @param configPath    The <code>ngrok</code> config path to read.
+     * @param useCache      Use the cached version of the config (if populated).
+     * @param ngrokVersion  The major version of <code>ngrok</code> installed.
+     * @param configVersion The <code>ngrok</code> config version.
      * @return A map of the <code>ngrok</code> config.
      * @throws JavaNgrokInstallerException The config could not be parsed.
      */
-    public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache,
-                                              final NgrokVersion ngrokVersion) {
+    public Map<String, Object> getNgrokConfig(final Path configPath,
+                                              final boolean useCache,
+                                              final NgrokVersion ngrokVersion,
+                                              final ConfigVersion configVersion) {
         final String key = configPath.toString();
         if (!configCache.containsKey(key) || !useCache) {
             try {
                 final String config = new String(Files.readAllBytes(configPath), StandardCharsets.UTF_8);
 
                 if (isBlank(config)) {
-                    configCache.put(key, getDefaultConfig(ngrokVersion));
+                    configCache.put(key, getDefaultConfig(ngrokVersion, configVersion));
                 } else {
                     configCache.put(key, yaml.load(config));
                 }
             } catch (final IOException | JsonParseException e) {
                 throw new JavaNgrokInstallerException(String.format("An error occurred while parsing "
-                    + "the config file: %s", configPath), e);
+                                                                    + "the config file: %s", configPath), e);
             }
         }
 
@@ -289,14 +316,14 @@ public class NgrokInstaller {
     }
 
     /**
-     * See {@link #getNgrokConfig(Path, boolean, NgrokVersion)}.
+     * See {@link #getNgrokConfig(Path, boolean, NgrokVersion, ConfigVersion)}.
      */
     public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache) {
-        return getNgrokConfig(configPath, useCache, NgrokVersion.V3);
+        return getNgrokConfig(configPath, useCache, NgrokVersion.V3, ConfigVersion.V2);
     }
 
     /**
-     * See {@link #getNgrokConfig(Path, boolean, NgrokVersion)}.
+     * See {@link #getNgrokConfig(Path, boolean, NgrokVersion, ConfigVersion)}.
      */
     public Map<String, Object> getNgrokConfig(final Path configPath) {
         return getNgrokConfig(configPath, true);
@@ -305,29 +332,21 @@ public class NgrokInstaller {
     /**
      * Get the default config params for the given major version of <code>ngrok</code>.
      *
-     * @param ngrokVersion The major version of <code>ngrok</code> installed.
+     * @param ngrokVersion  The major version of <code>ngrok</code> installed.
+     * @param configVersion The <code>ngrok</code> config version.
      * @return The default config.
      */
-    public Map<String, Object> getDefaultConfig(final NgrokVersion ngrokVersion) {
+    public Map<String, Object> getDefaultConfig(final NgrokVersion ngrokVersion,
+                                                final ConfigVersion configVersion) {
         if (ngrokVersion == NgrokVersion.V2) {
             return new HashMap<>();
         } else {
             final HashMap<String, Object> config = new HashMap<>();
-            config.put("version", "2");
-            config.put("region", "us");
+            config.put("version", configVersion.getVersion());
+            if (configVersion == ConfigVersion.V2) {
+                config.put("region", "us");
+            }
             return config;
-        }
-    }
-
-    private static Path getDefaultNgrokDir() {
-        final String system = getSystem();
-        final String userHome = System.getProperty("user.home");
-        if (system.equals(MAC)) {
-            return Paths.get(userHome, "Library", "Application Support", "ngrok");
-        } else if (system.equals(WINDOWS)) {
-            return Paths.get(userHome, "AppData", "Local", "ngrok");
-        } else {
-            return Paths.get(userHome, ".config", "ngrok");
         }
     }
 
@@ -370,10 +389,8 @@ public class NgrokInstaller {
 
             if (ngrokPath.getFileSystem().supportedFileAttributeViews().contains("posix")) {
                 final Set<PosixFilePermission> perms = Files.readAttributes(ngrokPath, PosixFileAttributes.class)
-                    .permissions();
+                                                            .permissions();
                 perms.add(PosixFilePermission.OWNER_EXECUTE);
-                perms.add(PosixFilePermission.GROUP_EXECUTE);
-                perms.add(PosixFilePermission.OTHERS_EXECUTE);
                 Files.setPosixFilePermissions(ngrokPath, perms);
             }
         } catch (final IOException e) {
@@ -390,7 +407,7 @@ public class NgrokInstaller {
             httpClient.get(url, Collections.emptyList(), Collections.emptyMap(), dest);
         } catch (final IOException | HttpClientException | InterruptedException e) {
             throw new JavaNgrokInstallerException(String.format("An error occurred while downloading "
-                + "ngrok from %s.", url), e);
+                                                                + "ngrok from %s.", url), e);
         }
     }
 

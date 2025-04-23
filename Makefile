@@ -11,7 +11,7 @@ else
 	GRADLE_BIN := ./gradlew
 endif
 
-all: build
+all: test
 
 install: local
 
@@ -51,4 +51,4 @@ test-downstream:
 	)
 
 upload:
-	$(GRADLE_BIN) publishToSonatype closeAndReleaseSonatypeStagingRepository
+	$(GRADLE_BIN) publish jreleaserFullRelease

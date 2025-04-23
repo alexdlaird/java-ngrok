@@ -1,10 +1,14 @@
 /*
- * Copyright (c) 2021-2024 Alex Laird
+ * Copyright (c) 2021-2025 Alex Laird
  *
  * SPDX-License-Identifier: MIT
  */
 
 package com.github.alexdlaird.ngrok.protocol;
+
+import com.github.alexdlaird.ngrok.installer.NgrokVersion;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -12,13 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Test;
 
 public class CreateTunnelTest {
 
@@ -29,16 +30,15 @@ public class CreateTunnelTest {
                 .withNgrokVersion(NgrokVersion.V2)
                 .withName("name")
                 .withProto(Proto.TCP)
+                .withDomain("pyngrok.com")
                 .withAddr(5000)
                 .withoutInspect()
                 .withAuth("auth-token")
                 .withHostHeader("host-header")
                 .withBindTls(false)
                 .withSubdomain("subdomain")
-                .withHostname("hostname")
                 .withCrt("crt")
                 .withKey("key")
-                .withClientCas("clientCas")
                 .withRemoteAddr("remoteAddr")
                 .withMetadata("metadata")
                 .withOAuth(new TunnelOAuth.Builder().withProvider("testcase")
@@ -64,12 +64,32 @@ public class CreateTunnelTest {
                 .withResponseHeader(new TunnelHeader.Builder().withAdd(Collections.singletonList(("res-addition")))
                         .withRemove(Collections.singletonList(("res-subtraction")))
                         .build())
-                .withIpRestrictions(new TunnelIPRestrictions
+                .withIpRestriction(new TunnelIPRestriction
                     .Builder().withAllowCidrs(Collections.singletonList(("allowed")))
                         .withDenyCidrs(Collections.singletonList(("denied")))
                         .build())
                 .withVerifyWebhook(new TunnelVerifyWebhook.Builder().withProvider("provider")
                         .withSecret("secret")
+                        .build())
+                .withUserAgentFilter(new TunnelUserAgentFilter.Builder()
+                        .withAllow(Collections.singletonList("allow-user-agent"))
+                        .withDeny(Collections.singletonList("deny-user-agent"))
+                        .build())
+                .withPolicyInbound(new TunnelPolicy.Builder()
+                        .withName("inbound-policy")
+                        .withActions(new TunnelPolicyActions.Builder()
+                            .withType("inbound-policy-actions-type")
+                            .withConfig("inbound-policy-actions-config")
+                            .build())
+                        .withExpressions(Collections.singletonList("inbound-policy-expression"))
+                        .build())
+                .withPolicyOutbound(new TunnelPolicy.Builder()
+                        .withName("outbound-policy")
+                        .withActions(new TunnelPolicyActions.Builder()
+                            .withType("outbound-policy-actions-type")
+                            .withConfig("outbound-policy-actions-config")
+                            .build())
+                        .withExpressions(Collections.singletonList("outbound-policy-expression"))
                         .build())
                 .build();
 
@@ -77,16 +97,15 @@ public class CreateTunnelTest {
         assertEquals(NgrokVersion.V2, createTunnel.getNgrokVersion());
         assertEquals("name", createTunnel.getName());
         assertEquals(Proto.TCP, createTunnel.getProto());
+        assertEquals("pyngrok.com", createTunnel.getDomain());
         assertEquals("5000", createTunnel.getAddr());
         assertFalse(createTunnel.isInspect());
         assertEquals("auth-token", createTunnel.getAuth());
         assertEquals("host-header", createTunnel.getHostHeader());
         assertEquals(BindTls.FALSE, createTunnel.getBindTls());
         assertEquals("subdomain", createTunnel.getSubdomain());
-        assertEquals("hostname", createTunnel.getHostname());
         assertEquals("crt", createTunnel.getCrt());
         assertEquals("key", createTunnel.getKey());
-        assertEquals("clientCas", createTunnel.getClientCas());
         assertEquals("remoteAddr", createTunnel.getRemoteAddr());
         assertEquals("metadata", createTunnel.getMetadata());
         assertEquals("testcase", createTunnel.getOauth().getProvider());
@@ -103,10 +122,20 @@ public class CreateTunnelTest {
         assertTrue(createTunnel.getRequestHeader().getRemove().contains("req-subtraction"));
         assertTrue(createTunnel.getResponseHeader().getAdd().contains("res-addition"));
         assertTrue(createTunnel.getResponseHeader().getRemove().contains("res-subtraction"));
-        assertTrue(createTunnel.getIpRestrictions().getAllowCidrs().contains("allowed"));
-        assertTrue(createTunnel.getIpRestrictions().getDenyCidrs().contains("denied"));
+        assertTrue(createTunnel.getIpRestriction().getAllowCidrs().contains("allowed"));
+        assertTrue(createTunnel.getIpRestriction().getDenyCidrs().contains("denied"));
         assertEquals("provider", createTunnel.getVerifyWebhook().getProvider());
         assertEquals("secret", createTunnel.getVerifyWebhook().getSecret());
+        assertTrue(createTunnel.getUserAgentFilter().getAllow().contains("allow-user-agent"));
+        assertTrue(createTunnel.getUserAgentFilter().getDeny().contains("deny-user-agent"));
+        assertEquals("inbound-policy", createTunnel.getPolicyInbound().getName());
+        assertTrue(createTunnel.getPolicyInbound().getExpressions().contains("inbound-policy-expression"));
+        assertEquals("inbound-policy-actions-type", createTunnel.getPolicyInbound().getActions().getType());
+        assertEquals("inbound-policy-actions-config", createTunnel.getPolicyInbound().getActions().getConfig());
+        assertEquals("outbound-policy", createTunnel.getPolicyOutbound().getName());
+        assertTrue(createTunnel.getPolicyOutbound().getExpressions().contains("outbound-policy-expression"));
+        assertEquals("outbound-policy-actions-type", createTunnel.getPolicyOutbound().getActions().getType());
+        assertEquals("outbound-policy-actions-config", createTunnel.getPolicyOutbound().getActions().getConfig());
 
         assertNull(createTunnel.getSchemes());
     }
@@ -158,12 +187,12 @@ public class CreateTunnelTest {
     @Test
     public void testCreateTunnelAuthAndBasicAuthFails() {
         assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
-                .withAuth("auth-token")
-                .withBasicAuth(Collections.singletonList(("auth-token"))));
+            .withAuth("auth-token")
+            .withBasicAuth(Collections.singletonList(("auth-token"))));
 
         assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
-                .withBasicAuth(Collections.singletonList(("auth-token")))
-                .withAuth("auth-token"));
+            .withBasicAuth(Collections.singletonList(("auth-token")))
+            .withAuth("auth-token"));
     }
 
     @Test
@@ -187,7 +216,7 @@ public class CreateTunnelTest {
         tunnelDefinitions.put("bind_tls", true);
         tunnelDefinitions.put("labels", Collections.singletonList(("edge=some-edge-id")));
         assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
-                .withTunnelDefinition(tunnelDefinitions));
+            .withTunnelDefinition(tunnelDefinitions));
     }
 
     @Test
@@ -195,7 +224,11 @@ public class CreateTunnelTest {
         // WHEN
         final Map<String, Object> tunnelDefinition = new HashMap<>();
         tunnelDefinition.put("labels", Collections.singletonList("edge=some-edge-id"));
-        tunnelDefinition.put("auth", "auth-token");
+        tunnelDefinition.put("proto", "tcp");
+        tunnelDefinition.put("domain", "pyngrok.com");
+        tunnelDefinition.put("addr", "5000");
+        tunnelDefinition.put("inspect", "false");
+        tunnelDefinition.put("basic_auth", Collections.singletonList("auth-token"));
         tunnelDefinition.put("host_header", "host-header");
         tunnelDefinition.put("hostname", "hostname");
         tunnelDefinition.put("crt", "crt");
@@ -219,24 +252,49 @@ public class CreateTunnelTest {
         final Map<String, Object> ipRestrictionsDefinition = new HashMap<>();
         ipRestrictionsDefinition.put("allow_cidrs", Collections.singletonList("allowed"));
         ipRestrictionsDefinition.put("deny_cidrs", Collections.singletonList("denied"));
-        tunnelDefinition.put("ip_restrictions", ipRestrictionsDefinition);
+        tunnelDefinition.put("ip_restriction", ipRestrictionsDefinition);
         final Map<String, Object> verifyWebhookDefinition = new HashMap<>();
         verifyWebhookDefinition.put("provider", "provider");
         verifyWebhookDefinition.put("secret", "secret");
         tunnelDefinition.put("verify_webhook", verifyWebhookDefinition);
+        final Map<String, Object> userAgentFilter = new HashMap<>();
+        userAgentFilter.put("allow", Collections.singletonList("allow-user-agent"));
+        userAgentFilter.put("deny", Collections.singletonList("deny-user-agent"));
+        tunnelDefinition.put("user_agent_filter", userAgentFilter);
+        final Map<String, Object> inboundPolicy = new HashMap<>();
+        inboundPolicy.put("name", "inbound-policy");
+        inboundPolicy.put("expressions", Collections.singletonList("inbound-policy-expression"));
+        final Map<String, Object> inboundPolicyActions = new HashMap<>();
+        inboundPolicyActions.put("type", "inbound-policy-actions-type");
+        inboundPolicyActions.put("config", "inbound-policy-actions-config");
+        inboundPolicy.put("actions", inboundPolicyActions);
+        final Map<String, Object> outboundPolicy = new HashMap<>();
+        outboundPolicy.put("name", "outbound-policy");
+        outboundPolicy.put("expressions", Collections.singletonList("outbound-policy-expression"));
+        final Map<String, Object> outboundPolicyActions = new HashMap<>();
+        outboundPolicyActions.put("type", "outbound-policy-actions-type");
+        outboundPolicyActions.put("config", "outbound-policy-actions-config");
+        outboundPolicy.put("actions", outboundPolicyActions);
+        tunnelDefinition.put("inbound-policy", inboundPolicy);
+        final Map<String, Object> policies = new HashMap<>();
+        policies.put("inbound", inboundPolicy);
+        policies.put("outbound", outboundPolicy);
+        tunnelDefinition.put("policy", policies);
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withTunnelDefinition(Collections.unmodifiableMap(tunnelDefinition))
                 .build();
 
         // THEN
         assertEquals(1, createTunnel.getLabels().size());
+        assertEquals(Proto.TCP, createTunnel.getProto());
+        assertEquals("pyngrok.com", createTunnel.getDomain());
+        assertEquals("5000", createTunnel.getAddr());
+        assertFalse(createTunnel.isInspect());
         assertEquals("edge=some-edge-id", createTunnel.getLabels().get(0));
-        assertEquals("auth-token", createTunnel.getAuth());
+        assertTrue(createTunnel.getBasicAuth().contains("auth-token"));
         assertEquals("host-header", createTunnel.getHostHeader());
-        assertEquals("hostname", createTunnel.getHostname());
         assertEquals("crt", createTunnel.getCrt());
         assertEquals("key", createTunnel.getKey());
-        assertEquals("clientCas", createTunnel.getClientCas());
         assertEquals("remoteAddr", createTunnel.getRemoteAddr());
         assertEquals("metadata", createTunnel.getMetadata());
         assertFalse(createTunnel.isCompression());
@@ -248,10 +306,20 @@ public class CreateTunnelTest {
         assertTrue(createTunnel.getRequestHeader().getRemove().contains("req-subtraction"));
         assertTrue(createTunnel.getResponseHeader().getAdd().contains("res-addition"));
         assertTrue(createTunnel.getResponseHeader().getRemove().contains("res-subtraction"));
-        assertTrue(createTunnel.getIpRestrictions().getAllowCidrs().contains("allowed"));
-        assertTrue(createTunnel.getIpRestrictions().getDenyCidrs().contains("denied"));
+        assertTrue(createTunnel.getIpRestriction().getAllowCidrs().contains("allowed"));
+        assertTrue(createTunnel.getIpRestriction().getDenyCidrs().contains("denied"));
         assertEquals("provider", createTunnel.getVerifyWebhook().getProvider());
         assertEquals("secret", createTunnel.getVerifyWebhook().getSecret());
+        assertTrue(createTunnel.getUserAgentFilter().getAllow().contains("allow-user-agent"));
+        assertTrue(createTunnel.getUserAgentFilter().getDeny().contains("deny-user-agent"));
+        assertEquals("inbound-policy", createTunnel.getPolicyInbound().getName());
+        assertTrue(createTunnel.getPolicyInbound().getExpressions().contains("inbound-policy-expression"));
+        assertEquals("inbound-policy-actions-type", createTunnel.getPolicyInbound().getActions().getType());
+        assertEquals("inbound-policy-actions-config", createTunnel.getPolicyInbound().getActions().getConfig());
+        assertEquals("outbound-policy", createTunnel.getPolicyOutbound().getName());
+        assertTrue(createTunnel.getPolicyOutbound().getExpressions().contains("outbound-policy-expression"));
+        assertEquals("outbound-policy-actions-type", createTunnel.getPolicyOutbound().getActions().getType());
+        assertEquals("outbound-policy-actions-config", createTunnel.getPolicyOutbound().getActions().getConfig());
 
         assertNull(createTunnel.getBindTls());
     }
@@ -260,9 +328,9 @@ public class CreateTunnelTest {
     public void testCreateWithTunnelDefinitionBasicAuth() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withTunnelDefinition(Collections.singletonMap("basic_auth", Collections.unmodifiableList(
-                        Stream.of("token-1", "token-2")
-                                .collect(Collectors.toList()))))
+            .withTunnelDefinition(Collections.singletonMap("basic_auth", Collections.unmodifiableList(
+                    Stream.of("token-1", "token-2")
+                            .collect(Collectors.toList()))))
                 .build();
 
         // THEN

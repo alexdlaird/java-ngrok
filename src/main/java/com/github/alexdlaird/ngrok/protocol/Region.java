@@ -10,12 +10,14 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * An enum representing <code>ngrok</code>'s valid regions, as defined in
- * <a href="https://ngrok.com/docs/ngrok-agent/config#global-options" target="_blank"><code>ngrok</code>'s docs</a>.
+ * <a href="https://ngrok.com/docs/agent/config/v2/#agent-configuration" target="_blank"><code>ngrok</code>'s docs</a>.
  */
 public enum Region {
 
     @SerializedName("us")
     US,
+    @SerializedName("us-cal-1")
+    US_CAL_1,
     @SerializedName("eu")
     EU,
     @SerializedName("ap")

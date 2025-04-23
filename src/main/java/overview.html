@@ -1,48 +1,51 @@
 <body>
 
-<p><img src="https://raw.githubusercontent.com/alexdlaird/java-ngrok/main/logo.png" style="width: 100%; max-width: 550px"
-        alt="java-ngrok - a Java wrapper for ngrok" /></p>
+<p><img alt="java-ngrok - a Java wrapper for ngrok"
+        src="https://raw.githubusercontent.com/alexdlaird/java-ngrok/main/logo.png"
+        style="width: 100%; max-width: 550px"/></p>
 
 <p>
-<a href="https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/">
-    <img src="https://img.shields.io/maven-central/v/com.github.alexdlaird/java8-ngrok"
-         alt="Version" />
-</a>
-<a href="https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/">
-    <img src="https://img.shields.io/badge/Java-8+-blue"
-         alt="Java Versions" />
-</a>
-<a href="https://codecov.io/gh/alexdlaird/java-ngrok/tree/1.4.x">
-    <img src="https://img.shields.io/codecov/c/github/alexdlaird/java-ngrok/1.4.x"
-         alt="Coverage" />
-</a>
-<a href="https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml?query=branch%3A1.4.x">
-    <img src="https://img.shields.io/github/actions/workflow/status/alexdlaird/java-ngrok/build.yml?branch=1.4.x"
-         alt="Build" />
-</a>
-<a href="https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok">
-    <img src="https://img.shields.io/badge/docs-passing-brightgreen"
-         alt="Docs" />
-</a>
-<a href="https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/alexdlaird/java-ngrok"
-         alt="GitHub License" />
-</a>
+    <a href="https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok">
+        <img alt="Version"
+             src="https://img.shields.io/maven-central/v/com.github.alexdlaird/java8-ngrok"/>
+    </a>
+    <a href="https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok">
+        <img alt="Java Versions"
+             src="https://img.shields.io/badge/Java-8+-blue"/>
+    </a>
+    <a href="https://codecov.io/gh/alexdlaird/java-ngrok/tree/1.4.x">
+        <img alt="Coverage"
+             src="https://img.shields.io/codecov/c/github/alexdlaird/java-ngrok/1.4.x"/>
+    </a>
+    <a href="https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml?query=branch%3A1.4.x">
+        <img alt="Build"
+             src="https://img.shields.io/github/actions/workflow/status/alexdlaird/java-ngrok/build.yml?branch=1.4.x"/>
+    </a>
+    <a href="https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.13/overview-summary.html">
+        <img alt="Docs"
+             src="https://img.shields.io/badge/docs-passing-brightgreen"/>
+    </a>
+    <a href="https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE">
+        <img alt="GitHub License"
+             src="https://img.shields.io/github/license/alexdlaird/java-ngrok"/>
+    </a>
 </p>
 
 <p><code>java-ngrok</code> is a Java wrapper for <code>ngrok</code> that manages its own binary, making
-<code>ngrok</code> available via a convenient Java API.</p>
+    <code>ngrok</code> available via a convenient Java API.</p>
 
-<p><a href="https://ngrok.com" target="_blank">ngrok</a> is a reverse proxy tool that opens secure tunnels from public URLs to localhost,
-perfect for exposing local web servers, building webhook integrations, enabling SSH access, testing chatbots,
-demoing from your own machine, and more, and its made even more powerful with native Java integration through
-<code>java-ngrok</code>.</p>
+<p><a href="https://ngrok.com" target="_blank">ngrok</a> is a reverse proxy tool that opens secure tunnels from public
+    URLs to localhost,
+    perfect for exposing local web servers, building webhook integrations, enabling SSH access, testing chatbots,
+    demoing from your own machine, and more, and its made even more powerful with native Java integration through
+    <code>java-ngrok</code>.</p>
 
 <h2>Useful Links</h2>
 
 <ul>
     <li><a href="https://ngrok.com/docs" target="_blank"><code>ngrok</code> Documentation</a></li>
-    <li><a href="https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/" target="_blank"><code>java-ngrok</code> on Maven Central</a></li>
+    <li><a href="https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok"
+           target="_blank"><code>java-ngrok</code> on Maven Central</a></li>
     <li><a href="https://github.com/alexdlaird/java-ngrok" target="_blank"><code>java-ngrok</code> on GitHub</a></li>
     <li><a href="https://github.com/sponsors/alexdlaird" target="_blank">Sponsor <code>java-ngrok</code></a></li>
 </ul>
@@ -50,15 +53,21 @@ demoing from your own machine, and more, and its made even more powerful with na
 <h2>Installation</h2>
 
 <p><code>java8-ngrok</code> is available on <a
-        href="https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java8-ngrok/" target="_blank">Maven Central</a>.</p>
+        href="https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok" target="_blank">Maven
+    Central</a>.</p>
 
 <p>If we want <code>ngrok</code> to be available from the command line,
-<a href="https://github.com/alexdlaird/pyngrok?tab=readme-ov-file#installation" target="_blank">pyngrok</a> can be installed using <code>pip</code> to manage that for
-us.</p>
+    <a href="https://pyngrok.readthedocs.io/en/latest/#installation" target="_blank">pyngrok</a> can be
+    installed using <code>pip</code> to manage that for
+    us.</p>
 
-<h2>Getting Started</h2>
+<h2>Getting Around</h2>
 
-To get started using <code>java-ngrok</code>, see the docs for the {@link com.github.alexdlaird.ngrok.NgrokClient}.
+<ul>
+    <li>{@link com.github.alexdlaird.ngrok.NgrokClient} - Get started using <code>java-ngrok</code>, most common uses cases just require the default client behavior</li>
+    <li>{@link com.github.alexdlaird.ngrok.conf.JavaNgrokConfig} - Configure the {@link com.github.alexdlaird.ngrok.NgrokClient}, {@link com.github.alexdlaird.ngrok.process.NgrokProcess}, {@link com.github.alexdlaird.ngrok.installer.NgrokInstaller}, and other parts of <code>java-ngrok</code></li>
+    <li>{@link com.github.alexdlaird.ngrok.process.NgrokProcess} - Advanced usage of the <code>ngrok</code> process</li>
+</ul>
 
 <h2>Integration Examples</h2>
 
@@ -69,28 +78,31 @@ or configure. Here are some common usage examples.
     <li><a href="https://github.com/alexdlaird/java-ngrok-example-spring" target="_blank">Spring</a></li>
     <li><a href="https://github.com/alexdlaird/java-ngrok-example-dropwizard" target="_blank">Dropwizard</a></li>
     <li><a href="https://github.com/alexdlaird/java-ngrok-example-play" target="_blank">Play (Scala)</a></li>
-    <li><a href="https://gist.github.com/alexdlaird/522cba505b0a9f935f65036355c46f4a" target="_blank">Java HTTP Server</a></li>
-    <li><a href="https://github.com/alexdlaird/java-ngrok-example-tcp-server-and-client" target="_blank">Java TCP Server and Client</a>
+    <li><a href="https://gist.github.com/alexdlaird/522cba505b0a9f935f65036355c46f4a" target="_blank">Java HTTP
+        Server</a></li>
+    <li><a href="https://github.com/alexdlaird/java-ngrok-example-tcp-server-and-client" target="_blank">Java TCP Server
+        and Client</a>
     </li>
 </ul>
 
 <h2><code>ngrok</code> Version Compatibility</h2>
 
 <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To install
-v2 instead, set the version with {@link com.github.alexdlaird.ngrok.conf.JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}
+v2 instead, set the version with {@link
+com.github.alexdlaird.ngrok.conf.JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}
 and {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
 
 <h2 id="java8">Java 8</h2>
 
 <p>Java 8 support is not actively maintained, this is the custom <code>1.4.x</code> branch, where a compatible build of this project
-exists for Java 8. Use the maintained <code>java-ngrok</code> dependency from <a href="https://maven-badges.herokuapp.com/maven-central/com.github.alexdlaird/java-ngrok/">Maven Central</a>
-and <a href="https://github.com/alexdlaird/java-ngrok">the <code>main</code> branch</a> for Java 9 and above.</p>
+exists for Java 8. Use the maintained <code>java-ngrok</code> dependency from <a href="https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok">Maven Central</a>
+and <a href="https://github.com/alexdlaird/java-ngrok">the <code>main</code> branch</a> for Java 11 and above.</p>
 
 <p>The <a href="https://docs.oracle.com/javase/9/docs/api/java/lang/ProcessHandle.html" target="_blank">Process API</a>
-was introduced in Java 9, so certain convenience methods around managing the <code>ngrok</code> process are
-not available in the Java 8 build. For instance, without the Process API, <code>java8-ngrok</code> cannot teardown
-the external <code>ngrok</code> process for us. So even though the Java process will terminate gracefully,
-<code>ngrok</code> will not. On a Unix-like system, we can remedy this with:
+    was introduced in Java 9, so certain convenience methods around managing the <code>ngrok</code> process are
+    not available in the Java 8 build. For instance, without the Process API, <code>java8-ngrok</code> cannot teardown
+    the external <code>ngrok</code> process for us. So even though the Java process will terminate gracefully,
+    <code>ngrok</code> will not. On a Unix-like system, we can remedy this with:
 
 <pre>
 Runtime.getRuntime().addShutdownHook(new Thread(() -> {

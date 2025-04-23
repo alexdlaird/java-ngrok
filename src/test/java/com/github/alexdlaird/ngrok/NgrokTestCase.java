@@ -6,13 +6,9 @@
 
 package com.github.alexdlaird.ngrok;
 
-import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
-import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.getNgrokBin;
-import static java.util.Objects.nonNull;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.http.DefaultHttpClient;
+import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
@@ -27,23 +23,31 @@ import java.util.Random;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
-public class NgrokTestCase {
+import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
+import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.getNgrokBin;
+import static java.util.Objects.nonNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+public class NgrokTestCase extends TestCase {
 
     protected final JavaNgrokConfig javaNgrokConfigV2 = new JavaNgrokConfig.Builder()
-            .withConfigPath(Paths.get("build", ".ngrok", "config_v2.yml").toAbsolutePath())
-            .withNgrokPath(Paths.get("build", "bin", "v2", getNgrokBin()))
-            .withNgrokVersion(NgrokVersion.V2)
-            .build();
+        .withConfigPath(Paths.get("build", ".ngrok", "config_v2.yml").toAbsolutePath())
+        .withNgrokPath(Paths.get("build", "bin", "v2", getNgrokBin()))
+        .withNgrokVersion(NgrokVersion.V2)
+        .build();
 
     protected final JavaNgrokConfig javaNgrokConfigV3 = new JavaNgrokConfig.Builder()
-            .withConfigPath(Paths.get("build", ".ngrok", "config_v3.yml").toAbsolutePath())
-            .withNgrokPath(Paths.get("build", "bin", "v3", getNgrokBin()))
-            .withNgrokVersion(NgrokVersion.V3)
-            .build();
+        .withConfigPath(Paths.get("build", ".ngrok", "config_v3.yml").toAbsolutePath())
+        .withNgrokPath(Paths.get("build", "bin", "v3", getNgrokBin()))
+        .withNgrokVersion(NgrokVersion.V3)
+        .build();
 
-    protected final NgrokInstaller ngrokInstaller = new NgrokInstaller(new DefaultHttpClient.Builder()
-            .withRetryCount(3)
-            .build());
+    protected final HttpClient retryHttpClient = new DefaultHttpClient.Builder()
+        .withTimeout(10000)
+        .withRetryCount(3)
+        .build();
+
+    protected final NgrokInstaller ngrokInstaller = new NgrokInstaller(retryHttpClient);
 
     protected NgrokProcess ngrokProcessV2;
 
@@ -62,7 +66,8 @@ public class NgrokTestCase {
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
+    public void tearDown()
+        throws IOException {
         ngrokProcessV2.stop();
         ngrokProcessV3.stop();
 
@@ -75,15 +80,15 @@ public class NgrokTestCase {
 
         // This deletes all v2 and v3 configs
         Files.walk(javaNgrokConfigV2.getConfigPath().getParent())
-                .sorted(Comparator.reverseOrder())
-                .forEach((path) -> {
-                    try {
-                        Files.delete(path);
-                    } catch (final IOException e) {
-                        throw new JavaNgrokException(
-                            String.format("An error occurred cleaning up file %s when testing.", path));
-                    }
-                });
+             .sorted(Comparator.reverseOrder())
+             .forEach((path) -> {
+                 try {
+                     Files.delete(path);
+                 } catch (final IOException e) {
+                     throw new JavaNgrokException(
+                         String.format("An error occurred cleaning up file %s when testing.", path));
+                 }
+             });
 
         for (final Map.Entry<String, String> entry : mockedSystemProperties.entrySet()) {
             System.setProperty(entry.getKey(), entry.getValue());
@@ -107,8 +112,8 @@ public class NgrokTestCase {
         final Random random = new Random();
         return String.format("java-ngrok-%s-%s-%s-tcp",
             random.longs(1000000000000000L, 9999999999999999L)
-                .findFirst()
-                .getAsLong(),
+                  .findFirst()
+                  .getAsLong(),
             System.getProperty("java.version").replaceAll("\\.|_", ""), NgrokInstaller.getSystem().toLowerCase());
     }
 

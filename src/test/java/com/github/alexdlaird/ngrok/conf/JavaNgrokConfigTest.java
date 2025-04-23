@@ -1,17 +1,13 @@
 /*
- * Copyright (c) 2021-2024 Alex Laird
+ * Copyright (c) 2021-2025 Alex Laird
  *
  * SPDX-License-Identifier: MIT
  */
 
 package com.github.alexdlaird.ngrok.conf;
 
-import static com.github.alexdlaird.util.StringUtils.isNotBlank;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-
+import com.github.alexdlaird.ngrok.TestCase;
+import com.github.alexdlaird.ngrok.installer.ConfigVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokLog;
 import com.github.alexdlaird.ngrok.protocol.Region;
@@ -20,7 +16,11 @@ import java.nio.file.Paths;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
-public class JavaNgrokConfigTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+public class JavaNgrokConfigTest extends TestCase {
     @Test
     public void testJavaNgrokConfig() {
         // GIVEN
@@ -30,17 +30,18 @@ public class JavaNgrokConfigTest {
 
         // WHEN
         final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-                .withNgrokPath(ngrokPath)
-                .withConfigPath(configPath)
-                .withAuthToken("auth-token")
-                .withRegion(Region.EU)
-                .withoutMonitoring()
-                .withMaxLogs(50)
-                .withLogEventCallback(logEventCallback)
-                .withStartupTimeout(5)
-                .withNgrokVersion(NgrokVersion.V2)
-                .withApiKey("api-key")
-                .build();
+            .withNgrokPath(ngrokPath)
+            .withConfigPath(configPath)
+            .withAuthToken("auth-token")
+            .withRegion(Region.EU)
+            .withoutMonitoring()
+            .withMaxLogs(50)
+            .withLogEventCallback(logEventCallback)
+            .withStartupTimeout(5)
+            .withNgrokVersion(NgrokVersion.V2)
+            .withApiKey("api-key")
+            .withConfigVersion(ConfigVersion.V2)
+            .build();
 
         // THEN
         assertEquals(ngrokPath, javaNgrokConfig.getNgrokPath());
@@ -53,6 +54,7 @@ public class JavaNgrokConfigTest {
         assertEquals(5, javaNgrokConfig.getStartupTimeout());
         assertEquals(NgrokVersion.V2, javaNgrokConfig.getNgrokVersion());
         assertEquals("api-key", javaNgrokConfig.getApiKey());
+        assertEquals(ConfigVersion.V2, javaNgrokConfig.getConfigVersion());
     }
 
     @Test
@@ -70,14 +72,26 @@ public class JavaNgrokConfigTest {
     @Test
     public void testAuthTokenSetFromEnv() {
         // GIVEN
-        final String ngrokAuthToken = System.getenv("NGROK_AUTHTOKEN");
-        assumeTrue(isNotBlank(System.getenv("NGROK_AUTHTOKEN")), "NGROK_AUTHTOKEN environment variable not set");
+        final String ngrokAuthToken = testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // WHEN
         final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-                .build();
+            .build();
 
         // THEN
         assertEquals(ngrokAuthToken, javaNgrokConfig.getAuthToken());
+    }
+
+    @Test
+    public void testApiKeySetFromEnv() {
+        // GIVEN
+        final String ngrokApiKey = testRequiresEnvVar("NGROK_API_KEY");
+
+        // WHEN
+        final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+            .build();
+
+        // THEN
+        assertEquals(ngrokApiKey, javaNgrokConfig.getApiKey());
     }
 }

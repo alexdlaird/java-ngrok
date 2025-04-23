@@ -9,11 +9,14 @@ jobs:
 
     env:
       NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
-      NGROK_HTTP_EDGE: ${{ secrets.NGROK_HTTP_EDGE }}
-      NGROK_TCP_EDGE: ${{ secrets.NGROK_TCP_EDGE }}
+      NGROK_DOMAIN: ${{ secrets.NGROK_DOMAIN }}
       NGROK_API_KEY: ${{ secrets.NGROK_API_KEY }}
+      NGROK_HTTP_EDGE: ${{ secrets.NGROK_HTTP_EDGE }}
       NGROK_HTTP_EDGE_ENDPOINT: ${{ secrets.NGROK_HTTP_EDGE_ENDPOINT }}
+      NGROK_TCP_EDGE: ${{ secrets.NGROK_TCP_EDGE }}
       NGROK_TCP_EDGE_ENDPOINT: ${{ secrets.NGROK_TCP_EDGE_ENDPOINT }}
+      NGROK_TLS_EDGE: ${{ secrets.NGROK_TLS_EDGE }}
+      NGROK_TLS_EDGE_ENDPOINT: ${{ secrets.NGROK_TLS_EDGE_ENDPOINT }}
 
     runs-on: ubuntu-latest
 
@@ -34,7 +37,15 @@ jobs:
         run: make local
       - name: Test downstream
         run: make test-downstream
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
+      - name: Upload test coverage
+        uses: codecov/codecov-action@v4
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           file: ./build/reports/jacoco/report.xml
+      - name: Upload test results
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./build/test-results
+          files: "test/*.xml"
