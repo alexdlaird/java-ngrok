@@ -82,7 +82,7 @@ import static java.util.Objects.nonNull;
  * {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
  * <code>https</code> tunnel will be returned.
  * <h3><code>ngrok</code>'s Edge</h3>
- * To use <a href="https://ngrok.com/docs/network-edge/edges/" target="_blank"><code>ngrok</code>'s Edges</a> with
+ * To use <a href="https://ngrok.com/docs/universal-gateway/edges/" target="_blank"><code>ngrok</code>'s Edges</a> with
  * <code>java-ngrok</code>, first <a href="ttps://dashboard.ngrok.com/edges" target="_blank">configure an
  * Edge on <code>ngrok</code>'s dashboard</a> (with at least one Endpoint mapped to the Edge), and define a labeled
  * tunnel in <a href="https://ngrok.com/docs/agent/config/v2/#define-two-labeled-tunnels" target="_blank">the
@@ -142,7 +142,7 @@ import static java.util.Objects.nonNull;
  * </pre>
  *
  * <p>We can also serve up local directories via
- * <a href="https://ngrok.com/docs/http/#file-serving" target="_blank">ngrok's built-in
+ * <a href="https://ngrok.com/docs/universal-gateway/http/?cty=agent-config#agent-endpoint" target="_blank">ngrok's built-in
  * fileserver</a>.
  *
  * <p><pre>
@@ -458,16 +458,12 @@ public class NgrokClient {
     }
 
     /**
-     * ngrok has deprecated Edges and will sunset Labeled Tunnels on December 31st, 2025. The official replacement
-     * is Internal Endpoints. Internal Endpoints can be started using tunnel configurations in the config file, which
-     * java-ngrok has always supported.
+     * ngrok has deprecated Edges and will sunset Labeled Tunnels on December 31st, 2025.
      *
      * <p>This particular code path, as well as support for labels in ngrok's config file, will become dead code after
-     * Edges are sunset, so support for this will be removed from java-ngrok in a subsequent release.
+     * Edges are sunset, so support for these things will be removed from java-ngrok in a subsequent release.
      *
      * <p>Deprecation notice: https://ngrok.com/docs/universal-gateway/edges/?utm_campaign=deprecation_notice_edges_04_2025&utm_medium=email&_hsenc=p2ANqtz-9z77Owmk44wHAXaBTjCfbEVHxKMPO7w9E8W-F284lO0FIrIEnvCtbhSLQ9o9NaZCFkrHfAxRyOtHAj02mli4ZMLAbMNg&_hsmi=357901456&utm_content=docs_edges&utm_source=email
-     * Docs for Internal Endpoint: https://ngrok.com/docs/universal-gateway/internal-endpoints/
-     * Docs for tunnel configurations: https://ngrok.com/docs/agent/config/v2/#tunnel-configurations
      */
     private void applyEdgeToTunnel(final Tunnel tunnel) {
         if ((isNull(tunnel.getPublicUrl()) || tunnel.getPublicUrl().isEmpty())

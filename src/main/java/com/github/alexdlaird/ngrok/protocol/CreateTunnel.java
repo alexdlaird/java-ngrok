@@ -464,7 +464,7 @@ public class CreateTunnel {
 
         /**
          * The local port to which the tunnel will forward traffic, or a
-         * <a href="https://ngrok.com/docs/http/#file-serving">local directory or network address</a>, defaults to "80".
+         * <a href="https://ngrok.com/docs/universal-gateway/http/?cty=agent-config#agent-endpoint">local directory or network address</a>, defaults to "80".
          */
         public Builder withAddr(final String addr) {
             this.addr = addr;
