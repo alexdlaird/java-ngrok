@@ -6,9 +6,6 @@ on:
   release:
     types: [ created ]
 
-concurrency:
-  group: java-ngrok-singleton
-
 jobs:
   build:
     name: Build
