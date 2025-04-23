@@ -279,7 +279,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
         // WHEN
         assertThrows(HttpClientException.class, () -> defaultHttpClient.post(
-            "/some-url", createTunnel, List.of(), Map.of(), Tunnel.class));
+            "/some-url", createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class));
     }
 
     @Test
@@ -292,7 +292,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
         // WHEN
         assertThrows(HttpClientException.class, () -> defaultHttpClient.delete(
-            "/some-url", List.of(), Map.of(), Tunnel.class));
+            "/some-url", Collections.emptyList(), Collections.emptyMap(), Tunnel.class));
     }
 
     @Test
@@ -306,6 +306,6 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
         // WHEN
         assertThrows(HttpClientException.class, () -> defaultHttpClient.put(
-            "/some-url", createTunnel, List.of(), Map.of(), Tunnel.class));
+            "/some-url", createTunnel, Collections.emptyList(), Collections.emptyMap(), Tunnel.class));
     }
 }
