@@ -82,7 +82,10 @@ import static java.util.Objects.nonNull;
  * {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
  * <code>https</code> tunnel will be returned.
  * <h3><code>ngrok</code>'s Edge</h3>
- * To use <a href="https://ngrok.com/docs/universal-gateway/edges/" target="_blank"><code>ngrok</code>'s Edges</a> with
+ * <p><strong>Note:</strong> <code>ngrok</code> has deprecated Edges and will sunset Labeled Tunnels on December 31st,
+ * 2025. See <a href="https://github.com/alexdlaird/java-ngrok/issues/158">this issue</a> for more details.
+ * <p>To use <a href="https://ngrok.com/docs/universal-gateway/edges/" target="_blank"><code>ngrok</code>'s Edges</a>
+ * with
  * <code>java-ngrok</code>, first <a href="ttps://dashboard.ngrok.com/edges" target="_blank">configure an
  * Edge on <code>ngrok</code>'s dashboard</a> (with at least one Endpoint mapped to the Edge), and define a labeled
  * tunnel in <a href="https://ngrok.com/docs/agent/config/v2/#define-two-labeled-tunnels" target="_blank">the
@@ -457,14 +460,6 @@ public class NgrokClient {
         return httpClient;
     }
 
-    /**
-     * ngrok has deprecated Edges and will sunset Labeled Tunnels on December 31st, 2025.
-     *
-     * <p>This particular code path, as well as support for labels in ngrok's config file, will become dead code after
-     * Edges are sunset, so support for these things will be removed from java-ngrok in a subsequent release.
-     *
-     * <p>The docs for Edges includes a migration guide: https://ngrok.com/docs/universal-gateway/edges
-     */
     private void applyEdgeToTunnel(final Tunnel tunnel) {
         if ((isNull(tunnel.getPublicUrl()) || tunnel.getPublicUrl().isEmpty())
                 && nonNull(javaNgrokConfig.getApiKey()) && nonNull(tunnel.getId())) {
@@ -508,6 +503,9 @@ public class NgrokClient {
             tunnel.setPublicUrl(String.format("%s://%s", edgesPrefix,
                     ((List) edgeResponse.getBody().get("hostports")).get(0)));
             tunnel.setProto(edgesPrefix);
+
+            LOGGER.warning("ngrok has deprecated Edges and will sunset Labeled Tunnels on December 31st, 2025. "
+                           + "See https://github.com/alexdlaird/java-ngrok/issues/158 for more details.");
         }
     }
 
