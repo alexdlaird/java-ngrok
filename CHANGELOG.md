@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- Deprecation warning when using Labeled Tunnels, since `ngrok` Edges, which will be sunset December 31st, 2025. See [this issue](https://github.com/alexdlaird/java-ngrok/issues/158) for more details.
+- Deprecation warning when using Labeled Tunnels, since `ngrok` Edges will be sunset December 31st, 2025. See [this issue](https://github.com/alexdlaird/java-ngrok/issues/158) for more details.
 - Migrate build from OSSRH to Central publishing. 
 - Updates to Maven Central badge links.
 - Documentation improvements.
@@ -384,7 +384,7 @@ on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/j
 
 ### Added
 
-- Rebased the `1.4.x` branch with Java 8-compatible changes from `main` between `2.2.15` and `2.3.8`. See
+- Rebased the `1.4.x` branch with Java 8-compatible changes from `main` between `2.2.15` and `2.3.9`. See
   the [`main` changelog](https://github.com/alexdlaird/java-ngrok/blob/main/CHANGELOG.md#230---2024-04-08) for full
   details.
 - Biggest changes include support for `ngrok`'s v3 config (including `traffic_policy`), support for latest fields in tunnel definitions, `ip_restriction`
