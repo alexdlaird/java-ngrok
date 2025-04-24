@@ -39,7 +39,7 @@ processResources.dependsOn createProperties
 
 tasks.register("printVersion") {
     doLast {
-        println(project.findProperty('rootProject').version)
+        println(project.findProperty("rootProject").version)
     }
 }
 
@@ -126,12 +126,19 @@ publishing {
             }
         }
     }
+
+    repositories {
+        maven {
+            url = layout.buildDirectory.dir("staging-deploy")
+        }
+    }
 }
 
 jreleaser {
     signing {
         active = "ALWAYS"
         armored = true
+        verify = true
     }
 
     deploy {
@@ -140,9 +147,16 @@ jreleaser {
                 sonatype {
                     active = "ALWAYS"
                     url = "https://central.sonatype.com/api/v1/publisher"
-                    stagingRepository("target/staging-deploy")
+                    stagingRepository(layout.buildDirectory.dir("staging-deploy").get().toString())
                 }
             }
+        }
+    }
+
+    release {
+        github {
+            skipRelease = true
+            skipTag = true
         }
     }
 }
