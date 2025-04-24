@@ -1,7 +1,6 @@
 plugins {
     id "java-library"
     id "maven-publish"
-    id "signing"
     id "jacoco"
     id "idea"
     id "com.adarshr.test-logger" version "4.0.0"
@@ -40,7 +39,7 @@ processResources.dependsOn createProperties
 
 tasks.register("printVersion") {
     doLast {
-        println(project.findProperty('rootProject').version)
+        println(project.findProperty("rootProject").version)
     }
 }
 
@@ -127,30 +126,37 @@ publishing {
             }
         }
     }
-}
 
-signing {
-    required { gradle.taskGraph.hasTask("publish") }
-    def signingKey = System.getenv("GPG_PRIVATE_KEY")
-    def signingPassword = System.getenv("GPG_PASSPHRASE")
-    useInMemoryPgpKeys(signingKey, signingPassword)
-    sign publishing.publications.javaLibrary
+    repositories {
+        maven {
+            url = layout.buildDirectory.dir("staging-deploy")
+        }
+    }
 }
 
 jreleaser {
     signing {
         active = "ALWAYS"
         armored = true
+        verify = true
     }
+
     deploy {
         maven {
             mavenCentral {
                 sonatype {
                     active = "ALWAYS"
                     url = "https://central.sonatype.com/api/v1/publisher"
-                    stagingRepository("target/staging-deploy")
+                    stagingRepository(layout.buildDirectory.dir("staging-deploy").get().toString())
                 }
             }
+        }
+    }
+
+    release {
+        github {
+            skipRelease = true
+            skipTag = true
         }
     }
 }
