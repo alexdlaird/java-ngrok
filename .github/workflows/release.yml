@@ -7,14 +7,8 @@ on:
     types: [ created ]
 
 jobs:
-  build:
-    name: Build
-    uses: alexdlaird/java-ngrok/.github/workflows/build.yml@1.4.x
-    secrets: inherit
-
-  release:
-    name: Release
-    needs: build
+  validate-version:
+    name: Validate Version
 
     runs-on: ubuntu-24.04
 
@@ -30,6 +24,25 @@ jobs:
         run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
       - name: Validate version
         run: make validate-release VERSION=${{ steps.get_version.outputs.VERSION }}
+
+  build:
+    name: Build
+    uses: alexdlaird/java-ngrok/.github/workflows/build.yml@1.4.x
+    secrets: inherit
+
+  release:
+    name: Release
+    needs: [build, validate-version]
+
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: zulu
       - name: Publish
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
