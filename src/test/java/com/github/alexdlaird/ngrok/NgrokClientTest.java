@@ -34,6 +34,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -163,6 +164,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
+    @ResourceLock("domain")
     public void testConnectTls() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
         final String domain = testRequiresEnvVar("NGROK_DOMAIN");
@@ -797,6 +799,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
+    @ResourceLock("domain")
     public void testTunnelDefinitionsTls() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
         final String domain = testRequiresEnvVar("NGROK_DOMAIN");
@@ -841,6 +844,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
+    @ResourceLock("endpoint")
     public void testTunnelDefinitionsV3HTTPEdge() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
         final String ngrokApiKey = testRequiresEnvVar("NGROK_API_KEY");
@@ -889,6 +893,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
+    @ResourceLock("endpoint")
     public void testTunnelDefinitionsV3TCPEdge() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
         final String ngrokApiKey = testRequiresEnvVar("NGROK_API_KEY");
@@ -937,6 +942,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
+    @ResourceLock("endpoint")
     public void testTunnelDefinitionsV3TLSEdge() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
         final String ngrokApiKey = testRequiresEnvVar("NGROK_API_KEY");
