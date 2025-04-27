@@ -1,4 +1,4 @@
-name: Deploy
+name: Release
 
 run-name: Release ${{ github.ref_name }}
 
@@ -12,8 +12,8 @@ jobs:
     uses: alexdlaird/java-ngrok/.github/workflows/build.yml@1.4.x
     secrets: inherit
 
-  deploy:
-    name: Deploy
+  release:
+    name: Release
     needs: build
 
     runs-on: ubuntu-24.04
