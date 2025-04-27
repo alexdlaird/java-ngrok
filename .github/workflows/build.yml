@@ -7,6 +7,8 @@ on:
     branches: [ main, develop, 1.4.x ]
   pull_request:
     branches: [ main, develop, 1.4.x ]
+  schedule:
+    - cron: "0 10 * * *"
   workflow_dispatch:
   workflow_call:
 
