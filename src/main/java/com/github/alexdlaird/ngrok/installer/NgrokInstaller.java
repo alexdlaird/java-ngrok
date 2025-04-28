@@ -144,14 +144,14 @@ public class NgrokInstaller {
     /**
      * See {@link #installDefaultConfig(Path, Map, NgrokVersion, ConfigVersion)}.
      */
-    public void installDefaultConfig(final Path configPath, final Map<String, Object> data) {
+    public synchronized void installDefaultConfig(final Path configPath, final Map<String, Object> data) {
         installDefaultConfig(configPath, data, NgrokVersion.V3, ConfigVersion.V2);
     }
 
     /**
      * See {@link #installDefaultConfig(Path, Map, NgrokVersion, ConfigVersion)}.
      */
-    public void installDefaultConfig(final Path configPath,
+    public synchronized void installDefaultConfig(final Path configPath,
                                      final Map<String, Object> data,
                                      final NgrokVersion ngrokVersion) {
         installDefaultConfig(configPath, data, ngrokVersion, ConfigVersion.V2);
@@ -167,7 +167,7 @@ public class NgrokInstaller {
      * @param configVersion The <code>ngrok</code> config version.
      * @throws JavaNgrokInstallerException An error occurred downloading <code>ngrok</code>.
      */
-    public void installDefaultConfig(final Path configPath,
+    public synchronized void installDefaultConfig(final Path configPath,
                                      final Map<String, Object> data,
                                      final NgrokVersion ngrokVersion,
                                      final ConfigVersion configVersion) {
@@ -257,7 +257,7 @@ public class NgrokInstaller {
      *
      * @param configPath The config path to validate.
      */
-    public void validateConfig(final Path configPath) {
+    public synchronized void validateConfig(final Path configPath) {
         final Map<String, Object> config = getNgrokConfig(configPath);
 
         validateConfig(config);
@@ -292,7 +292,7 @@ public class NgrokInstaller {
      * @return A map of the <code>ngrok</code> config.
      * @throws JavaNgrokInstallerException The config could not be parsed.
      */
-    public Map<String, Object> getNgrokConfig(final Path configPath,
+    public synchronized Map<String, Object> getNgrokConfig(final Path configPath,
                                               final boolean useCache,
                                               final NgrokVersion ngrokVersion,
                                               final ConfigVersion configVersion) {
@@ -318,14 +318,14 @@ public class NgrokInstaller {
     /**
      * See {@link #getNgrokConfig(Path, boolean, NgrokVersion, ConfigVersion)}.
      */
-    public Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache) {
+    public synchronized Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache) {
         return getNgrokConfig(configPath, useCache, NgrokVersion.V3, ConfigVersion.V2);
     }
 
     /**
      * See {@link #getNgrokConfig(Path, boolean, NgrokVersion, ConfigVersion)}.
      */
-    public Map<String, Object> getNgrokConfig(final Path configPath) {
+    public synchronized Map<String, Object> getNgrokConfig(final Path configPath) {
         return getNgrokConfig(configPath, true);
     }
 

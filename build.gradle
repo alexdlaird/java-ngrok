@@ -5,7 +5,7 @@ plugins {
     id "idea"
     id "com.adarshr.test-logger" version "4.0.0"
     id "checkstyle"
-    id "com.github.spotbugs" version "6.1.7"
+    id "com.github.spotbugs" version "6.1.10"
     id "org.jreleaser" version "1.17.0"
 }
 
@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.google.code.gson:gson:2.13.0"
+    implementation "com.google.code.gson:gson:2.13.1"
     implementation "org.yaml:snakeyaml:2.4"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.11.4"
     testImplementation "org.mockito:mockito-core:4.11.0"

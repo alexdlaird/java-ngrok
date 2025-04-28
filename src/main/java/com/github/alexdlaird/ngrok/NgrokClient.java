@@ -514,7 +514,7 @@ public class NgrokClient {
         }
     }
 
-    private CreateTunnel interpolateTunnelDefinition(final CreateTunnel createTunnel) {
+    private synchronized CreateTunnel interpolateTunnelDefinition(final CreateTunnel createTunnel) {
         final CreateTunnel.Builder createTunnelBuilder = new CreateTunnel.Builder(createTunnel);
 
         final Map<String, Object> config;
