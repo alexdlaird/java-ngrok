@@ -105,7 +105,7 @@ public class NgrokProcess {
      * @throws NgrokException             <code>ngrok</code> could not start.
      * @throws JavaNgrokSecurityException The URL was not supported.
      */
-    public void start() {
+    public synchronized void start() {
         if (isRunning()) {
             return;
         }
