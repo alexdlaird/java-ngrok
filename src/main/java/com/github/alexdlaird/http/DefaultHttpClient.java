@@ -304,7 +304,7 @@ public class DefaultHttpClient implements HttpClient {
         }
 
         /**
-         * Default retry count for GET requests.
+         * Default retry count for <code>GET</code> requests.
          */
         public Builder withRetryCount(final int retryCount) {
             this.retryCount = retryCount;
