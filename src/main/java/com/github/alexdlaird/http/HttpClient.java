@@ -18,7 +18,7 @@ import java.util.Map;
 public interface HttpClient {
 
     /**
-     * Perform GET operation against an endpoint.
+     * Perform <code>GET</code> operation against an endpoint.
      *
      * @param url               The URL on which to perform the operation.
      * @param parameters        An arbitrary number of parameters to add to the URL.
@@ -39,7 +39,7 @@ public interface HttpClient {
     }
 
     /**
-     * Perform GET operation that downloads a file to the given path.
+     * Perform <code>GET</code> operation that downloads a file to the given path.
      *
      * @param url               The URL on which to perform the operation.
      * @param parameters        An arbitrary number of parameters to add to the URL.
@@ -63,7 +63,7 @@ public interface HttpClient {
     }
 
     /**
-     * Perform POST operation against an endpoint.
+     * Perform <code>POST</code> operation against an endpoint.
      *
      * @param url               The URL on which to perform the operation.
      * @param request           The element to be serialized into the request body.
@@ -86,7 +86,7 @@ public interface HttpClient {
     }
 
     /**
-     * Perform PUT operation against an endpoint.
+     * Perform <code>PUT</code> operation against an endpoint.
      *
      * @param url               The URL on which to perform the operation.
      * @param request           The element to be serialized into the request body.
@@ -109,7 +109,7 @@ public interface HttpClient {
     }
 
     /**
-     * Perform DELETE operation against an endpoint.
+     * Perform <code>DELETE</code> operation against an endpoint.
      *
      * @param url               The URL on which to perform the operation.
      * @param parameters        An arbitrary number of parameters to add to the URL.
