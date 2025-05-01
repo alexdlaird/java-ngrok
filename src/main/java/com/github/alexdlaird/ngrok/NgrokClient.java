@@ -82,8 +82,8 @@ import static java.util.Objects.nonNull;
  * <p><strong>Note:</strong> <code>ngrok</code> v2's default behavior for <code>http</code> when no additional
  * properties are passed is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This method
  * will return a reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed, call
- * {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
- * <code>https</code> tunnel will be returned.
+ * {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and
+ * a reference to the <code>https</code> tunnel will be returned.
  * <h3><code>ngrok</code>'s Edge</h3>
  *
  * <p><strong>Note:</strong> <code>ngrok</code> has deprecated Edges and will sunset Labeled Tunnels on December 31st,
@@ -238,8 +238,9 @@ public class NgrokClient {
      *
      * <p>If a <a href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
      * target="_blank">tunnel definition in ngrok's config file</a> matches the given
-     * {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withName(String)}, it will be loaded and used to start the tunnel. When
-     * {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withName(String)} is not set and a "java-ngrok-default" tunnel definition exists in
+     * {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withName(String)}, it will be loaded and used
+     * to start the tunnel. When {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withName(String)}
+     * is not set and a "java-ngrok-default" tunnel definition exists in
      * <code>ngrok</code>'s config, it will be loaded and used. Any properties defined on {@link CreateTunnel} will
      * override properties from the loaded tunnel definition.
      *
@@ -257,8 +258,8 @@ public class NgrokClient {
      * <p><strong>Note:</strong> <code>ngrok</code> v2's default behavior for <code>http</code> when no additional
      * properties are passed is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This
      * method will return a reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed,
-     * call {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
-     * <code>https</code> tunnel will be returned.
+     * call {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withBindTls(BindTls)} with
+     * {@link BindTls#TRUE} and a reference to the <code>https</code> tunnel will be returned.
      *
      * @param createTunnel The tunnel definition.
      * @return The created Tunnel.
