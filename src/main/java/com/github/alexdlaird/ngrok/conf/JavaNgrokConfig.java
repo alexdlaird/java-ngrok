@@ -40,8 +40,9 @@ import static java.util.Objects.nonNull;
  * </pre>
  * <h2><code>ngrok</code> Version Compatibility</h2>
  * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
- * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
- * {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
+ * install v2 instead, set the version with
+ * {@link com.github.alexdlaird.ngrok.conf.JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
+ * {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
  */
 public class JavaNgrokConfig {
 

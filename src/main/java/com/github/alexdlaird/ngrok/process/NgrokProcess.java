@@ -47,10 +47,11 @@ import static java.util.logging.Level.SEVERE;
  *
  * <h3>Event Logs</h3>
  * When <code>ngrok</code> emits logs, <code>java-ngrok</code> can surface them to a callback function. To register
- * this callback, use {@link JavaNgrokConfig.Builder#withLogEventCallback}.
+ * this callback, use {@link com.github.alexdlaird.ngrok.conf.JavaNgrokConfig.Builder#withLogEventCallback}.
  *
  * <p>If these events aren't necessary for our use case, some resources can be freed up by turning them off.
- * {@link JavaNgrokConfig.Builder#withoutMonitoring} will disable logging, or we can call
+ * {@link com.github.alexdlaird.ngrok.conf.JavaNgrokConfig.Builder#withoutMonitoring} will disable logging, or we can
+ * call
  * {@link NgrokProcess.ProcessMonitor#stop()} to stop monitoring on a running process.
  */
 public class NgrokProcess {
@@ -233,7 +234,7 @@ public class NgrokProcess {
      * </pre>
      *
      * <p>The auth token can also be set in the {@link JavaNgrokConfig} that is passed to the
-     * {@link NgrokClient.Builder}.
+     * {@link com.github.alexdlaird.ngrok.NgrokClient.Builder}.
      *
      * @param authToken The auth token.
      * @throws NgrokException <code>ngrok</code> could not start.
@@ -282,7 +283,7 @@ public class NgrokProcess {
      * Set the <code>ngrok</code> API key in the config file, enabling more features (for instance, labeled tunnels).
      *
      * <p>The API key can also be set in the {@link JavaNgrokConfig} that is passed to the
-     * {@link NgrokClient.Builder}.
+     * {@link com.github.alexdlaird.ngrok.NgrokClient.Builder}.
      *
      * @param apiKey The API key.
      * @throws NgrokException <code>ngrok</code> could not start.

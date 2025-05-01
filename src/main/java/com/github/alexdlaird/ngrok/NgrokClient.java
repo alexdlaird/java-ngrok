@@ -69,18 +69,20 @@ import static java.util.Objects.nonNull;
  * </pre>
  *
  * <p>The {@link NgrokClient#connect(CreateTunnel) NgrokClient.connect()} method can also take a {@link CreateTunnel}
- * (which can be built through {@link CreateTunnel.Builder its Builder}), which allows us to pass additional tunnel
- * configurations that are supported by <code>ngrok</code> (or {@link CreateTunnel.Builder#withName(String)} to use a
+ * (which can be built through {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder its Builder}), which
+ * allows us to pass additional tunnel configurations that are supported by <code>ngrok</code> (or
+ * {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withName(String)} to use a
  * tunnel defined in <code>ngrok</code>`'s config file), <a href="#tunnel-configurations">as documented here</a>.
  *
  * <p><p><code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
- * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
- * {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
+ * install v2 instead, set the version with
+ * {@link com.github.alexdlaird.ngrok.conf.JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
+ * {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
  *
  * <p><strong>Note:</strong> <code>ngrok</code> v2's default behavior for <code>http</code> when no additional
  * properties are passed is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This method
  * will return a reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed, call
- * {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
+ * {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
  * <code>https</code> tunnel will be returned.
  * <h3><code>ngrok</code>'s Edge</h3>
  *
@@ -102,7 +104,8 @@ import static java.util.Objects.nonNull;
  *       - edge=my_edge_id
  *     addr: http://localhost:80
  * </pre>
- * To start a labeled tunnel in <code>java-ngrok</code>, set {@link CreateTunnel.Builder#withName(String)}.
+ * To start a labeled tunnel in <code>java-ngrok</code>, set
+ * {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withName(String)}.
  *
  * <p><pre>
  * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
@@ -166,7 +169,8 @@ import static java.util.Objects.nonNull;
  * It is possible to configure the tunnel when it is created, for instance adding authentication, a subdomain, or other
  * additional <a href="https://ngrok.com/docs/agent/config/v2/#common-tunnel-configuration-properties"
  * target="_blank">tunnel configurations that are supported by ngrok</a>. This is accomplished by using
- * {@link CreateTunnel.Builder} to set what properties will be used when the tunnel is created.
+ * {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder} to set what properties will be used when the tunnel
+ * is created.
  *
  * <p>Here is an example that opens a tunnel with subdomain <code>foo</code>, requires basic authentication for
  * requests, and defines a circuit breaker.
@@ -234,8 +238,8 @@ public class NgrokClient {
      *
      * <p>If a <a href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
      * target="_blank">tunnel definition in ngrok's config file</a> matches the given
-     * {@link CreateTunnel.Builder#withName(String)}, it will be loaded and used to start the tunnel. When
-     * {@link CreateTunnel.Builder#withName(String)} is not set and a "java-ngrok-default" tunnel definition exists in
+     * {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withName(String)}, it will be loaded and used to start the tunnel. When
+     * {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withName(String)} is not set and a "java-ngrok-default" tunnel definition exists in
      * <code>ngrok</code>'s config, it will be loaded and used. Any properties defined on {@link CreateTunnel} will
      * override properties from the loaded tunnel definition.
      *
@@ -243,8 +247,9 @@ public class NgrokClient {
      * method will first download and install <code>ngrok</code>.
      *
      * <p><code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v2.
-     * To install v3 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
-     * {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
+     * To install v3 instead, set the version with
+     * {@link com.github.alexdlaird.ngrok.conf.JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
+     * {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
      *
      * <p>If <code>ngrok</code> is not running, calling this method will first start a process with
      * {@link JavaNgrokConfig}.
@@ -252,7 +257,7 @@ public class NgrokClient {
      * <p><strong>Note:</strong> <code>ngrok</code> v2's default behavior for <code>http</code> when no additional
      * properties are passed is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This
      * method will return a reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed,
-     * call {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
+     * call {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
      * <code>https</code> tunnel will be returned.
      *
      * @param createTunnel The tunnel definition.
