@@ -57,6 +57,9 @@ public class NgrokTestCase extends TestCase {
 
     protected NgrokProcess ngrokProcessV3_2;
 
+    protected String ngrokSubdomain = System.getenv()
+                                            .getOrDefault("NGROK_SUBDOMAIN", System.getProperty("user.name"));
+
     private final Map<String, String> mockedSystemProperties = new HashMap<>();
 
     @BeforeEach
@@ -110,11 +113,10 @@ public class NgrokTestCase extends TestCase {
 
     protected String createUniqueSubdomain() {
         final Random random = new Random();
-        return String.format("java-ngrok-%s-%s-%s-tcp",
-            random.longs(1000000000000000L, 9999999999999999L)
-                  .findFirst()
-                  .getAsLong(),
-            System.getProperty("java.version").replaceAll("\\.|_", ""), NgrokInstaller.getSystem().toLowerCase());
+        return String.format("java-ngrok-%s-%s-%s",
+            random.nextLong(9999999999999999L),
+            NgrokInstaller.getSystem().toLowerCase(),
+            System.getProperty("java.version").replaceAll("[._]", "-"));
     }
 
     protected void mockSystemProperty(final String key, final String value) {
