@@ -1,4 +1,4 @@
-.PHONY: all build install clean test docs check local validate-release test-downstream upload
+.PHONY: all build install clean clean-api-tests test docs check local validate-release test-downstream upload
 
 SHELL := /usr/bin/env bash
 ifeq ($(OS),Windows_NT)
@@ -21,6 +21,10 @@ build:
 clean:
 	$(GRADLE_BIN) clean
 	@rm -rf java-ngrok-example-dropwizard
+
+clean-api-tests:
+	python -m pip install pyngrok
+	python scripts/clean-api-tests.py
 
 test:
 	$(GRADLE_BIN) test
