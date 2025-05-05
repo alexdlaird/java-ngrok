@@ -27,6 +27,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.11.4"
     testImplementation "org.mockito:mockito-core:5.17.0"
     testImplementation "org.hamcrest:hamcrest:3.0"
+    testImplementation "org.junit-pioneer:junit-pioneer:2.3.0"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.11.4"
 }
 
@@ -44,6 +45,11 @@ tasks.register("printVersion") {
 }
 
 test {
+    jvmArgs += [
+            "--add-opens", "java.base/java.util=ALL-UNNAMED",
+            "--add-opens", "java.base/java.lang=ALL-UNNAMED"
+    ]
+
     useJUnitPlatform()
     finalizedBy jacocoTestReport
 }
