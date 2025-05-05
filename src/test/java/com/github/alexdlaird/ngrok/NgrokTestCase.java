@@ -13,11 +13,13 @@ import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import org.junit.jupiter.api.AfterEach;
@@ -25,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.getNgrokBin;
+import static com.github.alexdlaird.util.ProcessUtils.captureRunProcess;
 import static java.util.Objects.nonNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -58,6 +61,10 @@ public class NgrokTestCase extends TestCase {
     protected NgrokProcess ngrokProcessV3_2;
 
     private final Map<String, String> mockedSystemProperties = new HashMap<>();
+
+    private final Random random = new Random();
+
+    private final Gson gson = new Gson();
 
     @BeforeEach
     public void setUp() {
@@ -108,13 +115,50 @@ public class NgrokTestCase extends TestCase {
         assertFalse(Files.exists(javaNgrokConfig.getNgrokPath()));
     }
 
+    protected Map<String, String> givenNgrokReservedDomain(final JavaNgrokConfig javaNgrokConfig,
+                                                           final String domain)
+        throws IOException, InterruptedException {
+        final List<String> command = List.of(javaNgrokConfig.getNgrokPath().toString(),
+            "--config", javaNgrokConfig.getConfigPath().toString(),
+            "api", "reserved-domains", "create",
+            "--domain", domain,
+            "--description", "Created by java-ngrok test");
+
+        final String result = captureRunProcess(command);
+        return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
+    }
+
+    protected Map<String, String> givenNgrokReservedAddr(final JavaNgrokConfig javaNgrokConfig)
+        throws IOException, InterruptedException {
+        final List<String> command = List.of(javaNgrokConfig.getNgrokPath().toString(),
+            "--config", javaNgrokConfig.getConfigPath().toString(),
+            "api", "reserved-addrs", "create",
+            "--description", "Created by java-ngrok test");
+
+        final String result = captureRunProcess(command);
+        return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
+    }
+
+    protected Map<String, String> givenNgrokEdgeExists(final JavaNgrokConfig javaNgrokConfig,
+                                                       final String proto,
+                                                       final String domain,
+                                                       final int port)
+        throws IOException, InterruptedException {
+        final List<String> command = List.of(javaNgrokConfig.getNgrokPath().toString(),
+            "--config", javaNgrokConfig.getConfigPath().toString(),
+            "api", "edges", proto, "create",
+            "--hostports", String.format("%s:%s", domain, port),
+            "--description", "Created by java-ngrok test");
+
+        final String result = captureRunProcess(command);
+        return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
+    }
+
     protected String createUniqueSubdomain() {
-        final Random random = new Random();
-        return String.format("java-ngrok-%s-%s-%s-tcp",
-            random.longs(1000000000000000L, 9999999999999999L)
-                  .findFirst()
-                  .getAsLong(),
-            System.getProperty("java.version").replaceAll("\\.|_", ""), NgrokInstaller.getSystem().toLowerCase());
+        return String.format("java-ngrok-%s-%s-%s",
+            random.nextInt(2000000000 - (1000000001)) + 1000000000,
+            NgrokInstaller.getSystem().toLowerCase(),
+            System.getProperty("java.version").replaceAll("[._]", "-"));
     }
 
     protected void mockSystemProperty(final String key, final String value) {

@@ -30,7 +30,7 @@ public class CreateTunnelTest {
                 .withNgrokVersion(NgrokVersion.V2)
                 .withName("name")
                 .withProto(Proto.TCP)
-                .withDomain("pyngrok.com")
+                .withDomain("java-ngrok.com")
                 .withAddr(5000)
                 .withoutInspect()
                 .withAuth("auth-token")
@@ -97,7 +97,7 @@ public class CreateTunnelTest {
         assertEquals(NgrokVersion.V2, createTunnel.getNgrokVersion());
         assertEquals("name", createTunnel.getName());
         assertEquals(Proto.TCP, createTunnel.getProto());
-        assertEquals("pyngrok.com", createTunnel.getDomain());
+        assertEquals("java-ngrok.com", createTunnel.getDomain());
         assertEquals("5000", createTunnel.getAddr());
         assertFalse(createTunnel.isInspect());
         assertEquals("auth-token", createTunnel.getAuth());
@@ -225,7 +225,7 @@ public class CreateTunnelTest {
         final Map<String, Object> tunnelDefinition = new HashMap<>();
         tunnelDefinition.put("labels", Collections.singletonList("edge=some-edge-id"));
         tunnelDefinition.put("proto", "tcp");
-        tunnelDefinition.put("domain", "pyngrok.com");
+        tunnelDefinition.put("domain", "java-ngrok.com");
         tunnelDefinition.put("addr", "5000");
         tunnelDefinition.put("inspect", "false");
         tunnelDefinition.put("basic_auth", Collections.singletonList("auth-token"));
@@ -287,7 +287,7 @@ public class CreateTunnelTest {
         // THEN
         assertEquals(1, createTunnel.getLabels().size());
         assertEquals(Proto.TCP, createTunnel.getProto());
-        assertEquals("pyngrok.com", createTunnel.getDomain());
+        assertEquals("java-ngrok.com", createTunnel.getDomain());
         assertEquals("5000", createTunnel.getAddr());
         assertFalse(createTunnel.isInspect());
         assertEquals("edge=some-edge-id", createTunnel.getLabels().get(0));

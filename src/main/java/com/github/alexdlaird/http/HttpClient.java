@@ -46,7 +46,7 @@ public interface HttpClient {
      * @param additionalHeaders Additional headers for the request.
      * @param dest              The destination to which the file will be downloaded.
      * @param retries           The retry attempt index, if download fails.
-     * @throws InterruptedException The thread is interrupted during retries.
+     * @throws InterruptedException The thread was interrupted during retries.
      * @throws HttpClientException  An error has occurred while executing the HTTP request.
      */
     void get(final String url, final List<Parameter> parameters,

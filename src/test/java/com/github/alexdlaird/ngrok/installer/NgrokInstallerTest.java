@@ -12,14 +12,12 @@ import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokTestCase;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
-
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
