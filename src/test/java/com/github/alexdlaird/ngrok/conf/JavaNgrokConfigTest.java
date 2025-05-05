@@ -15,14 +15,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.SetEnvironmentVariable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SetEnvironmentVariable(key = "NGROK_AUTHTOKEN", value = "some-auth-token")
-@SetEnvironmentVariable(key = "NGROK_API_KEY", value = "some-api-key")
 public class JavaNgrokConfigTest extends TestCase {
     @Test
     public void testJavaNgrokConfig() {
@@ -74,21 +71,25 @@ public class JavaNgrokConfigTest extends TestCase {
 
     @Test
     public void testAuthTokenSetFromEnv() {
+        final String ngrokAuthToken = testRequiresEnvVar("NGROK_AUTHTOKEN");
+
         // WHEN
         final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
             .build();
 
         // THEN
-        assertEquals("some-auth-token", javaNgrokConfig.getAuthToken());
+        assertEquals(ngrokAuthToken, javaNgrokConfig.getAuthToken());
     }
 
     @Test
     public void testApiKeySetFromEnv() {
+        final String ngrokApiKey = testRequiresEnvVar("NGROK_API_KEY");
+
         // WHEN
         final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
             .build();
 
         // THEN
-        assertEquals("some-api-key", javaNgrokConfig.getApiKey());
+        assertEquals(ngrokApiKey, javaNgrokConfig.getApiKey());
     }
 }

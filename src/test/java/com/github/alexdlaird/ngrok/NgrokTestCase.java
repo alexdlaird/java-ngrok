@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -118,11 +120,11 @@ public class NgrokTestCase extends TestCase {
     protected Map<String, String> givenNgrokReservedDomain(final JavaNgrokConfig javaNgrokConfig,
                                                            final String domain)
         throws IOException, InterruptedException {
-        final List<String> command = List.of(javaNgrokConfig.getNgrokPath().toString(),
+        final List<String> command = Stream.of(javaNgrokConfig.getNgrokPath().toString(),
             "--config", javaNgrokConfig.getConfigPath().toString(),
             "api", "reserved-domains", "create",
             "--domain", domain,
-            "--description", "Created by java-ngrok test");
+            "--description", "Created by java-ngrok test").collect(Collectors.toList());
 
         final String result = captureRunProcess(command);
         return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
@@ -130,10 +132,10 @@ public class NgrokTestCase extends TestCase {
 
     protected Map<String, String> givenNgrokReservedAddr(final JavaNgrokConfig javaNgrokConfig)
         throws IOException, InterruptedException {
-        final List<String> command = List.of(javaNgrokConfig.getNgrokPath().toString(),
+        final List<String> command = Stream.of(javaNgrokConfig.getNgrokPath().toString(),
             "--config", javaNgrokConfig.getConfigPath().toString(),
             "api", "reserved-addrs", "create",
-            "--description", "Created by java-ngrok test");
+            "--description", "Created by java-ngrok test").collect(Collectors.toList());
 
         final String result = captureRunProcess(command);
         return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
@@ -144,11 +146,11 @@ public class NgrokTestCase extends TestCase {
                                                        final String domain,
                                                        final int port)
         throws IOException, InterruptedException {
-        final List<String> command = List.of(javaNgrokConfig.getNgrokPath().toString(),
+        final List<String> command = Stream.of(javaNgrokConfig.getNgrokPath().toString(),
             "--config", javaNgrokConfig.getConfigPath().toString(),
             "api", "edges", proto, "create",
             "--hostports", String.format("%s:%s", domain, port),
-            "--description", "Created by java-ngrok test");
+            "--description", "Created by java-ngrok test").collect(Collectors.toList());
 
         final String result = captureRunProcess(command);
         return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
