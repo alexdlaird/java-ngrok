@@ -989,6 +989,7 @@ class NgrokClientTest extends NgrokTestCase {
         testRequiresEnvVar("NGROK_API_KEY");
 
         // GIVEN
+        final String[] hostAndPort = this.reservedAddrTcpEdge.get("addr").split(":");
         final Map<String, Object> edgeTcpTunnelConfig = new HashMap<>();
         edgeTcpTunnelConfig.put("addr", "22");
         edgeTcpTunnelConfig.put("labels", Collections.singletonList(String.format("edge=%s", tcpEdge.get("id"))));
