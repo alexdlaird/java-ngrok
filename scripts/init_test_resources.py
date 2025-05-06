@@ -84,13 +84,13 @@ def init_test_resources():
 
     if os.environ.get("GITHUB_ACTIONS") == "true":
         with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-            f.write(f"NGROK_PARENT_DOMAIN={ngrok_parent_domain}")
-            f.write(f"NGROK_DOMAIN={reserved_domain['domain']}")
-            f.write(f"NGROK_TCP_EDGE_ADDR={reserved_addr_tcp_edge['addr']}")
-            f.write(f"NGROK_TCP_EDGE_ID={tcp_edge['id']}")
-            f.write(f"NGROK_HTTP_EDGE_DOMAIN={reserved_domain_http_edge['domain']}")
-            f.write(f"NGROK_HTTP_EDGE_ID={http_edge['id']}")
-            f.write(f"NGROK_TLS_EDGE_DOMAIN={reserved_domain_tls_edge['domain']}")
+            f.write(f"NGROK_PARENT_DOMAIN={ngrok_parent_domain}\n")
+            f.write(f"NGROK_DOMAIN={reserved_domain['domain']}\n")
+            f.write(f"NGROK_TCP_EDGE_ADDR={reserved_addr_tcp_edge['addr']}\n")
+            f.write(f"NGROK_TCP_EDGE_ID={tcp_edge['id']}\n")
+            f.write(f"NGROK_HTTP_EDGE_DOMAIN={reserved_domain_http_edge['domain']}\n")
+            f.write(f"NGROK_HTTP_EDGE_ID={http_edge['id']}\n")
+            f.write(f"NGROK_TLS_EDGE_DOMAIN={reserved_domain_tls_edge['domain']}\n")
             f.write(f"NGROK_TLS_EDGE_ID={tls_edge['id']}")
 
 
