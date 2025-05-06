@@ -123,9 +123,9 @@ public class NgrokTestCase extends TestCase {
         throws IOException, InterruptedException {
         final List<String> args = Collections.unmodifiableList(
             Stream.of("--config", javaNgrokConfig.getConfigPath().toString(),
-            "api", "reserved-domains", "create",
-            "--domain", domain,
-            "--description", "Created by java-ngrok test").collect(Collectors.toList()));
+                "api", "reserved-domains", "create",
+                "--domain", domain,
+                "--description", "Created by java-ngrok test").collect(Collectors.toList()));
 
         final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
         return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
@@ -135,8 +135,8 @@ public class NgrokTestCase extends TestCase {
         throws IOException, InterruptedException {
         final List<String> args = Collections.unmodifiableList(
             Stream.of("--config", javaNgrokConfig.getConfigPath().toString(),
-            "api", "reserved-addrs", "create",
-            "--description", "Created by java-ngrok test").collect(Collectors.toList()));
+                "api", "reserved-addrs", "create",
+                "--description", "Created by java-ngrok test").collect(Collectors.toList()));
 
         final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
         return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
@@ -149,9 +149,9 @@ public class NgrokTestCase extends TestCase {
         throws IOException, InterruptedException {
         final List<String> args = Collections.unmodifiableList(
             Stream.of("--config", javaNgrokConfig.getConfigPath().toString(),
-            "api", "edges", proto, "create",
-            "--hostports", String.format("%s:%s", domain, port),
-            "--description", "Created by java-ngrok test").collect(Collectors.toList()));
+                "api", "edges", proto, "create",
+                "--hostports", String.format("%s:%s", domain, port),
+                "--description", "Created by java-ngrok test").collect(Collectors.toList()));
 
         final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
         return gson.fromJson(result.substring(result.indexOf("{")), Map.class);

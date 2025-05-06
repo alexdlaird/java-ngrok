@@ -56,8 +56,8 @@ public class NgrokException extends JavaNgrokException {
         super(message);
 
         this.ngrokLogs = Collections.unmodifiableList(
-                Stream.of(ngrokLogs.toArray(new NgrokLog[]{}))
-                        .collect(Collectors.toList()));
+            Stream.of(ngrokLogs.toArray(new NgrokLog[]{}))
+                  .collect(Collectors.toList()));
         this.ngrokError = null;
     }
 
@@ -72,8 +72,8 @@ public class NgrokException extends JavaNgrokException {
         super(message);
 
         this.ngrokLogs = Collections.unmodifiableList(
-                Stream.of(ngrokLogs.toArray(new NgrokLog[]{}))
-                        .collect(Collectors.toList()));
+            Stream.of(ngrokLogs.toArray(new NgrokLog[]{}))
+                  .collect(Collectors.toList()));
         this.ngrokError = ngrokError;
     }
 

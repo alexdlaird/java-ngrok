@@ -8,7 +8,6 @@ package com.github.alexdlaird.ngrok.protocol;
 
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokClient;
-import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import java.util.Collections;
 import java.util.List;
@@ -890,8 +889,8 @@ public class CreateTunnel {
                             schemes = Collections.singletonList("http");
                         } else {
                             schemes = Collections.unmodifiableList(
-                                    Stream.of("http", "https")
-                                            .collect(Collectors.toList()));
+                                Stream.of("http", "https")
+                                      .collect(Collectors.toList()));
                         }
 
                         bindTls = null;

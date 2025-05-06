@@ -13,7 +13,6 @@ import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.http.HttpClientException;
 import com.github.alexdlaird.ngrok.NgrokClient;
-import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.google.gson.JsonParseException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -62,15 +61,15 @@ public class NgrokInstaller {
     public static final String LINUX = "LINUX";
     public static final String FREEBSD = "FREEBSD";
     public static final List<String> UNIX_BINARIES = Collections.unmodifiableList(
-            Stream.of(MAC, LINUX, FREEBSD)
-                    .collect(Collectors.toList()));
+        Stream.of(MAC, LINUX, FREEBSD)
+              .collect(Collectors.toList()));
     public static final Path DEFAULT_NGROK_PATH = Paths.get(getDefaultNgrokDir().toString(),
         NgrokInstaller.getNgrokBin());
     public static final Path DEFAULT_CONFIG_PATH = Paths.get(getDefaultNgrokDir().toString(), "ngrok.yml");
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokInstaller.class));
     private final List<String> validLogLevels = Collections.unmodifiableList(
         Stream.of("info", "debug").collect(
-        Collectors.toList()));
+            Collectors.toList()));
     private final Yaml yaml = new Yaml();
     private final Map<String, Map<String, Object>> configCache = new HashMap<>();
 

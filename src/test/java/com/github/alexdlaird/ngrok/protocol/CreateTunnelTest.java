@@ -7,7 +7,11 @@
 package com.github.alexdlaird.ngrok.protocol;
 
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,82 +20,77 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 public class CreateTunnelTest {
 
     @Test
     public void testCreateTunnelParams() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withNgrokVersion(NgrokVersion.V2)
-                .withName("name")
-                .withProto(Proto.TCP)
-                .withDomain("java-ngrok.com")
-                .withAddr(5000)
-                .withoutInspect()
-                .withAuth("auth-token")
-                .withHostHeader("host-header")
-                .withBindTls(false)
-                .withSubdomain("subdomain")
-                .withCrt("crt")
-                .withKey("key")
-                .withRemoteAddr("remoteAddr")
-                .withMetadata("metadata")
-                .withOAuth(new TunnelOAuth.Builder().withProvider("testcase")
-                        .withAllowDomains(Collections.unmodifiableList(
-                                Stream.of("one.domain", "two.domain")
-                                        .collect(Collectors.toList())))
-                        .withAllowEmails(Collections.unmodifiableList(
-                                Stream.of("one@email", "two@email")
-                                        .collect(Collectors.toList())))
-                        .withScopes(Collections.unmodifiableList(
-                                Stream.of("ascope", "bscope")
-                                        .collect(Collectors.toList())))
-                        .build())
-                .withCircuitBreaker(0.5f)
-                .withCompression(false)
-                .withMutualTlsCas("mutualTlsCas")
-                .withProxyProto("proxyProto")
-                .withWebsocketTcpConverter(false)
-                .withTerminateAt("provider")
-                .withRequestHeader(new TunnelHeader.Builder().withAdd(Collections.singletonList("req-addition"))
-                        .withRemove(Collections.singletonList(("req-subtraction")))
-                        .build())
-                .withResponseHeader(new TunnelHeader.Builder().withAdd(Collections.singletonList(("res-addition")))
-                        .withRemove(Collections.singletonList(("res-subtraction")))
-                        .build())
-                .withIpRestriction(new TunnelIPRestriction
-                    .Builder().withAllowCidrs(Collections.singletonList(("allowed")))
-                        .withDenyCidrs(Collections.singletonList(("denied")))
-                        .build())
-                .withVerifyWebhook(new TunnelVerifyWebhook.Builder().withProvider("provider")
-                        .withSecret("secret")
-                        .build())
-                .withUserAgentFilter(new TunnelUserAgentFilter.Builder()
-                        .withAllow(Collections.singletonList("allow-user-agent"))
-                        .withDeny(Collections.singletonList("deny-user-agent"))
-                        .build())
-                .withPolicyInbound(new TunnelPolicy.Builder()
-                        .withName("inbound-policy")
-                        .withActions(new TunnelPolicyActions.Builder()
-                            .withType("inbound-policy-actions-type")
-                            .withConfig("inbound-policy-actions-config")
-                            .build())
-                        .withExpressions(Collections.singletonList("inbound-policy-expression"))
-                        .build())
-                .withPolicyOutbound(new TunnelPolicy.Builder()
-                        .withName("outbound-policy")
-                        .withActions(new TunnelPolicyActions.Builder()
-                            .withType("outbound-policy-actions-type")
-                            .withConfig("outbound-policy-actions-config")
-                            .build())
-                        .withExpressions(Collections.singletonList("outbound-policy-expression"))
-                        .build())
-                .build();
+            .withNgrokVersion(NgrokVersion.V2)
+            .withName("name")
+            .withProto(Proto.TCP)
+            .withDomain("java-ngrok.com")
+            .withAddr(5000)
+            .withoutInspect()
+            .withAuth("auth-token")
+            .withHostHeader("host-header")
+            .withBindTls(false)
+            .withSubdomain("subdomain")
+            .withCrt("crt")
+            .withKey("key")
+            .withRemoteAddr("remoteAddr")
+            .withMetadata("metadata")
+            .withOAuth(new TunnelOAuth.Builder().withProvider("testcase")
+                                                .withAllowDomains(Collections.unmodifiableList(
+                                                    Stream.of("one.domain", "two.domain")
+                                                          .collect(Collectors.toList())))
+                                                .withAllowEmails(Collections.unmodifiableList(
+                                                    Stream.of("one@email", "two@email")
+                                                          .collect(Collectors.toList())))
+                                                .withScopes(Collections.unmodifiableList(
+                                                    Stream.of("ascope", "bscope")
+                                                          .collect(Collectors.toList())))
+                                                .build())
+            .withCircuitBreaker(0.5f)
+            .withCompression(false)
+            .withMutualTlsCas("mutualTlsCas")
+            .withProxyProto("proxyProto")
+            .withWebsocketTcpConverter(false)
+            .withTerminateAt("provider")
+            .withRequestHeader(new TunnelHeader.Builder().withAdd(Collections.singletonList("req-addition"))
+                                                         .withRemove(Collections.singletonList(("req-subtraction")))
+                                                         .build())
+            .withResponseHeader(new TunnelHeader.Builder().withAdd(Collections.singletonList(("res-addition")))
+                                                          .withRemove(Collections.singletonList(("res-subtraction")))
+                                                          .build())
+            .withIpRestriction(new TunnelIPRestriction
+                .Builder().withAllowCidrs(Collections.singletonList(("allowed")))
+                          .withDenyCidrs(Collections.singletonList(("denied")))
+                          .build())
+            .withVerifyWebhook(new TunnelVerifyWebhook.Builder().withProvider("provider")
+                                                                .withSecret("secret")
+                                                                .build())
+            .withUserAgentFilter(new TunnelUserAgentFilter.Builder()
+                .withAllow(Collections.singletonList("allow-user-agent"))
+                .withDeny(Collections.singletonList("deny-user-agent"))
+                .build())
+            .withPolicyInbound(new TunnelPolicy.Builder()
+                .withName("inbound-policy")
+                .withActions(new TunnelPolicyActions.Builder()
+                    .withType("inbound-policy-actions-type")
+                    .withConfig("inbound-policy-actions-config")
+                    .build())
+                .withExpressions(Collections.singletonList("inbound-policy-expression"))
+                .build())
+            .withPolicyOutbound(new TunnelPolicy.Builder()
+                .withName("outbound-policy")
+                .withActions(new TunnelPolicyActions.Builder()
+                    .withType("outbound-policy-actions-type")
+                    .withConfig("outbound-policy-actions-config")
+                    .build())
+                .withExpressions(Collections.singletonList("outbound-policy-expression"))
+                .build())
+            .build();
 
         // THEN
         assertEquals(NgrokVersion.V2, createTunnel.getNgrokVersion());
@@ -144,10 +143,10 @@ public class CreateTunnelTest {
     public void testCreateTunnelSchemes() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withSchemes(Collections.unmodifiableList(
-                        Stream.of("http", "https")
-                                .collect(Collectors.toList())))
-                .build();
+            .withSchemes(Collections.unmodifiableList(
+                Stream.of("http", "https")
+                      .collect(Collectors.toList())))
+            .build();
 
         // THEN
         assertNull(createTunnel.getBindTls());
@@ -159,25 +158,25 @@ public class CreateTunnelTest {
     @Test
     public void testCreateTunnelBindTlsAndSchemesFails() {
         assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
-                .withBindTls(BindTls.TRUE)
-                .withSchemes(Collections.unmodifiableList(
-                        Stream.of("http", "https")
-                                .collect(Collectors.toList()))));
+            .withBindTls(BindTls.TRUE)
+            .withSchemes(Collections.unmodifiableList(
+                Stream.of("http", "https")
+                      .collect(Collectors.toList()))));
 
         assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
-                .withSchemes(Collections.unmodifiableList(
-                        Stream.of("http", "https")
-                                .collect(Collectors.toList())))
-                .withBindTls(BindTls.TRUE));
+            .withSchemes(Collections.unmodifiableList(
+                Stream.of("http", "https")
+                      .collect(Collectors.toList())))
+            .withBindTls(BindTls.TRUE));
     }
 
     @Test
     public void testCreateTunnelBasicAuth() {
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withBasicAuth(Collections.unmodifiableList(
-                        Stream.of("token-1", "token-2")
-                                .collect(Collectors.toList())))
-                .build();
+            .withBasicAuth(Collections.unmodifiableList(
+                Stream.of("token-1", "token-2")
+                      .collect(Collectors.toList())))
+            .build();
 
         assertEquals(2, createTunnel.getBasicAuth().size());
         assertEquals("token-1", createTunnel.getBasicAuth().get(0));
@@ -199,9 +198,9 @@ public class CreateTunnelTest {
     public void testCreateLabelsWithTunnelDefinitions() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withTunnelDefinition(Collections.singletonMap("labels",
-                    Collections.singletonList(("edge=some-edge-id"))))
-                .build();
+            .withTunnelDefinition(Collections.singletonMap("labels",
+                Collections.singletonList(("edge=some-edge-id"))))
+            .build();
 
         // THEN
         assertNull(createTunnel.getBindTls());
@@ -281,8 +280,8 @@ public class CreateTunnelTest {
         policies.put("outbound", Collections.unmodifiableMap(outboundPolicy));
         tunnelDefinition.put("policy", Collections.unmodifiableMap(policies));
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withTunnelDefinition(Collections.unmodifiableMap(tunnelDefinition))
-                .build();
+            .withTunnelDefinition(Collections.unmodifiableMap(tunnelDefinition))
+            .build();
 
         // THEN
         assertEquals(1, createTunnel.getLabels().size());
@@ -329,9 +328,9 @@ public class CreateTunnelTest {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
             .withTunnelDefinition(Collections.singletonMap("basic_auth", Collections.unmodifiableList(
-                    Stream.of("token-1", "token-2")
-                            .collect(Collectors.toList()))))
-                .build();
+                Stream.of("token-1", "token-2")
+                      .collect(Collectors.toList()))))
+            .build();
 
         // THEN
         assertEquals(2, createTunnel.getBasicAuth().size());

@@ -12,7 +12,6 @@ import com.github.alexdlaird.exception.NgrokException;
 import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.http.Response;
-import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
@@ -316,7 +315,7 @@ public class NgrokProcess {
             captureRunProcess(javaNgrokConfig.getNgrokPath(),
                 Collections.unmodifiableList(Stream.of(javaNgrokConfig.getNgrokPath().toString(),
                                                        "update", "--log=stdout")
-                      .collect(Collectors.toList())));
+                                                   .collect(Collectors.toList())));
         } catch (final IOException | InterruptedException e) {
             throw new NgrokException("An error occurred while trying to update ngrok.", e);
         }
@@ -430,8 +429,8 @@ public class NgrokProcess {
          */
         public List<NgrokLog> getLogs() {
             return Collections.unmodifiableList(
-                    Stream.of(logs.toArray(new NgrokLog[]{}))
-                            .collect(Collectors.toList()));
+                Stream.of(logs.toArray(new NgrokLog[]{}))
+                      .collect(Collectors.toList()));
         }
 
         /**
