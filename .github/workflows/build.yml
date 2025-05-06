@@ -32,6 +32,7 @@ jobs:
         id: init
         run: make init-test-resources
       - run: echo ${{ steps.init.outputs.NGROK_PARENT_DOMAIN }}
+      - run: echo ${{ steps.init.outputs.NGROK_TLS_EDGE_DOMAIN }}
 
 
   validate:
