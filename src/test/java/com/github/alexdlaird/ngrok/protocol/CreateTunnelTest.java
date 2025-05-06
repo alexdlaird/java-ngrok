@@ -216,7 +216,7 @@ public class CreateTunnelTest {
         tunnelDefinitions.put("bind_tls", true);
         tunnelDefinitions.put("labels", Collections.singletonList(("edge=some-edge-id")));
         assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
-            .withTunnelDefinition(tunnelDefinitions));
+            .withTunnelDefinition(Collections.unmodifiableMap(tunnelDefinitions)));
     }
 
     @Test
@@ -244,42 +244,42 @@ public class CreateTunnelTest {
         final Map<String, Object> requestHeaderDefinition = new HashMap<>();
         requestHeaderDefinition.put("add", Collections.singletonList("req-addition"));
         requestHeaderDefinition.put("remove", Collections.singletonList("req-subtraction"));
-        tunnelDefinition.put("request_header", requestHeaderDefinition);
+        tunnelDefinition.put("request_header", Collections.unmodifiableMap(requestHeaderDefinition));
         final Map<String, Object> responseHeaderDefinition = new HashMap<>();
         responseHeaderDefinition.put("add", Collections.singletonList("res-addition"));
         responseHeaderDefinition.put("remove", Collections.singletonList("res-subtraction"));
-        tunnelDefinition.put("response_header", responseHeaderDefinition);
+        tunnelDefinition.put("response_header", Collections.unmodifiableMap(responseHeaderDefinition));
         final Map<String, Object> ipRestrictionsDefinition = new HashMap<>();
         ipRestrictionsDefinition.put("allow_cidrs", Collections.singletonList("allowed"));
         ipRestrictionsDefinition.put("deny_cidrs", Collections.singletonList("denied"));
-        tunnelDefinition.put("ip_restriction", ipRestrictionsDefinition);
+        tunnelDefinition.put("ip_restriction", Collections.unmodifiableMap(ipRestrictionsDefinition));
         final Map<String, Object> verifyWebhookDefinition = new HashMap<>();
         verifyWebhookDefinition.put("provider", "provider");
         verifyWebhookDefinition.put("secret", "secret");
-        tunnelDefinition.put("verify_webhook", verifyWebhookDefinition);
+        tunnelDefinition.put("verify_webhook", Collections.unmodifiableMap(verifyWebhookDefinition));
         final Map<String, Object> userAgentFilter = new HashMap<>();
         userAgentFilter.put("allow", Collections.singletonList("allow-user-agent"));
         userAgentFilter.put("deny", Collections.singletonList("deny-user-agent"));
-        tunnelDefinition.put("user_agent_filter", userAgentFilter);
+        tunnelDefinition.put("user_agent_filter", Collections.unmodifiableMap(userAgentFilter));
         final Map<String, Object> inboundPolicy = new HashMap<>();
         inboundPolicy.put("name", "inbound-policy");
         inboundPolicy.put("expressions", Collections.singletonList("inbound-policy-expression"));
         final Map<String, Object> inboundPolicyActions = new HashMap<>();
         inboundPolicyActions.put("type", "inbound-policy-actions-type");
         inboundPolicyActions.put("config", "inbound-policy-actions-config");
-        inboundPolicy.put("actions", inboundPolicyActions);
+        inboundPolicy.put("actions", Collections.unmodifiableMap(inboundPolicyActions));
         final Map<String, Object> outboundPolicy = new HashMap<>();
         outboundPolicy.put("name", "outbound-policy");
         outboundPolicy.put("expressions", Collections.singletonList("outbound-policy-expression"));
         final Map<String, Object> outboundPolicyActions = new HashMap<>();
         outboundPolicyActions.put("type", "outbound-policy-actions-type");
         outboundPolicyActions.put("config", "outbound-policy-actions-config");
-        outboundPolicy.put("actions", outboundPolicyActions);
-        tunnelDefinition.put("inbound-policy", inboundPolicy);
+        outboundPolicy.put("actions", Collections.unmodifiableMap(outboundPolicyActions));
+        tunnelDefinition.put("inbound-policy", Collections.unmodifiableMap(inboundPolicy));
         final Map<String, Object> policies = new HashMap<>();
-        policies.put("inbound", inboundPolicy);
-        policies.put("outbound", outboundPolicy);
-        tunnelDefinition.put("policy", policies);
+        policies.put("inbound", Collections.unmodifiableMap(inboundPolicy));
+        policies.put("outbound", Collections.unmodifiableMap(outboundPolicy));
+        tunnelDefinition.put("policy", Collections.unmodifiableMap(policies));
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
                 .withTunnelDefinition(Collections.unmodifiableMap(tunnelDefinition))
                 .build();
