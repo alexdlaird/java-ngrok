@@ -47,6 +47,14 @@ jobs:
     env:
       NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
       NGROK_API_KEY: ${{ secrets.NGROK_API_KEY }}
+      NGROK_PARENT_DOMAIN: ${{ needs.init.outputs.NGROK_PARENT_DOMAIN }}
+      NGROK_DOMAIN: ${{ needs.init.outputs.NGROK_DOMAIN }}
+      NGROK_TCP_EDGE_ADDR: ${{ needs.init.outputs.NGROK_TCP_EDGE_ADDR }}
+      NGROK_TCP_EDGE_ID: ${{ needs.init.outputs.NGROK_TCP_EDGE_ID }}
+      NGROK_HTTP_EDGE_DOMAIN: ${{ needs.init.outputs.NGROK_HTTP_EDGE_DOMAIN }}
+      NGROK_HTTP_EDGE_ID: ${{ needs.init.outputs.NGROK_HTTP_EDGE_ID }}
+      NGROK_TLS_EDGE_DOMAIN: ${{ needs.init.outputs.NGROK_TLS_EDGE_DOMAIN }}
+      NGROK_TLS_EDGE_ID: ${{ needs.init.outputs.NGROK_TLS_EDGE_ID }}
 
     strategy:
       fail-fast: false
@@ -71,11 +79,6 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
           distribution: zulu
-      - name: Write outputs from init to env
-        run: |
-          for output in ${{ needs.init.outputs.keys }}; do
-            echo ${output}
-          done
       - name: Build
         run: make build
       - name: Test
