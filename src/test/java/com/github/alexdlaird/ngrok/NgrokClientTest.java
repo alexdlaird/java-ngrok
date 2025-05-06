@@ -154,7 +154,10 @@ class NgrokClientTest extends NgrokTestCase {
         // NGROK_PARENT_DOMAIN is set when init_test_resources.py is done provisioning test resources, in which case
         // prune_test_resources.py should also be called to clean up test resources after all tests complete.
         // Otherwise, this testcase set up the resources, so it should also tear them down.
-        if (isNotBlank(System.getenv("NGROK_API_KEY")) && isBlank(System.getenv("NGROK_PARENT_DOMAIN"))) {
+        if (isNotBlank(System.getenv("NGROK_API_KEY")) &&
+            isBlank(System.getenv("NGROK_PARENT_DOMAIN")) &&
+            System.getenv().getOrDefault("NGROK_SKIP_TEST_RESOURCE_TEARDOWN", "false")
+                   .equalsIgnoreCase("false")) {
             try {
                 final String httpEdgesResult = captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
                     List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
