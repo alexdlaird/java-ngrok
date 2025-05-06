@@ -62,7 +62,7 @@ def init_test_resources():
         print("An error occurred: " + e.output.decode("utf-8"))
         sys.exit(1)
 
-    with open(os.environ["GITHUB_ENV"], "a") as f:
+    with open(os.environ["GITHUB_OUTPUTS"], "a") as f:
         print(f"export NGROK_PARENT_DOMAIN={ngrok_parent_domain}")
         f.write(f"NGROK_PARENT_DOMAIN={ngrok_parent_domain}\n")
 

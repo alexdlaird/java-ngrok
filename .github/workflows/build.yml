@@ -30,7 +30,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Initialize test resources
         run: make init-test-resources
-      - run: echo "The value of NGROK_PARENT_DOMAIN is $NGROK_PARENT_DOMAIN"
 
 
   validate:
@@ -45,14 +44,6 @@ jobs:
     env:
       NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
       NGROK_API_KEY: ${{ secrets.NGROK_API_KEY }}
-      NGROK_PARENT_DOMAIN: ${{ needs.init.env.NGROK_PARENT_DOMAIN }}
-      NGROK_DOMAIN: ${{ needs.init.env.NGROK_DOMAIN }}
-      NGROK_TCP_EDGE_ADDR: ${{ needs.init.env.NGROK_TCP_EDGE_ADDR }}
-      NGROK_TCP_EDGE_ID: ${{ needs.init.env.NGROK_TCP_EDGE_ID }}
-      NGROK_HTTP_EDGE_DOMAIN: ${{ needs.init.env.NGROK_HTTP_EDGE_DOMAIN }}
-      NGROK_HTTP_EDGE_ID: ${{ needs.init.env.NGROK_HTTP_EDGE_ID }}
-      NGROK_TLS_EDGE_DOMAIN: ${{ needs.init.env.NGROK_TLS_EDGE_DOMAIN }}
-      NGROK_TLS_EDGE_ID: ${{ needs.init.env.NGROK_TLS_EDGE_ID }}
 
     strategy:
       fail-fast: false
@@ -77,6 +68,11 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
           distribution: zulu
+      - name: Write outputs from init to env
+        run: |
+          for output in ${{ needs.init.outputs.keys }}; do
+            echo "OUT_${output}=${{ steps.my_step.outputs.$output }}" >> $GITHUB_ENV
+          done
       - name: Build
         run: make build
       - name: Test
