@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- Stability improvements around concurrency.
+- Stability improvements around concurrency, process execution.
 - Documentation improvements.
 - Test improvements.
 
