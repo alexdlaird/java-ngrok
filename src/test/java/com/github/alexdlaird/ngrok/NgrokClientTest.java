@@ -130,27 +130,34 @@ class NgrokClientTest extends NgrokTestCase {
     public void tearDownClass()
         throws IOException, InterruptedException {
         if (isNotBlank(System.getenv("NGROK_API_KEY"))) {
-            captureRunProcess(List.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
-                "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                "api", "edges", "tls", "delete", this.tlsEdge.get("id")));
-            captureRunProcess(List.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
-                "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                "api", "edges", "https", "delete", this.httpEdge.get("id")));
-            captureRunProcess(List.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
-                "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                "api", "edges", "tcp", "delete", this.tcpEdge.get("id")));
-            captureRunProcess(List.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
-                "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                "api", "reserved-domains", "delete", this.reservedDomain.get("id")));
-            captureRunProcess(List.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
-                "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                "api", "reserved-domains", "delete", this.reservedDomainTlsEdge.get("id")));
-            captureRunProcess(List.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
-                "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                "api", "reserved-domains", "delete", this.reservedDomainHttpEdge.get("id")));
-            captureRunProcess(List.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
-                "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                "api", "reserved-addrs", "delete", this.reservedAddrTcpEdge.get("id")));
+            captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                List.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
+                    "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
+                    "api", "edges", "tls", "delete", this.tlsEdge.get("id")));
+            captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                List.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
+                    "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
+                    "api", "edges", "https", "delete", this.httpEdge.get("id")));
+            captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                List.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
+                    "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
+                    "api", "edges", "tcp", "delete", this.tcpEdge.get("id")));
+            captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                List.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
+                    "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
+                    "api", "reserved-domains", "delete", this.reservedDomain.get("id")));
+            captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                List.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
+                    "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
+                    "api", "reserved-domains", "delete", this.reservedDomainTlsEdge.get("id")));
+            captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                List.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
+                    "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
+                    "api", "reserved-domains", "delete", this.reservedDomainHttpEdge.get("id")));
+            captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                List.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
+                    "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
+                    "api", "reserved-addrs", "delete", this.reservedAddrTcpEdge.get("id")));
         }
     }
 
