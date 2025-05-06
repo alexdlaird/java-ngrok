@@ -30,8 +30,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Initialize test resources
         run: make init-test-resources
-      - run: echo $outputs
-#       - run: echo "NGROK_AUTHTOKEN=${{ outputs.NGROK_AUTHTOKEN }}"
+      - run: echo ${{ outputs.NGROK_PARENT_DOMAIN }}
 
 
   validate:
