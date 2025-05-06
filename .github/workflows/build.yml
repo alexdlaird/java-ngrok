@@ -16,13 +16,41 @@ concurrency:
   group: java-ngrok-singleton
 
 jobs:
-  build:
-    name: Build
+  init:
+    name: Initialize test resources
 
     env:
       NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
       NGROK_API_KEY: ${{ secrets.NGROK_API_KEY }}
       NGROK_SUBDOMAIN: ${{ github.repository_owner }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize test resources
+        run: make init-test-resources >> $GITHUB_ENV
+
+  validate:
+    name: Validate
+    uses: ./.github/workflows/validate.yml
+    secrets: inherit
+
+  build:
+    name: Build
+    needs: init
+
+    env:
+      NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
+      NGROK_API_KEY: ${{ secrets.NGROK_API_KEY }}
+      NGROK_PARENT_DOMAIN: ${{ needs.init.env.NGROK_PARENT_DOMAIN }}
+      NGROK_DOMAIN: ${{ needs.init.env.NGROK_DOMAIN }}
+      NGROK_TCP_EDGE_ADDR: ${{ needs.init.env.NGROK_TCP_EDGE_ADDR }}
+      NGROK_TCP_EDGE_ID: ${{ needs.init.env.NGROK_TCP_EDGE_ID }}
+      NGROK_HTTP_EDGE_DOMAIN: ${{ needs.init.env.NGROK_HTTP_EDGE_DOMAIN }}
+      NGROK_HTTP_EDGE_ID: ${{ needs.init.env.NGROK_HTTP_EDGE_ID }}
+      NGROK_TLS_EDGE_DOMAIN: ${{ needs.init.env.NGROK_TLS_EDGE_DOMAIN }}
+      NGROK_TLS_EDGE_ID: ${{ needs.init.env.NGROK_TLS_EDGE_ID }}
 
     strategy:
       fail-fast: false
@@ -52,7 +80,13 @@ jobs:
       - name: Test
         run: make test
 
-  validate:
-    name: Validate
-    uses: ./.github/workflows/validate.yml
-    secrets: inherit
+  cleanup:
+    name: Cleanup test resources
+    needs: [validate, build]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize test resources
+        run: make prune-test-resources

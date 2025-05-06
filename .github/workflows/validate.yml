@@ -4,8 +4,24 @@ on:
   workflow_call:
 
 jobs:
+  init:
+    name: Initialize Test Resources
+
+    env:
+      NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
+      NGROK_API_KEY: ${{ secrets.NGROK_API_KEY }}
+      NGROK_SUBDOMAIN: ${{ github.repository_owner }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+    - name: Initialize test resources
+      run: make init-test-resources >> $GITHUB_ENV
+
   build:
     name: Validate
+    needs: init
 
     env:
       NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
