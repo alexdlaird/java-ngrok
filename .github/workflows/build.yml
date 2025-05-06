@@ -31,7 +31,7 @@ jobs:
       - name: Initialize test resources
         run: make init-test-resources
       - run: echo $outputs
-      - run: echo "NGROK_AUTHTOKEN=${{ outputs.NGROK_AUTHTOKEN }}"
+#       - run: echo "NGROK_AUTHTOKEN=${{ outputs.NGROK_AUTHTOKEN }}"
 
 
   validate:
