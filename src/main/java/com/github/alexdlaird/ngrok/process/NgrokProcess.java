@@ -312,7 +312,7 @@ public class NgrokProcess {
     public void update() {
         try {
             captureRunProcess(javaNgrokConfig.getNgrokPath(),
-                List.of(javaNgrokConfig.getNgrokPath().toString(), "update", "--log=stdout"));
+                List.of(javaNgrokConfig.getNgrokPath().toString(), "update"));
         } catch (final IOException | InterruptedException e) {
             throw new NgrokException("An error occurred while trying to update ngrok.", e);
         }
