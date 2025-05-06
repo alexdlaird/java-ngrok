@@ -137,29 +137,34 @@ class NgrokClientTest extends NgrokTestCase {
     public void tearDownClass()
         throws IOException, InterruptedException {
         if (isNotBlank(System.getenv("NGROK_API_KEY"))) {
-            captureRunProcess(Stream.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
-                "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                "api", "edges", "tls", "delete", this.tlsEdge.get("id")).collect(Collectors.toList()));
-            captureRunProcess(Stream.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
-                "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                "api", "edges", "https", "delete", this.httpEdge.get("id")).collect(Collectors.toList()));
-            captureRunProcess(Stream.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
-                "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                "api", "edges", "tcp", "delete", this.tcpEdge.get("id")).collect(Collectors.toList()));
-            captureRunProcess(Stream.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
-                "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                "api", "reserved-domains", "delete", this.reservedDomain.get("id")).collect(Collectors.toList()));
-            captureRunProcess(Stream.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
-                                        "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                                        "api", "reserved-domains", "delete", this.reservedDomainTlsEdge.get("id"))
-                                    .collect(Collectors.toList()));
-            captureRunProcess(Stream.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
-                                        "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                                        "api", "reserved-domains", "delete", this.reservedDomainHttpEdge.get("id"))
-                                    .collect(Collectors.toList()));
-            captureRunProcess(Stream.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
-                "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                "api", "reserved-addrs", "delete", this.reservedAddrTcpEdge.get("id")).collect(Collectors.toList()));
+            captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                Collections.unmodifiableList(Stream.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
+                    "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
+                    "api", "edges", "tls", "delete", this.tlsEdge.get("id")).collect(Collectors.toList())));
+            captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                Collections.unmodifiableList(Stream.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
+                    "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
+                    "api", "edges", "https", "delete", this.httpEdge.get("id")).collect(Collectors.toList())));
+            captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                Collections.unmodifiableList(Stream.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
+                    "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
+                    "api", "edges", "tcp", "delete", this.tcpEdge.get("id")).collect(Collectors.toList())));
+            captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                Collections.unmodifiableList(Stream.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
+                    "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
+                    "api", "reserved-domains", "delete", this.reservedDomain.get("id")).collect(Collectors.toList())));
+            captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                Collections.unmodifiableList(Stream.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
+                    "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
+                    "api", "reserved-domains", "delete", this.reservedDomainTlsEdge.get("id")).collect(Collectors.toList())));
+            captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                Collections.unmodifiableList(Stream.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
+                    "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
+                    "api", "reserved-domains", "delete", this.reservedDomainHttpEdge.get("id")).collect(Collectors.toList())));
+            captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                Collections.unmodifiableList(Stream.of(this.testcaseJavaNgrokConfig.getNgrokPath().toString(),
+                    "--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
+                    "api", "reserved-addrs", "delete", this.reservedAddrTcpEdge.get("id")).collect(Collectors.toList())));
         }
     }
 
@@ -795,9 +800,10 @@ class NgrokClientTest extends NgrokTestCase {
         tcpTunnelConfig.put("proto", "tcp");
         tcpTunnelConfig.put("addr", "22");
         final Map<String, Map<String, Object>> tunnelsConfig = new HashMap<>();
-        tunnelsConfig.put("http-tunnel", httpTunnelConfig);
-        tunnelsConfig.put("tcp-tunnel", tcpTunnelConfig);
-        final Map<String, Object> config = Collections.singletonMap("tunnels", tunnelsConfig);
+        tunnelsConfig.put("http-tunnel", Collections.unmodifiableMap(httpTunnelConfig));
+        tunnelsConfig.put("tcp-tunnel", Collections.unmodifiableMap(tcpTunnelConfig));
+        final Map<String, Object> config = Collections.singletonMap("tunnels",
+            Collections.unmodifiableMap(tunnelsConfig));
 
         final Path configPath2 = Paths.get(javaNgrokConfigV2.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV2.getNgrokVersion());
@@ -853,9 +859,10 @@ class NgrokClientTest extends NgrokTestCase {
         tcpTunnelConfig.put("proto", "tcp");
         tcpTunnelConfig.put("addr", "22");
         final Map<String, Object> tunnelsConfig = new HashMap<>();
-        tunnelsConfig.put("http-tunnel", httpTunnelConfig);
-        tunnelsConfig.put("tcp-tunnel", tcpTunnelConfig);
-        final Map<String, Object> config = Collections.singletonMap("tunnels", tunnelsConfig);
+        tunnelsConfig.put("http-tunnel", Collections.unmodifiableMap(httpTunnelConfig));
+        tunnelsConfig.put("tcp-tunnel", Collections.unmodifiableMap(tcpTunnelConfig));
+        final Map<String, Object> config = Collections.singletonMap("tunnels",
+            Collections.unmodifiableMap(tunnelsConfig));
 
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
@@ -905,10 +912,9 @@ class NgrokClientTest extends NgrokTestCase {
         tlsTunnelConfig.put("addr", "443");
         tlsTunnelConfig.put("domain", this.reservedDomain.get("domain"));
         tlsTunnelConfig.put("terminate_at", "upstream");
-        final Map<String, Object> tunnelsConfig = new HashMap<>();
-        tunnelsConfig.put("tls-tunnel", tlsTunnelConfig);
-        final Map<String, Object> config = new HashMap<>();
-        config.put("tunnels", tunnelsConfig);
+        final Map<String, Object> tunnelsConfig = Collections.singletonMap("tls-tunnel",
+            Collections.unmodifiableMap(tlsTunnelConfig));
+        final Map<String, Object> config = Collections.singletonMap("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
@@ -948,10 +954,8 @@ class NgrokClientTest extends NgrokTestCase {
         edgeHttpTunnelConfig.put("addr", "80");
         edgeHttpTunnelConfig.put("labels", Collections.singletonList(String.format("edge=%s",
             this.httpEdge.get("id"))));
-        final Map<String, Object> tunnelsConfig = new HashMap<>();
-        tunnelsConfig.put("edge-http-tunnel", edgeHttpTunnelConfig);
-        final Map<String, Object> config = new HashMap<>();
-        config.put("tunnels", tunnelsConfig);
+        final Map<String, Object> tunnelsConfig = Collections.singletonMap("edge-http-tunnel", edgeHttpTunnelConfig);
+        final Map<String, Object> config = Collections.singletonMap("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
@@ -996,10 +1000,9 @@ class NgrokClientTest extends NgrokTestCase {
         final Map<String, Object> edgeTcpTunnelConfig = new HashMap<>();
         edgeTcpTunnelConfig.put("addr", "22");
         edgeTcpTunnelConfig.put("labels", Collections.singletonList(String.format("edge=%s", tcpEdge.get("id"))));
-        final Map<String, Object> tunnelsConfig = new HashMap<>();
-        tunnelsConfig.put("edge-tcp-tunnel", edgeTcpTunnelConfig);
-        final Map<String, Object> config = new HashMap<>();
-        config.put("tunnels", tunnelsConfig);
+        final Map<String, Object> tunnelsConfig = Collections.singletonMap("edge-tcp-tunnel",
+            Collections.unmodifiableMap(edgeTcpTunnelConfig));
+        final Map<String, Object> config = Collections.singletonMap("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
@@ -1041,10 +1044,9 @@ class NgrokClientTest extends NgrokTestCase {
         final Map<String, Object> edgeTlsTunnelConfig = new HashMap<>();
         edgeTlsTunnelConfig.put("addr", "443");
         edgeTlsTunnelConfig.put("labels", Collections.singletonList(String.format("edge=%s", tlsEdge.get("id"))));
-        final Map<String, Object> tunnelsConfig = new HashMap<>();
-        tunnelsConfig.put("edge-tls-tunnel", edgeTlsTunnelConfig);
-        final Map<String, Object> config = new HashMap<>();
-        config.put("tunnels", tunnelsConfig);
+        final Map<String, Object> tunnelsConfig = Collections.singletonMap("edge-tls-tunnel",
+            Collections.unmodifiableMap(edgeTlsTunnelConfig));
+        final Map<String, Object> config = Collections.singletonMap("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
@@ -1088,7 +1090,8 @@ class NgrokClientTest extends NgrokTestCase {
         final Map<String, Object> edgeHttpTunnelConfig = new HashMap<>();
         edgeHttpTunnelConfig.put("addr", "80");
         edgeHttpTunnelConfig.put("labels", Collections.singletonList(String.format("edge=%s", ngrokHttpEdge)));
-        final Map<String, Object> tunnelsConfig = Collections.singletonMap("edge-tunnel", edgeHttpTunnelConfig);
+        final Map<String, Object> tunnelsConfig = Collections.singletonMap("edge-tunnel",
+            Collections.unmodifiableMap(edgeHttpTunnelConfig));
         final Map<String, Object> config = Collections.singletonMap("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
@@ -1126,8 +1129,9 @@ class NgrokClientTest extends NgrokTestCase {
         httpTunnelConfig.put("proto", "http");
         httpTunnelConfig.put("addr", "8000");
         httpTunnelConfig.put("subdomain", subdomain);
-        httpTunnelConfig.put("oauth", oauthConfig);
-        final Map<String, Object> tunnelsConfig = Collections.singletonMap("http-tunnel", httpTunnelConfig);
+        httpTunnelConfig.put("oauth", Collections.unmodifiableMap(oauthConfig));
+        final Map<String, Object> tunnelsConfig = Collections.singletonMap("http-tunnel",
+            Collections.unmodifiableMap(httpTunnelConfig));
         final Map<String, Object> config = Collections.singletonMap("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
@@ -1170,7 +1174,8 @@ class NgrokClientTest extends NgrokTestCase {
         defaultTunnelConfig.put("proto", "http");
         defaultTunnelConfig.put("addr", "8080");
         defaultTunnelConfig.put("subdomain", subdomain1);
-        final Map<String, Object> tunnelsConfig = Collections.singletonMap("java-ngrok-default", defaultTunnelConfig);
+        final Map<String, Object> tunnelsConfig = Collections.singletonMap("java-ngrok-default",
+            Collections.unmodifiableMap(defaultTunnelConfig));
         final Map<String, Object> config = Collections.singletonMap("tunnels", tunnelsConfig);
 
         final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");

@@ -241,26 +241,25 @@ public class NgrokProcess {
      * @throws NgrokException <code>ngrok</code> could not start.
      */
     public void setAuthToken(final String authToken) {
-        final List<String> command = new ArrayList<>();
-        command.add(javaNgrokConfig.getNgrokPath().toString());
+        final List<String> args = new ArrayList<>();
         if (javaNgrokConfig.getNgrokVersion() == NgrokVersion.V2) {
-            command.add("authtoken");
-            command.add(authToken);
+            args.add("authtoken");
+            args.add(authToken);
         } else {
-            command.add("config");
-            command.add("add-authtoken");
-            command.add(authToken);
+            args.add("config");
+            args.add("add-authtoken");
+            args.add(authToken);
         }
-        command.add("--log=stdout");
+        args.add("--log=stdout");
 
         if (nonNull(javaNgrokConfig.getConfigPath())) {
-            command.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().toString()));
+            args.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().toString()));
         }
 
         LOGGER.info(String.format("Updating authtoken for \"configPath\": %s", javaNgrokConfig.getConfigPath()));
 
         try {
-            final String result = captureRunProcess(command);
+            final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
             if (!result.contains("Authtoken saved")) {
                 throw new NgrokException(String.format("An error occurred while setting the auth token: %s", result));
             }
@@ -279,26 +278,25 @@ public class NgrokProcess {
      * @throws NgrokException <code>ngrok</code> could not start.
      */
     public void setApiKey(final String apiKey) {
-        final List<String> command = new ArrayList<>();
-        command.add(javaNgrokConfig.getNgrokPath().toString());
+        final List<String> args = new ArrayList<>();
         if (javaNgrokConfig.getNgrokVersion() == NgrokVersion.V3) {
-            command.add("config");
-            command.add("add-api-key");
-            command.add(apiKey);
+            args.add("config");
+            args.add("add-api-key");
+            args.add(apiKey);
         } else {
             throw new JavaNgrokException(String.format("ngrok %s does not have this command.",
                 javaNgrokConfig.getNgrokVersion()));
         }
-        command.add("--log=stdout");
+        args.add("--log=stdout");
 
         if (nonNull(javaNgrokConfig.getConfigPath())) {
-            command.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().toString()));
+            args.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().toString()));
         }
 
         LOGGER.info(String.format("Updating API key for \"configPath\": %s", javaNgrokConfig.getConfigPath()));
 
         try {
-            final String result = captureRunProcess(command);
+            final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
             if (!result.contains("API key saved")) {
                 throw new NgrokException(String.format("An error occurred while setting the API key: %s",
                     result));
@@ -314,18 +312,11 @@ public class NgrokProcess {
      * @throws NgrokException <code>ngrok</code> could not start.
      */
     public void update() {
-        final ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.redirectErrorStream(true);
-        processBuilder.inheritIO().redirectOutput(ProcessBuilder.Redirect.PIPE);
-
-        final List<String> command = Collections.unmodifiableList(
-                Stream.of(javaNgrokConfig.getNgrokPath().toString(), "update", "--log=stdout")
-                        .collect(Collectors.toList()));
-
-        processBuilder.command(command);
         try {
-            final Process process = processBuilder.start();
-            process.waitFor();
+            captureRunProcess(javaNgrokConfig.getNgrokPath(),
+                Collections.unmodifiableList(Stream.of(javaNgrokConfig.getNgrokPath().toString(),
+                                                       "update", "--log=stdout")
+                      .collect(Collectors.toList())));
         } catch (final IOException | InterruptedException e) {
             throw new NgrokException("An error occurred while trying to update ngrok.", e);
         }
@@ -338,13 +329,11 @@ public class NgrokProcess {
      * @throws NgrokException <code>ngrok</code> could not start.
      */
     public String getVersion() {
-        final List<String> command = Stream.of(javaNgrokConfig.getNgrokPath().toString(), "--version")
-                                           .collect(Collectors.toList());
-
         try {
-            return captureRunProcess(command).split("version ")[1];
+            return captureRunProcess(javaNgrokConfig.getNgrokPath(),
+                Collections.singletonList("--version")).split("version ")[1];
         } catch (final IOException | InterruptedException | ArrayIndexOutOfBoundsException e) {
-            throw new NgrokException("An error occurred while trying to update ngrok.", e);
+            throw new NgrokException("An error occurred while getting the version for ngrok.", e);
         }
     }
 

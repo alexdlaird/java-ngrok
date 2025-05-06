@@ -19,11 +19,8 @@ jobs:
         with:
           java-version: 8
           distribution: zulu
-      - name: Get version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
       - name: Validate version
-        run: make validate-release VERSION=${{ steps.get_version.outputs.VERSION }}
+        run: make validate-release VERSION=${GITHUB_REF#refs/tags/}
 
   build:
     name: Build
