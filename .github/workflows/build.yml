@@ -29,8 +29,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Initialize test resources
+        id: init
         run: make init-test-resources
-      - run: echo ${{ outputs.NGROK_PARENT_DOMAIN }}
+      - run: echo ${{ steps.init.outputs.NGROK_PARENT_DOMAIN }}
 
 
   validate:
