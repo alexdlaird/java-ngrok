@@ -62,37 +62,38 @@ def init_test_resources():
         print("An error occurred: " + e.output.decode("utf-8"))
         sys.exit(1)
 
-    with open(os.environ.get("GITHUB_OUTPUTS", ""), "a") as f:
         print(f"export NGROK_PARENT_DOMAIN={ngrok_parent_domain}")
-        f.write(f"NGROK_PARENT_DOMAIN={ngrok_parent_domain}\n")
+        os.system(f'echo "NGROK_PARENT_DOMAIN={ngrok_parent_domain}" >> $GITHUB_OUTPUT')
 
         print(f"export NGROK_DOMAIN={reserved_domain['domain']}")
         os.environ["NGROK_DOMAIN"] = reserved_domain["domain"]
-        f.write(f"NGROK_DOMAIN={reserved_domain['domain']}\n")
+        os.system(f'echo "NGROK_DOMAIN={reserved_domain["domain"]}" >> $GITHUB_OUTPUT')
 
         print(f"export NGROK_TCP_EDGE_ADDR={reserved_addr_tcp_edge['addr']}")
         print(f"export NGROK_TCP_EDGE_ID={tcp_edge['id']}")
         os.environ["NGROK_TCP_EDGE_ADDR"] = reserved_addr_tcp_edge["addr"]
         os.environ["NGROK_TCP_EDGE_ID"] = tcp_edge["id"]
-        f.write(f"NGROK_TCP_EDGE_ADDR={reserved_addr_tcp_edge['addr']}\n")
-        f.write(f"NGROK_TCP_EDGE_ID={tcp_edge['id']}\n")
+        os.system(f'echo "NGROK_TCP_EDGE_ADDR={reserved_addr_tcp_edge["addr"]}" >> $GITHUB_OUTPUT')
+        os.system(f'echo "NGROK_TCP_EDGE_ID={tcp_edge["id"]}" >> $GITHUB_OUTPUT')
 
         print(f"export NGROK_HTTP_EDGE_DOMAIN={reserved_domain_http_edge['domain']}")
         print(f"export NGROK_HTTP_EDGE_ID={http_edge['id']}")
         os.environ["NGROK_HTTP_EDGE_DOMAIN"] = reserved_domain_http_edge["domain"]
         os.environ["NGROK_HTTP_EDGE_ID"] = http_edge["id"]
-        f.write(f"NGROK_HTTP_EDGE_DOMAIN={reserved_domain_http_edge['domain']}\n")
-        f.write(f"NGROK_HTTP_EDGE_ID={http_edge['id']}\n")
+        os.system(f'echo "NGROK_HTTP_EDGE_DOMAIN={reserved_domain_http_edge["domain"]}" >> $GITHUB_OUTPUT')
+        os.system(f'echo "NGROK_HTTP_EDGE_ID={http_edge["id"]}" >> $GITHUB_OUTPUT')
 
         print(f"export NGROK_TLS_EDGE_DOMAIN={reserved_domain_tls_edge['domain']}")
         print(f"export NGROK_TLS_EDGE_ID={tls_edge['id']}")
         os.environ["NGROK_TLS_EDGE_DOMAIN"] = reserved_domain_tls_edge["domain"]
         os.environ["NGROK_TLS_EDGE_ID"] = tls_edge["id"]
-        f.write(f"NGROK_TLS_EDGE_DOMAIN={reserved_domain_tls_edge['domain']}\n")
-        f.write(f"NGROK_TLS_EDGE_ID={tls_edge['id']}")
+        os.system(f'echo "NGROK_TLS_EDGE_DOMAIN={reserved_domain_http_edge["domain"]}" >> $GITHUB_OUTPUT')
+        os.system(f'echo "NGROK_TLS_EDGE_ID={http_edge["id"]}" >> $GITHUB_OUTPUT')
+
 
 def generate_name_for_subdomain(prefix):
     return "{prefix}-{random}".format(prefix=prefix, random=randint(1000000000, 2000000000))
+
 
 def reserve_ngrok_domain(pyngrok_config, domain):
     output = capture_run_process(pyngrok_config.ngrok_path,
