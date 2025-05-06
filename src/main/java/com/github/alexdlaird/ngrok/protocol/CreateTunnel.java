@@ -827,8 +827,8 @@ public class CreateTunnel {
                 // For HTTP, ngrok has renamed this key to "on_http_request", but it functions the same
                 if (isNull(this.policyInbound) && policy.containsKey("on_http_request")) {
                     this.policyInbound = new TunnelPolicy
-                            .Builder((Map<String, Object>) policy.get("on_http_request"))
-                            .build();
+                        .Builder((Map<String, Object>) policy.get("on_http_request"))
+                        .build();
                 }
                 if (isNull(this.policyOutbound) && policy.containsKey("outbound")) {
                     this.policyOutbound = new TunnelPolicy
@@ -838,8 +838,8 @@ public class CreateTunnel {
                 // For HTTP, ngrok has renamed this key to "on_http_response", but it functions the same
                 if (isNull(this.policyOutbound) && policy.containsKey("on_http_response")) {
                     this.policyOutbound = new TunnelPolicy
-                            .Builder((Map<String, Object>) policy.get("on_http_response"))
-                            .build();
+                        .Builder((Map<String, Object>) policy.get("on_http_response"))
+                        .build();
                 }
             }
             if (tunnelDefinition.containsKey("labels")) {
