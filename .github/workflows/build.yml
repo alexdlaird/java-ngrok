@@ -49,7 +49,7 @@ jobs:
       NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
       NGROK_API_KEY: ${{ secrets.NGROK_API_KEY }}
       NGROK_PARENT_DOMAIN: ${{ needs.init.outputs.NGROK_PARENT_DOMAIN }}
-      NGROK_DOMAIN: ${{ needs.init.outputs.NGROK_DOMAIN }}
+      NGROK_DOMAIN: ${{ needs.init.steps.init.outputs.NGROK_DOMAIN }}
       NGROK_TCP_EDGE_ADDR: ${{ needs.init.outputs.NGROK_TCP_EDGE_ADDR }}
       NGROK_TCP_EDGE_ID: ${{ needs.init.outputs.NGROK_TCP_EDGE_ID }}
       NGROK_HTTP_EDGE_DOMAIN: ${{ needs.init.outputs.NGROK_HTTP_EDGE_DOMAIN }}
