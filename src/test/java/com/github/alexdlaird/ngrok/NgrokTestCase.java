@@ -121,8 +121,8 @@ public class NgrokTestCase extends TestCase {
     protected Map<String, String> givenNgrokReservedDomain(final JavaNgrokConfig javaNgrokConfig,
                                                            final String domain)
         throws IOException, InterruptedException {
-        final List<String> args = Collections.unmodifiableList(Stream.of(javaNgrokConfig.getNgrokPath().toString(),
-            "--config", javaNgrokConfig.getConfigPath().toString(),
+        final List<String> args = Collections.unmodifiableList(
+            Stream.of("--config", javaNgrokConfig.getConfigPath().toString(),
             "api", "reserved-domains", "create",
             "--domain", domain,
             "--description", "Created by java-ngrok test").collect(Collectors.toList()));
@@ -133,8 +133,8 @@ public class NgrokTestCase extends TestCase {
 
     protected Map<String, String> givenNgrokReservedAddr(final JavaNgrokConfig javaNgrokConfig)
         throws IOException, InterruptedException {
-        final List<String> args = Collections.unmodifiableList(Stream.of(javaNgrokConfig.getNgrokPath().toString(),
-            "--config", javaNgrokConfig.getConfigPath().toString(),
+        final List<String> args = Collections.unmodifiableList(
+            Stream.of("--config", javaNgrokConfig.getConfigPath().toString(),
             "api", "reserved-addrs", "create",
             "--description", "Created by java-ngrok test").collect(Collectors.toList()));
 
@@ -147,8 +147,8 @@ public class NgrokTestCase extends TestCase {
                                                        final String domain,
                                                        final int port)
         throws IOException, InterruptedException {
-        final List<String> args = Collections.unmodifiableList(Stream.of(javaNgrokConfig.getNgrokPath().toString(),
-            "--config", javaNgrokConfig.getConfigPath().toString(),
+        final List<String> args = Collections.unmodifiableList(
+            Stream.of("--config", javaNgrokConfig.getConfigPath().toString(),
             "api", "edges", proto, "create",
             "--hostports", String.format("%s:%s", domain, port),
             "--description", "Created by java-ngrok test").collect(Collectors.toList()));
