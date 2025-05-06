@@ -314,7 +314,7 @@ public class NgrokProcess {
         try {
             captureRunProcess(javaNgrokConfig.getNgrokPath(),
                 Collections.unmodifiableList(Stream.of(javaNgrokConfig.getNgrokPath().toString(),
-                                                       "update", "--log=stdout")
+                                                       "update")
                                                    .collect(Collectors.toList())));
         } catch (final IOException | InterruptedException e) {
             throw new NgrokException("An error occurred while trying to update ngrok.", e);
