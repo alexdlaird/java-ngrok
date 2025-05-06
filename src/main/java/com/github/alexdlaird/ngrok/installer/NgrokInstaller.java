@@ -145,8 +145,8 @@ public class NgrokInstaller {
      * See {@link #installDefaultConfig(Path, Map, NgrokVersion, ConfigVersion)}.
      */
     public synchronized void installDefaultConfig(final Path configPath,
-                                     final Map<String, Object> data,
-                                     final NgrokVersion ngrokVersion) {
+                                                  final Map<String, Object> data,
+                                                  final NgrokVersion ngrokVersion) {
         installDefaultConfig(configPath, data, ngrokVersion, ConfigVersion.V2);
     }
 
@@ -161,9 +161,9 @@ public class NgrokInstaller {
      * @throws JavaNgrokInstallerException An error occurred downloading <code>ngrok</code>.
      */
     public synchronized void installDefaultConfig(final Path configPath,
-                                     final Map<String, Object> data,
-                                     final NgrokVersion ngrokVersion,
-                                     final ConfigVersion configVersion) {
+                                                  final Map<String, Object> data,
+                                                  final NgrokVersion ngrokVersion,
+                                                  final ConfigVersion configVersion) {
         try {
             Files.createDirectories(configPath.getParent());
             if (!Files.exists(configPath)) {
@@ -286,9 +286,9 @@ public class NgrokInstaller {
      * @throws JavaNgrokInstallerException The config could not be parsed.
      */
     public synchronized Map<String, Object> getNgrokConfig(final Path configPath,
-                                              final boolean useCache,
-                                              final NgrokVersion ngrokVersion,
-                                              final ConfigVersion configVersion) {
+                                                           final boolean useCache,
+                                                           final NgrokVersion ngrokVersion,
+                                                           final ConfigVersion configVersion) {
         final String key = configPath.toString();
         if (!configCache.containsKey(key) || !useCache) {
             try {
