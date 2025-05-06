@@ -62,40 +62,36 @@ def init_test_resources():
         print("An error occurred: " + e.output.decode("utf-8"))
         sys.exit(1)
 
-    github_actions = os.environ.get("GITHUB_ACTIONS") == "true"
-
     print(f"export NGROK_PARENT_DOMAIN={ngrok_parent_domain}")
-    if github_actions:
-        os.system(f'echo "NGROK_PARENT_DOMAIN={ngrok_parent_domain}" >> $GITHUB_OUTPUT')
 
     print(f"export NGROK_DOMAIN={reserved_domain['domain']}")
     os.environ["NGROK_DOMAIN"] = reserved_domain["domain"]
-    if github_actions:
-        os.system(f'echo "NGROK_DOMAIN={reserved_domain["domain"]}" >> $GITHUB_OUTPUT')
 
     print(f"export NGROK_TCP_EDGE_ADDR={reserved_addr_tcp_edge['addr']}")
     print(f"export NGROK_TCP_EDGE_ID={tcp_edge['id']}")
     os.environ["NGROK_TCP_EDGE_ADDR"] = reserved_addr_tcp_edge["addr"]
     os.environ["NGROK_TCP_EDGE_ID"] = tcp_edge["id"]
-    if github_actions:
-        os.system(f'echo "NGROK_TCP_EDGE_ADDR={reserved_addr_tcp_edge["addr"]}" >> $GITHUB_OUTPUT')
-        os.system(f'echo "NGROK_TCP_EDGE_ID={tcp_edge["id"]}" >> $GITHUB_OUTPUT')
 
     print(f"export NGROK_HTTP_EDGE_DOMAIN={reserved_domain_http_edge['domain']}")
     print(f"export NGROK_HTTP_EDGE_ID={http_edge['id']}")
     os.environ["NGROK_HTTP_EDGE_DOMAIN"] = reserved_domain_http_edge["domain"]
     os.environ["NGROK_HTTP_EDGE_ID"] = http_edge["id"]
-    if github_actions:
-        os.system(f'echo "NGROK_HTTP_EDGE_DOMAIN={reserved_domain_http_edge["domain"]}" >> $GITHUB_OUTPUT')
-        os.system(f'echo "NGROK_HTTP_EDGE_ID={http_edge["id"]}" >> $GITHUB_OUTPUT')
 
     print(f"export NGROK_TLS_EDGE_DOMAIN={reserved_domain_tls_edge['domain']}")
     print(f"export NGROK_TLS_EDGE_ID={tls_edge['id']}")
     os.environ["NGROK_TLS_EDGE_DOMAIN"] = reserved_domain_tls_edge["domain"]
     os.environ["NGROK_TLS_EDGE_ID"] = tls_edge["id"]
-    if github_actions:
-        os.system(f'echo "NGROK_TLS_EDGE_DOMAIN={reserved_domain_http_edge["domain"]}" >> $GITHUB_OUTPUT')
-        os.system(f'echo "NGROK_TLS_EDGE_ID={http_edge["id"]}" >> $GITHUB_OUTPUT')
+
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+            f.write(f"NGROK_PARENT_DOMAIN={ngrok_parent_domain}")
+            f.write(f"NGROK_DOMAIN={reserved_domain['domain']}")
+            f.write(f"NGROK_TCP_EDGE_ADDR={reserved_addr_tcp_edge['addr']}")
+            f.write(f"NGROK_TCP_EDGE_ID={tcp_edge['id']}")
+            f.write(f"NGROK_HTTP_EDGE_DOMAIN={reserved_domain_http_edge['domain']}")
+            f.write(f"NGROK_HTTP_EDGE_ID={http_edge['id']}")
+            f.write(f"NGROK_TLS_EDGE_DOMAIN={reserved_domain_tls_edge['domain']}")
+            f.write(f"NGROK_TLS_EDGE_ID={tls_edge['id']}")
 
 
 def generate_name_for_subdomain(prefix):
