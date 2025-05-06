@@ -71,7 +71,7 @@ jobs:
       - name: Write outputs from init to env
         run: |
           for output in ${{ needs.init.outputs.keys }}; do
-            echo "OUT_${output}=${{ steps.my_step.outputs.$output }}" >> $GITHUB_ENV
+            echo "${output}=${{ needs.init.outputs.$output }}" >> $GITHUB_ENV
           done
       - name: Build
         run: make build
