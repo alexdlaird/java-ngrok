@@ -72,7 +72,6 @@ jobs:
         run: |
           for output in ${{ needs.init.outputs.keys }}; do
             echo ${output}
-#             echo "${output}=${{ needs.init.outputs.$output }}" >> $GITHUB_ENV
           done
       - name: Build
         run: make build
