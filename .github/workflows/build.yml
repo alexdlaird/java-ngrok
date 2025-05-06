@@ -26,13 +26,14 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    outputs:
+      NGROK_PARENT_DOMAIN: ${{ steps.init.outputs.NGROK_PARENT_DOMAIN }}
+
     steps:
       - uses: actions/checkout@v4
       - name: Initialize test resources
         id: init
         run: make init-test-resources
-      - run: echo ${{ steps.init.outputs.NGROK_PARENT_DOMAIN }}
-      - run: echo ${{ steps.init.outputs.NGROK_TLS_EDGE_DOMAIN }}
 
 
   validate:
