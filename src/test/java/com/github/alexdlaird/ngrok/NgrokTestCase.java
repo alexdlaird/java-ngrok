@@ -64,7 +64,9 @@ public class NgrokTestCase extends TestCase {
 
     private final Random random = new Random();
 
-    private final Gson gson = new Gson();
+    protected final Gson gson = new Gson();
+
+    protected final String testResourceDescription = "Created by java-ngrok test";
 
     @BeforeEach
     public void setUp() {
@@ -115,43 +117,43 @@ public class NgrokTestCase extends TestCase {
         assertFalse(Files.exists(javaNgrokConfig.getNgrokPath()));
     }
 
-    protected Map<String, String> givenNgrokReservedDomain(final JavaNgrokConfig javaNgrokConfig,
-                                                           final String domain)
+    protected Map<String, String> reserveNgrokDomain(final JavaNgrokConfig javaNgrokConfig,
+                                                     final String domain)
         throws IOException, InterruptedException {
         final List<String> args = List.of("--config", javaNgrokConfig.getConfigPath().toString(),
             "api", "reserved-domains", "create",
             "--domain", domain,
-            "--description", "Created by java-ngrok test");
+            "--description", testResourceDescription);
 
         final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
         return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
     }
 
-    protected Map<String, String> givenNgrokReservedAddr(final JavaNgrokConfig javaNgrokConfig)
+    protected Map<String, String> reserveNgrokAddr(final JavaNgrokConfig javaNgrokConfig)
         throws IOException, InterruptedException {
         final List<String> args = List.of("--config", javaNgrokConfig.getConfigPath().toString(),
             "api", "reserved-addrs", "create",
-            "--description", "Created by java-ngrok test");
+            "--description", testResourceDescription);
 
         final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
         return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
     }
 
-    protected Map<String, String> givenNgrokEdgeExists(final JavaNgrokConfig javaNgrokConfig,
-                                                       final String proto,
-                                                       final String domain,
-                                                       final int port)
+    protected Map<String, String> createNgrokEdge(final JavaNgrokConfig javaNgrokConfig,
+                                                  final String proto,
+                                                  final String domain,
+                                                  final int port)
         throws IOException, InterruptedException {
         final List<String> args = List.of("--config", javaNgrokConfig.getConfigPath().toString(),
             "api", "edges", proto, "create",
             "--hostports", String.format("%s:%s", domain, port),
-            "--description", "Created by java-ngrok test");
+            "--description", testResourceDescription);
 
         final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
         return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
     }
 
-    protected String createUniqueSubdomain() {
+    protected String generateNameForSubdomain() {
         return String.format("java-ngrok-%s-%s-%s",
             random.nextInt(2000000000 - (1000000001)) + 1000000000,
             NgrokInstaller.getSystem().toLowerCase(),
