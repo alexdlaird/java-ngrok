@@ -33,7 +33,7 @@ jobs:
         with:
           python-version: 3.12
       - name: Initialize test resources
-        run: make init-test-resources >> $GITHUB_ENV
+        run: make init-test-resources
 
   validate:
     name: Validate
