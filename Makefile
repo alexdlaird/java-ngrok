@@ -1,4 +1,4 @@
-.PHONY: all build install clean clean-api-tests test docs check local validate-release test-downstream upload
+.PHONY: all build install clean init-test-resources prune-test-resources test docs check local validate-release test-downstream upload
 
 SHELL := /usr/bin/env bash
 ifeq ($(OS),Windows_NT)
@@ -22,9 +22,13 @@ clean:
 	$(GRADLE_BIN) clean
 	@rm -rf java-ngrok-example-dropwizard
 
-clean-api-tests:
+init-test-resources:
 	python -m pip install pyngrok
-	python scripts/clean-api-tests.py
+	python scripts/init_test_resources.py
+
+prune-test-resources:
+	python -m pip install pyngrok
+	python scripts/prune_test_resources.py
 
 test:
 	$(GRADLE_BIN) test
