@@ -438,6 +438,7 @@ public class CreateTunnel {
             this.userAgentFilter = createTunnel.userAgentFilter;
             this.policyInbound = createTunnel.policyInbound;
             this.policyOutbound = createTunnel.policyOutbound;
+            this.poolingEnabled = createTunnel.poolingEnabled;
         }
 
         /**
