@@ -36,6 +36,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junitpioneer.jupiter.ClearEnvironmentVariable;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.getNgrokBin;
 import static com.github.alexdlaird.util.ProcessUtils.captureRunProcess;
@@ -1121,13 +1122,14 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
+    @ClearEnvironmentVariable(key = "NGROK_API_KEY")
     public void testLabelsNoApiKeyFails() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
         final Map<String, Object> edgeHttpTunnelConfig = Map.of(
             "addr", "80",
-            "labels", List.of(String.format("edge=%s", this.httpEdgeId)));
+            "labels", List.of("edge=edghts_some-id"));
         final Map<String, Object> tunnelsConfig = Map.of(
             "edge-tunnel", edgeHttpTunnelConfig);
         final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
@@ -1136,13 +1138,14 @@ class NgrokClientTest extends NgrokTestCase {
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
             .withConfigPath(configPath2)
-            .withApiKey("")
+            .withApiKey(null)
             .build();
         ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
         final NgrokClient ngrokClient2 = new NgrokClient.Builder()
             .withJavaNgrokConfig(javaNgrokConfig2)
             .withNgrokProcess(ngrokProcessV3_2)
             .build();
+        assertNull(javaNgrokConfig2.getApiKey());
 
         // WHEN
         final CreateTunnel createEdgeTunnel = new CreateTunnel.Builder()
