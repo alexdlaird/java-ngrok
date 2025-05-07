@@ -393,7 +393,7 @@ on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/j
 
 ### Added
 
-- Support for `pooling_enabled` in `CreateTunnel`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.14/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withPoolingEnabled-java.lang.Boolean-), which allows for the use of `https` and `tls` [Internal Endpoints](https://ngrok.com/docs/universal-gateway/internal-endpoints/).
+- Support for `pooling_enabled` in `CreateTunnel`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.15/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withPoolingEnabled-java.lang.Boolean-), which allows for the use of `https` and `tls` [Internal Endpoints](https://ngrok.com/docs/universal-gateway/internal-endpoints/).
 - Stability improvements around concurrency, process execution.
 - Documentation improvements.
 - Test improvements.
