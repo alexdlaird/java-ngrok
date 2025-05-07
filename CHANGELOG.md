@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.9...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.10...HEAD)
+
+## [2.3.10](https://github.com/alexdlaird/java-ngrok/compare/2.3.9...2.3.10) - 2025-05-07
 
 ### Added
 
@@ -381,11 +383,20 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   from [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.5.0/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html),
   instead relying on `ngrok`'s own built-in retry mechanism on startup fails.
 
-## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.14...1.4.x)
+## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.15...1.4.x)
 
 The `1.4.x` branch is where support for Java 8 of `java-ngrok` is passively maintained. It is available through
 the `java8-ngrok` artifact
 on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok).
+
+## [1.4.15](https://github.com/alexdlaird/java-ngrok/compare/1.4.14...1.4.15) - 2025-05-07
+
+### Added
+
+- Support for `pooling_enabled` in `CreateTunnel`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.14/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withPoolingEnabled-java.lang.Boolean-), which allows for the use of `https` and `tls` [Internal Endpoints](https://ngrok.com/docs/universal-gateway/internal-endpoints/).
+- Stability improvements around concurrency, process execution.
+- Documentation improvements.
+- Test improvements.
 
 ## [1.4.14](https://github.com/alexdlaird/java-ngrok/compare/1.4.13...1.4.14) - 2025-04-23
 
