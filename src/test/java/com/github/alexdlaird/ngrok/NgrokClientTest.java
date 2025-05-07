@@ -205,7 +205,7 @@ class NgrokClientTest extends NgrokTestCase {
                 Thread.sleep(200);
                 captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
                     List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                        "api", "reserved-domains", "delete", this.tcpEdgeReservedAddrId));
+                        "api", "reserved-addrs", "delete", this.tcpEdgeReservedAddrId));
                 Thread.sleep(200);
             } catch (Exception ex) {
                 ex.printStackTrace(System.out);
