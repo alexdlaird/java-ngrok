@@ -1,4 +1,4 @@
-.PHONY: all build install clean create-test-resources delete-test-resources test docs check local validate-release test-downstream upload
+.PHONY: all build install clean create-test-resources delete-test-resources delete-temp-test-resources test docs check local validate-release test-downstream upload
 
 SHELL := /usr/bin/env bash
 ifeq ($(OS),Windows_NT)
@@ -29,6 +29,10 @@ create-test-resources:
 delete-test-resources:
 	python -m pip install pyngrok
 	python scripts/delete_test_resources.py
+
+delete-temp-test-resources:
+	python -m pip install pyngrok
+	python scripts/delete_test_resources.py --temp
 
 test:
 	$(GRADLE_BIN) test
