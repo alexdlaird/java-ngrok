@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- Support for `pooling_enabled` in [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.3.10/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withPoolingEnabled(java.lang.Boolean)), which allows for the use of `https` and `tls` [Internal Endpoints](https://ngrok.com/docs/universal-gateway/internal-endpoints/).
 - Stability improvements around concurrency, process execution.
 - Documentation improvements.
 - Test improvements.

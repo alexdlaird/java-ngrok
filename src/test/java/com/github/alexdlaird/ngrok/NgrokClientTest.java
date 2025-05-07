@@ -1156,8 +1156,55 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testTunnelDefinitionsV3OAuth()
-        throws InterruptedException {
+    public void testNgrokHttpInternalEndpointPooling() {
+        testRequiresEnvVar("NGROK_AUTHTOKEN");
+
+        // WHEN
+        final CreateTunnel createHttpEdgeTunnel = new CreateTunnel.Builder()
+            .withProto(Proto.HTTP)
+            .withAddr(80)
+            .withDomain("java-ngrok.internal")
+            .withPoolingEnabled(true)
+            .build();
+        final Tunnel httpInternalEndpoint = ngrokClientV3.connect(createHttpEdgeTunnel);
+        final List<Tunnel> tunnels = ngrokClientV3.getTunnels();
+
+        // THEN
+        assertEquals("http://localhost:80", httpInternalEndpoint.getConfig().getAddr());
+        assertEquals("https", httpInternalEndpoint.getProto());
+        assertEquals("https://java-ngrok.internal", httpInternalEndpoint.getPublicUrl());
+        assertEquals(1, tunnels.size());
+        assertEquals("http://localhost:80", tunnels.get(0).getConfig().getAddr());
+        assertEquals("https", tunnels.get(0).getProto());
+        assertEquals("https://java-ngrok.internal", tunnels.get(0).getPublicUrl());
+    }
+
+    @Test
+    public void testNgrokTlsInternalEndpointPooling() {
+        testRequiresEnvVar("NGROK_AUTHTOKEN");
+
+        // WHEN
+        final CreateTunnel createHttpEdgeTunnel = new CreateTunnel.Builder()
+            .withProto(Proto.TLS)
+            .withAddr(443)
+            .withDomain("java-ngrok.internal")
+            .withPoolingEnabled(true)
+            .build();
+        final Tunnel httpInternalEndpoint = ngrokClientV3.connect(createHttpEdgeTunnel);
+        final List<Tunnel> tunnels = ngrokClientV3.getTunnels();
+
+        // THEN
+        assertEquals("tls://localhost:443", httpInternalEndpoint.getConfig().getAddr());
+        assertEquals("tls", httpInternalEndpoint.getProto());
+        assertEquals("tls://java-ngrok.internal", httpInternalEndpoint.getPublicUrl());
+        assertEquals(1, tunnels.size());
+        assertEquals("tls://localhost:443", tunnels.get(0).getConfig().getAddr());
+        assertEquals("tls", tunnels.get(0).getProto());
+        assertEquals("tls://java-ngrok.internal", tunnels.get(0).getPublicUrl());
+    }
+
+    @Test
+    public void testTunnelDefinitionsV3OAuth() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN

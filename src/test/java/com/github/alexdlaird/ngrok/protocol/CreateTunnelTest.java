@@ -97,6 +97,7 @@ public class CreateTunnelTest {
                                                                                                             + "-config")
                                                                                                         .build())
                                                           .build())
+            .withPoolingEnabled(false)
             .build();
 
         // THEN
@@ -142,6 +143,7 @@ public class CreateTunnelTest {
         assertTrue(createTunnel.getPolicyOutbound().getExpressions().contains("outbound-policy-expression"));
         assertEquals("outbound-policy-actions-type", createTunnel.getPolicyOutbound().getActions().getType());
         assertEquals("outbound-policy-actions-config", createTunnel.getPolicyOutbound().getActions().getConfig());
+        assertFalse(createTunnel.isPoolingEnabled());
 
         assertNull(createTunnel.getSchemes());
     }
@@ -242,7 +244,9 @@ public class CreateTunnelTest {
                             "expressions", List.of("outbound-policy-expression"),
                             "actions",
                             Map.of("type", "outbound-policy-actions-type", "config",
-                                "outbound-policy-actions-config")))))
+                                "outbound-policy-actions-config")))),
+                Map.entry("pooling_enabled", "false")
+                )
             ).build();
 
         // THEN
@@ -281,6 +285,7 @@ public class CreateTunnelTest {
         assertTrue(createTunnel.getPolicyOutbound().getExpressions().contains("outbound-policy-expression"));
         assertEquals("outbound-policy-actions-type", createTunnel.getPolicyOutbound().getActions().getType());
         assertEquals("outbound-policy-actions-config", createTunnel.getPolicyOutbound().getActions().getConfig());
+        assertFalse(createTunnel.isPoolingEnabled());
 
         assertNull(createTunnel.getBindTls());
     }
