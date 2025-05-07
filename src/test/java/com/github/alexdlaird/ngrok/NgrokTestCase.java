@@ -154,10 +154,7 @@ public class NgrokTestCase extends TestCase {
     }
 
     protected String generateNameForSubdomain() {
-        return String.format("java-ngrok-%s-%s-%s",
-            random.nextInt(2000000000 - (1000000001)) + 1000000000,
-            NgrokInstaller.getSystem().toLowerCase(),
-            System.getProperty("java.version").replaceAll("[._]", "-"));
+        return String.format("java-ngrok-%s", random.nextInt(2000000000 - (1000000001)) + 1000000000);
     }
 
     protected void mockSystemProperty(final String key, final String value) {
