@@ -276,7 +276,6 @@ public class CreateTunnelTest {
         outboundPolicyActions.put("type", "outbound-policy-actions-type");
         outboundPolicyActions.put("config", "outbound-policy-actions-config");
         outboundPolicy.put("actions", Collections.unmodifiableMap(outboundPolicyActions));
-        tunnelDefinition.put("inbound-policy", Collections.unmodifiableMap(inboundPolicy));
         final Map<String, Object> policies = new HashMap<>();
         policies.put("inbound", Collections.unmodifiableMap(inboundPolicy));
         policies.put("outbound", Collections.unmodifiableMap(outboundPolicy));
