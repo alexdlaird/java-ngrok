@@ -16,6 +16,11 @@ concurrency:
   group: java-ngrok-1.4.x-singleton
 
 jobs:
+  validate:
+    name: Validate
+    uses: alexdlaird/java-ngrok/.github/workflows/validate.yml@1.4.x
+    secrets: inherit
+
   build:
     name: Build
 
@@ -23,6 +28,14 @@ jobs:
       NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
       NGROK_API_KEY: ${{ secrets.NGROK_API_KEY }}
       NGROK_SUBDOMAIN: ${{ github.repository_owner }}
+      NGROK_HOSTNAME: ${{ secrets.NGROK_HOSTNAME }}
+      NGROK_DOMAIN: ${{ secrets.NGROK_DOMAIN }}
+      NGROK_TCP_EDGE_ADDR: ${{ secrets.NGROK_TCP_EDGE_ADDR }}
+      NGROK_TCP_EDGE_ID: ${{ secrets.NGROK_TCP_EDGE_ID }}
+      NGROK_HTTP_EDGE_DOMAIN: ${{ secrets.NGROK_HTTP_EDGE_DOMAIN }}
+      NGROK_HTTP_EDGE_ID: ${{ secrets.NGROK_HTTP_EDGE_ID }}
+      NGROK_TLS_EDGE_DOMAIN: ${{ secrets.NGROK_TLS_EDGE_DOMAIN }}
+      NGROK_TLS_EDGE_ID: ${{ secrets.NGROK_TLS_EDGE_ID }}
 
     strategy:
       fail-fast: false
@@ -44,8 +57,3 @@ jobs:
         run: make build
       - name: Test
         run: make test
-
-  validate:
-    name: Validate
-    uses: alexdlaird/java-ngrok/.github/workflows/validate.yml@1.4.x
-    secrets: inherit
