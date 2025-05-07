@@ -988,7 +988,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testTunnelDefinitionsV3HTTPEdge() {
+    public void testTunnelDefinitionsHTTPEdge() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
         testRequiresEnvVar("NGROK_API_KEY");
 
@@ -1033,7 +1033,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testTunnelDefinitionsV3TCPEdge() {
+    public void testTunnelDefinitionsTCPEdge() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
         testRequiresEnvVar("NGROK_API_KEY");
 
@@ -1077,7 +1077,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testTunnelDefinitionsV3TLSEdge() {
+    public void testTunnelDefinitionsTLSEdge() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
         testRequiresEnvVar("NGROK_API_KEY");
 
