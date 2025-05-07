@@ -1142,7 +1142,7 @@ class NgrokClientTest extends NgrokTestCase {
         // GIVEN
         final Map<String, Object> edgeHttpTunnelConfig = new HashMap<>();
         edgeHttpTunnelConfig.put("addr", "80");
-        edgeHttpTunnelConfig.put("labels", Collections.singletonList(String.format("edge=%s", httpEdgeId)));
+        edgeHttpTunnelConfig.put("labels", Collections.singletonList("edge=edghts_some-id"));
         final Map<String, Object> tunnelsConfig = Collections.singletonMap("edge-tunnel",
             Collections.unmodifiableMap(edgeHttpTunnelConfig));
         final Map<String, Object> config = Collections.singletonMap("tunnels", tunnelsConfig);
@@ -1158,6 +1158,7 @@ class NgrokClientTest extends NgrokTestCase {
             .withJavaNgrokConfig(javaNgrokConfig2)
             .withNgrokProcess(ngrokProcessV3_2)
             .build();
+        assertEquals("", javaNgrokConfig2.getApiKey());
 
         // WHEN
         final CreateTunnel createEdgeTunnel = new CreateTunnel.Builder()
