@@ -66,7 +66,7 @@ public class NgrokTestCase extends TestCase {
 
     protected final Gson gson = new Gson();
 
-    protected final String testResourceDescription = "Created by java-ngrok test";
+    protected final String testResourceDescription = "Created by java-ngrok testcase";
 
     @BeforeEach
     public void setUp() {
