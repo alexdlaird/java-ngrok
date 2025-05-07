@@ -94,21 +94,28 @@ class NgrokClientTest extends NgrokTestCase {
     public void setUpClass()
         throws IOException, InterruptedException {
         if (isNotBlank(System.getenv("NGROK_API_KEY"))) {
-            new NgrokProcess(testcaseJavaNgrokConfig, ngrokInstaller);
-
-            final String domain = String.format("%s.ngrok.dev", this.ngrokSubdomain);
-            try {
-                this.reserveNgrokDomain(this.testcaseJavaNgrokConfig, domain);
-            } catch (final NgrokException ex) {
-                if (!ex.getMessage().contains("domain is already reserved")) {
-                    throw ex;
-                }
+            if (!Files.exists(testcaseJavaNgrokConfig.getNgrokPath())) {
+                ngrokInstaller.installNgrok(testcaseJavaNgrokConfig.getNgrokPath(),
+                    testcaseJavaNgrokConfig.getNgrokVersion());
+            }
+            if (!Files.exists(testcaseJavaNgrokConfig.getConfigPath())) {
+                ngrokInstaller.installDefaultConfig(testcaseJavaNgrokConfig.getConfigPath(), Map.of(),
+                    testcaseJavaNgrokConfig.getNgrokVersion());
             }
 
             // NGROK_PARENT_DOMAIN is set when init_test_resources.py is done provisioning test resources, so if it
             // hasn't been set, we need to do that now. When running tests on CI, using the init script can protect
             // against rate limiting, as this allows API resources to be shared across the build matrix.
             if (isBlank(System.getenv("NGROK_PARENT_DOMAIN"))) {
+                final String domain = String.format("%s.ngrok.dev", this.ngrokSubdomain);
+                try {
+                    this.reserveNgrokDomain(this.testcaseJavaNgrokConfig, domain);
+                } catch (final NgrokException ex) {
+                    if (!ex.getMessage().contains("domain is already reserved")) {
+                        throw ex;
+                    }
+                }
+
                 final String subdomain = this.generateNameForSubdomain();
                 final String hostname = String.format("%s.%s.ngrok.dev", subdomain, this.ngrokSubdomain);
                 Map<String, String> reservedDomain = this.reserveNgrokDomain(this.testcaseJavaNgrokConfig,
@@ -157,7 +164,7 @@ class NgrokClientTest extends NgrokTestCase {
         if (isNotBlank(System.getenv("NGROK_API_KEY")) &&
             isBlank(System.getenv("NGROK_PARENT_DOMAIN")) &&
             System.getenv().getOrDefault("NGROK_SKIP_TEST_RESOURCE_TEARDOWN", "false")
-                   .equalsIgnoreCase("false")) {
+                  .equalsIgnoreCase("false")) {
             try {
                 final String httpEdgesResult = captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
                     List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
