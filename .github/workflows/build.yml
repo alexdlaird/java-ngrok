@@ -20,7 +20,6 @@ jobs:
     name: Initialize test resources
 
     env:
-      NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
       NGROK_API_KEY: ${{ secrets.NGROK_API_KEY }}
       NGROK_SUBDOMAIN: ${{ github.repository_owner }}
 
@@ -95,6 +94,9 @@ jobs:
     name: Cleanup test resources
     needs: [validate, build]
     if: always()
+
+    env:
+      NGROK_API_KEY: ${{ secrets.NGROK_API_KEY }}
 
     runs-on: ubuntu-latest
 
