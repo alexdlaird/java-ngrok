@@ -71,15 +71,23 @@ class NgrokClientTest extends NgrokTestCase {
 
     private String reservedDomain;
 
+    private String reservedDomainId;
+
     private String tcpEdgeReservedAddr;
+
+    private String tcpEdgeReservedAddrId;
 
     private String tcpEdgeId;
 
     private String httpEdgeReservedDomain;
 
+    private String httpEdgeReservedDomainId;
+
     private String httpEdgeId;
 
     private String tlsEdgeReservedDomain;
+
+    private String tlsEdgeReservedDomainId;
 
     private String tlsEdgeId;
 
@@ -94,28 +102,39 @@ class NgrokClientTest extends NgrokTestCase {
     public void setUpClass()
         throws IOException, InterruptedException {
         if (isNotBlank(System.getenv("NGROK_API_KEY"))) {
-            new NgrokProcess(testcaseJavaNgrokConfig, ngrokInstaller);
-
-            final String domain = String.format("%s.ngrok.dev", this.ngrokSubdomain);
-            try {
-                this.reserveNgrokDomain(this.testcaseJavaNgrokConfig, domain);
-            } catch (final NgrokException ex) {
-                if (!ex.getMessage().contains("domain is already reserved")) {
-                    throw ex;
-                }
+            if (!Files.exists(testcaseJavaNgrokConfig.getNgrokPath())) {
+                ngrokInstaller.installNgrok(testcaseJavaNgrokConfig.getNgrokPath(),
+                    testcaseJavaNgrokConfig.getNgrokVersion());
+            }
+            if (!Files.exists(testcaseJavaNgrokConfig.getConfigPath())) {
+                ngrokInstaller.installDefaultConfig(testcaseJavaNgrokConfig.getConfigPath(), Map.of(),
+                    testcaseJavaNgrokConfig.getNgrokVersion());
             }
 
-            // NGROK_PARENT_DOMAIN is set when init_test_resources.py is done provisioning test resources, so if it
+            // NGROK_HOSTNAME is set when init_test_resources.py is done provisioning test resources, so if it
             // hasn't been set, we need to do that now. When running tests on CI, using the init script can protect
             // against rate limiting, as this allows API resources to be shared across the build matrix.
-            if (isBlank(System.getenv("NGROK_PARENT_DOMAIN"))) {
+            if (isBlank(System.getenv("NGROK_HOSTNAME"))) {
+                final String domain = String.format("%s.ngrok.dev", this.ngrokSubdomain);
+                try {
+                    this.reserveNgrokDomain(this.testcaseJavaNgrokConfig, domain);
+                } catch (final NgrokException ex) {
+                    if (!ex.getMessage().contains("domain is already reserved")) {
+                        throw ex;
+                    }
+                }
+
                 final String subdomain = this.generateNameForSubdomain();
                 final String hostname = String.format("%s.%s.ngrok.dev", subdomain, this.ngrokSubdomain);
-                Map<String, String> reservedDomain = this.reserveNgrokDomain(this.testcaseJavaNgrokConfig,
+                final Map<String, String> reservedDomain = this.reserveNgrokDomain(this.testcaseJavaNgrokConfig,
                     hostname);
                 this.reservedDomain = reservedDomain.get("domain");
+                this.reservedDomainId = reservedDomain.get("id");
 
-                this.tcpEdgeReservedAddr = this.reserveNgrokAddr(this.testcaseJavaNgrokConfig).get("addr");
+                final Map<String, String> tcpEdgeReservedAddr =
+                    this.reserveNgrokAddr(this.testcaseJavaNgrokConfig);
+                this.tcpEdgeReservedAddr = tcpEdgeReservedAddr.get("addr");
+                this.tcpEdgeReservedAddrId = tcpEdgeReservedAddr.get("id");
                 Thread.sleep(500);
                 final String[] hostAndPort = this.tcpEdgeReservedAddr.split(":");
                 this.tcpEdgeId = this.createNgrokEdge(this.testcaseJavaNgrokConfig, "tcp", hostAndPort[0],
@@ -123,16 +142,20 @@ class NgrokClientTest extends NgrokTestCase {
 
                 final String subdomainHttp = this.generateNameForSubdomain();
                 final String httpEdgeHostname = String.format("%s.%s.ngrok.dev", subdomainHttp, this.ngrokSubdomain);
-                this.httpEdgeReservedDomain = this.reserveNgrokDomain(this.testcaseJavaNgrokConfig,
-                    httpEdgeHostname).get("domain");
+                final Map<String, String> httpEdgeReservedDomain = this.reserveNgrokDomain(this.testcaseJavaNgrokConfig,
+                    httpEdgeHostname);
+                this.httpEdgeReservedDomain = httpEdgeReservedDomain.get("domain");
+                this.httpEdgeReservedDomainId = httpEdgeReservedDomain.get("id");
                 Thread.sleep(500);
                 this.httpEdgeId = this.createNgrokEdge(this.testcaseJavaNgrokConfig, "https", httpEdgeHostname,
                     443).get("id");
 
                 final String subdomainTls = this.generateNameForSubdomain();
                 final String tlsEdgeHostname = String.format("%s.%s.ngrok.dev", subdomainTls, this.ngrokSubdomain);
-                this.tlsEdgeReservedDomain = this.reserveNgrokDomain(this.testcaseJavaNgrokConfig,
-                    tlsEdgeHostname).get("domain");
+                final Map<String, String> tlsEdgeReservedDomain = this.reserveNgrokDomain(this.testcaseJavaNgrokConfig,
+                    tlsEdgeHostname);
+                this.tlsEdgeReservedDomain = tlsEdgeReservedDomain.get("domain");
+                this.tlsEdgeReservedDomainId = tlsEdgeReservedDomain.get("id");
                 Thread.sleep(500);
                 this.tlsEdgeId = this.createNgrokEdge(this.testcaseJavaNgrokConfig, "tls",
                     tlsEdgeHostname, 443).get("id");
@@ -149,86 +172,41 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @AfterAll
-    public void tearDownClass()
-        throws IOException, InterruptedException {
-        // NGROK_PARENT_DOMAIN is set when init_test_resources.py is done provisioning test resources, in which case
+    public void tearDownClass() {
+        // NGROK_HOSTNAME is set when init_test_resources.py is done provisioning test resources, in which case
         // prune_test_resources.py should also be called to clean up test resources after all tests complete.
         // Otherwise, this testcase set up the resources, so it should also tear them down.
-        if (isNotBlank(System.getenv("NGROK_API_KEY")) && isBlank(System.getenv("NGROK_PARENT_DOMAIN"))) {
+        if (isNotBlank(System.getenv("NGROK_API_KEY")) &&
+            isBlank(System.getenv("NGROK_HOSTNAME"))) {
             try {
-                final String httpEdgesResult = captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
                     List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                        "api", "edges", "https", "list"));
-                for (final Map<String, String> value :
-                    (List<Map<String, String>>) gson.fromJson(httpEdgesResult.substring(httpEdgesResult.indexOf("{")),
-                                                        Map.class)
-                                                    .get("https_edges")) {
-                    if (value.getOrDefault("description", "").equals(this.testResourceDescription)) {
-                        captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
-                            List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                                "api", "edges", "https", "delete", value.get("id")));
-                        Thread.sleep(200);
-                    }
-                }
-                final String tcpEdgesResult = captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                        "api", "edges", "https", "delete", this.httpEdgeId));
+                Thread.sleep(200);
+                captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
                     List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                        "api", "edges", "tcp", "list"));
-                for (final Map<String, String> value :
-                    (List<Map<String, String>>) gson.fromJson(tcpEdgesResult.substring(tcpEdgesResult.indexOf("{")),
-                                                        Map.class)
-                                                    .get("tcp_edges")) {
-                    if (value.getOrDefault("description", "").equals(this.testResourceDescription)) {
-                        captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
-                            List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                                "api", "edges", "tcp", "delete", value.get("id")));
-                        Thread.sleep(200);
-                    }
-                }
-                final String tlsEdgesResult = captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                        "api", "edges", "tcp", "delete", this.tcpEdgeId));
+                Thread.sleep(200);
+                captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
                     List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                        "api", "edges", "tls", "list"));
-                for (final Map<String, String> value :
-                    (List<Map<String, String>>) gson.fromJson(tlsEdgesResult.substring(tlsEdgesResult.indexOf("{")),
-                                                        Map.class)
-                                                    .get("tls_edges")) {
-                    if (value.getOrDefault("description", "").equals(this.testResourceDescription)) {
-                        captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
-                            List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                                "api", "edges", "tls", "delete", value.get("id")));
-                        Thread.sleep(200);
-                    }
-                }
-                final String reservedDomainsResult = captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                        "api", "edges", "tls", "delete", this.tlsEdgeId));
+                Thread.sleep(200);
+                captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
                     List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                        "api", "reserved-domains", "list"));
-                for (final Map<String, String> value :
-                    (List<Map<String, String>>) gson.fromJson(
-                                                        reservedDomainsResult.substring(reservedDomainsResult.indexOf("{")),
-                                                        Map.class)
-                                                    .get("reserved_domains")) {
-                    if (value.containsKey("description") && value.get("description")
-                                                                 .equals(this.testResourceDescription)) {
-                        captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
-                            List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                                "api", "reserved-domains", "delete", value.get("id")));
-                        Thread.sleep(200);
-                    }
-                }
-                final String reservedAddrsResult = captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                        "api", "reserved-domains", "delete", this.reservedDomainId));
+                Thread.sleep(200);
+                captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
                     List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                        "api", "reserved-addrs", "list"));
-                for (final Map<String, String> value :
-                    (List<Map<String, String>>) gson.fromJson(
-                                                        reservedAddrsResult.substring(reservedAddrsResult.indexOf("{")),
-                                                        Map.class)
-                                                    .get("reserved_addrs")) {
-                    if (value.getOrDefault("description", "").equals(this.testResourceDescription)) {
-                        captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
-                            List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                                "api", "reserved-addrs", "delete", value.get("id")));
-                        Thread.sleep(200);
-                    }
-                }
+                        "api", "reserved-domains", "delete", this.tlsEdgeReservedDomainId));
+                Thread.sleep(200);
+                captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                    List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
+                        "api", "reserved-domains", "delete", this.httpEdgeReservedDomainId));
+                Thread.sleep(200);
+                captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
+                    List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
+                        "api", "reserved-domains", "delete", this.tcpEdgeReservedAddrId));
+                Thread.sleep(200);
             } catch (Exception ex) {
                 ex.printStackTrace(System.out);
                 System.out.println("--> An error occurred while cleaning up test resources. Run "
