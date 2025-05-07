@@ -126,7 +126,7 @@ A Java 8-compatible build was maintained in this branch, but it is not actively 
 the `java8-ngrok` dependency from [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok).
 
 For more details on what differs in the `java8-ngrok` dependency,
-see [the "Java 8" section of the docs](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.14/overview-summary.html#java8).
+see [the "Java 8" section of the docs](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.15/overview-summary.html#java8).
 
 ## Contributing
 
