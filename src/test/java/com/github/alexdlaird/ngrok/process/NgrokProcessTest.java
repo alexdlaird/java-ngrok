@@ -155,7 +155,7 @@ public class NgrokProcessTest extends NgrokTestCase {
     }
 
     @Test
-    public void testMultipleProcessesDifferentBinariesV2() {
+    public void testMultipleProcessesDifferentBinaries() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN

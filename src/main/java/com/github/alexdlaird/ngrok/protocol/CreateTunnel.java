@@ -75,6 +75,7 @@ public class CreateTunnel {
     private final TunnelPolicy policyInbound;
     private final TunnelPolicy policyOutbound;
     private final List<String> labels;
+    private final Boolean poolingEnabled;
 
     private CreateTunnel(final Builder builder) {
         this.ngrokVersion = builder.ngrokVersion;
@@ -108,6 +109,7 @@ public class CreateTunnel {
         this.policyInbound = builder.policyInbound;
         this.policyOutbound = builder.policyOutbound;
         this.labels = builder.labels;
+        this.poolingEnabled = builder.poolingEnabled;
     }
 
     /**
@@ -329,6 +331,13 @@ public class CreateTunnel {
     }
 
     /**
+     * Whether pooling is enabled on this tunnel.
+     */
+    public Boolean isPoolingEnabled() {
+        return poolingEnabled;
+    }
+
+    /**
      * Builder for a {@link CreateTunnel}, which can be used to construct a request that conforms to <a
      * href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
      * target="_blank"><code>ngrok</code>'s tunnel definition</a>. See docs for that class for example usage.
@@ -368,6 +377,7 @@ public class CreateTunnel {
         private TunnelPolicy policyInbound;
         private TunnelPolicy policyOutbound;
         private List<String> labels;
+        private Boolean poolingEnabled;
 
         /**
          * Use this constructor if default values should not be populated in required attributes when {@link #build()}
@@ -713,6 +723,14 @@ public class CreateTunnel {
         }
 
         /**
+         * Whether pooling is enabled on this tunnel.
+         */
+        public Builder withPoolingEnabled(final Boolean poolingEnabled) {
+            this.poolingEnabled = poolingEnabled;
+            return this;
+        }
+
+        /**
          * Populate any <code>null</code> attributes (except for <code>name</code>) in this Builder with values from the
          * given <code>tunnelDefinition</code>.
          *
@@ -813,6 +831,9 @@ public class CreateTunnel {
                 this.userAgentFilter = new TunnelUserAgentFilter
                     .Builder((Map<String, Object>) tunnelDefinition.get("user_agent_filter"))
                     .build();
+            }
+            if (isNull(this.poolingEnabled) && tunnelDefinition.containsKey("pooling_enabled")) {
+                this.poolingEnabled = Boolean.valueOf(String.valueOf(tunnelDefinition.get("pooling_enabled")));
             }
             if (tunnelDefinition.containsKey("policy") || tunnelDefinition.containsKey("traffic_policy")) {
                 final String policyKey = tunnelDefinition.containsKey("policy") ? "policy" : "traffic_policy";
