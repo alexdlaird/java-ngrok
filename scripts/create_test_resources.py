@@ -18,7 +18,7 @@ from pyngrok.process import capture_run_process
 description = "Created by java-ngrok test"
 
 
-def create_test_resources():
+def create_test_resources(subdomain_prefix="java-ngrok-init"):
     """
     Provisioning test resources with the ngrok API, and then setting secrets in the CI environment so the resources are
     shared across tests, can greatly reduce the chances of being rate limited when running a build matrix.
@@ -40,7 +40,7 @@ def create_test_resources():
             sys.exit(1)
 
     try:
-        subdomain = generate_name_for_subdomain("java-ngrok-init")
+        subdomain = generate_name_for_subdomain(subdomain_prefix)
         hostname = f"{subdomain}.{ngrok_hostname}"
         reserved_domain = reserve_ngrok_domain(pyngrok_config, hostname)
 
@@ -49,7 +49,7 @@ def create_test_resources():
         tcp_edge = create_ngrok_edge(pyngrok_config, "tcp",
                                      *tcp_edge_reserved_addr["addr"].split(":"))
 
-        subdomain = generate_name_for_subdomain("java-ngrok-init")
+        subdomain = generate_name_for_subdomain(subdomain_prefix)
         http_edge_hostname = f"{subdomain}.{ngrok_hostname}"
         http_edge_reserved_domain = reserve_ngrok_domain(pyngrok_config,
                                                          http_edge_hostname)
@@ -57,7 +57,7 @@ def create_test_resources():
         http_edge = create_ngrok_edge(pyngrok_config, "https",
                                       http_edge_hostname, 443)
 
-        subdomain = generate_name_for_subdomain("java-ngrok-init")
+        subdomain = generate_name_for_subdomain(subdomain_prefix)
         tls_edge_hostname = f"{subdomain}.{ngrok_hostname}"
         tls_edge_reserved_domain = reserve_ngrok_domain(pyngrok_config,
                                                         tls_edge_hostname)
@@ -68,27 +68,31 @@ def create_test_resources():
         print("An error occurred: " + e.output.decode("utf-8"))
         sys.exit(1)
 
-    print("--> The following ngrok resources have been provisioned, set these GitHub secrets to reduce the chances "
-          "of rate limiting in CI workflows")
+    print("--> The following ngrok resources have been provisioned. Set these as GitHub secrets to reduce rate limiting"
+          "when running a build matrix.")
 
     print(f"export NGROK_HOSTNAME={ngrok_hostname}")
 
     print(f"export NGROK_DOMAIN={reserved_domain['domain']}")
     os.environ["NGROK_DOMAIN"] = reserved_domain["domain"]
+    os.environ["NGROK_DOMAIN_ID"] = reserved_domain["id"]
 
     print(f"export NGROK_TCP_EDGE_ADDR={tcp_edge_reserved_addr['addr']}")
     print(f"export NGROK_TCP_EDGE_ID={tcp_edge['id']}")
     os.environ["NGROK_TCP_EDGE_ADDR"] = tcp_edge_reserved_addr["addr"]
+    os.environ["NGROK_TCP_EDGE_ADDR_ID"] = tcp_edge_reserved_addr["id"]
     os.environ["NGROK_TCP_EDGE_ID"] = tcp_edge["id"]
 
     print(f"export NGROK_HTTP_EDGE_DOMAIN={http_edge_reserved_domain['domain']}")
     print(f"export NGROK_HTTP_EDGE_ID={http_edge['id']}")
     os.environ["NGROK_HTTP_EDGE_DOMAIN"] = http_edge_reserved_domain["domain"]
+    os.environ["NGROK_HTTP_EDGE_DOMAIN_ID"] = http_edge_reserved_domain["id"]
     os.environ["NGROK_HTTP_EDGE_ID"] = http_edge["id"]
 
     print(f"export NGROK_TLS_EDGE_DOMAIN={tls_edge_reserved_domain['domain']}")
     print(f"export NGROK_TLS_EDGE_ID={tls_edge['id']}")
     os.environ["NGROK_TLS_EDGE_DOMAIN"] = tls_edge_reserved_domain["domain"]
+    os.environ["NGROK_TLS_EDGE_DOMAIN_ID"] = tls_edge_reserved_domain["id"]
     os.environ["NGROK_TLS_EDGE_ID"] = tls_edge["id"]
 
 
