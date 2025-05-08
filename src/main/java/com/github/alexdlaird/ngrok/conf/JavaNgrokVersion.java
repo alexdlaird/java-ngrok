@@ -4,6 +4,7 @@ import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.NgrokClient.Builder;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,7 +23,7 @@ public class JavaNgrokVersion {
     private final String version;
 
     private JavaNgrokVersion(final String version) {
-        this.version = version;
+        this.version = Objects.requireNonNull(version);
     }
 
     /**

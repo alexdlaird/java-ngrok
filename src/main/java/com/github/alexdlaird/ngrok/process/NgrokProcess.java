@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -72,8 +73,8 @@ public class NgrokProcess {
      */
     public NgrokProcess(final JavaNgrokConfig javaNgrokConfig,
                         final NgrokInstaller ngrokInstaller) {
-        this.javaNgrokConfig = javaNgrokConfig;
-        this.ngrokInstaller = ngrokInstaller;
+        this.javaNgrokConfig = Objects.requireNonNull(javaNgrokConfig);
+        this.ngrokInstaller = Objects.requireNonNull(ngrokInstaller);
 
         if (!Files.exists(javaNgrokConfig.getNgrokPath())) {
             ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath(), javaNgrokConfig.getNgrokVersion());
@@ -364,9 +365,9 @@ public class NgrokProcess {
         protected ProcessMonitor(final Process process,
                                  final JavaNgrokConfig javaNgrokConfig,
                                  final HttpClient httpClient) {
-            this.process = process;
-            this.javaNgrokConfig = javaNgrokConfig;
-            this.httpClient = httpClient;
+            this.process = Objects.requireNonNull(process);
+            this.javaNgrokConfig = Objects.requireNonNull(javaNgrokConfig);
+            this.httpClient = Objects.requireNonNull(httpClient);
         }
 
         @Override

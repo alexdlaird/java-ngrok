@@ -30,6 +30,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import static com.github.alexdlaird.util.StringUtils.isBlank;
@@ -327,6 +328,8 @@ public class NgrokClient {
     public void disconnect(final String publicUrl) {
         // If ngrok is not running, there are no tunnels to disconnect
         if (!ngrokProcess.isRunning()) {
+            LOGGER.fine(String.format("\"ngrokPath\" %s is not running a process", javaNgrokConfig.getNgrokPath()));
+
             return;
         }
 
@@ -606,7 +609,7 @@ public class NgrokClient {
          * The <code>java-ngrok</code> to use when interacting with the <code>ngrok</code> binary.
          */
         public Builder withJavaNgrokConfig(final JavaNgrokConfig javaNgrokConfig) {
-            this.javaNgrokConfig = javaNgrokConfig;
+            this.javaNgrokConfig = Objects.requireNonNull(javaNgrokConfig);
             return this;
         }
 
@@ -615,7 +618,7 @@ public class NgrokClient {
          * {@link #withNgrokProcess(NgrokProcess)} is not called.
          */
         public Builder withNgrokInstaller(final NgrokInstaller ngrokInstaller) {
-            this.ngrokInstaller = ngrokInstaller;
+            this.ngrokInstaller = Objects.requireNonNull(ngrokInstaller);
             return this;
         }
 
@@ -623,7 +626,7 @@ public class NgrokClient {
          * The class used to manage the <code>ngrok</code> binary.
          */
         public Builder withNgrokProcess(final NgrokProcess ngrokProcess) {
-            this.ngrokProcess = ngrokProcess;
+            this.ngrokProcess = Objects.requireNonNull(ngrokProcess);
             return this;
         }
 
@@ -631,7 +634,7 @@ public class NgrokClient {
          * The class used to make HTTP requests to <code>ngrok</code>'s APIs.
          */
         public Builder withHttpClient(final HttpClient httpClient) {
-            this.httpClient = httpClient;
+            this.httpClient = Objects.requireNonNull(httpClient);
             return this;
         }
 

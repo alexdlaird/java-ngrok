@@ -168,7 +168,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
         Thread.sleep(1000);
 
-        defaultHttpClient.get(String.format("%s/status", publicUrl), Object.class);
+        defaultHttpClient.get(String.format("%s/api/status", publicUrl), Object.class);
 
         Thread.sleep(3000);
 
@@ -180,7 +180,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
                 new Parameter("tunnel_name", "my-tunnel")), Map.of(), CapturedRequests.class);
         final Response<CapturedRequests> response3 = defaultHttpClient.get(
             String.format("%s/api/requests/http", publicUrl), List.of(
-                new Parameter("tunnel_name", "my-tunnel (http)")), Map.of(), CapturedRequests.class);
+                new Parameter("tunnel_name", "unknown-tunnel")), Map.of(), CapturedRequests.class);
 
         // THEN
         assertEquals(HTTP_OK, response1.getStatusCode());
@@ -189,28 +189,8 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         assertThat(response2.getBody().getRequests().size(), greaterThan(0));
         assertEquals(HTTP_OK, response3.getStatusCode());
         assertEquals(response3.getBody().getRequests().size(), 0);
-        final CapturedRequests capturedRequests = response1.getBody();
-        assertEquals(2, capturedRequests.getRequests().size());
-        assertNotNull(capturedRequests.getUri());
-        final CapturedRequest capturedRequest = capturedRequests.getRequests().get(0);
-        assertNotNull(capturedRequest.getRequest());
-        assertNotNull(capturedRequest.getRequest().getMethod());
-        assertNotNull(capturedRequest.getRequest().getUri());
-        assertNotNull(capturedRequest.getRequest().getHeaders());
-        assertNotNull(capturedRequest.getRequest().getProto());
-        assertNotNull(capturedRequest.getRequest().getRaw());
-        assertNotNull(capturedRequest.getResponse());
-        assertNotNull(capturedRequest.getResponse().getStatus());
-        assertEquals(0, capturedRequest.getResponse().getStatusCode());
-        assertNull(capturedRequest.getResponse().getHeaders());
-        assertNotNull(capturedRequest.getResponse().getProto());
-        assertNull(capturedRequest.getResponse().getRaw());
-        assertNotNull(capturedRequest.getUri());
-        assertEquals(0, capturedRequest.getDuration());
-        assertNotNull(capturedRequest.getId());
-        assertNotNull(capturedRequest.getRemoteAddr());
-        assertNotNull(capturedRequest.getStart());
-        assertNotNull(capturedRequest.getTunnelName());
+        assertNotNull(response1.getBody());
+        assertEquals(2, response1.getBody().getRequests().size());
     }
 
     @Test

@@ -821,7 +821,7 @@ class NgrokClientTest extends NgrokTestCase {
         Thread.sleep(1000);
         assertEquals(0, tunnel.getMetrics().get("http").getCount());
 
-        ngrokClientV3.getHttpClient().get(String.format("%s/status", tunnel.getPublicUrl()), Object.class);
+        ngrokClientV3.getHttpClient().get(String.format("%s/api/status", tunnel.getPublicUrl()), Object.class);
 
         Thread.sleep(3000);
 

@@ -64,7 +64,7 @@ public class AgentStatus {
          */
         public static class Leg {
             private String region;
-            private int latency;
+            private String latency;
 
             /**
              * Get the region of the leg.
@@ -76,7 +76,7 @@ public class AgentStatus {
             /**
              * Get the latency of the leg.
              */
-            public int getLatency() {
+            public String getLatency() {
                 return latency;
             }
         }

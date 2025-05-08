@@ -45,4 +45,14 @@
         <Field name="httpClient"/>
         <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
+    <Match>
+        <Class name="com.github.alexdlaird.ngrok.agent.NgrokAgent"/>
+        <Field name="httpClient"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Class name="com.github.alexdlaird.ngrok.agent.NgrokAgent"/>
+        <Field name="ngrokProcess"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
 </FindBugsFilter>

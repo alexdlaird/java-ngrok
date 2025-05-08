@@ -199,6 +199,9 @@ public class DefaultHttpClient implements HttpClient {
             try {
                 return gson.fromJson(response, clazz);
             } catch (final JsonSyntaxException e) {
+                LOGGER.fine(String.format("An error occurred when attempting to parse JSON response: %s",
+                    e.getMessage()));
+
                 return null;
             }
         } else {

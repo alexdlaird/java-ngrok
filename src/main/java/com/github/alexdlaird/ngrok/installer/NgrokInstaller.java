@@ -28,6 +28,7 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -82,7 +83,7 @@ public class NgrokInstaller {
      * @param httpClient The HTTP client.
      */
     public NgrokInstaller(final HttpClient httpClient) {
-        this.httpClient = httpClient;
+        this.httpClient = Objects.requireNonNull(httpClient);
     }
 
     /**

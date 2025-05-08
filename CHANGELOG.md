@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- [Agent interface](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/agent/NgrokAgent.html), which provides access to Captured Requests and Agent status.
 - Documentation improvements.
 
 ## [2.3.10](https://github.com/alexdlaird/java-ngrok/compare/2.3.9...2.3.10) - 2025-05-07
