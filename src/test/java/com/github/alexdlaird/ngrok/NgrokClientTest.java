@@ -815,7 +815,6 @@ class NgrokClientTest extends NgrokTestCase {
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
             .withName("my-tunnel")
             .withAddr(new URL(ngrokClientV3.getNgrokProcess().getApiUrl()).getPort())
-            .withBindTls(true)
             .build();
         final Tunnel tunnel = ngrokClientV3.connect(createTunnel);
         Thread.sleep(1000);
@@ -988,7 +987,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testTunnelDefinitionsHTTPEdge() {
+    public void testTunnelDefinitionsHttpEdge() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
         testRequiresEnvVar("NGROK_API_KEY");
 
@@ -1033,7 +1032,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testTunnelDefinitionsTCPEdge() {
+    public void testTunnelDefinitionsTcpEdge() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
         testRequiresEnvVar("NGROK_API_KEY");
 
@@ -1077,7 +1076,7 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testTunnelDefinitionsTLSEdge() {
+    public void testTunnelDefinitionsTlsEdge() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
         testRequiresEnvVar("NGROK_API_KEY");
 
@@ -1119,6 +1118,38 @@ class NgrokClientTest extends NgrokTestCase {
         assertEquals("tls", tunnels.get(0).getProto());
         assertEquals(String.format("tls://%s:443", this.tlsEdgeReservedDomain),
             tunnels.get(0).getPublicUrl());
+    }
+
+    @Test
+    public void testBindTlsAndLabelsNotAllowed() {
+        testRequiresEnvVar("NGROK_AUTHTOKEN");
+        testRequiresEnvVar("NGROK_API_KEY");
+
+        // GIVEN
+        final Map<String, Object> edgeTlsTunnelConfig = Map.of(
+            "addr", "443",
+            "labels", List.of(String.format("edge=%s", this.tlsEdgeId)));
+        final Map<String, Object> tunnelsConfig = Map.of("edge-tls-tunnel", edgeTlsTunnelConfig);
+        final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
+
+        final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
+        ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
+            .withConfigPath(configPath2)
+            .build();
+        ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+        final NgrokClient ngrokClient2 = new NgrokClient.Builder()
+            .withJavaNgrokConfig(javaNgrokConfig2)
+            .withNgrokProcess(ngrokProcessV3_2)
+            .build();
+
+        // WHEN
+        final CreateTunnel createEdgeTunnel = new CreateTunnel.Builder()
+            .withNgrokVersion(NgrokVersion.V3)
+            .withName("edge-tls-tunnel")
+            .withBindTls(true)
+            .build();
+        assertThrows(IllegalArgumentException.class, () -> ngrokClient2.connect(createEdgeTunnel));
     }
 
     @Test

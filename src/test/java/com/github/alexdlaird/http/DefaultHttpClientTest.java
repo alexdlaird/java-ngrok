@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Alex Laird
+ * Copyright (c) 2021-2025 Alex Laird
  *
  * SPDX-License-Identifier: MIT
  */
@@ -91,7 +91,6 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
             .withNgrokVersion(NgrokVersion.V3)
             .withName("my-tunnel")
-            .withBindTls(true)
             .build();
         defaultHttpClient.post(String.format("%s/api/tunnels",
             ngrokProcessV3.getApiUrl()), createTunnel, Tunnel.class);
@@ -141,7 +140,6 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
             .withNgrokVersion(NgrokVersion.V3)
             .withName("my-tunnel")
-            .withBindTls(true)
             .build();
 
         // WHEN
@@ -163,7 +161,6 @@ public class DefaultHttpClientTest extends NgrokTestCase {
             .withNgrokVersion(NgrokVersion.V3)
             .withName("my-tunnel")
             .withAddr(new URL(ngrokProcessV3.getApiUrl()).getPort())
-            .withBindTls(true)
             .build();
         final Response<Tunnel> createResponse = defaultHttpClient.post(String.format("%s/api/tunnels",
             ngrokProcessV3.getApiUrl()), request, Tunnel.class);
