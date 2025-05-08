@@ -89,7 +89,7 @@ To start a labeled tunnel in `java-ngrok`, set [withName(String)](https://javado
 ```java
 final NgrokClient ngrokClient = new NgrokClient.Builder().build();
 
-// Open a named tunnel from the config file
+// Open the Edge tunnel that is defined in the config file
 final CreateTunnel createNamedTunnel = new CreateTunnel.Builder()
         .withName("some-edge-tunnel")
         .build();
