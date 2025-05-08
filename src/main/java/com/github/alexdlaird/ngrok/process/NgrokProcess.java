@@ -267,7 +267,8 @@ public class NgrokProcess {
     }
 
     /**
-     * Set the <code>ngrok</code> API key in the config file, enabling more features (for instance, labeled tunnels).
+     * Set the <code>ngrok</code> API key in the config file, enabling more features (for instance, Internal
+     * Endpoints).
      *
      * <p>The API key can also be set in the {@link JavaNgrokConfig} that is passed to the
      * {@link NgrokClient.Builder}.
