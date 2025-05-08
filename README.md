@@ -57,6 +57,15 @@ final CreateTunnel createNamedTunnel = new CreateTunnel.Builder()
         .withName("my-config-file-tunnel")
         .build();
 final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
+
+// Open an Internal Endpoint that's load balanced
+// <Tunnel: "https://some-endpoint.internal" -> "http://localhost:9000">
+final CreateTunnel createInternalEndpoint = new CreateTunnel.Builder()
+    .withAddr("9000")
+    .withDomain("some-endpoint.internal")
+    .withPoolingEnabled(true)
+    .build();
+final Tunnel internalEndpoint = ngrokClient.connect(createInternalEndpoint);
 ```
 
 The [`connect`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel))
@@ -114,13 +123,6 @@ see [`ngrok`'s official documentation](https://ngrok.com/docs/agent/cli/).
 
 For more advanced usage, `java-ngrok`'s official documentation is available
 at [https://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok).
-
-### `ngrok` Version Compatibility
-
-`java-ngrok` is compatible with `ngrok` v2 and v3, but by default it will install v3. To install v2 instead,
-set the version
-with [`JavaNgrokConfig.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withNgrokVersion(com.github.alexdlaird.ngrok.installer.NgrokVersion))
-and [`CreateTunnel.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withNgrokVersion(com.github.alexdlaird.ngrok.installer.NgrokVersion)).
 
 ### Java 8
 

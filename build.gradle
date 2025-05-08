@@ -109,7 +109,7 @@ publishing {
             pom {
                 name = Project.getName()
                 description = "A Java wrapper for ngrok that manages its own binary, making ngrok available via a convenient Java API"
-                url = "http://github.com/alexdlaird/java-ngrok"
+                url = "https://github.com/alexdlaird/java-ngrok"
                 licenses {
                     license {
                         name = "MIT"
@@ -127,7 +127,7 @@ publishing {
                 scm {
                     connection = "scm:git:git://github.com/alexdlaird/java-ngrok.git"
                     developerConnection = "scm:git:ssh://github.com/alexdlaird/java-ngrok.git"
-                    url = "http://github.com/alexdlaird/java-ngrok"
+                    url = "https://github.com/alexdlaird/java-ngrok"
                 }
             }
         }

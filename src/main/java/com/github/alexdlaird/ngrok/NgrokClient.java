@@ -65,6 +65,15 @@ import static java.util.Objects.nonNull;
  *         .withName("my-config-file-tunnel")
  *         .build();
  * final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
+ *
+ * // Open an Internal Endpoint that's load balanced
+ * // &lt;Tunnel: "https://some-endpoint.internal" -&gt; "http://localhost:9000"&gt;
+ * final CreateTunnel createInternalEndpoint = new CreateTunnel.Builder()
+ *     .withAddr("9000")
+ *     .withDomain("some-endpoint.internal")
+ *     .withPoolingEnabled(true)
+ *     .build();
+ * final Tunnel internalEndpoint = ngrokClient.connect(createInternalEndpoint);
  * </pre>
  *
  * <p>The {@link NgrokClient#connect(CreateTunnel) NgrokClient.connect()} method can also take a {@link CreateTunnel}
@@ -406,8 +415,25 @@ public class NgrokClient {
     }
 
     /**
-     * Set the <code>ngrok</code> auth token in the config file, enabling authenticated features (for instance,
-     * opening multiple concurrent tunnels, custom domains, etc.).
+     * Set the <code>ngrok</code> auth token in the config file to streamline access to more features (for instance,
+     * multiple concurrent tunnels, custom domains, etc.).
+     *
+     * <p>The auth token can also be set in the {@link JavaNgrokConfig} that is passed to the
+     * {@link NgrokClient.Builder}, or use the environment variable <code>NGROK_AUTHTOKEN</code>.
+     *
+     * <pre>
+     * // Setting an auth token allows us to do things like open multiple tunnels at the same time
+     * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+     * ngrokClient.setAuthToken("&lt;NGROK_AUTHTOKEN&gt;")
+     *
+     * // &lt;NgrokTunnel: "https://&lt;public_sub1&gt;.ngrok.io" -&gt; "http://localhost:80"&gt;
+     * final Tunnel ngrokTunnel1 = ngrokClient.connect();
+     * // &lt;NgrokTunnel: "https://&lt;public_sub2&gt;.ngrok.io" -&gt; "http://localhost:8000"&gt;
+     * final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder()
+     *         .withAddr(8000)
+     *         .build();
+     * final Tunnel ngrokTunnel2 = ngrokClient.connect(createTunnel);
+     * </pre>
      *
      * @param authToken The auth token.
      */
@@ -416,7 +442,26 @@ public class NgrokClient {
     }
 
     /**
-     * Set the <code>ngrok</code> API key in the config file, enabling more features (for instance, labeled tunnels).
+     * Set the <code>ngrok</code> API key in the config file to enable access to more features (for instance,
+     * <a href="https://ngrok.com/docs/universal-gateway/internal-endpoints/">Internal Endpoints</a>).
+     *
+     * <p>The API key can also be set in the {@link JavaNgrokConfig} that is passed to the
+     * {@link NgrokClient.Builder}, or use the environment variable <code>NGROK_API_KEY</code>.
+     *
+     * <pre>
+     * // Setting an API key allows us to use things like Internal Endpoints
+     * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+     * ngrokClient.setApiKey("&lt;NGROK_API_KEY&gt;")
+     *
+     * // &lt;NgrokTunnel: "tls://some-endpoint.internal" -&gt; "localhost:9000"&gt;
+     * final CreateTunnel createInternalEndpoint = new CreateTunnel.Builder()
+     *     .withAddr("9000")
+     *     .withProto(Proto.TLS)
+     *     .withDomain("some-endpoint.internal")
+     *     .withPoolingEnabled(true)
+     *     .build();
+     * final Tunnel internalEndpoint = ngrokClient.connect(createInternalEndpoint);
+     * </pre>
      *
      * @param apiKey The API key.
      */

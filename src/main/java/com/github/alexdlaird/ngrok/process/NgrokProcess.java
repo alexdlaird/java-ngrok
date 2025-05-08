@@ -215,25 +215,7 @@ public class NgrokProcess {
     }
 
     /**
-     * Set the <code>ngrok</code> auth token in the config file, enabling authenticated features (for instance, opening
-     * multiple concurrent tunnels, custom domains, etc.).
-     *
-     * <pre>
-     * // Setting an auth token allows us to do things like open multiple tunnels at the same time
-     * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
-     * ngrokClient.setAuthToken("&lt;NGROK_AUTHTOKEN&gt;")
-     *
-     * // &lt;NgrokTunnel: "http://&lt;public_sub1&gt;.ngrok.io" -&gt; "http://localhost:80"&gt;
-     * final Tunnel ngrokTunnel1 = ngrokClient.connect();
-     * // &lt;NgrokTunnel: "http://&lt;public_sub2&gt;.ngrok.io" -&gt; "http://localhost:8000"&gt;
-     * final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder()
-     *         .withAddr(8000)
-     *         .build();
-     * final Tunnel ngrokTunnel2 = ngrokClient.connect(createTunnel);
-     * </pre>
-     *
-     * <p>The auth token can also be set in the {@link JavaNgrokConfig} that is passed to the
-     * {@link NgrokClient.Builder}.
+     * See {@link NgrokClient#setAuthToken(String)}.
      *
      * @param authToken The auth token.
      * @throws NgrokException <code>ngrok</code> could not start.
@@ -267,11 +249,7 @@ public class NgrokProcess {
     }
 
     /**
-     * Set the <code>ngrok</code> API key in the config file, enabling more features (for instance, Internal
-     * Endpoints).
-     *
-     * <p>The API key can also be set in the {@link JavaNgrokConfig} that is passed to the
-     * {@link NgrokClient.Builder}.
+     * See {@link NgrokClient#setApiKey(String)}.
      *
      * @param apiKey The API key.
      * @throws NgrokException <code>ngrok</code> could not start.
