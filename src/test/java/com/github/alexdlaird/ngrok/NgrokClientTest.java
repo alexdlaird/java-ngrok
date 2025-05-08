@@ -326,6 +326,7 @@ class NgrokClientTest extends NgrokTestCase {
             .withProto(Proto.TLS)
             .withDomain(this.reservedDomain)
             .withTerminateAt("upstream")
+            .withPoolingEnabled(true)
             .build();
 
         // WHEN
@@ -954,7 +955,8 @@ class NgrokClientTest extends NgrokTestCase {
             "proto", "tls",
             "addr", "443",
             "domain", this.reservedDomain,
-            "terminate_at", "upstream");
+            "terminate_at", "upstream",
+            "pooling_enabled", true);
         final Map<String, Object> tunnelsConfig = Map.of("tls-tunnel", tlsTunnelConfig);
         final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
 
