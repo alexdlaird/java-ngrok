@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
 
 import static com.github.alexdlaird.util.ProcessUtils.captureRunProcess;
 import static com.github.alexdlaird.util.StringUtils.isBlank;
@@ -481,7 +480,7 @@ public class NgrokProcess {
                 return null;
             }
 
-            LOGGER.atLevel(Level.valueOf(toJavaLevel(ngrokLog.getLvl()))).log(ngrokLog.getLine());
+            ngrokLog(ngrokLog);
             logs.add(ngrokLog);
             if (logs.size() > javaNgrokConfig.getMaxLogs()) {
                 logs.remove(0);
@@ -494,15 +493,24 @@ public class NgrokProcess {
             return ngrokLog;
         }
 
-        private String toJavaLevel(final String ngrokLvl) {
-            if (ngrokLvl.equals("CRITICAL")) {
-                return "ERROR";
-            } else if (ngrokLvl.equals("WARNING")) {
-                return "WARN";
-            } else if (ngrokLvl.equals("NOTSET")) {
-                return "INFO";
+        private void ngrokLog(final NgrokLog ngrokLog) {
+            switch (ngrokLog.getLvl()) {
+                case "ERROR":
+                    LOGGER.error(ngrokLog.getLine());
+                    break;
+                case "WARN":
+                    LOGGER.warn(ngrokLog.getLine());
+                    break;
+                case "DEBUG":
+                    LOGGER.debug(ngrokLog.getLine());
+                    break;
+                case "TRACE":
+                    LOGGER.trace(ngrokLog.getLine());
+                    break;
+                case "INFO":
+                default:
+                    LOGGER.info(ngrokLog.getLine());
             }
-            return ngrokLvl;
         }
     }
 }

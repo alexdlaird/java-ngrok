@@ -19,6 +19,8 @@ import static com.github.alexdlaird.util.StringUtils.isBlank;
  */
 public class NgrokLog extends HashMap<String, String> {
 
+    private static final List<String> VALID_LOG_LEVELS = List.of("ERROR", "WARN", "INFO", "DEBUG", "TRACE");
+
     private final String line;
 
     // CHECKSTYLE.SUPPRESS: MemberName
@@ -53,16 +55,18 @@ public class NgrokLog extends HashMap<String, String> {
                 value = value.toUpperCase();
                 switch (value) {
                     case "CRIT":
-                        value = "CRITICAL";
-                        break;
                     case "ERR":
                     case "EROR":
                         value = "ERROR";
                         break;
-                    case "WARN":
-                        value = "WARNING";
+                    case "WARNING":
+                        value = "WARN";
                         break;
                     default:
+                }
+
+                if (!VALID_LOG_LEVELS.contains(value)) {
+                    value = this.lvl;
                 }
             }
 
@@ -112,6 +116,7 @@ public class NgrokLog extends HashMap<String, String> {
     public String getLvl() {
         return lvl;
     }
+
 
     /**
      * Get the log's msg.
