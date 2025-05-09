@@ -43,20 +43,20 @@ public class NgrokLogTest {
     @Test
     public void testNgrokLogWarn() {
         // WHEN
-        final NgrokLog ngrokLog = new NgrokLog("lvl=WARN msg=Test");
+        final NgrokLog ngrokLog = new NgrokLog("lvl=WARNING msg=Test");
 
         // THEN
-        assertEquals("WARNING", ngrokLog.getLvl());
+        assertEquals("WARN", ngrokLog.getLvl());
         assertEquals("Test", ngrokLog.getMsg());
     }
 
     @Test
     public void testNgrokLogMsgWithPossessiveQuote() {
         // WHEN
-        final NgrokLog ngrokLog = new NgrokLog("lvl=WARN msg=\"Test=This is Tom's test\"");
+        final NgrokLog ngrokLog = new NgrokLog("lvl=WARNING msg=\"Test=This is Tom's test\"");
 
         // THEN
-        assertEquals("WARNING", ngrokLog.getLvl());
+        assertEquals("WARN", ngrokLog.getLvl());
         assertEquals("Test=This is Tom's test", ngrokLog.getMsg());
     }
 
@@ -66,7 +66,7 @@ public class NgrokLogTest {
         final NgrokLog ngrokLog = new NgrokLog("lvl=WARN msg=\"Test=Test with spaces\"");
 
         // THEN
-        assertEquals("WARNING", ngrokLog.getLvl());
+        assertEquals("WARN", ngrokLog.getLvl());
         assertEquals("Test=Test with spaces", ngrokLog.getMsg());
     }
 
@@ -86,7 +86,7 @@ public class NgrokLogTest {
         final NgrokLog ngrokLog = new NgrokLog("lvl=CRIT err=\"Some error\"");
 
         // THEN
-        assertEquals("CRITICAL", ngrokLog.getLvl());
+        assertEquals("ERROR", ngrokLog.getLvl());
         assertEquals("Some error", ngrokLog.getErr());
         assertNull(ngrokLog.getMsg());
     }
@@ -94,11 +94,25 @@ public class NgrokLogTest {
     @Test
     public void testNgrokLogLvlNotSet() {
         // WHEN
-        final NgrokLog ngrokLog = new NgrokLog("lvl=");
+        final NgrokLog ngrokLog1 = new NgrokLog("lvl=");
 
         // THEN
-        assertEquals("NOTSET", ngrokLog.getLvl());
-        assertNull(ngrokLog.getMsg());
+        assertEquals("NOTSET", ngrokLog1.getLvl());
+        assertNull(ngrokLog1.getMsg());
+
+        // WHEN
+        final NgrokLog ngrokLog2 = new NgrokLog("key=val");
+
+        // THEN
+        assertEquals("NOTSET", ngrokLog2.getLvl());
+        assertNull(ngrokLog2.getMsg());
+
+        // WHEN
+        final NgrokLog ngrokLog3 = new NgrokLog("lvl=FAKE");
+
+        // THEN
+        assertEquals("NOTSET", ngrokLog3.getLvl());
+        assertNull(ngrokLog3.getMsg());
     }
 
     @Test
