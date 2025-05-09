@@ -25,7 +25,7 @@ public class NgrokLog extends HashMap<String, String> {
 
     // CHECKSTYLE.SUPPRESS: MemberName
     private String t;
-    private String lvl = "NOTSET";
+    private String lvl = "INFO";
     private String msg;
     private String err;
     private String obj;
@@ -65,9 +65,9 @@ public class NgrokLog extends HashMap<String, String> {
                     default:
                 }
 
-                if (!VALID_LOG_LEVELS.contains(value)) {
-                    value = this.lvl;
-                }
+//                if (!VALID_LOG_LEVELS.contains(value)) {
+//                    value = this.lvl;
+//                }
             }
 
             switch (key) {
