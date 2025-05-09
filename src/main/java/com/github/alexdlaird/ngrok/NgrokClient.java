@@ -9,6 +9,7 @@ package com.github.alexdlaird.ngrok;
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokHTTPException;
 import com.github.alexdlaird.exception.JavaNgrokSecurityException;
+import com.github.alexdlaird.exception.NgrokException;
 import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.http.HttpClientException;
@@ -18,12 +19,14 @@ import com.github.alexdlaird.ngrok.conf.JavaNgrokVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
+import com.github.alexdlaird.ngrok.protocol.ApiResponse;
 import com.github.alexdlaird.ngrok.protocol.BindTls;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Proto;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import com.github.alexdlaird.ngrok.protocol.Version;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,8 +34,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import static com.github.alexdlaird.util.ProcessUtils.captureRunProcess;
 import static com.github.alexdlaird.util.StringUtils.isBlank;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -66,6 +72,15 @@ import static java.util.Objects.nonNull;
  *         .withName("my-config-file-tunnel")
  *         .build();
  * final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
+ *
+ * // Open an Internal Endpoint that's load balanced
+ * // &lt;Tunnel: "https://some-endpoint.internal" -&gt; "http://localhost:9000"&gt;
+ * final CreateTunnel createInternalEndpoint = new CreateTunnel.Builder()
+ *     .withAddr("9000")
+ *     .withDomain("some-endpoint.internal")
+ *     .withPoolingEnabled(true)
+ *     .build();
+ * final Tunnel internalEndpoint = ngrokClient.connect(createInternalEndpoint);
  * </pre>
  *
  * <p>The {@link NgrokClient#connect(CreateTunnel) NgrokClient.connect()} method can also take a {@link CreateTunnel}
@@ -110,7 +125,7 @@ import static java.util.Objects.nonNull;
  * <p><pre>
  * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
  *
- * // Open a named tunnel from the config file
+ * // Open the Edge tunnel that is defined in the config file
  * final CreateTunnel createNamedTunnel = new CreateTunnel.Builder()
  *         .withName("some-edge-tunnel")
  *         .build();
@@ -152,8 +167,8 @@ import static java.util.Objects.nonNull;
  * </pre>
  *
  * <p>We can also serve up local directories via
- * <a href="https://ngrok.com/docs/universal-gateway/http/?cty=agent-config#agent-endpoint" target="_blank">ngrok's built-in
- * fileserver</a>.
+ * <a href="https://ngrok.com/docs/universal-gateway/http/?cty=agent-config#agent-endpoint" target="_blank">ngrok's
+ * built-in fileserver</a>.
  *
  * <p><pre>
  * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
@@ -216,7 +231,7 @@ import static java.util.Objects.nonNull;
  */
 public class NgrokClient {
 
-    private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokClient.class));
+    private static final Logger LOGGER = LoggerFactory.getLogger(NgrokClient.class);
 
     private final Map<String, Tunnel> currentTunnels = new HashMap<>();
 
@@ -273,7 +288,7 @@ public class NgrokClient {
 
         final CreateTunnel finalTunnel = interpolateTunnelDefinition(createTunnel);
 
-        LOGGER.info(String.format("Opening tunnel named: %s", finalTunnel.getName()));
+        LOGGER.info("Opening tunnel named: {}", finalTunnel.getName());
 
         final Response<Tunnel> response;
         try {
@@ -293,6 +308,9 @@ public class NgrokClient {
                                                                     + response.getBody().getUri() + "%20%28http%29",
                     Tunnel.class);
                 tunnel = getResponse.getBody();
+
+                LOGGER.info("ngrok v2 opens multiple tunnels, fetching just HTTP tunnel {} for return",
+                    tunnel.getId());
             } catch (final HttpClientException e) {
                 throw new JavaNgrokHTTPException(String.format("An error occurred when GETing the HTTP tunnel %s.",
                     response.getBody().getName()), e, e.getUrl(), e.getStatusCode(), e.getBody());
@@ -325,6 +343,8 @@ public class NgrokClient {
     public void disconnect(final String publicUrl) {
         // If ngrok is not running, there are no tunnels to disconnect
         if (!ngrokProcess.isRunning()) {
+            LOGGER.trace("\"ngrokPath\" {} is not running a process", javaNgrokConfig.getNgrokPath());
+
             return;
         }
 
@@ -341,7 +361,7 @@ public class NgrokClient {
 
         ngrokProcess.start();
 
-        LOGGER.info(String.format("Disconnecting tunnel: %s", tunnel.getPublicUrl()));
+        LOGGER.info("Disconnecting tunnel: {}", tunnel.getPublicUrl());
 
         try {
             httpClient.delete(ngrokProcess.getApiUrl() + tunnel.getUri());
@@ -413,8 +433,25 @@ public class NgrokClient {
     }
 
     /**
-     * Set the <code>ngrok</code> auth token in the config file, enabling authenticated features (for instance,
-     * opening multiple concurrent tunnels, custom domains, etc.).
+     * Set the <code>ngrok</code> auth token in the config file to streamline access to more features (for instance,
+     * multiple concurrent tunnels, custom domains, etc.).
+     *
+     * <p>The auth token can also be set in the {@link JavaNgrokConfig} that is passed to the
+     * {@link NgrokClient.Builder}, or use the environment variable <code>NGROK_AUTHTOKEN</code>.
+     *
+     * <pre>
+     * // Setting an auth token allows us to do things like open multiple tunnels at the same time
+     * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+     * ngrokClient.setAuthToken("&lt;NGROK_AUTHTOKEN&gt;")
+     *
+     * // &lt;NgrokTunnel: "https://&lt;public_sub1&gt;.ngrok.io" -&gt; "http://localhost:80"&gt;
+     * final Tunnel ngrokTunnel1 = ngrokClient.connect();
+     * // &lt;NgrokTunnel: "https://&lt;public_sub2&gt;.ngrok.io" -&gt; "http://localhost:8000"&gt;
+     * final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder()
+     *         .withAddr(8000)
+     *         .build();
+     * final Tunnel ngrokTunnel2 = ngrokClient.connect(createTunnel);
+     * </pre>
      *
      * @param authToken The auth token.
      */
@@ -423,7 +460,26 @@ public class NgrokClient {
     }
 
     /**
-     * Set the <code>ngrok</code> API key in the config file, enabling more features (for instance, labeled tunnels).
+     * Set the <code>ngrok</code> API key in the config file to enable access to more features (for instance,
+     * <a href="https://ngrok.com/docs/universal-gateway/internal-endpoints/">Internal Endpoints</a>).
+     *
+     * <p>The API key can also be set in the {@link JavaNgrokConfig} that is passed to the
+     * {@link NgrokClient.Builder}, or use the environment variable <code>NGROK_API_KEY</code>.
+     *
+     * <pre>
+     * // Setting an API key allows us to use things like Internal Endpoints
+     * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+     * ngrokClient.setApiKey("&lt;NGROK_API_KEY&gt;")
+     *
+     * // &lt;NgrokTunnel: "tls://some-endpoint.internal" -&gt; "localhost:9000"&gt;
+     * final CreateTunnel createInternalEndpoint = new CreateTunnel.Builder()
+     *     .withAddr("9000")
+     *     .withProto(Proto.TLS)
+     *     .withDomain("some-endpoint.internal")
+     *     .withPoolingEnabled(true)
+     *     .build();
+     * final Tunnel internalEndpoint = ngrokClient.connect(createInternalEndpoint);
+     * </pre>
      *
      * @param apiKey The API key.
      */
@@ -447,6 +503,36 @@ public class NgrokClient {
         final String ngrokVersion = ngrokProcess.getVersion();
 
         return new Version(ngrokVersion, javaNgrokVersion);
+    }
+
+    /**
+     * Run a <code>ngrok</code> command against the <code>api</code> with the given args. This will use the local agent
+     * to run a remote API request for <code>ngrok</code>, which requires that an API key has been set. For a list of
+     * available commands, pass <code>List.of("--help")</code>.
+     *
+     * @param args The args to pass to the <code>api</code> command.
+     * @return The response from executing the <code>api</code> command.
+     * @throws NgrokException       The <code>ngrok</code> process exited with an error.
+     * @throws IOException          An I/O exception occurred.
+     * @throws InterruptedException The thread was interrupted during execution.
+     */
+    public ApiResponse api(final List<String> args)
+        throws IOException, InterruptedException {
+        final List<String> cmdArgs = new ArrayList<>();
+        if (nonNull(javaNgrokConfig.getConfigPath())) {
+            cmdArgs.add("--config");
+            cmdArgs.add(javaNgrokConfig.getConfigPath().toString());
+        }
+        cmdArgs.add("api");
+        if (nonNull(javaNgrokConfig.getApiKey())) {
+            cmdArgs.add("--api-key");
+            cmdArgs.add(javaNgrokConfig.getApiKey());
+        }
+        cmdArgs.addAll(args);
+
+        LOGGER.info("Executing \"ngrok api\" command with args: {}", args);
+
+        return ApiResponse.fromBody(captureRunProcess(javaNgrokConfig.getNgrokPath(), cmdArgs));
     }
 
     /**
@@ -499,6 +585,8 @@ public class NgrokClient {
                 throw new JavaNgrokException(String.format("Unknown Edge prefix: %s.", edge));
             }
 
+            LOGGER.info("Applying edge {} to tunnel {}", edge, tunnel.getId());
+
             final Response<Map> edgeResponse = httpClient.get(String.format("https://api.ngrok.com/edges/%s/%s",
                 edgesPrefix, edge), Collections.emptyList(), ngrokApiHeaders, Map.class);
 
@@ -515,8 +603,8 @@ public class NgrokClient {
                 ((List) edgeResponse.getBody().get("hostports")).get(0)));
             tunnel.setProto(edgesPrefix);
 
-            LOGGER.warning("ngrok has deprecated Edges and will sunset Labeled Tunnels on December 31st, 2025. "
-                           + "See https://github.com/alexdlaird/java-ngrok/issues/158 for more details.");
+            LOGGER.warn("ngrok has deprecated Edges and will sunset Labeled Tunnels on December 31st, 2025. "
+                        + "See https://github.com/alexdlaird/java-ngrok/issues/158 for more details.");
         }
     }
 
@@ -535,6 +623,8 @@ public class NgrokClient {
         final Map<String, Object> tunnelDefinitions = (Map<String, Object>) config.getOrDefault("tunnels",
             Collections.emptyMap());
         if (isNull(createTunnel.getName()) && tunnelDefinitions.containsKey("java-ngrok-default")) {
+            LOGGER.info("java-ngrok-default found defined in config, using for tunnel definition");
+
             name = "java-ngrok-default";
             createTunnelBuilder.withName(name);
         } else {
@@ -569,7 +659,7 @@ public class NgrokClient {
          * The <code>java-ngrok</code> to use when interacting with the <code>ngrok</code> binary.
          */
         public Builder withJavaNgrokConfig(final JavaNgrokConfig javaNgrokConfig) {
-            this.javaNgrokConfig = javaNgrokConfig;
+            this.javaNgrokConfig = Objects.requireNonNull(javaNgrokConfig);
             return this;
         }
 
@@ -578,7 +668,7 @@ public class NgrokClient {
          * {@link #withNgrokProcess(NgrokProcess)} is not called.
          */
         public Builder withNgrokInstaller(final NgrokInstaller ngrokInstaller) {
-            this.ngrokInstaller = ngrokInstaller;
+            this.ngrokInstaller = Objects.requireNonNull(ngrokInstaller);
             return this;
         }
 
@@ -586,7 +676,7 @@ public class NgrokClient {
          * The class used to manage the <code>ngrok</code> binary.
          */
         public Builder withNgrokProcess(final NgrokProcess ngrokProcess) {
-            this.ngrokProcess = ngrokProcess;
+            this.ngrokProcess = Objects.requireNonNull(ngrokProcess);
             return this;
         }
 
@@ -594,7 +684,7 @@ public class NgrokClient {
          * The class used to make HTTP requests to <code>ngrok</code>'s APIs.
          */
         public Builder withHttpClient(final HttpClient httpClient) {
-            this.httpClient = httpClient;
+            this.httpClient = Objects.requireNonNull(httpClient);
             return this;
         }
 

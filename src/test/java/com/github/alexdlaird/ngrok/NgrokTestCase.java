@@ -17,20 +17,15 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.getNgrokBin;
-import static com.github.alexdlaird.util.ProcessUtils.captureRunProcess;
 import static java.util.Objects.nonNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -120,44 +115,6 @@ public class NgrokTestCase extends TestCase {
         assertFalse(Files.exists(javaNgrokConfig.getNgrokPath()));
     }
 
-    protected Map<String, String> reserveNgrokDomain(final JavaNgrokConfig javaNgrokConfig,
-                                                     final String domain)
-        throws IOException, InterruptedException {
-        final List<String> args = Collections.unmodifiableList(
-            Stream.of("--config", javaNgrokConfig.getConfigPath().toString(),
-                "api", "reserved-domains", "create",
-                "--domain", domain,
-                "--description", testResourceDescription).collect(Collectors.toList()));
-
-        final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
-        return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
-    }
-
-    protected Map<String, String> reserveNgrokAddr(final JavaNgrokConfig javaNgrokConfig)
-        throws IOException, InterruptedException {
-        final List<String> args = Collections.unmodifiableList(
-            Stream.of("--config", javaNgrokConfig.getConfigPath().toString(),
-                "api", "reserved-addrs", "create",
-                "--description", testResourceDescription).collect(Collectors.toList()));
-
-        final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
-        return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
-    }
-
-    protected Map<String, String> createNgrokEdge(final JavaNgrokConfig javaNgrokConfig,
-                                                  final String proto,
-                                                  final String domain,
-                                                  final int port)
-        throws IOException, InterruptedException {
-        final List<String> args = Collections.unmodifiableList(
-            Stream.of("--config", javaNgrokConfig.getConfigPath().toString(),
-                "api", "edges", proto, "create",
-                "--hostports", String.format("%s:%s", domain, port),
-                "--description", testResourceDescription).collect(Collectors.toList()));
-
-        final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
-        return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
-    }
 
     protected String generateNameForSubdomain() {
         return String.format("java-ngrok-temp-%s", random.nextInt(2000000000 - (1000000001)) + 1000000000);

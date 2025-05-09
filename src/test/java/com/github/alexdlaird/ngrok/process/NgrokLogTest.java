@@ -76,7 +76,7 @@ public class NgrokLogTest {
         final NgrokLog ngrokLog = new NgrokLog("lvl=ERR no_msg");
 
         // THEN
-        assertEquals("SEVERE", ngrokLog.getLvl());
+        assertEquals("ERROR", ngrokLog.getLvl());
         assertNull(ngrokLog.getMsg());
     }
 
@@ -86,7 +86,7 @@ public class NgrokLogTest {
         final NgrokLog ngrokLog = new NgrokLog("lvl=CRIT err=\"Some error\"");
 
         // THEN
-        assertEquals("SEVERE", ngrokLog.getLvl());
+        assertEquals("CRITICAL", ngrokLog.getLvl());
         assertEquals("Some error", ngrokLog.getErr());
         assertNull(ngrokLog.getMsg());
     }
@@ -97,7 +97,7 @@ public class NgrokLogTest {
         final NgrokLog ngrokLog = new NgrokLog("lvl=");
 
         // THEN
-        assertEquals("INFO", ngrokLog.getLvl());
+        assertEquals("NOTSET", ngrokLog.getLvl());
         assertNull(ngrokLog.getMsg());
     }
 

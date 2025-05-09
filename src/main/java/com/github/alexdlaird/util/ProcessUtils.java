@@ -26,6 +26,7 @@ public class ProcessUtils {
      *
      * @param args The args to pass to <code>ngrok</code>.
      * @return The output from the process.
+     * @throws NgrokException The <code>ngrok</code> process exited with an error.
      * @throws InterruptedException The thread was interrupted during execution.
      * @throws IOException          An I/O exception occurred.
      */

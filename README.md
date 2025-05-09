@@ -10,10 +10,11 @@
 `java-ngrok` is a Java wrapper for `ngrok` that manages its own binary, making `ngrok` available via a convenient Java
 API.
 
-[`ngrok`](https://ngrok.com) is a reverse proxy tool that opens secure tunnels from public URLs to localhost, perfect
-for
-exposing local web servers, building webhook integrations, enabling SSH access, testing chatbots, demoing from your own
-machine, and more, and its made even more powerful with native Java integration through `java-ngrok`.
+[`ngrok`](https://ngrok.com) is a reverse proxy that opens secure tunnels from public URLs to localhost. It's perfect
+for rapid
+development (test webhooks, demo local websites, enable SSH access), establishing ingress to external
+networks and devices, building production APIs (traffic policies, OAuth, load balancing), and more. And
+it's made even more powerful with native Java integration through the `java-ngrok` client.
 
 ## Installation
 
@@ -46,16 +47,25 @@ final Tunnel httpTunnel = ngrokClient.connect();
 // Open a SSH tunnel
 // <Tunnel: "tcp://0.tcp.ngrok.io:12345" -> "localhost:22">
 final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder()
-        .withProto(Proto.TCP)
-        .withAddr(22)
-        .build();
+    .withProto(Proto.TCP)
+    .withAddr(22)
+    .build();
 final Tunnel sshTunnel = ngrokClient.connect(sshCreateTunnel);
 
 // Open a named tunnel from the config file
 final CreateTunnel createNamedTunnel = new CreateTunnel.Builder()
-        .withName("my-config-file-tunnel")
-        .build();
+    .withName("my-config-file-tunnel")
+    .build();
 final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
+
+// Open an Internal Endpoint that's load balanced
+// <Tunnel: "https://some-endpoint.internal" -> "http://localhost:9000">
+final CreateTunnel createInternalEndpoint = new CreateTunnel.Builder()
+    .withAddr("9000")
+    .withDomain("some-endpoint.internal")
+    .withPoolingEnabled(true)
+    .build();
+final Tunnel internalEndpoint = ngrokClient.connect(createInternalEndpoint);
 ```
 
 The [`connect`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.15/com/github/alexdlaird/ngrok/NgrokClient.html#connect-com.github.alexdlaird.ngrok.protocol.CreateTunnel-)
@@ -64,6 +74,27 @@ a [`CreateTunnel`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1
 that allows us to pass additional properties that
 are supported by `ngrok` (or [`withName()`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.15/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withName-java.lang.String-)
 to use a tunnel defined in `ngrok`'s config file), [as documented here](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.15/com/github/alexdlaird/ngrok/NgrokClient.html#tunnel-configurations).
+
+### `ngrok`'s API
+
+The [`api`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.15/com/github/alexdlaird/ngrok/NgrokClient.html#api-) method allows us to use the local
+`ngrok` agent to make requests against [the `ngrok` API](https://ngrok.com/docs/agent/cli-api/), if we
+have [set an API key](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.15/com/github/alexdlaird/ngrok/NgrokClient.html#setApiKey-java.lang.String-).
+For example, here we reserve a `ngrok` domain, then create a Cloud Endpoint with an associated traffic policy:
+
+```java
+final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+
+final String domain = "some-domain.ngrok.dev";
+final ApiResponse domainResponse = ngrokClient.api(
+    Stream.of("reserved-domains", "create",
+        "--domain", domain).collect(Collectors.toList()));
+final ApiResponse endpointResponse = ngrokClient.api(
+    Stream.of("endpoints", "create",
+        "--bindings", "public",
+        "--url", String.format("https://%s", domain),
+        "--traffic-policy-file", "policy.yml").collect(Collectors.toList()));
+```
 
 ### `ngrok`'s Edge
 
@@ -88,10 +119,10 @@ To start a labeled tunnel in `java-ngrok`, set [withName(String)](https://javado
 ```java
 final NgrokClient ngrokClient = new NgrokClient.Builder().build();
 
-// Open a named tunnel from the config file
+// Open the Edge tunnel that is defined in the config file
 final CreateTunnel createNamedTunnel = new CreateTunnel.Builder()
-        .withName("some-edge-tunnel")
-        .build();
+    .withName("some-edge-tunnel")
+    .build();
 final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
 ```
 
@@ -99,7 +130,8 @@ Once an Edge tunnel is started, it can be managed through [`ngrok`'s dashboard](
 
 ### Command Line Usage
 
-Assuming we have also installed [pyngrok](https://pyngrok.readthedocs.io/en/latest/#installation), all features of `ngrok` are available
+Assuming we have also installed [pyngrok](https://pyngrok.readthedocs.io/en/latest/#installation), all features of
+`ngrok` are available
 on the command line.
 
 ```sh
@@ -113,12 +145,6 @@ see [`ngrok`'s official documentation](https://ngrok.com/docs/agent/cli/).
 
 For more advanced usage, `java-ngrok`'s official documentation is available
 at [https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.15/overview-summary.html](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.15/overview-summary.html).
-
-### `ngrok` Version Compatibility
-
-`java-ngrok` is compatible with `ngrok` v2 and v3, but by default it will install v3. To install v2 instead,
-set the version with [`JavaNgrokConfig.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.15/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withNgrokVersion-com.github.alexdlaird.ngrok.installer.NgrokVersion-)
-and [`CreateTunnel.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.15/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withNgrokVersion-com.github.alexdlaird.ngrok.installer.NgrokVersion-).
 
 ### Java 8
 

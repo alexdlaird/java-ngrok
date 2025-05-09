@@ -12,6 +12,7 @@ import com.github.alexdlaird.exception.NgrokException;
 import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.http.Response;
+import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
@@ -25,17 +26,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 import static com.github.alexdlaird.util.ProcessUtils.captureRunProcess;
 import static com.github.alexdlaird.util.StringUtils.isBlank;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static java.util.logging.Level.SEVERE;
 
 /**
  * An object containing information about the <code>ngrok</code> process. Can be configured with
@@ -46,17 +48,16 @@ import static java.util.logging.Level.SEVERE;
  * until {@link NgrokProcess#stop()} is invoked, or until the Java process terminates.
  *
  * <h3>Event Logs</h3>
- * When <code>ngrok</code> emits logs, <code>java-ngrok</code> can surface them to a callback function. To register
- * this callback, use {@link com.github.alexdlaird.ngrok.conf.JavaNgrokConfig.Builder#withLogEventCallback}.
+ * When <code>ngrok</code> emits logs, <code>java-ngrok</code> can surface them to a callback function. To register this
+ * callback, use {@link com.github.alexdlaird.ngrok.conf.JavaNgrokConfig.Builder#withLogEventCallback}.
  *
  * <p>If these events aren't necessary for our use case, some resources can be freed up by turning them off.
  * {@link com.github.alexdlaird.ngrok.conf.JavaNgrokConfig.Builder#withoutMonitoring} will disable logging, or we can
- * call
- * {@link NgrokProcess.ProcessMonitor#stop()} to stop monitoring on a running process.
+ * call {@link NgrokProcess.ProcessMonitor#stop()} to stop monitoring on a running process.
  */
 public class NgrokProcess {
 
-    private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokProcess.class));
+    private static final Logger LOGGER = LoggerFactory.getLogger(NgrokProcess.class);
 
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokInstaller ngrokInstaller;
@@ -74,8 +75,8 @@ public class NgrokProcess {
      */
     public NgrokProcess(final JavaNgrokConfig javaNgrokConfig,
                         final NgrokInstaller ngrokInstaller) {
-        this.javaNgrokConfig = javaNgrokConfig;
-        this.ngrokInstaller = ngrokInstaller;
+        this.javaNgrokConfig = Objects.requireNonNull(javaNgrokConfig);
+        this.ngrokInstaller = Objects.requireNonNull(ngrokInstaller);
 
         if (!Files.exists(javaNgrokConfig.getNgrokPath())) {
             ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath(), javaNgrokConfig.getNgrokVersion());
@@ -129,19 +130,23 @@ public class NgrokProcess {
         command.add(javaNgrokConfig.getNgrokPath().toString());
         command.add("start");
         command.add("--none");
-        command.add("--log=stdout");
+        command.add("--log");
+        command.add("stdout");
 
         if (nonNull(javaNgrokConfig.getConfigPath())) {
-            LOGGER.info(String.format("Starting ngrok with config file: %s", javaNgrokConfig.getConfigPath()));
-            command.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().toString()));
+            LOGGER.info("Starting ngrok with config file: {}", javaNgrokConfig.getConfigPath());
+            command.add("--config");
+            command.add(javaNgrokConfig.getConfigPath().toString());
         }
         if (nonNull(javaNgrokConfig.getAuthToken())) {
             LOGGER.info("Overriding default auth token");
-            command.add(String.format("--authtoken=%s", javaNgrokConfig.getAuthToken()));
+            command.add("--authtoken");
+            command.add(javaNgrokConfig.getAuthToken());
         }
         if (nonNull(javaNgrokConfig.getRegion())) {
-            LOGGER.info(String.format("Starting ngrok in region: %s", javaNgrokConfig.getRegion()));
-            command.add(String.format("--region=%s", javaNgrokConfig.getRegion()));
+            LOGGER.info("Starting ngrok in region: {}", javaNgrokConfig.getRegion());
+            command.add("--region");
+            command.add(javaNgrokConfig.getRegion().toString());
         }
 
         processBuilder.command(command);
@@ -149,7 +154,7 @@ public class NgrokProcess {
             process = processBuilder.start();
             Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
 
-            LOGGER.fine("ngrok process starting");
+            LOGGER.trace("ngrok process starting");
 
             processMonitor = new ProcessMonitor(process, javaNgrokConfig);
             new Thread(processMonitor).start();
@@ -158,12 +163,12 @@ public class NgrokProcess {
             timeout.add(Calendar.SECOND, javaNgrokConfig.getStartupTimeout());
             while (Calendar.getInstance().before(timeout)) {
                 if (processMonitor.isHealthy()) {
-                    LOGGER.info(String.format("ngrok process has started with API URL: %s", processMonitor.apiUrl));
+                    LOGGER.info("ngrok process has started with API URL: {}", processMonitor.apiUrl);
 
                     processMonitor.startupError = null;
+                }
 
-                    break;
-                } else if (!isRunning()) {
+                if (processMonitor.isHealthy() || !isRunning()) {
                     break;
                 }
             }
@@ -197,7 +202,7 @@ public class NgrokProcess {
      */
     public void stop() {
         if (!isRunning()) {
-            LOGGER.info(String.format("\"ngrokPath\" %s is not running a process", javaNgrokConfig.getNgrokPath()));
+            LOGGER.debug("\"ngrokPath\" {} is not running a process", javaNgrokConfig.getNgrokPath());
 
             return;
         }
@@ -211,30 +216,12 @@ public class NgrokProcess {
                 processMonitor.reader.close();
             }
         } catch (final IOException e) {
-            LOGGER.log(Level.WARNING, "An error occurred when closing \"ProcessMonitor.reader\"", e);
+            LOGGER.warn("An error occurred when closing \"ProcessMonitor.reader\"", e);
         }
     }
 
     /**
-     * Set the <code>ngrok</code> auth token in the config file, enabling authenticated features (for instance, opening
-     * multiple concurrent tunnels, custom domains, etc.).
-     *
-     * <pre>
-     * // Setting an auth token allows us to do things like open multiple tunnels at the same time
-     * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
-     * ngrokClient.setAuthToken("&lt;NGROK_AUTHTOKEN&gt;")
-     *
-     * // &lt;NgrokTunnel: "http://&lt;public_sub1&gt;.ngrok.io" -&gt; "http://localhost:80"&gt;
-     * final Tunnel ngrokTunnel1 = ngrokClient.connect();
-     * // &lt;NgrokTunnel: "http://&lt;public_sub2&gt;.ngrok.io" -&gt; "http://localhost:8000"&gt;
-     * final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder()
-     *         .withAddr(8000)
-     *         .build();
-     * final Tunnel ngrokTunnel2 = ngrokClient.connect(createTunnel);
-     * </pre>
-     *
-     * <p>The auth token can also be set in the {@link JavaNgrokConfig} that is passed to the
-     * {@link com.github.alexdlaird.ngrok.NgrokClient.Builder}.
+     * See {@link NgrokClient#setAuthToken(String)}.
      *
      * @param authToken The auth token.
      * @throws NgrokException <code>ngrok</code> could not start.
@@ -249,13 +236,15 @@ public class NgrokProcess {
             args.add("add-authtoken");
             args.add(authToken);
         }
-        args.add("--log=stdout");
+        args.add("--log");
+        args.add("stdout");
 
         if (nonNull(javaNgrokConfig.getConfigPath())) {
-            args.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().toString()));
+            args.add("--config");
+            args.add(javaNgrokConfig.getConfigPath().toString());
         }
 
-        LOGGER.info(String.format("Updating authtoken for \"configPath\": %s", javaNgrokConfig.getConfigPath()));
+        LOGGER.info("Updating authtoken for \"configPath\": {}", javaNgrokConfig.getConfigPath());
 
         try {
             final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
@@ -268,10 +257,7 @@ public class NgrokProcess {
     }
 
     /**
-     * Set the <code>ngrok</code> API key in the config file, enabling more features (for instance, labeled tunnels).
-     *
-     * <p>The API key can also be set in the {@link JavaNgrokConfig} that is passed to the
-     * {@link com.github.alexdlaird.ngrok.NgrokClient.Builder}.
+     * See {@link NgrokClient#setApiKey(String)}.
      *
      * @param apiKey The API key.
      * @throws NgrokException <code>ngrok</code> could not start.
@@ -286,13 +272,15 @@ public class NgrokProcess {
             throw new JavaNgrokException(String.format("ngrok %s does not have this command.",
                 javaNgrokConfig.getNgrokVersion()));
         }
-        args.add("--log=stdout");
+        args.add("--log");
+        args.add("stdout");
 
         if (nonNull(javaNgrokConfig.getConfigPath())) {
-            args.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().toString()));
+            args.add("--config");
+            args.add(javaNgrokConfig.getConfigPath().toString());
         }
 
-        LOGGER.info(String.format("Updating API key for \"configPath\": %s", javaNgrokConfig.getConfigPath()));
+        LOGGER.info("Updating API key for \"configPath\": {}", javaNgrokConfig.getConfigPath());
 
         try {
             final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
@@ -389,9 +377,9 @@ public class NgrokProcess {
         protected ProcessMonitor(final Process process,
                                  final JavaNgrokConfig javaNgrokConfig,
                                  final HttpClient httpClient) {
-            this.process = process;
-            this.javaNgrokConfig = javaNgrokConfig;
-            this.httpClient = httpClient;
+            this.process = Objects.requireNonNull(process);
+            this.javaNgrokConfig = Objects.requireNonNull(javaNgrokConfig);
+            this.httpClient = Objects.requireNonNull(httpClient);
         }
 
         @Override
@@ -477,7 +465,8 @@ public class NgrokProcess {
                 return;
             }
 
-            if (nonNull(ngrokLog.getLvl()) && ngrokLog.getLvl().equals(SEVERE.getName())) {
+            if (nonNull(ngrokLog.getLvl())
+                && (ngrokLog.getLvl().equals("ERROR") || ngrokLog.getLvl().equals("CRITICAL"))) {
                 this.startupError = ngrokLog.getErr();
             } else if (nonNull(ngrokLog.getMsg())) {
                 // Log ngrok startup states as they come in
@@ -498,7 +487,7 @@ public class NgrokProcess {
                 return null;
             }
 
-            LOGGER.log(Level.parse(ngrokLog.getLvl()), ngrokLog.getLine());
+            LOGGER.atLevel(Level.valueOf(toJavaLevel(ngrokLog.getLvl()))).log(ngrokLog.getLine());
             logs.add(ngrokLog);
             if (logs.size() > javaNgrokConfig.getMaxLogs()) {
                 logs.remove(0);
@@ -509,6 +498,17 @@ public class NgrokProcess {
             }
 
             return ngrokLog;
+        }
+
+        private String toJavaLevel(final String ngrokLvl) {
+            if (ngrokLvl.equals("CRITICAL")) {
+                return "ERROR";
+            } else if (ngrokLvl.equals("WARNING")) {
+                return "WARN";
+            } else if (ngrokLvl.equals("NOTSET")) {
+                return "INFO";
+            }
+            return ngrokLvl;
         }
     }
 }

@@ -24,6 +24,8 @@ repositories {
 dependencies {
     implementation "com.google.code.gson:gson:2.13.1"
     implementation "org.yaml:snakeyaml:2.4"
+    implementation "org.slf4j:slf4j-api:2.0.17"
+    testImplementation "org.slf4j:slf4j-simple:2.0.17"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.11.4"
     testImplementation "org.mockito:mockito-core:4.11.0"
     testImplementation "org.hamcrest:hamcrest:3.0"
@@ -103,7 +105,7 @@ publishing {
             pom {
                 name = Project.getName()
                 description = "A Java wrapper for ngrok that manages its own binary, making ngrok available via a convenient Java API"
-                url = "http://github.com/alexdlaird/java-ngrok"
+                url = "https://github.com/alexdlaird/java-ngrok"
                 licenses {
                     license {
                         name = "MIT"
@@ -121,7 +123,7 @@ publishing {
                 scm {
                     connection = "scm:git:git://github.com/alexdlaird/java-ngrok.git"
                     developerConnection = "scm:git:ssh://github.com/alexdlaird/java-ngrok.git"
-                    url = "http://github.com/alexdlaird/java-ngrok"
+                    url = "https://github.com/alexdlaird/java-ngrok"
                 }
             }
         }

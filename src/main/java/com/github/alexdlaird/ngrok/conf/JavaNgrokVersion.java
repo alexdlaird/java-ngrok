@@ -1,12 +1,12 @@
 package com.github.alexdlaird.ngrok.conf;
 
-import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.NgrokClient.Builder;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Objects.nonNull;
 
@@ -15,14 +15,14 @@ import static java.util.Objects.nonNull;
  */
 public class JavaNgrokVersion {
 
-    private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokClient.class));
+    private static final Logger LOGGER = LoggerFactory.getLogger(JavaNgrokVersion.class);
 
     private static JavaNgrokVersion instance = null;
 
     private final String version;
 
     private JavaNgrokVersion(final String version) {
-        this.version = version;
+        this.version = Objects.requireNonNull(version);
     }
 
     /**
@@ -46,11 +46,14 @@ public class JavaNgrokVersion {
                     final Properties properties = new Properties();
                     properties.load(resourceStream);
 
-                    return properties.getProperty("version");
+                    final String version = properties.getProperty("version");
+                    LOGGER.trace("Version number {} fetched from version.properties resource", version);
+
+                    return version;
                 }
             }
         } catch (final IOException e) {
-            LOGGER.log(Level.WARNING, "An error occurred trying to read \"version\" from resource properties", e);
+            LOGGER.warn("An error occurred trying to read \"version\" from resource properties", e);
         }
 
         return null;
