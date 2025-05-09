@@ -31,14 +31,22 @@ jobs:
       NGROK_HTTP_EDGE_ID: ${{ secrets.NGROK_HTTP_EDGE_ID }}
       NGROK_TLS_EDGE_DOMAIN: ${{ secrets.NGROK_TLS_EDGE_DOMAIN }}
       NGROK_TLS_EDGE_ID: ${{ secrets.NGROK_TLS_EDGE_ID }}
-    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+        java-version: [ "21" ]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 21
+      - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v4
         with:
-          java-version: 21
+          java-version: ${{ matrix.java-version }}
           distribution: zulu
       - name: Build
         run: make build
