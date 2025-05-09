@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.10...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.11...HEAD)
+
+## [2.3.11](https://github.com/alexdlaird/java-ngrok/compare/2.3.10...2.3.11) - 2025-05-09
 
 ### Added
 
@@ -400,18 +402,18 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   from [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.5.0/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html),
   instead relying on `ngrok`'s own built-in retry mechanism on startup fails.
 
-## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.15...1.4.x)
+## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.16...1.4.x)
 
 The `1.4.x` branch is where support for Java 8 of `java-ngrok` was maintained. It is available through
 the `java8-ngrok` artifact
 on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok).
 
-## [1.4.16](https://github.com/alexdlaird/java-ngrok/compare/1.4.15...1.4.16) - TBD
+## [1.4.16](https://github.com/alexdlaird/java-ngrok/compare/1.4.15...1.4.16) - 2025-05-09
 
 ### Added
 
-- [`NgrokClient.api()`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.13/com/github/alexdlaird/ngrok/NgrokClient.html#api--), allowing `api` commands to be executed from the agent.
-- [Agent interface](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.13/com/github/alexdlaird/ngrok/agent/NgrokAgent.html), which provides access to Captured Requests and agent status.
+- [`NgrokClient.api()`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.16/com/github/alexdlaird/ngrok/NgrokClient.html#api--), allowing `api` commands to be executed from the agent.
+- [Agent interface](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.16/com/github/alexdlaird/ngrok/agent/NgrokAgent.html), which provides access to Captured Requests and agent status.
 - Adding [`slf4j`](https://www.slf4j.org/) dependency, making logging improvements.
 - Stability improvements.
 - Documentation improvements.
