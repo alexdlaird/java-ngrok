@@ -508,7 +508,7 @@ public class NgrokClient {
     /**
      * Run a <code>ngrok</code> command against the <code>api</code> with the given args. This will use the local agent
      * to run a remote API request for <code>ngrok</code>, which requires that an API key has been set. For a list of
-     * available commands, pass <code>List.of("--help")</code>.
+     * available commands, pass <code>Collections.singletonList("--help")</code>.
      *
      * @param args The args to pass to the <code>api</code> command.
      * @return The response from executing the <code>api</code> command.

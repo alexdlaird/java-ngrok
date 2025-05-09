@@ -15,6 +15,7 @@ import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import com.github.alexdlaird.ngrok.protocol.AgentStatus;
 import com.github.alexdlaird.ngrok.protocol.CapturedRequest;
 import com.github.alexdlaird.ngrok.protocol.CapturedRequests;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -88,7 +89,9 @@ public class NgrokAgent {
         if (!ngrokProcess.isRunning()) {
             throw new JavaNgrokException("ngrok is not running.");
         }
-        List<Parameter> params = nonNull(tunnelName) ? List.of(new Parameter("tunnel_name", tunnelName)) : List.of();
+        List<Parameter> params = nonNull(tunnelName) ? Collections.singletonList(
+            new Parameter("tunnel_name", tunnelName)) :
+                                 Collections.emptyList();
 
         final String apiUrl = ngrokProcess.getApiUrl();
 
@@ -96,7 +99,7 @@ public class NgrokAgent {
 
         return httpClient.get(String.format("%s/api/requests/http", apiUrl),
             params,
-            Map.of(),
+            Collections.emptyMap(),
             CapturedRequests.class);
     }
 
