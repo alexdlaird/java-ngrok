@@ -16,7 +16,7 @@ from pyngrok import ngrok
 from pyngrok.conf import PyngrokConfig
 from pyngrok.exception import PyngrokNgrokError
 
-project = os.path.basename(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+project = "java8-ngrok"
 
 
 def create_test_resources(temp=False):
