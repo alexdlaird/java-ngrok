@@ -35,7 +35,7 @@ delete-temp-test-resources:
 	python scripts/delete_test_resources.py --temp
 
 test:
-	$(GRADLE_BIN) test
+	$(GRADLE_BIN) test --info
 
 docs:
 	$(GRADLE_BIN) javadoc
