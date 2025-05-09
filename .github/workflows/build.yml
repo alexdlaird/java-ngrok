@@ -16,11 +16,6 @@ concurrency:
   group: java-ngrok-singleton
 
 jobs:
-  validate:
-    name: Validate
-    uses: ./.github/workflows/validate.yml
-    secrets: inherit
-
   build:
     name: Build
 
