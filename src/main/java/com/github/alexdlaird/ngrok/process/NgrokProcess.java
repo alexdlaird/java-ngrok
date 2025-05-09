@@ -128,19 +128,23 @@ public class NgrokProcess {
         command.add(javaNgrokConfig.getNgrokPath().toString());
         command.add("start");
         command.add("--none");
-        command.add("--log=stdout");
+        command.add("--log");
+        command.add("stdout");
 
         if (nonNull(javaNgrokConfig.getConfigPath())) {
             LOGGER.info(String.format("Starting ngrok with config file: %s", javaNgrokConfig.getConfigPath()));
-            command.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().toString()));
+            command.add("--config");
+            command.add(javaNgrokConfig.getConfigPath().toString());
         }
         if (nonNull(javaNgrokConfig.getAuthToken())) {
             LOGGER.info("Overriding default auth token");
-            command.add(String.format("--authtoken=%s", javaNgrokConfig.getAuthToken()));
+            command.add("--authtoken");
+            command.add(javaNgrokConfig.getAuthToken());
         }
         if (nonNull(javaNgrokConfig.getRegion())) {
             LOGGER.info(String.format("Starting ngrok in region: %s", javaNgrokConfig.getRegion()));
-            command.add(String.format("--region=%s", javaNgrokConfig.getRegion()));
+            command.add("--region");
+            command.add(javaNgrokConfig.getRegion().toString());
         }
 
         processBuilder.command(command);
@@ -231,10 +235,12 @@ public class NgrokProcess {
             args.add("add-authtoken");
             args.add(authToken);
         }
-        args.add("--log=stdout");
+        args.add("--log");
+        args.add("stdout");
 
         if (nonNull(javaNgrokConfig.getConfigPath())) {
-            args.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().toString()));
+            args.add("--config");
+            args.add(javaNgrokConfig.getConfigPath().toString());
         }
 
         LOGGER.info(String.format("Updating authtoken for \"configPath\": %s", javaNgrokConfig.getConfigPath()));
@@ -265,10 +271,12 @@ public class NgrokProcess {
             throw new JavaNgrokException(String.format("ngrok %s does not have this command.",
                 javaNgrokConfig.getNgrokVersion()));
         }
-        args.add("--log=stdout");
+        args.add("--log");
+        args.add("stdout");
 
         if (nonNull(javaNgrokConfig.getConfigPath())) {
-            args.add(String.format("--config=%s", javaNgrokConfig.getConfigPath().toString()));
+            args.add("--config");
+            args.add(javaNgrokConfig.getConfigPath().toString());
         }
 
         LOGGER.info(String.format("Updating API key for \"configPath\": %s", javaNgrokConfig.getConfigPath()));

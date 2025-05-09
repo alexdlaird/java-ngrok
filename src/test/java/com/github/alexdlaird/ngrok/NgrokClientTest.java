@@ -39,7 +39,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junitpioneer.jupiter.ClearEnvironmentVariable;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.getNgrokBin;
-import static com.github.alexdlaird.util.ProcessUtils.captureRunProcess;
 import static com.github.alexdlaird.util.StringUtils.isBlank;
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static org.hamcrest.CoreMatchers.startsWith;
@@ -97,6 +96,9 @@ class NgrokClientTest extends NgrokTestCase {
         .withNgrokPath(Paths.get("build", "bin", "testcase-ngrok", getNgrokBin()))
         .build();
 
+    private final NgrokClient testcaseClient = new NgrokClient.Builder()
+        .withJavaNgrokConfig(testcaseJavaNgrokConfig).build();
+
     private Map<String, String> edge;
 
     @BeforeAll
@@ -118,7 +120,7 @@ class NgrokClientTest extends NgrokTestCase {
             if (isBlank(System.getenv("NGROK_HOSTNAME"))) {
                 final String domain = String.format("%s.ngrok.dev", this.ngrokSubdomain);
                 try {
-                    this.reserveNgrokDomain(this.testcaseJavaNgrokConfig, domain);
+                    this.reserveNgrokDomain(this.testcaseClient, domain);
                 } catch (final NgrokException ex) {
                     if (!ex.getMessage().contains("domain is already reserved")) {
                         throw ex;
@@ -127,38 +129,38 @@ class NgrokClientTest extends NgrokTestCase {
 
                 final String subdomain = this.generateNameForSubdomain();
                 final String hostname = String.format("%s.%s.ngrok.dev", subdomain, this.ngrokSubdomain);
-                final Map<String, String> reservedDomain = this.reserveNgrokDomain(this.testcaseJavaNgrokConfig,
+                final Map<String, String> reservedDomain = this.reserveNgrokDomain(this.testcaseClient,
                     hostname);
                 this.reservedDomain = reservedDomain.get("domain");
                 this.reservedDomainId = reservedDomain.get("id");
 
                 final Map<String, String> tcpEdgeReservedAddr =
-                    this.reserveNgrokAddr(this.testcaseJavaNgrokConfig);
+                    this.reserveNgrokAddr(this.testcaseClient);
                 this.tcpEdgeReservedAddr = tcpEdgeReservedAddr.get("addr");
                 this.tcpEdgeReservedAddrId = tcpEdgeReservedAddr.get("id");
                 Thread.sleep(500);
                 final String[] hostAndPort = this.tcpEdgeReservedAddr.split(":");
-                this.tcpEdgeId = this.createNgrokEdge(this.testcaseJavaNgrokConfig, "tcp", hostAndPort[0],
+                this.tcpEdgeId = this.createNgrokEdge(this.testcaseClient, "tcp", hostAndPort[0],
                     Integer.parseInt(hostAndPort[1])).get("id");
 
                 final String subdomainHttp = this.generateNameForSubdomain();
                 final String httpEdgeHostname = String.format("%s.%s.ngrok.dev", subdomainHttp, this.ngrokSubdomain);
-                final Map<String, String> httpEdgeReservedDomain = this.reserveNgrokDomain(this.testcaseJavaNgrokConfig,
+                final Map<String, String> httpEdgeReservedDomain = this.reserveNgrokDomain(this.testcaseClient,
                     httpEdgeHostname);
                 this.httpEdgeReservedDomain = httpEdgeReservedDomain.get("domain");
                 this.httpEdgeReservedDomainId = httpEdgeReservedDomain.get("id");
                 Thread.sleep(500);
-                this.httpEdgeId = this.createNgrokEdge(this.testcaseJavaNgrokConfig, "https", httpEdgeHostname,
+                this.httpEdgeId = this.createNgrokEdge(this.testcaseClient, "https", httpEdgeHostname,
                     443).get("id");
 
                 final String subdomainTls = this.generateNameForSubdomain();
                 final String tlsEdgeHostname = String.format("%s.%s.ngrok.dev", subdomainTls, this.ngrokSubdomain);
-                final Map<String, String> tlsEdgeReservedDomain = this.reserveNgrokDomain(this.testcaseJavaNgrokConfig,
+                final Map<String, String> tlsEdgeReservedDomain = this.reserveNgrokDomain(this.testcaseClient,
                     tlsEdgeHostname);
                 this.tlsEdgeReservedDomain = tlsEdgeReservedDomain.get("domain");
                 this.tlsEdgeReservedDomainId = tlsEdgeReservedDomain.get("id");
                 Thread.sleep(500);
-                this.tlsEdgeId = this.createNgrokEdge(this.testcaseJavaNgrokConfig, "tls",
+                this.tlsEdgeId = this.createNgrokEdge(this.testcaseClient, "tls",
                     tlsEdgeHostname, 443).get("id");
             } else {
                 this.reservedDomain = System.getenv("NGROK_DOMAIN");
@@ -180,33 +182,19 @@ class NgrokClientTest extends NgrokTestCase {
         if (isNotBlank(System.getenv("NGROK_API_KEY")) &&
             isBlank(System.getenv("NGROK_HOSTNAME"))) {
             try {
-                captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
-                    List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                        "api", "edges", "https", "delete", this.httpEdgeId));
+                testcaseClient.api(List.of("edges", "https", "delete", this.httpEdgeId));
                 Thread.sleep(200);
-                captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
-                    List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                        "api", "edges", "tcp", "delete", this.tcpEdgeId));
+                testcaseClient.api(List.of("edges", "tcp", "delete", this.tcpEdgeId));
                 Thread.sleep(200);
-                captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
-                    List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                        "api", "edges", "tls", "delete", this.tlsEdgeId));
+                testcaseClient.api(List.of("edges", "tls", "delete", this.tlsEdgeId));
                 Thread.sleep(200);
-                captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
-                    List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                        "api", "reserved-domains", "delete", this.reservedDomainId));
+                testcaseClient.api(List.of("reserved-domains", "delete", this.reservedDomainId));
                 Thread.sleep(200);
-                captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
-                    List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                        "api", "reserved-domains", "delete", this.tlsEdgeReservedDomainId));
+                testcaseClient.api(List.of("reserved-domains", "delete", this.tlsEdgeReservedDomainId));
                 Thread.sleep(200);
-                captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
-                    List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                        "api", "reserved-domains", "delete", this.httpEdgeReservedDomainId));
+                testcaseClient.api(List.of("reserved-domains", "delete", this.httpEdgeReservedDomainId));
                 Thread.sleep(200);
-                captureRunProcess(this.testcaseJavaNgrokConfig.getNgrokPath(),
-                    List.of("--config", this.testcaseJavaNgrokConfig.getConfigPath().toString(),
-                        "api", "reserved-addrs", "delete", this.tcpEdgeReservedAddrId));
+                testcaseClient.api(List.of("reserved-addrs", "delete", this.tcpEdgeReservedAddrId));
                 Thread.sleep(200);
             } catch (Exception ex) {
                 ex.printStackTrace(System.out);

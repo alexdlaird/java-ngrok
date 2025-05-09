@@ -9,6 +9,7 @@ package com.github.alexdlaird.ngrok;
 import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.exception.JavaNgrokHTTPException;
 import com.github.alexdlaird.exception.JavaNgrokSecurityException;
+import com.github.alexdlaird.exception.NgrokException;
 import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.http.HttpClientException;
@@ -24,6 +25,7 @@ import com.github.alexdlaird.ngrok.protocol.Proto;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import com.github.alexdlaird.ngrok.protocol.Version;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -33,6 +35,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
 
+import static com.github.alexdlaird.util.ProcessUtils.captureRunProcess;
 import static com.github.alexdlaird.util.StringUtils.isBlank;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -158,8 +161,8 @@ import static java.util.Objects.nonNull;
  * </pre>
  *
  * <p>We can also serve up local directories via
- * <a href="https://ngrok.com/docs/universal-gateway/http/?cty=agent-config#agent-endpoint" target="_blank">ngrok's built-in
- * fileserver</a>.
+ * <a href="https://ngrok.com/docs/universal-gateway/http/?cty=agent-config#agent-endpoint" target="_blank">ngrok's
+ * built-in fileserver</a>.
  *
  * <p><pre>
  * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
@@ -488,6 +491,34 @@ public class NgrokClient {
         final String ngrokVersion = ngrokProcess.getVersion();
 
         return new Version(ngrokVersion, javaNgrokVersion);
+    }
+
+    /**
+     * Run a <code>ngrok</code> command against the <code>api</code> with the given args. This allows for executing
+     * remote API commands against the <code>ngrok</code> service (not the local agent). Start by just passing
+     * "--help" for a list of available options.
+     *
+     * @param args The args to pass to the <code>api</code> command.
+     * @return The output from the process.
+     * @throws NgrokException The <code>ngrok</code> process exited with an error.
+     * @throws IOException          An I/O exception occurred.
+     * @throws InterruptedException The thread was interrupted during execution.
+     */
+    public String api(final List<String> args)
+        throws IOException, InterruptedException {
+        final List<String> cmdArgs = new ArrayList<>();
+        if (nonNull(javaNgrokConfig.getConfigPath())) {
+            cmdArgs.add("--config");
+            cmdArgs.add(javaNgrokConfig.getConfigPath().toString());
+        }
+        cmdArgs.add("api");
+        if (nonNull(javaNgrokConfig.getApiKey())) {
+            cmdArgs.add("--api-key");
+            cmdArgs.add(javaNgrokConfig.getApiKey());
+        }
+        cmdArgs.addAll(args);
+
+        return captureRunProcess(javaNgrokConfig.getNgrokPath(), cmdArgs);
     }
 
     /**

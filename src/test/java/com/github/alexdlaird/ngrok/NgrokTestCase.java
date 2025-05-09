@@ -117,39 +117,33 @@ public class NgrokTestCase extends TestCase {
         assertFalse(Files.exists(javaNgrokConfig.getNgrokPath()));
     }
 
-    protected Map<String, String> reserveNgrokDomain(final JavaNgrokConfig javaNgrokConfig,
+    protected Map<String, String> reserveNgrokDomain(final NgrokClient ngrokClient,
                                                      final String domain)
         throws IOException, InterruptedException {
-        final List<String> args = List.of("--config", javaNgrokConfig.getConfigPath().toString(),
-            "api", "reserved-domains", "create",
+        final String result = ngrokClient.api(List.of("reserved-domains", "create",
             "--domain", domain,
-            "--description", testResourceDescription);
+            "--description", testResourceDescription));
 
-        final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
         return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
     }
 
-    protected Map<String, String> reserveNgrokAddr(final JavaNgrokConfig javaNgrokConfig)
+    protected Map<String, String> reserveNgrokAddr(final NgrokClient ngrokClient)
         throws IOException, InterruptedException {
-        final List<String> args = List.of("--config", javaNgrokConfig.getConfigPath().toString(),
-            "api", "reserved-addrs", "create",
-            "--description", testResourceDescription);
+        final String result = ngrokClient.api(List.of("reserved-addrs", "create",
+            "--description", testResourceDescription));
 
-        final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
         return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
     }
 
-    protected Map<String, String> createNgrokEdge(final JavaNgrokConfig javaNgrokConfig,
+    protected Map<String, String> createNgrokEdge(final NgrokClient ngrokClient,
                                                   final String proto,
                                                   final String domain,
                                                   final int port)
         throws IOException, InterruptedException {
-        final List<String> args = List.of("--config", javaNgrokConfig.getConfigPath().toString(),
-            "api", "edges", proto, "create",
+        final String result = ngrokClient.api(List.of("edges", proto, "create",
             "--hostports", String.format("%s:%s", domain, port),
-            "--description", testResourceDescription);
+            "--description", testResourceDescription));
 
-        final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
         return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
     }
 
