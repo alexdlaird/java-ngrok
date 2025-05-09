@@ -165,8 +165,7 @@ public class NgrokProcess {
                     processMonitor.startupError = null;
 
                     break;
-                }
-                else if (processMonitor.isHealthy() || !isRunning()) {
+                } else if (processMonitor.isHealthy() || !isRunning()) {
                     break;
                 }
             }
