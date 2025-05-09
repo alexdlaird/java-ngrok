@@ -19,7 +19,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import org.junit.jupiter.api.AfterEach;
@@ -27,7 +26,6 @@ import org.junit.jupiter.api.BeforeEach;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.getNgrokBin;
-import static com.github.alexdlaird.util.ProcessUtils.captureRunProcess;
 import static java.util.Objects.nonNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -115,36 +113,6 @@ public class NgrokTestCase extends TestCase {
             Files.delete(javaNgrokConfig.getNgrokPath());
         }
         assertFalse(Files.exists(javaNgrokConfig.getNgrokPath()));
-    }
-
-    protected Map<String, String> reserveNgrokDomain(final NgrokClient ngrokClient,
-                                                     final String domain)
-        throws IOException, InterruptedException {
-        final String result = ngrokClient.api(List.of("reserved-domains", "create",
-            "--domain", domain,
-            "--description", testResourceDescription));
-
-        return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
-    }
-
-    protected Map<String, String> reserveNgrokAddr(final NgrokClient ngrokClient)
-        throws IOException, InterruptedException {
-        final String result = ngrokClient.api(List.of("reserved-addrs", "create",
-            "--description", testResourceDescription));
-
-        return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
-    }
-
-    protected Map<String, String> createNgrokEdge(final NgrokClient ngrokClient,
-                                                  final String proto,
-                                                  final String domain,
-                                                  final int port)
-        throws IOException, InterruptedException {
-        final String result = ngrokClient.api(List.of("edges", proto, "create",
-            "--hostports", String.format("%s:%s", domain, port),
-            "--description", testResourceDescription));
-
-        return gson.fromJson(result.substring(result.indexOf("{")), Map.class);
     }
 
     protected String generateNameForSubdomain() {

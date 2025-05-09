@@ -27,15 +27,15 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 import static com.github.alexdlaird.util.ProcessUtils.captureRunProcess;
 import static com.github.alexdlaird.util.StringUtils.isBlank;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static java.util.logging.Level.SEVERE;
 
 /**
  * An object containing information about the <code>ngrok</code> process. Can be configured with
@@ -55,7 +55,7 @@ import static java.util.logging.Level.SEVERE;
  */
 public class NgrokProcess {
 
-    private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokProcess.class));
+    private static final Logger LOGGER = LoggerFactory.getLogger(NgrokProcess.class);
 
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokInstaller ngrokInstaller;
@@ -132,7 +132,7 @@ public class NgrokProcess {
         command.add("stdout");
 
         if (nonNull(javaNgrokConfig.getConfigPath())) {
-            LOGGER.info(String.format("Starting ngrok with config file: %s", javaNgrokConfig.getConfigPath()));
+            LOGGER.info("Starting ngrok with config file: {}", javaNgrokConfig.getConfigPath());
             command.add("--config");
             command.add(javaNgrokConfig.getConfigPath().toString());
         }
@@ -142,7 +142,7 @@ public class NgrokProcess {
             command.add(javaNgrokConfig.getAuthToken());
         }
         if (nonNull(javaNgrokConfig.getRegion())) {
-            LOGGER.info(String.format("Starting ngrok in region: %s", javaNgrokConfig.getRegion()));
+            LOGGER.info("Starting ngrok in region: {}", javaNgrokConfig.getRegion());
             command.add("--region");
             command.add(javaNgrokConfig.getRegion().toString());
         }
@@ -152,7 +152,7 @@ public class NgrokProcess {
             process = processBuilder.start();
             Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
 
-            LOGGER.fine(String.format("ngrok process starting with PID: %s", process.pid()));
+            LOGGER.trace("ngrok process starting with PID: {}", process.pid());
 
             processMonitor = new ProcessMonitor(process, javaNgrokConfig);
             new Thread(processMonitor).start();
@@ -161,12 +161,12 @@ public class NgrokProcess {
             timeout.add(Calendar.SECOND, javaNgrokConfig.getStartupTimeout());
             while (Calendar.getInstance().before(timeout)) {
                 if (processMonitor.isHealthy()) {
-                    LOGGER.info(String.format("ngrok process has started with API URL: %s", processMonitor.apiUrl));
+                    LOGGER.info("ngrok process has started with API URL: {}", processMonitor.apiUrl);
 
                     processMonitor.startupError = null;
+                }
 
-                    break;
-                } else if (!isRunning()) {
+                if (processMonitor.isHealthy() || !isRunning()) {
                     break;
                 }
             }
@@ -200,12 +200,12 @@ public class NgrokProcess {
      */
     public void stop() {
         if (!isRunning()) {
-            LOGGER.info(String.format("\"ngrokPath\" %s is not running a process", javaNgrokConfig.getNgrokPath()));
+            LOGGER.debug("\"ngrokPath\" {} is not running a process", javaNgrokConfig.getNgrokPath());
 
             return;
         }
 
-        LOGGER.info(String.format("Killing ngrok process: %s", process.pid()));
+        LOGGER.info("Killing ngrok process: {}", process.pid());
 
         processMonitor.stop();
         process.descendants().forEach(ProcessHandle::destroy);
@@ -215,7 +215,7 @@ public class NgrokProcess {
                 processMonitor.reader.close();
             }
         } catch (final IOException e) {
-            LOGGER.log(Level.WARNING, "An error occurred when closing \"ProcessMonitor.reader\"", e);
+            LOGGER.warn("An error occurred when closing \"ProcessMonitor.reader\"", e);
         }
     }
 
@@ -243,7 +243,7 @@ public class NgrokProcess {
             args.add(javaNgrokConfig.getConfigPath().toString());
         }
 
-        LOGGER.info(String.format("Updating authtoken for \"configPath\": %s", javaNgrokConfig.getConfigPath()));
+        LOGGER.info("Updating authtoken for \"configPath\": {}", javaNgrokConfig.getConfigPath());
 
         try {
             final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
@@ -279,7 +279,7 @@ public class NgrokProcess {
             args.add(javaNgrokConfig.getConfigPath().toString());
         }
 
-        LOGGER.info(String.format("Updating API key for \"configPath\": %s", javaNgrokConfig.getConfigPath()));
+        LOGGER.info("Updating API key for \"configPath\": {}", javaNgrokConfig.getConfigPath());
 
         try {
             final String result = captureRunProcess(javaNgrokConfig.getNgrokPath(), args);
@@ -459,7 +459,8 @@ public class NgrokProcess {
                 return;
             }
 
-            if (nonNull(ngrokLog.getLvl()) && ngrokLog.getLvl().equals(SEVERE.getName())) {
+            if (nonNull(ngrokLog.getLvl())
+                && (ngrokLog.getLvl().equals("ERROR") || ngrokLog.getLvl().equals("CRITICAL"))) {
                 this.startupError = ngrokLog.getErr();
             } else if (nonNull(ngrokLog.getMsg())) {
                 // Log ngrok startup states as they come in
@@ -480,7 +481,7 @@ public class NgrokProcess {
                 return null;
             }
 
-            LOGGER.log(Level.parse(ngrokLog.getLvl()), ngrokLog.getLine());
+            LOGGER.atLevel(Level.valueOf(toJavaLevel(ngrokLog.getLvl()))).log(ngrokLog.getLine());
             logs.add(ngrokLog);
             if (logs.size() > javaNgrokConfig.getMaxLogs()) {
                 logs.remove(0);
@@ -491,6 +492,17 @@ public class NgrokProcess {
             }
 
             return ngrokLog;
+        }
+
+        private String toJavaLevel(final String ngrokLvl) {
+            if (ngrokLvl.equals("CRITICAL")) {
+                return "ERROR";
+            } else if (ngrokLvl.equals("WARNING")) {
+                return "WARN";
+            } else if (ngrokLvl.equals("NOTSET")) {
+                return "INFO";
+            }
+            return ngrokLvl;
         }
     }
 }

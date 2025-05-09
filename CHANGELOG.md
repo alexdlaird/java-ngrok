@@ -10,7 +10,18 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - [`NgrokClient.api()`](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.3.10/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#api()), allowing `api` commands to be executed from the agent.
 - [Agent interface](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/agent/NgrokAgent.html), which provides access to Captured Requests and agent status.
+- Adding [`slf4j`](https://www.slf4j.org/) dependency, making logging improvements.
+- Stability improvements.
 - Documentation improvements.
+
+### Changed
+
+- `NgrokLog.lvl` now consistently parses `ERR` and `EROR` to `ERROR` instead of `SEVERE`.
+
+### Fixed
+
+- `NgrokLog.lvl` now properly parses `CRIT` `CRITICAL`, distinguishing from `ERROR`.
+- `NgrokLog` string may contain a malformed or empty `lvl`. Default is now `NOTSET` in such cases.
 
 ## [2.3.10](https://github.com/alexdlaird/java-ngrok/compare/2.3.9...2.3.10) - 2025-05-07
 

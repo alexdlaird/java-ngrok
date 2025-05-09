@@ -11,6 +11,7 @@ module com.github.alexdlaird.ngrok {
     requires java.logging;
     requires com.google.gson;
     requires org.yaml.snakeyaml;
+    requires org.slf4j;
 
     exports com.github.alexdlaird.exception;
     exports com.github.alexdlaird.http;

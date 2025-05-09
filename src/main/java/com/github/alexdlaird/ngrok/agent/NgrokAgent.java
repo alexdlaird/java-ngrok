@@ -18,6 +18,8 @@ import com.github.alexdlaird.ngrok.protocol.CapturedRequests;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Objects.nonNull;
 
@@ -25,6 +27,9 @@ import static java.util.Objects.nonNull;
  * A client for interaction with the <code>ngrok</code> agent.
  */
 public class NgrokAgent {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(NgrokAgent.class);
+
     private final NgrokProcess ngrokProcess;
 
     private final HttpClient httpClient;
@@ -62,6 +67,8 @@ public class NgrokAgent {
 
         final String apiUrl = ngrokProcess.getApiUrl();
 
+        LOGGER.info("Getting agent status from {}", apiUrl);
+
         return httpClient.get(String.format("%s/api/status", apiUrl), AgentStatus.class);
     }
 
@@ -85,6 +92,8 @@ public class NgrokAgent {
 
         final String apiUrl = ngrokProcess.getApiUrl();
 
+        LOGGER.info("Listing captured requests from {} with {}", apiUrl, params);
+
         return httpClient.get(String.format("%s/api/requests/http", apiUrl),
             params,
             Map.of(),
@@ -103,8 +112,9 @@ public class NgrokAgent {
 
         final String apiUrl = ngrokProcess.getApiUrl();
 
-        return httpClient.get(String.format("%s/api/requests/http/%s", apiUrl, requestId), CapturedRequest.class);
+        LOGGER.info("Getting captured request {} from {}", requestId, apiUrl);
 
+        return httpClient.get(String.format("%s/api/requests/http/%s", apiUrl, requestId), CapturedRequest.class);
     }
 
     /**
@@ -128,6 +138,8 @@ public class NgrokAgent {
 
         final String apiUrl = ngrokProcess.getApiUrl();
 
+        LOGGER.info("Replaying captured request {} from {}", requestId, apiUrl);
+
         httpClient.post(String.format("%s/api/requests/http", apiUrl),
             new ReplayRequest(requestId, tunnelName),
             Object.class);
@@ -142,6 +154,8 @@ public class NgrokAgent {
         }
 
         final String apiUrl = ngrokProcess.getApiUrl();
+
+        LOGGER.info("Deleting captured requests from {}", apiUrl);
 
         httpClient.delete(String.format("%s/api/requests/http", apiUrl));
     }

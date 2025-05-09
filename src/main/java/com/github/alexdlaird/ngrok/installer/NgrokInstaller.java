@@ -30,9 +30,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import static com.github.alexdlaird.util.StringUtils.isBlank;
@@ -53,6 +54,8 @@ import static java.util.Objects.nonNull;
  */
 public class NgrokInstaller {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(NgrokInstaller.class);
+
     public static final String MAC = "DARWIN";
     public static final String WINDOWS = "WINDOWS";
     public static final String LINUX = "LINUX";
@@ -61,7 +64,6 @@ public class NgrokInstaller {
     public static final Path DEFAULT_NGROK_PATH = Paths.get(getDefaultNgrokDir().toString(),
         NgrokInstaller.getNgrokBin());
     public static final Path DEFAULT_CONFIG_PATH = Paths.get(getDefaultNgrokDir().toString(), "ngrok.yml");
-    private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokInstaller.class));
     private final List<String> validLogLevels = List.of("info", "debug");
     private final Yaml yaml = new Yaml();
     private final Map<String, Map<String, Object>> configCache = new HashMap<>();
@@ -179,7 +181,7 @@ public class NgrokInstaller {
 
             validateConfig(config);
 
-            LOGGER.fine(String.format("Installing default config to %s ...", configPath));
+            LOGGER.trace("Installing default config to {} ...", configPath);
 
             final FileOutputStream out = new FileOutputStream(configPath.toFile());
             final StringWriter writer = new StringWriter();
@@ -211,8 +213,8 @@ public class NgrokInstaller {
     public void installNgrok(final Path ngrokPath, final NgrokVersion ngrokVersion) {
         final NgrokCDNUrl ngrokCDNUrl = getNgrokCDNUrl(ngrokVersion);
 
-        LOGGER.fine(String.format("Installing ngrok %s to %s%s ...", ngrokVersion, ngrokPath,
-            Files.exists(ngrokPath) ? ", overwriting" : ""));
+        LOGGER.trace("Installing ngrok {} to {}{} ...", ngrokVersion, ngrokPath,
+            Files.exists(ngrokPath) ? ", overwriting" : "");
 
         final Path ngrokZip = Paths.get(ngrokPath.getParent().toString(), "ngrok.zip");
         downloadFile(ngrokCDNUrl.getUrl(), ngrokZip);
@@ -238,7 +240,7 @@ public class NgrokInstaller {
         final String system = getSystem();
         final String plat = String.format("%s_%s", system, arch);
 
-        LOGGER.fine(String.format("Platform to download: %s", plat));
+        LOGGER.trace("Platform to download: {}", plat);
         if (ngrokVersion == NgrokVersion.V2) {
             return NgrokV2CDNUrl.valueOf(plat);
         } else {
@@ -348,7 +350,7 @@ public class NgrokInstaller {
         try {
             final Path dir = ngrokPath.getParent();
 
-            LOGGER.fine(String.format("Extracting ngrok binary from %s to %s ...", zipPath, ngrokPath));
+            LOGGER.trace("Extracting ngrok binary from {} to {} ...", zipPath, ngrokPath);
 
             Files.createDirectories(dir);
 
@@ -396,7 +398,7 @@ public class NgrokInstaller {
         try {
             Files.createDirectories(dest.getParent());
 
-            LOGGER.fine(String.format("Download ngrok from %s ...", url));
+            LOGGER.trace("Download ngrok from {} ...", url);
 
             httpClient.get(url, List.of(), Map.of(), dest);
         } catch (final IOException | HttpClientException | InterruptedException e) {

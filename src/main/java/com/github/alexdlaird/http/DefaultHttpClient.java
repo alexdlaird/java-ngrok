@@ -24,7 +24,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.github.alexdlaird.util.StringUtils.isNotBlank;
 import static java.util.Objects.nonNull;
@@ -54,7 +55,7 @@ import static java.util.Objects.nonNull;
  */
 public class DefaultHttpClient implements HttpClient {
 
-    private static final Logger LOGGER = Logger.getLogger(String.valueOf(DefaultHttpClient.class));
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHttpClient.class);
 
     private final Gson gson;
     private final String encoding;
@@ -102,7 +103,7 @@ public class DefaultHttpClient implements HttpClient {
             }
         } catch (final Exception e) {
             if (retries < retryCount) {
-                LOGGER.warning("GET failed, retrying in 0.5 seconds ...");
+                LOGGER.warn("GET failed, retrying in 0.5 seconds ...");
                 Thread.sleep(500);
 
                 get(url, parameters, additionalHeaders, dest, retries + 1);
@@ -199,8 +200,7 @@ public class DefaultHttpClient implements HttpClient {
             try {
                 return gson.fromJson(response, clazz);
             } catch (final JsonSyntaxException e) {
-                LOGGER.fine(String.format("An error occurred when attempting to parse JSON response: %s",
-                    e.getMessage()));
+                LOGGER.debug("An error occurred when attempting to parse JSON response", e);
 
                 return null;
             }
@@ -232,7 +232,7 @@ public class DefaultHttpClient implements HttpClient {
         } catch (final Exception e) {
             if (method.equals("GET")
                 && retries < retryCount) {
-                LOGGER.warning("GET failed, retrying in 0.5 seconds ...");
+                LOGGER.warn("GET failed, retrying in 0.5 seconds ...");
                 Thread.sleep(500);
 
                 return execute(url, body, method, additionalHeaders, clazz, retries + 1);

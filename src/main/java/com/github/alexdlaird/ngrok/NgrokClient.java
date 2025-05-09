@@ -19,6 +19,7 @@ import com.github.alexdlaird.ngrok.conf.JavaNgrokVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
+import com.github.alexdlaird.ngrok.protocol.ApiResponse;
 import com.github.alexdlaird.ngrok.protocol.BindTls;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Proto;
@@ -33,7 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.github.alexdlaird.util.ProcessUtils.captureRunProcess;
 import static com.github.alexdlaird.util.StringUtils.isBlank;
@@ -224,7 +226,7 @@ import static java.util.Objects.nonNull;
  */
 public class NgrokClient {
 
-    private static final Logger LOGGER = Logger.getLogger(String.valueOf(NgrokClient.class));
+    private static final Logger LOGGER = LoggerFactory.getLogger(NgrokClient.class);
 
     private final Map<String, Tunnel> currentTunnels = new HashMap<>();
 
@@ -279,7 +281,7 @@ public class NgrokClient {
 
         final CreateTunnel finalTunnel = interpolateTunnelDefinition(createTunnel);
 
-        LOGGER.info(String.format("Opening tunnel named: %s", finalTunnel.getName()));
+        LOGGER.info("Opening tunnel named: {}", finalTunnel.getName());
 
         final Response<Tunnel> response;
         try {
@@ -299,6 +301,9 @@ public class NgrokClient {
                                                                     + response.getBody().getUri() + "%20%28http%29",
                     Tunnel.class);
                 tunnel = getResponse.getBody();
+
+                LOGGER.info("ngrok v2 opens multiple tunnels, fetching just HTTP tunnel {} for return",
+                    tunnel.getId());
             } catch (final HttpClientException e) {
                 throw new JavaNgrokHTTPException(String.format("An error occurred when GETing the HTTP tunnel %s.",
                     response.getBody().getName()), e, e.getUrl(), e.getStatusCode(), e.getBody());
@@ -331,7 +336,7 @@ public class NgrokClient {
     public void disconnect(final String publicUrl) {
         // If ngrok is not running, there are no tunnels to disconnect
         if (!ngrokProcess.isRunning()) {
-            LOGGER.fine(String.format("\"ngrokPath\" %s is not running a process", javaNgrokConfig.getNgrokPath()));
+            LOGGER.trace("\"ngrokPath\" {} is not running a process", javaNgrokConfig.getNgrokPath());
 
             return;
         }
@@ -349,7 +354,7 @@ public class NgrokClient {
 
         ngrokProcess.start();
 
-        LOGGER.info(String.format("Disconnecting tunnel: %s", tunnel.getPublicUrl()));
+        LOGGER.info("Disconnecting tunnel: {}", tunnel.getPublicUrl());
 
         try {
             httpClient.delete(ngrokProcess.getApiUrl() + tunnel.getUri());
@@ -494,17 +499,17 @@ public class NgrokClient {
     }
 
     /**
-     * Run a <code>ngrok</code> command against the <code>api</code> with the given args. This allows for executing
-     * remote API commands against the <code>ngrok</code> service (not the local agent). Start by just passing
-     * "--help" for a list of available options.
+     * Run a <code>ngrok</code> command against the <code>api</code> with the given args. This will use the local agent
+     * to run a remote API request for <code>ngrok</code>, which requires that an API key has been set. For a list of
+     * available commands, pass <code>List.of("--help")</code>.
      *
      * @param args The args to pass to the <code>api</code> command.
-     * @return The output from the process.
-     * @throws NgrokException The <code>ngrok</code> process exited with an error.
+     * @return The response from executing the <code>api</code> command.
+     * @throws NgrokException       The <code>ngrok</code> process exited with an error.
      * @throws IOException          An I/O exception occurred.
      * @throws InterruptedException The thread was interrupted during execution.
      */
-    public String api(final List<String> args)
+    public ApiResponse api(final List<String> args)
         throws IOException, InterruptedException {
         final List<String> cmdArgs = new ArrayList<>();
         if (nonNull(javaNgrokConfig.getConfigPath())) {
@@ -518,7 +523,9 @@ public class NgrokClient {
         }
         cmdArgs.addAll(args);
 
-        return captureRunProcess(javaNgrokConfig.getNgrokPath(), cmdArgs);
+        LOGGER.info("Executing \"ngrok api\" command with args: {}", args);
+
+        return ApiResponse.fromBody(captureRunProcess(javaNgrokConfig.getNgrokPath(), cmdArgs));
     }
 
     /**
@@ -571,6 +578,8 @@ public class NgrokClient {
                 throw new JavaNgrokException(String.format("Unknown Edge prefix: %s.", edge));
             }
 
+            LOGGER.info("Applying edge {} to tunnel {}", edge, tunnel.getId());
+
             final Response<Map> edgeResponse = httpClient.get(String.format("https://api.ngrok.com/edges/%s/%s",
                 edgesPrefix, edge), List.of(), ngrokApiHeaders, Map.class);
 
@@ -587,8 +596,8 @@ public class NgrokClient {
                 ((List) edgeResponse.getBody().get("hostports")).get(0)));
             tunnel.setProto(edgesPrefix);
 
-            LOGGER.warning("ngrok has deprecated Edges and will sunset Labeled Tunnels on December 31st, 2025. "
-                           + "See https://github.com/alexdlaird/java-ngrok/issues/158 for more details.");
+            LOGGER.warn("ngrok has deprecated Edges and will sunset Labeled Tunnels on December 31st, 2025. "
+                        + "See https://github.com/alexdlaird/java-ngrok/issues/158 for more details.");
         }
     }
 
@@ -606,6 +615,8 @@ public class NgrokClient {
         final String name;
         final Map<String, Object> tunnelDefinitions = (Map<String, Object>) config.getOrDefault("tunnels", Map.of());
         if (isNull(createTunnel.getName()) && tunnelDefinitions.containsKey("java-ngrok-default")) {
+            LOGGER.info("java-ngrok-default found defined in config, using for tunnel definition");
+
             name = "java-ngrok-default";
             createTunnelBuilder.withName(name);
         } else {
