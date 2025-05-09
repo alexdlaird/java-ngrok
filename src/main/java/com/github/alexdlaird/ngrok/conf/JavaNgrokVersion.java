@@ -22,7 +22,7 @@ public class JavaNgrokVersion {
     private final String version;
 
     private JavaNgrokVersion(final String version) {
-        this.version = Objects.requireNonNull(version);
+        this.version = version;
     }
 
     /**
@@ -50,6 +50,8 @@ public class JavaNgrokVersion {
                     LOGGER.trace("Version number {} fetched from version.properties resource", version);
 
                     return version;
+                } else {
+                    LOGGER.debug("Resource stream for version.properties is null, version can't be set");
                 }
             }
         } catch (final IOException e) {
