@@ -22,7 +22,7 @@ public class JavaNgrokVersion {
     private final String version;
 
     private JavaNgrokVersion(final String version) {
-        this.version = Objects.requireNonNull(version);
+        this.version = version;
     }
 
     /**
