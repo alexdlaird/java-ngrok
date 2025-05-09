@@ -459,8 +459,7 @@ public class NgrokProcess {
                 return;
             }
 
-            if (nonNull(ngrokLog.getLvl())
-                && (ngrokLog.getLvl().equals("ERROR") || ngrokLog.getLvl().equals("CRITICAL"))) {
+            if (nonNull(ngrokLog.getLvl()) && ngrokLog.getLvl().equals("ERROR")) {
                 this.startupError = ngrokLog.getErr();
             } else if (nonNull(ngrokLog.getMsg())) {
                 // Log ngrok startup states as they come in
