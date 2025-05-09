@@ -457,6 +457,7 @@ public class NgrokProcess {
                 return;
             }
 
+            LOGGER.info("What is happening here: {}", ngrokLog.getLvl());
             if (nonNull(ngrokLog.getLvl()) && ngrokLog.getLvl().equals("ERROR")) {
                 this.startupError = ngrokLog.getErr();
             } else if (nonNull(ngrokLog.getMsg())) {

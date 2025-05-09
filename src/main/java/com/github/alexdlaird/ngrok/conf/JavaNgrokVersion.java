@@ -50,6 +50,8 @@ public class JavaNgrokVersion {
                     LOGGER.trace("Version number {} fetched from version.properties resource", version);
 
                     return version;
+                } else {
+                    LOGGER.warn("Nope, version not set");
                 }
             }
         } catch (final IOException e) {
