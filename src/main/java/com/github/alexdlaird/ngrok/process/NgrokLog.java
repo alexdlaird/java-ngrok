@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.github.alexdlaird.util.StringUtils.isBlank;
 
@@ -20,7 +22,8 @@ import static com.github.alexdlaird.util.StringUtils.isBlank;
  */
 public class NgrokLog extends HashMap<String, String> {
 
-    private static final List<String> VALID_LOG_LEVELS = List.of("ERROR", "WARN", "INFO", "DEBUG", "TRACE");
+    private static final List<String> VALID_LOG_LEVELS = Stream.of("ERROR", "WARN", "INFO", "DEBUG", "TRACE")
+                                                               .collect(Collectors.toList());
 
     private final String line;
 
