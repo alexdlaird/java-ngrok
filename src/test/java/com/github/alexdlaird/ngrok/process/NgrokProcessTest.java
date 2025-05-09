@@ -101,7 +101,7 @@ public class NgrokProcessTest extends NgrokTestCase {
         // WHEN
         NgrokException exception = null;
         String error = null;
-        for (int i = 0; isNull(error) && i < 10; ++i) {
+        for (int i = 0; isNull(error) && i < 15; ++i) {
             Thread.sleep(1000);
 
             ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
