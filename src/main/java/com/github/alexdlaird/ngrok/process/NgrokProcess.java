@@ -163,9 +163,10 @@ public class NgrokProcess {
                     LOGGER.info("ngrok process has started with API URL: {}", processMonitor.apiUrl);
 
                     processMonitor.startupError = null;
-                }
 
-                if (processMonitor.isHealthy() || !isRunning()) {
+                    break;
+                }
+                else if (processMonitor.isHealthy() || !isRunning()) {
                     break;
                 }
             }
