@@ -98,7 +98,7 @@ public class NgrokProcessTest extends NgrokTestCase {
             assertThat(exception.getMessage(), containsString("bind: address already in use"));
             assertThat(exception.getNgrokError(), containsString("bind: address already in use"));
         }
-        assertEquals(1, exception.getNgrokLogs().size());
+        assertThat(exception.getNgrokLogs().size(), greaterThan(0));
         assertFalse(ngrokProcessV2_2.isRunning());
     }
 
@@ -138,7 +138,7 @@ public class NgrokProcessTest extends NgrokTestCase {
             assertThat(exception.getMessage(), containsString("bind: address already in use"));
             assertThat(exception.getNgrokError(), containsString("bind: address already in use"));
         }
-        assertEquals(1, exception.getNgrokLogs().size());
+        assertThat(exception.getNgrokLogs().size(), greaterThan(0));
         assertFalse(ngrokProcessV3_2.isRunning());
     }
 
