@@ -22,6 +22,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- Refactored concurrency around `ProcessMonitor` and startup logging, as the old design could lead to race conditions when startup errored.
 - `NgrokLog` string may contain a malformed or empty `lvl`. Default is now `NOTSET` in such cases.
 
 ## [2.3.10](https://github.com/alexdlaird/java-ngrok/compare/2.3.9...2.3.10) - 2025-05-07

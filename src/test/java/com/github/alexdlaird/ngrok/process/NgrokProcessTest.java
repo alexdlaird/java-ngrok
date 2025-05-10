@@ -236,7 +236,7 @@ public class NgrokProcessTest extends NgrokTestCase {
 
         // THEN
         int i = 0;
-        for (final NgrokLog log : ngrokProcessV3.getProcessMonitor().getLogs()) {
+        for (final NgrokLog log : ngrokProcessV3.getLogs()) {
             assertNotNull(log.getT());
             assertNotNull(log.getLvl());
             assertNotNull(log.getMsg());
@@ -264,8 +264,8 @@ public class NgrokProcessTest extends NgrokTestCase {
 
         // THEN
         assertThat(Mockito.mockingDetails(logEventCallbackMock).getInvocations().size(),
-            greaterThan(ngrokProcessV3_2.getProcessMonitor().getLogs().size()));
-        assertEquals(5, ngrokProcessV3_2.getProcessMonitor().getLogs().size());
+            greaterThan(ngrokProcessV3_2.getLogs().size()));
+        assertEquals(5, ngrokProcessV3_2.getLogs().size());
     }
 
     @Test
