@@ -81,7 +81,7 @@ public class NgrokProcessTest extends NgrokTestCase {
             .withConfigPath(configPath2)
             .build();
         ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(), Map.of("web_addr",
-            ngrokProcessV2.getApiUrl().substring(7)), javaNgrokConfig2.getNgrokVersion());
+            ngrokProcessV2.getApiUrl().replace("http://", "")), javaNgrokConfig2.getNgrokVersion());
         Thread.sleep(3000);
 
         // WHEN
@@ -120,7 +120,7 @@ public class NgrokProcessTest extends NgrokTestCase {
             .withConfigPath(configPath2)
             .build();
         ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(),
-            Map.of("web_addr", ngrokProcessV3.getApiUrl().substring(7)), javaNgrokConfigV3.getNgrokVersion());
+            Map.of("web_addr", ngrokProcessV3.getApiUrl().replace("http://", "")), javaNgrokConfigV3.getNgrokVersion());
         Thread.sleep(3000);
 
         // WHEN
