@@ -151,7 +151,7 @@ public class NgrokProcess {
             process = processBuilder.start();
             Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
 
-            LOGGER.trace("ngrok process starting with PID: {}", process.pid());
+            LOGGER.info("ngrok process starting with PID: {}", process.pid());
 
             processMonitor = new ProcessMonitor(process, javaNgrokConfig);
             new Thread(processMonitor).start();
@@ -160,27 +160,32 @@ public class NgrokProcess {
             timeout.add(Calendar.SECOND, javaNgrokConfig.getStartupTimeout());
             while (Calendar.getInstance().before(timeout)) {
                 if (processMonitor.isHealthy()) {
-                    LOGGER.info("ngrok process has started with API URL: {}", processMonitor.apiUrl);
+                    LOGGER.info("DEBUG: ngrok process has started with API URL: {}", processMonitor.apiUrl);
 
                     processMonitor.startupError = null;
                     break;
                 } else if (!isRunning()) {
+                    LOGGER.info("DEBUG: breeeeeeeak");
                     break;
                 }
             }
 
             if (!processMonitor.isHealthy()) {
+                LOGGER.info("DEBUG: teardown an unhealthy process");
                 // If the process did not come up in a healthy state, clean up the state
                 stop();
 
                 if (nonNull(processMonitor.startupError)) {
+                    LOGGER.info("DEBUG: error out 1");
                     throw new NgrokException(String.format("The ngrok process errored on start: %s.",
                         processMonitor.startupError), processMonitor.logs, processMonitor.startupError);
                 } else {
+                    LOGGER.info("DEBUG: error out 2");
                     throw new NgrokException("The ngrok process was unable to start.", processMonitor.logs);
                 }
             }
         } catch (final IOException e) {
+            LOGGER.info("DEBUG: error out 3");
             throw new NgrokException("An error occurred while starting ngrok.", e);
         }
     }
@@ -198,7 +203,7 @@ public class NgrokProcess {
      */
     public void stop() {
         if (!isRunning()) {
-            LOGGER.debug("\"ngrokPath\" {} is not running a process", javaNgrokConfig.getNgrokPath());
+            LOGGER.info("\"ngrokPath\" {} is not running a process", javaNgrokConfig.getNgrokPath());
 
             return;
         }
@@ -210,6 +215,7 @@ public class NgrokProcess {
         process.destroy();
         try {
             if (nonNull(processMonitor.reader)) {
+                LOGGER.info("DEBUG: close the monitor thread");
                 processMonitor.reader.close();
             }
         } catch (final IOException e) {
@@ -384,11 +390,13 @@ public class NgrokProcess {
 
                 String line;
                 while (nonNull(line = reader.readLine())) {
-                    logStartupLine(line);
+                    logStartupLine(line + "---first logLine");
 
                     if (isHealthy()) {
+                        LOGGER.info("DEBUG: ngrok process is healthy");
                         break;
                     } else if (nonNull(startupError)) {
+                        LOGGER.info("DEBUG: ngrok process has startup error {}", startupError);
                         alive = false;
                         break;
                     }
@@ -397,9 +405,10 @@ public class NgrokProcess {
                 while (alive && process.isAlive()
                        && javaNgrokConfig.isKeepMonitoring()
                        && nonNull(line = reader.readLine())) {
-                    logLine(line);
+                    logLine(line + "---second logLine");
                 }
 
+                LOGGER.info("DEBUG: ngrok process is no longer alive, but no startup error");
                 alive = false;
             } catch (final IOException e) {
                 throw new NgrokException("An error occurred in the ngrok process.", e);
@@ -434,6 +443,7 @@ public class NgrokProcess {
 
         private boolean isHealthy() {
             if (isNull(apiUrl) || !tunnelStarted || !clientConnected) {
+                LOGGER.info("DEBUG: not healthy cuz apiUrl is null");
                 return false;
             }
 
@@ -457,8 +467,8 @@ public class NgrokProcess {
                 return;
             }
 
-            LOGGER.info("What is happening here 1: {}", ngrokLog.getLvl());
-            LOGGER.info("What is happening here 2: {}", ngrokLog.getErr());
+            LOGGER.info("DEBUG: What is happening here 1: {}", ngrokLog.getLvl());
+            LOGGER.info("DEBUG: What is happening here 2: {}", ngrokLog.getErr());
             if (nonNull(ngrokLog.getLvl()) && ngrokLog.getLvl().equals("ERROR")) {
                 this.startupError = ngrokLog.getErr();
             } else if (nonNull(ngrokLog.getMsg())) {
