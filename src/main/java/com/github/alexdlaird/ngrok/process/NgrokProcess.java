@@ -407,7 +407,7 @@ public class NgrokProcess {
                        && javaNgrokConfig.isKeepMonitoring()
                        && nonNull(line = reader.readLine())) {
                     LOGGER.info("DEBUG: logging second startup line: {}", line);
-                    logLine(lin);
+                    logLine(line);
                 }
 
                 LOGGER.info("DEBUG: ngrok process is no longer alive, but no startup error");
