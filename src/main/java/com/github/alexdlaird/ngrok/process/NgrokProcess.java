@@ -60,9 +60,17 @@ public class NgrokProcess {
 
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokInstaller ngrokInstaller;
+    private final HttpClient httpClient;
+    private final List<NgrokLog> logs = new ArrayList<>();
 
     private Process process;
     private ProcessMonitor processMonitor;
+
+    private String apiUrl;
+    private boolean tunnelStarted;
+    private boolean clientConnected;
+    private String startupError;
+    private BufferedReader reader;
 
     /**
      * If <code>ngrok</code> is not already installed at {@link JavaNgrokConfig#getNgrokPath()}, the given
@@ -71,11 +79,14 @@ public class NgrokProcess {
      *
      * @param javaNgrokConfig The config to use when interacting with the <code>ngrok</code> binary.
      * @param ngrokInstaller  The class used to download and install <code>ngrok</code>.
+     * @param httpClient      The HTTP client.
      */
     public NgrokProcess(final JavaNgrokConfig javaNgrokConfig,
-                        final NgrokInstaller ngrokInstaller) {
+                        final NgrokInstaller ngrokInstaller,
+                        final HttpClient httpClient) {
         this.javaNgrokConfig = Objects.requireNonNull(javaNgrokConfig);
         this.ngrokInstaller = Objects.requireNonNull(ngrokInstaller);
+        this.httpClient = Objects.requireNonNull(httpClient);
 
         if (!Files.exists(javaNgrokConfig.getNgrokPath())) {
             ngrokInstaller.installNgrok(javaNgrokConfig.getNgrokPath(), javaNgrokConfig.getNgrokVersion());
@@ -84,6 +95,17 @@ public class NgrokProcess {
             ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Collections.emptyMap(),
                 javaNgrokConfig.getNgrokVersion());
         }
+    }
+
+    /**
+     * See {@link NgrokProcess#NgrokProcess(JavaNgrokConfig, NgrokInstaller, HttpClient)}.
+     *
+     * @param javaNgrokConfig The config to use when interacting with the <code>ngrok</code> binary.
+     * @param ngrokInstaller  The class used to download and install <code>ngrok</code>.
+     */
+    public NgrokProcess(final JavaNgrokConfig javaNgrokConfig,
+                        final NgrokInstaller ngrokInstaller) {
+        this(javaNgrokConfig, ngrokInstaller, new DefaultHttpClient.Builder().build());
     }
 
     /**
@@ -98,6 +120,13 @@ public class NgrokProcess {
      */
     public ProcessMonitor getProcessMonitor() {
         return processMonitor;
+    }
+
+    /**
+     * Get the <code>ngrok</code> logs.
+     */
+    public List<NgrokLog> getLogs() {
+        return Stream.of(logs.toArray(new NgrokLog[]{})).collect(Collectors.toList());
     }
 
     /**
@@ -155,32 +184,44 @@ public class NgrokProcess {
 
             LOGGER.trace("ngrok process starting");
 
-            processMonitor = new ProcessMonitor(process, javaNgrokConfig);
-            new Thread(processMonitor).start();
+            reader = new BufferedReader(
+                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
 
             final Calendar timeout = Calendar.getInstance();
             timeout.add(Calendar.SECOND, javaNgrokConfig.getStartupTimeout());
             while (Calendar.getInstance().before(timeout)) {
-                if (processMonitor.isHealthy()) {
-                    LOGGER.info("ngrok process has started with API URL: {}", processMonitor.apiUrl);
+                final String line = reader.readLine();
+                if (isNull(line)) {
+                    LOGGER.debug("Empty log line when starting the process, this may or may not be an issue");
 
-                    processMonitor.startupError = null;
+                    break;
                 }
 
-                if (processMonitor.isHealthy() || !isRunning()) {
+                logStartupLine(line);
+
+                if (healthy()) {
+                    LOGGER.info("ngrok process has started with API URL: {}", apiUrl);
+
+                    startupError = null;
+
+                    processMonitor = new ProcessMonitor(this, javaNgrokConfig);
+                    new Thread(processMonitor).start();
+                }
+
+                if (healthy() || !isRunning()) {
                     break;
                 }
             }
 
-            if (!processMonitor.isHealthy()) {
+            if (!healthy()) {
                 // If the process did not come up in a healthy state, clean up the state
                 stop();
 
-                if (nonNull(processMonitor.startupError)) {
+                if (nonNull(startupError)) {
                     throw new NgrokException(String.format("The ngrok process errored on start: %s.",
-                        processMonitor.startupError), processMonitor.logs, processMonitor.startupError);
+                        startupError), logs, startupError);
                 } else {
-                    throw new NgrokException("The ngrok process was unable to start.", processMonitor.logs);
+                    throw new NgrokException("The ngrok process was unable to start.", logs);
                 }
             }
         } catch (final IOException e) {
@@ -189,7 +230,7 @@ public class NgrokProcess {
     }
 
     /**
-     * Check if this object is currently managing a running <code>ngrok</code> process.
+     * Whether this object is currently managing a running <code>ngrok</code> process.
      */
     public boolean isRunning() {
         return nonNull(process) && process.isAlive();
@@ -208,11 +249,13 @@ public class NgrokProcess {
 
         LOGGER.info("Killing ngrok process");
 
-        processMonitor.stop();
+        if (nonNull(processMonitor)) {
+            processMonitor.stop();
+        }
         process.destroy();
         try {
-            if (nonNull(processMonitor.reader)) {
-                processMonitor.reader.close();
+            if (nonNull(reader)) {
+                reader.close();
             }
         } catch (final IOException e) {
             LOGGER.warn("An error occurred when closing \"ProcessMonitor.reader\"", e);
@@ -329,80 +372,127 @@ public class NgrokProcess {
      * @throws JavaNgrokSecurityException The URL was not supported.
      */
     public String getApiUrl() {
-        if (!isRunning() || !processMonitor.isHealthy()) {
+        if (!isRunning() || !healthy()) {
             return null;
         }
 
-        return processMonitor.apiUrl;
+        return apiUrl;
+    }
+
+    private boolean healthy() {
+        if (isNull(apiUrl) || !tunnelStarted || !clientConnected) {
+            return false;
+        }
+
+        if (!apiUrl.toLowerCase().startsWith("http")) {
+            throw new JavaNgrokSecurityException(String.format("URL must start with \"http\": %s", apiUrl));
+        }
+
+        final Response<Tunnels> tunnelsResponse = httpClient.get(String.format("%s/api/tunnels", apiUrl),
+            Tunnels.class);
+        if (tunnelsResponse.getStatusCode() != HTTP_OK) {
+            return false;
+        }
+
+        return nonNull(process) && process.isAlive();
+    }
+
+    private void logStartupLine(final String line) {
+        final NgrokLog ngrokLog = logLine(line);
+
+        if (isNull(ngrokLog)) {
+            return;
+        }
+
+        if (nonNull(ngrokLog.getLvl()) && ngrokLog.getLvl().equals("ERROR")) {
+            this.startupError = ngrokLog.getErr();
+        } else if (nonNull(ngrokLog.getMsg())) {
+            // Log ngrok startup states as they come in
+            if (ngrokLog.getMsg().contains("starting web service") && nonNull(ngrokLog.getAddr())) {
+                this.apiUrl = String.format("http://%s", ngrokLog.getAddr());
+            } else if (ngrokLog.getMsg().contains("tunnel session started")) {
+                this.tunnelStarted = true;
+            } else if (ngrokLog.getMsg().contains("client session established")) {
+                this.clientConnected = true;
+            }
+        }
+    }
+
+    private NgrokLog logLine(final String line) {
+        final NgrokLog ngrokLog = new NgrokLog(line);
+
+        if (isBlank(ngrokLog.getLine())) {
+            return null;
+        }
+
+        ngrokLog(ngrokLog);
+        logs.add(ngrokLog);
+        if (logs.size() > javaNgrokConfig.getMaxLogs()) {
+            logs.remove(0);
+        }
+
+        if (nonNull(javaNgrokConfig.getLogEventCallback())) {
+            javaNgrokConfig.getLogEventCallback().apply(ngrokLog);
+        }
+
+        return ngrokLog;
+    }
+
+    private void ngrokLog(final NgrokLog ngrokLog) {
+        switch (ngrokLog.getLvl()) {
+            case "ERROR":
+                LOGGER.error(ngrokLog.getLine());
+                break;
+            case "WARN":
+                LOGGER.warn(ngrokLog.getLine());
+                break;
+            case "DEBUG":
+                LOGGER.debug(ngrokLog.getLine());
+                break;
+            case "TRACE":
+                LOGGER.trace(ngrokLog.getLine());
+                break;
+            case "INFO":
+            default:
+                LOGGER.info(ngrokLog.getLine());
+        }
     }
 
     /**
-     * A Runnable that monitors the <code>ngrok</code> thread.
+     * A Runnable that monitors the <code>ngrok</code> process.
      */
     public static class ProcessMonitor implements Runnable {
 
-        private final List<NgrokLog> logs = new ArrayList<>();
-
-        private final Process process;
+        private final NgrokProcess ngrokProcess;
         private final JavaNgrokConfig javaNgrokConfig;
-        private final HttpClient httpClient;
 
         private boolean alive = true;
-
-        private String apiUrl;
-        private boolean tunnelStarted;
-        private boolean clientConnected;
-        private String startupError;
-        private BufferedReader reader;
 
         /**
          * Construct to monitor a {link @Process} monitor.
          *
-         * @param process         The Process to monitor.
+         * @param ngrokProcess    The Process to monitor.
          * @param javaNgrokConfig The config to use when monitoring the Process.
          */
-        public ProcessMonitor(final Process process,
+        public ProcessMonitor(final NgrokProcess ngrokProcess,
                               final JavaNgrokConfig javaNgrokConfig) {
-            this(process, javaNgrokConfig, new DefaultHttpClient.Builder().build());
-        }
-
-        /**
-         * Construct to monitor a {@link Process} monitor with a custom {@link HttpClient}.
-         *
-         * @param process         The Process to monitor.
-         * @param javaNgrokConfig The config to use when monitoring the Process.
-         * @param httpClient      The custom HTTP client.
-         */
-        protected ProcessMonitor(final Process process,
-                                 final JavaNgrokConfig javaNgrokConfig,
-                                 final HttpClient httpClient) {
-            this.process = Objects.requireNonNull(process);
+            this.ngrokProcess = Objects.requireNonNull(ngrokProcess);
             this.javaNgrokConfig = Objects.requireNonNull(javaNgrokConfig);
-            this.httpClient = Objects.requireNonNull(httpClient);
         }
 
         @Override
         public void run() {
             try {
-                reader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+                while (alive && ngrokProcess.process.isAlive()
+                       && javaNgrokConfig.isKeepMonitoring()) {
+                    final String line = ngrokProcess.reader.readLine();
+                    if (isNull(line)) {
+                        LOGGER.debug("Output from process is empty, nothing to log");
 
-                String line;
-                while (nonNull(line = reader.readLine())) {
-                    logStartupLine(line);
-
-                    if (isHealthy()) {
-                        break;
-                    } else if (nonNull(startupError)) {
-                        alive = false;
-                        break;
+                        continue;
                     }
-                }
 
-                while (alive && process.isAlive()
-                       && javaNgrokConfig.isKeepMonitoring()
-                       && nonNull(line = reader.readLine())) {
-                    logLine(line);
+                    ngrokProcess.logLine(line);
                 }
 
                 alive = false;
@@ -412,16 +502,7 @@ public class NgrokProcess {
         }
 
         /**
-         * Get the <code>ngrok</code> logs.
-         */
-        public List<NgrokLog> getLogs() {
-            return Collections.unmodifiableList(
-                Stream.of(logs.toArray(new NgrokLog[]{}))
-                      .collect(Collectors.toList()));
-        }
-
-        /**
-         * Get whether the thread is continuing to monitor <code>ngrok</code> logs.
+         * Whether the thread is continuing to monitor <code>ngrok</code> logs.
          */
         public boolean isMonitoring() {
             return alive;
@@ -439,83 +520,14 @@ public class NgrokProcess {
             this.alive = false;
         }
 
-        private boolean isHealthy() {
-            if (isNull(apiUrl) || !tunnelStarted || !clientConnected) {
-                return false;
-            }
-
-            if (!apiUrl.toLowerCase().startsWith("http")) {
-                throw new JavaNgrokSecurityException(String.format("URL must start with \"http\": %s", apiUrl));
-            }
-
-            final Response<Tunnels> tunnelsResponse = httpClient.get(String.format("%s/api/tunnels", apiUrl),
-                Tunnels.class);
-            if (tunnelsResponse.getStatusCode() != HTTP_OK) {
-                return false;
-            }
-
-            return nonNull(process) && process.isAlive();
-        }
-
-        private void logStartupLine(final String line) {
-            final NgrokLog ngrokLog = logLine(line);
-
-            if (isNull(ngrokLog)) {
-                return;
-            }
-
-            if (nonNull(ngrokLog.getLvl()) && ngrokLog.getLvl().equals("ERROR")) {
-                this.startupError = ngrokLog.getErr();
-            } else if (nonNull(ngrokLog.getMsg())) {
-                // Log ngrok startup states as they come in
-                if (ngrokLog.getMsg().contains("starting web service") && nonNull(ngrokLog.getAddr())) {
-                    this.apiUrl = String.format("http://%s", ngrokLog.getAddr());
-                } else if (ngrokLog.getMsg().contains("tunnel session started")) {
-                    this.tunnelStarted = true;
-                } else if (ngrokLog.getMsg().contains("client session established")) {
-                    this.clientConnected = true;
-                }
-            }
-        }
-
-        private NgrokLog logLine(final String line) {
-            final NgrokLog ngrokLog = new NgrokLog(line);
-
-            if (isBlank(ngrokLog.getLine())) {
-                return null;
-            }
-
-            ngrokLog(ngrokLog);
-            logs.add(ngrokLog);
-            if (logs.size() > javaNgrokConfig.getMaxLogs()) {
-                logs.remove(0);
-            }
-
-            if (nonNull(javaNgrokConfig.getLogEventCallback())) {
-                javaNgrokConfig.getLogEventCallback().apply(ngrokLog);
-            }
-
-            return ngrokLog;
-        }
-
-        private void ngrokLog(final NgrokLog ngrokLog) {
-            switch (ngrokLog.getLvl()) {
-                case "ERROR":
-                    LOGGER.error(ngrokLog.getLine());
-                    break;
-                case "WARN":
-                    LOGGER.warn(ngrokLog.getLine());
-                    break;
-                case "DEBUG":
-                    LOGGER.debug(ngrokLog.getLine());
-                    break;
-                case "TRACE":
-                    LOGGER.trace(ngrokLog.getLine());
-                    break;
-                case "INFO":
-                default:
-                    LOGGER.info(ngrokLog.getLine());
-            }
+        /**
+         * Get the <code>ngrok</code> logs.
+         *
+         * @deprecated Use {@link NgrokProcess#getLogs()} instead.
+         */
+        @Deprecated
+        public List<NgrokLog> getLogs() {
+            return ngrokProcess.getLogs();
         }
     }
 }

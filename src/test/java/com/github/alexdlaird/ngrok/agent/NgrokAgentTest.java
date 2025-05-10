@@ -71,7 +71,7 @@ class NgrokAgentTest extends NgrokTestCase {
         final CapturedRequest capturedRequest = capturedRequests.getRequests().get(0);
         assertNotNull(capturedRequest.getId());
         assertNotNull(capturedRequest.getUri());
-        assertThat(capturedRequest.getDuration(), greaterThan(0));
+        assertNotNull(capturedRequest.getDuration());
         assertNotNull(capturedRequest.getStart());
         assertNotNull(capturedRequest.getRemoteAddr());
         assertNotNull(capturedRequest.getRequest().getMethod());

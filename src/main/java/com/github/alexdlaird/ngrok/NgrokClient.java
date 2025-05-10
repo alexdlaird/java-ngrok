@@ -336,6 +336,9 @@ public class NgrokClient {
     /**
      * Disconnect the <code>ngrok</code> tunnel for the given URL, if open.
      *
+     * <p>If <code>ngrok</code> is not running, calling this method will first start a process with
+     * {@link JavaNgrokConfig}.
+     *
      * @param publicUrl The public URL of the tunnel to disconnect.
      * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
      * @throws JavaNgrokSecurityException The URL was not supported.

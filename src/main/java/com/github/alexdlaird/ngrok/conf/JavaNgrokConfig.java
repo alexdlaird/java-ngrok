@@ -93,7 +93,7 @@ public class JavaNgrokConfig {
     }
 
     /**
-     * Get whether the <code>ngrok</code> process will continue to be monitored after it finishes starting up.
+     * Whether the <code>ngrok</code> process will continue to be monitored after it finishes starting up.
      */
     public boolean isKeepMonitoring() {
         return keepMonitoring;
