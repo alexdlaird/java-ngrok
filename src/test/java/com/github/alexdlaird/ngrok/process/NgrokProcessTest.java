@@ -10,26 +10,19 @@ import com.github.alexdlaird.exception.NgrokException;
 import com.github.alexdlaird.ngrok.NgrokTestCase;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
-import java.util.function.Function;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
-import static java.util.Objects.isNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 
 public class NgrokProcessTest extends NgrokTestCase {
     @Test
@@ -52,21 +45,15 @@ public class NgrokProcessTest extends NgrokTestCase {
             .build();
         ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(), Map.of("web_addr",
             ngrokProcessV2.getApiUrl().substring(7)), javaNgrokConfig2.getNgrokVersion());
+        Thread.sleep(3000);
 
         // WHEN
-        NgrokException exception = null;
-        String error = null;
-        for (int i = 0; isNull(error) && i < 10; ++i) {
-            Thread.sleep(1000);
-
-            ngrokProcessV2_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
-            exception = assertThrows(NgrokException.class, ngrokProcessV2_2::start);
-            error = exception.getNgrokError();
-        }
+        ngrokProcessV2_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+        final NgrokException exception = assertThrows(NgrokException.class, ngrokProcessV2_2::start);
 
         // THEN
         assertNotNull(exception);
-        assertNotNull(error);
+        assertNotNull(exception.getNgrokError());
         if (NgrokInstaller.getSystem().equals(WINDOWS)) {
             assertThat(exception.getMessage(), containsString("bind: Only one usage of each socket address"));
             assertThat(exception.getNgrokError(), containsString("bind: Only one usage of each socket address"));
@@ -97,21 +84,15 @@ public class NgrokProcessTest extends NgrokTestCase {
             .build();
         ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(),
             Map.of("web_addr", ngrokProcessV3.getApiUrl().substring(7)), javaNgrokConfigV3.getNgrokVersion());
+        Thread.sleep(3000);
 
         // WHEN
-        NgrokException exception = null;
-        String error = null;
-        for (int i = 0; isNull(error) && i < 15; ++i) {
-            Thread.sleep(1000);
-
-            ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
-            exception = assertThrows(NgrokException.class, ngrokProcessV3_2::start);
-            error = exception.getNgrokError();
-        }
+        ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+        final NgrokException exception = assertThrows(NgrokException.class, ngrokProcessV3_2::start);
 
         // THEN
         assertNotNull(exception);
-        assertNotNull(error);
+        assertNotNull(exception.getNgrokError());
         if (NgrokInstaller.getSystem().equals(WINDOWS)) {
             assertThat(exception.getMessage(), containsString("bind: Only one usage of each socket address"));
             assertThat(exception.getNgrokError(), containsString("bind: Only one usage of each socket address"));
