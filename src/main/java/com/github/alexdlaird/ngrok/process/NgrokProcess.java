@@ -443,7 +443,7 @@ public class NgrokProcess {
 
         private boolean isHealthy() {
             if (isNull(apiUrl) || !tunnelStarted || !clientConnected) {
-                LOGGER.info("DEBUG: not healthy cuz apiUrl is null");
+//                LOGGER.info("DEBUG: not healthy cuz apiUrl is null");
                 return false;
             }
 
