@@ -390,7 +390,8 @@ public class NgrokProcess {
 
                 String line;
                 while (nonNull(line = reader.readLine())) {
-                    logStartupLine(line + "---first logLine");
+                    LOGGER.info("DEBUG: logging first startup line: {}", line);
+                    logStartupLine(line);
 
                     if (isHealthy()) {
                         LOGGER.info("DEBUG: ngrok process is healthy");
@@ -405,7 +406,8 @@ public class NgrokProcess {
                 while (alive && process.isAlive()
                        && javaNgrokConfig.isKeepMonitoring()
                        && nonNull(line = reader.readLine())) {
-                    logLine(line + "---second logLine");
+                    LOGGER.info("DEBUG: logging second startup line: {}", line);
+                    logLine(lin);
                 }
 
                 LOGGER.info("DEBUG: ngrok process is no longer alive, but no startup error");
