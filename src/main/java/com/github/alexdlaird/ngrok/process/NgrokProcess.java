@@ -173,7 +173,8 @@ public class NgrokProcess {
                     processMonitor.startupError = null;
                     break;
                 } else if (!isRunning()) {
-                    LOGGER.info("DEBUG: breeeeeeeak");
+                    LOGGER.info("DEBUG: breeeeeeeak because {} and {}", process,process != null ? process.isAlive() :
+                                                                                null);
                     break;
                 }
             }
@@ -405,20 +406,22 @@ public class NgrokProcess {
                         LOGGER.info("DEBUG: ngrok process is healthy");
                         break;
                     } else if (nonNull(startupError)) {
-                        LOGGER.info("DEBUG: ngrok process has startup error {}", startupError);
+                        LOGGER.info("DEBUG: ngrok process has startup error, alive=false {}", startupError);
                         alive = false;
                         break;
                     }
                 }
 
-                while (alive && process.isAlive()
+                LOGGER.info("DEBUG: fell out of first startup loop");
+
+                while (alive //&& process.isAlive()
                        && javaNgrokConfig.isKeepMonitoring()
                        && nonNull(line = reader.readLine())) {
                     LOGGER.info("DEBUG: logging second startup line: {}", line);
                     logLine(line);
                 }
 
-                LOGGER.info("DEBUG: ngrok process is no longer alive, but no startup error");
+                LOGGER.info("DEBUG: fell out of second startup loop, alive=false");
                 alive = false;
             } catch (final IOException e) {
                 throw new NgrokException("An error occurred in the ngrok process.", e);
@@ -448,7 +451,7 @@ public class NgrokProcess {
          * its logs.
          */
         public void stop() {
-            LOGGER.info("DEBUG: someone called stop");
+            LOGGER.info("DEBUG: someone called stop, alive=false");
             this.alive = false;
         }
 
@@ -478,9 +481,8 @@ public class NgrokProcess {
                 return;
             }
 
-            LOGGER.info("DEBUG: What is happening here 1: {}", ngrokLog.getLvl());
-            LOGGER.info("DEBUG: What is happening here 2: {}", ngrokLog.getErr());
             if (nonNull(ngrokLog.getLvl()) && ngrokLog.getLvl().equals("ERROR")) {
+                LOGGER.info("DEBUG: here we log startup error");
                 this.startupError = ngrokLog.getErr();
             } else if (nonNull(ngrokLog.getMsg())) {
                 // Log ngrok startup states as they come in
