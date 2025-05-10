@@ -149,7 +149,15 @@ public class NgrokProcess {
         processBuilder.command(command);
         try {
             process = processBuilder.start();
-            Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    LOGGER.info("DEBUG: let's wait a bit first");
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                stop();
+            }));
 
             LOGGER.info("ngrok process starting with PID: {}", process.pid());
 
@@ -208,7 +216,7 @@ public class NgrokProcess {
             return;
         }
 
-        LOGGER.info("Killing ngrok process: {}", process.pid());
+        LOGGER.info("DEBUG: Killing ngrok process: {}", process.pid());
 
         processMonitor.stop();
         process.descendants().forEach(ProcessHandle::destroy);
@@ -440,6 +448,7 @@ public class NgrokProcess {
          * its logs.
          */
         public void stop() {
+            LOGGER.info("DEBUG: someone called stop");
             this.alive = false;
         }
 
