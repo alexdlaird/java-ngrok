@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - [`NgrokClient.api()`](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.3.11/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#api()), allowing `api` commands to be executed from the agent.
 - [Agent interface](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.11/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/agent/NgrokAgent.html), which provides access to Captured Requests and agent status.
-- Adding [`slf4j`](https://www.slf4j.org/) dependency, making logging improvements.
+- [`slf4j`](https://www.slf4j.org/) dependency, making logging improvements.
 - Stability improvements.
 - Documentation improvements.
 
@@ -414,7 +414,7 @@ on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/j
 
 - [`NgrokClient.api()`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.16/com/github/alexdlaird/ngrok/NgrokClient.html#api--), allowing `api` commands to be executed from the agent.
 - [Agent interface](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.16/com/github/alexdlaird/ngrok/agent/NgrokAgent.html), which provides access to Captured Requests and agent status.
-- Adding [`slf4j`](https://www.slf4j.org/) dependency, making logging improvements.
+- [`slf4j`](https://www.slf4j.org/) dependency, making logging improvements.
 - Stability improvements.
 - Documentation improvements.
 
