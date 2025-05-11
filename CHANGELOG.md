@@ -420,11 +420,11 @@ on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/j
 
 ### Changed
 
-- `NgrokLog.lvl` now consistently parses `ERR` and `EROR` to `ERROR` instead of `SEVERE`.
+- `NgrokLog.lvl` now consistently parses `ERR`, `EROR`, and `CRIT` to `ERROR` instead of `SEVERE`.
 
 ### Fixed
 
-- `NgrokLog.lvl` now properly parses `CRIT` `CRITICAL`, distinguishing from `ERROR`.
+- Refactored concurrency around `ProcessMonitor` and startup logging, as the old design could lead to race conditions when startup errored.
 - `NgrokLog` string may contain a malformed or empty `lvl`. Default is now `NOTSET` in such cases.
 
 ## [1.4.15](https://github.com/alexdlaird/java-ngrok/compare/1.4.14...1.4.15) - 2025-05-07
