@@ -140,6 +140,11 @@ public class NgrokProcess {
             return;
         }
 
+        apiUrl = null;
+        tunnelStarted = false;
+        clientConnected = false;
+        processMonitor = null;
+
         if (!Files.exists(javaNgrokConfig.getNgrokPath())) {
             throw new NgrokException(String.format("ngrok binary was not found. "
                                                    + "Be sure to call \"NgrokInstaller.installNgrok()\" first for "
