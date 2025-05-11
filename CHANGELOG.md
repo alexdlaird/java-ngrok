@@ -412,7 +412,7 @@ on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/j
 
 ### Added
 
-- [`NgrokClient.api()`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.16/com/github/alexdlaird/ngrok/NgrokClient.html#api--), allowing `api` commands to be executed from the agent.
+- [`NgrokClient.api()`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.16/com/github/alexdlaird/ngrok/NgrokClient.html#api-java.util.List-), allowing `api` commands to be executed from the agent.
 - [Agent interface](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.16/com/github/alexdlaird/ngrok/agent/NgrokAgent.html), which provides access to Captured Requests and agent status.
 - [`slf4j`](https://www.slf4j.org/) dependency, making logging improvements.
 - Stability improvements.
