@@ -6,7 +6,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.11...HEAD)
 
-## [2.3.11](https://github.com/alexdlaird/java-ngrok/compare/2.3.10...2.3.11) - 2025-05-09
+## [2.3.11](https://github.com/alexdlaird/java-ngrok/compare/2.3.10...2.3.11) - 2025-05-11
 
 ### Added
 
@@ -408,7 +408,7 @@ The `1.4.x` branch is where support for Java 8 of `java-ngrok` was maintained. I
 the `java8-ngrok` artifact
 on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok).
 
-## [1.4.16](https://github.com/alexdlaird/java-ngrok/compare/1.4.15...1.4.16) - 2025-05-09
+## [1.4.16](https://github.com/alexdlaird/java-ngrok/compare/1.4.15...1.4.16) - 2025-05-11
 
 ### Added
 
