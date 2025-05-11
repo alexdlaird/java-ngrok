@@ -77,7 +77,7 @@ to use a tunnel defined in `ngrok`'s config file), [as documented here](https://
 
 ### `ngrok`'s API
 
-The [`api`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.16/com/github/alexdlaird/ngrok/NgrokClient.html#api-) method allows us to use the local
+The [`api`](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.16/com/github/alexdlaird/ngrok/NgrokClient.html#api-java.util.List-) method allows us to use the local
 `ngrok` agent to make requests against [the `ngrok` API](https://ngrok.com/docs/agent/cli-api/), if we
 have [set an API key](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.16/com/github/alexdlaird/ngrok/NgrokClient.html#setApiKey-java.lang.String-).
 For example, here we reserve a `ngrok` domain, then create a Cloud Endpoint with an associated traffic policy:
