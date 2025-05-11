@@ -150,8 +150,6 @@ public class NgrokProcessTest extends NgrokTestCase {
         // GIVEN
         ngrokProcessV3.start();
         assertTrue(ngrokProcessV3.isRunning());
-
-        // WHEN
         final ProcessHandle processHandle = ProcessHandle.allProcesses()
                                                          .filter(p -> p.info()
                                                                        .command()
@@ -159,9 +157,9 @@ public class NgrokProcessTest extends NgrokTestCase {
                                                                        .contains(
                                                                            javaNgrokConfigV3.getNgrokPath().toString()))
                                                          .findFirst().orElse(null);
-
-        // THEN
         assertNotNull(processHandle);
+
+        // THEN Kill the process by external means, java-ngrok will clean up the state
         processHandle.destroy();
         long timeoutTime = System.currentTimeMillis() + 10 * 1000;
         while (processHandle.isAlive() && ngrokProcessV3.isRunning() && System.currentTimeMillis() < timeoutTime) {
