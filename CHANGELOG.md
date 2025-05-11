@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- [`NgrokClient.api()`](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.3.11/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#api()), allowing `api` commands to be executed from the agent.
+- [`NgrokClient.api()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.11/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#api()), allowing `api` commands to be executed from the agent.
 - [Agent interface](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.11/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/agent/NgrokAgent.html), which provides access to Captured Requests and agent status.
 - [`slf4j`](https://www.slf4j.org/) dependency, making logging improvements.
 - Stability improvements.
@@ -29,7 +29,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- Support for `pooling_enabled` in [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.3.10/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withPoolingEnabled(java.lang.Boolean)), which allows for the use of `https` and `tls` [Internal Endpoints](https://ngrok.com/docs/universal-gateway/internal-endpoints/).
+- Support for `pooling_enabled` in [CreateTunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.10/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withPoolingEnabled(java.lang.Boolean)), which allows for the use of `https` and `tls` [Internal Endpoints](https://ngrok.com/docs/universal-gateway/internal-endpoints/).
 - Stability improvements around concurrency, process execution.
 - Documentation improvements.
 - Test improvements.
@@ -103,7 +103,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
-- [NgrokProcess.ProcessMonitor.stop()](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.3.2/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/process/NgrokProcess.ProcessMonitor.html#stop()) is now public (it was already documented as such).
+- [NgrokProcess.ProcessMonitor.stop()](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.2/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/process/NgrokProcess.ProcessMonitor.html#stop()) is now public (it was already documented as such).
 
 ## [2.3.1](https://github.com/alexdlaird/java-ngrok/compare/2.3.0...2.3.1) - 2024-11-04
 
@@ -117,11 +117,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Added
 
 - Support for `domain` configuration when
-  building [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.3.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withDomain(java.lang.String)).
+  building [CreateTunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withDomain(java.lang.String)).
 - Support for `user_agent_filter` configuration when
-  building [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.3.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withUserAgentFilter(com.github.alexdlaird.ngrok.protocol.TunnelUserAgentFilter)).
+  building [CreateTunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withUserAgentFilter(com.github.alexdlaird.ngrok.protocol.TunnelUserAgentFilter)).
 - Support for `policy` configuration when
-  building [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.3.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withPolicy(com.github.alexdlaird.ngrok.protocol.TunnelPolicy)).
+  building [CreateTunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withPolicy(com.github.alexdlaird.ngrok.protocol.TunnelPolicy)).
 - `us-cal-1`
   to [Region](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.3.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/Region.html).
 - Test cases for TLS tunnels.
@@ -180,7 +180,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
-- Moved evaluation of HTTP `GET` retry logic from `DefaultHttpClient`'s [`getInputStream()`](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.2.10/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html#getInputStream(java.net.HttpURLConnection,java.lang.String,java.lang.String,java.util.Map)) to [`get()`](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.2.10/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html#get(java.lang.String,java.util.List,java.util.Map,java.nio.file.Path,int)).
+- Moved evaluation of HTTP `GET` retry logic from `DefaultHttpClient`'s [`getInputStream()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.10/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html#getInputStream(java.net.HttpURLConnection,java.lang.String,java.lang.String,java.util.Map)) to [`get()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.2.10/com.github.alexdlaird.ngrok/com/github/alexdlaird/http/DefaultHttpClient.html#get(java.lang.String,java.util.List,java.util.Map,java.nio.file.Path,int)).
 - Build and stability improvements.
 
 ## [2.2.9](https://github.com/alexdlaird/java-ngrok/compare/2.2.8...2.2.9) - 2024-02-14
@@ -277,9 +277,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Added
 
 - Support for `oauth` configuration when
-  building [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.1.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html).
+  building [CreateTunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.1.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html).
 - Support for other new `ngrok`
-  v3 [CreateTunnel](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.1.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html)
+  v3 [CreateTunnel](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/2.1.0/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html)
   parameters,
   including `circuit_breaker`, `compression`, `mutual_tls_cas`, `proxy_proto`, `websocket_tcp_converter`, `terminate_at`, `request_header`, `response_header`, `ip_restrictions`,
   and `verify_webhook`.
@@ -554,12 +554,12 @@ on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/j
 - Support
   for [`ngrok`'s tunnel definitions](https://ngrok.com/docs/agent/config/v2/#tunnel-configurations)
   when
-  calling [NgrokClient.connect()](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/1.1.0/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)).
+  calling [NgrokClient.connect()](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.1.0/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)).
   If a tunnel definition in `ngrok`'s config matches the given `name`, it will be used to start the tunnel.
 - Support for
   a [`ngrok` tunnel definition](https://ngrok.com/docs/agent/config/v2/#tunnel-configurations)
   named "java-ngrok-default" when
-  calling [NgrokClient.connect()](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/1.1.0/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)).
+  calling [NgrokClient.connect()](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.1.0/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)).
   When `name` is `None` and a "java-ngrok-default" tunnel definition exists it `ngrok`'s config, it will be used.
 - `refreshMetrics()`
   to [NgrokClient](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.1.0/com/github/alexdlaird/ngrok/NgrokClient.html).
