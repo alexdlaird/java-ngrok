@@ -97,6 +97,7 @@ import static java.util.Objects.nonNull;
  * {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
  * <code>https</code> tunnel will be returned.
  * <h3><code>ngrok</code>'s API</h3>
+ *
  * <p>The {@link NgrokClient#api(List) api()} method allows us to use the local <code>ngrok</code> agent to make
  * requests against <a href="https://ngrok.com/docs/agent/cli-api/" target="_blank">the <code>ngrok</code> API</a>,
  * if we have {@link NgrokClient#setApiKey(String) set an API key}. For example, here we reserve a ngrok domain, then
