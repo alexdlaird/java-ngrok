@@ -297,7 +297,7 @@ class NgrokInstallerTest extends NgrokTestCase {
     }
 
     @Test
-    public void testGetNgrokCDNUrlMacARM() {
+    public void testGetNgrokCDNUrlMacARM64() {
         // GIVEN
         mockSystemProperty("os.name", "macOS");
         mockSystemProperty("os.arch", "aarch64");
@@ -310,7 +310,7 @@ class NgrokInstallerTest extends NgrokTestCase {
     }
 
     @Test
-    public void testGetNgrokCDNUrlWindowsi386() {
+    public void testGetNgrokCDNUrlWindows32() {
         // GIVEN
         mockSystemProperty("os.name", "Windows 10");
         mockSystemProperty("os.arch", "i386");
@@ -333,6 +333,19 @@ class NgrokInstallerTest extends NgrokTestCase {
 
         // THEN
         assertEquals(NgrokV3CDNUrl.LINUX_x86_64_arm, ngrokCDNUrl);
+    }
+
+    @Test
+    public void testGetNgrokCDNUrlFreeBSD64() {
+        // GIVEN
+        mockSystemProperty("os.name", "FreeBSD");
+        mockSystemProperty("os.arch", "x86_64");
+
+        // WHEN
+        final NgrokCDNUrl ngrokCDNUrl = ngrokInstaller.getNgrokCDNUrl();
+
+        // THEN
+        assertEquals(NgrokV3CDNUrl.FREEBSD_x86_64, ngrokCDNUrl);
     }
 
     @Test
