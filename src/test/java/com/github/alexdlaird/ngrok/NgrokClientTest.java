@@ -870,6 +870,7 @@ class NgrokClientTest extends NgrokTestCase {
         final NgrokClient ngrokClient2 = new NgrokClient.Builder().withJavaNgrokConfig(javaNgrokConfig2)
                                                                   .withNgrokInstaller(ngrokInstaller)
                                                                   .build();
+        ngrokProcessV3_2 = ngrokClient2.getNgrokProcess();
 
         // WHEN
         final CreateTunnel createHttpTunnel = new CreateTunnel.Builder().withNgrokVersion(NgrokVersion.V3)
