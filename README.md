@@ -23,7 +23,7 @@ it's made even more powerful with native Java integration through the `java-ngro
 on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok).
 
 If we want `ngrok` to be available from the command
-line, [pyngrok](https://pyngrok.readthedocs.io/en/latest/#installation)
+line, [`pyngrok`](https://pyngrok.readthedocs.io/en/latest/#installation)
 can be installed using `pip` to manage that for us.
 
 ## Basic Usage
@@ -80,7 +80,7 @@ file), [as documented here](https://javadoc.io/doc/com.github.alexdlaird/java-ng
 
 ### `ngrok`'s API
 
-The [`api()`](https://javadoc.io/static/com.github.alexdlaird/java-ngrok/2.3.11/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#api(java.util.List)) method allows us to use the local
+The [`api()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#api(java.util.List)) method allows us to use the local
 `ngrok` agent to make requests against [the `ngrok` API](https://ngrok.com/docs/agent/cli-api/), if we
 have [set an API key](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#setApiKey(java.lang.String)).
 For example, here we reserve a `ngrok` domain, then create a Cloud Endpoint with an associated traffic policy:
@@ -101,7 +101,7 @@ final ApiResponse endpointResponse = ngrokClient.api(
 
 ### Command Line Usage
 
-Assuming we have also installed [pyngrok](https://pyngrok.readthedocs.io/en/latest/#installation), all features of
+Assuming we have also installed [`pyngrok`](https://pyngrok.readthedocs.io/en/latest/#installation), all features of
 `ngrok` are available
 on the command line.
 
@@ -116,6 +116,12 @@ see [`ngrok`'s official documentation](https://ngrok.com/docs/agent/cli/).
 
 For more advanced usage, `java-ngrok`'s official documentation is available
 at [https://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok).
+
+### Integration Examples
+
+- [Spring](https://github.com/alexdlaird/java-ngrok-example-spring)
+- [Dropwizard](https://github.com/alexdlaird/java-ngrok-example-dropwizard)
+- [Play (Scala)](https://github.com/alexdlaird/java-ngrok-example-play)
 
 ### Java 8
 

@@ -5,8 +5,8 @@ If you find issues, [report them on GitHub](https://github.com/alexdlaird/java-n
 
 If you would like to contribute to the code, the process is pretty simple:
 
-1. Familiarise yourself with this package, [java-ngrok's APIs](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok)
-   and other documentation, and [ngrok's documentation](https://ngrok.com/docs).
+1. Familiarise yourself with this package, [`java-ngrok`'s APIs](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok)
+   and other documentation, and [`ngrok`'s documentation](https://ngrok.com/docs).
 2. Fork [the repository on GitHub](https://github.com/alexdlaird/java-ngrok) and start implementing changes.
 3. Write a test that plainly validates the changes made.
 4. Build and test locally with ``make local`` and ``make test``.
