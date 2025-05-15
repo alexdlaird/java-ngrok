@@ -117,6 +117,12 @@ see [`ngrok`'s official documentation](https://ngrok.com/docs/agent/cli/).
 For more advanced usage, `java-ngrok`'s official documentation is available
 at [https://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok).
 
+### Integration Examples
+
+- [Spring](https://github.com/alexdlaird/java-ngrok-example-spring)
+- [Dropwizard](https://github.com/alexdlaird/java-ngrok-example-dropwizard)
+- [Play (Scala)](https://github.com/alexdlaird/java-ngrok-example-play)
+
 ### Java 8
 
 [![Version](https://img.shields.io/maven-central/v/com.github.alexdlaird/java8-ngrok)](https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok)
