@@ -13,7 +13,9 @@ import com.github.alexdlaird.ngrok.NgrokTestCase;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -175,21 +177,48 @@ class NgrokInstallerTest extends NgrokTestCase {
     }
 
     @Test
-    public void testGetNgrokBinaryMac() {
+    public void testGetDefaultNgrokDirMac() {
         // GIVEN
-        mockSystemProperty("os.name", "Mac OS X");
+        mockSystemProperty("os.name", "macOS");
+        mockSystemProperty("user.home", "/my/user/home");
 
         // WHEN
-        final String ngrokBin = NgrokInstaller.getNgrokBin();
+        final Path defaultConfigPath = NgrokInstaller.getDefaultNgrokDir();
 
         // THEN
-        assertEquals("ngrok", ngrokBin);
+        assertEquals("/my/user/home/Library/Application Support/ngrok", defaultConfigPath.toString());
     }
 
     @Test
-    public void testGetNgrokBinaryFreeBSD() {
+    public void testGetDefaultNgrokDirWindows() {
         // GIVEN
-        mockSystemProperty("os.name", "FreeBSD");
+        mockSystemProperty("os.name", "Windows 10");
+        mockSystemProperty("user.home", "/my/user/home");
+
+        // WHEN
+        final Path defaultConfigPath = NgrokInstaller.getDefaultNgrokDir();
+
+        // THEN
+        assertEquals("/my/user/home/AppData/Local/ngrok", defaultConfigPath.toString());
+    }
+
+    @Test
+    public void testGetDefaultNgrokDirUnix() {
+        // GIVEN
+        mockSystemProperty("os.name", "Linux");
+        mockSystemProperty("user.home", "/my/user/home");
+
+        // WHEN
+        final Path defaultConfigPath = NgrokInstaller.getDefaultNgrokDir();
+
+        // THEN
+        assertEquals("/my/user/home/.config/ngrok", defaultConfigPath.toString());
+    }
+
+    @Test
+    public void testGetNgrokBinaryMac() {
+        // GIVEN
+        mockSystemProperty("os.name", "macOS");
 
         // WHEN
         final String ngrokBin = NgrokInstaller.getNgrokBin();
@@ -211,9 +240,45 @@ class NgrokInstallerTest extends NgrokTestCase {
     }
 
     @Test
-    public void testGetNgrokBinaryCygwin() {
+    public void testGetNgrokBinaryLinux() {
+        // GIVEN
+        mockSystemProperty("os.name", "Linux");
+
+        // WHEN
+        final String ngrokBin = NgrokInstaller.getNgrokBin();
+
+        // THEN
+        assertEquals("ngrok", ngrokBin);
+    }
+
+    @Test
+    public void testGetNgrokBinaryFreeBSD() {
+        // GIVEN
+        mockSystemProperty("os.name", "FreeBSD");
+
+        // WHEN
+        final String ngrokBin = NgrokInstaller.getNgrokBin();
+
+        // THEN
+        assertEquals("ngrok", ngrokBin);
+    }
+
+    @Test
+    public void testGetNgrokBinaryCygwinIsWindows() {
         // GIVEN
         mockSystemProperty("os.name", "Cygwin NT");
+
+        // WHEN
+        final String ngrokBin = NgrokInstaller.getNgrokBin();
+
+        // THEN
+        assertEquals("ngrok.exe", ngrokBin);
+    }
+
+    @Test
+    public void testGetNgrokBinaryMinGWIsWindows() {
+        // GIVEN
+        mockSystemProperty("os.name", "MinGW NT");
 
         // WHEN
         final String ngrokBin = NgrokInstaller.getNgrokBin();
@@ -232,6 +297,19 @@ class NgrokInstallerTest extends NgrokTestCase {
     }
 
     @Test
+    public void testGetNgrokCDNUrlMacARM() {
+        // GIVEN
+        mockSystemProperty("os.name", "macOS");
+        mockSystemProperty("os.arch", "aarch64");
+
+        // WHEN
+        final NgrokCDNUrl ngrokCDNUrl = ngrokInstaller.getNgrokCDNUrl();
+
+        // THEN
+        assertEquals(NgrokV3CDNUrl.DARWIN_x86_64_arm, ngrokCDNUrl);
+    }
+
+    @Test
     public void testGetNgrokCDNUrlWindowsi386() {
         // GIVEN
         mockSystemProperty("os.name", "Windows 10");
@@ -245,7 +323,7 @@ class NgrokInstallerTest extends NgrokTestCase {
     }
 
     @Test
-    public void testGetNgrokCDNUrlLinuxARM() {
+    public void testGetNgrokCDNUrlLinuxARM64() {
         // GIVEN
         mockSystemProperty("os.name", "Linux");
         mockSystemProperty("os.arch", "arm x86_64");
@@ -255,6 +333,32 @@ class NgrokInstallerTest extends NgrokTestCase {
 
         // THEN
         assertEquals(NgrokV3CDNUrl.LINUX_x86_64_arm, ngrokCDNUrl);
+    }
+
+    @Test
+    public void testGetNgrokCDNUrlCygwinIsWindows() {
+        // GIVEN
+        mockSystemProperty("os.name", "Cygwin NT");
+        mockSystemProperty("os.arch", "aarch64");
+
+        // WHEN
+        final NgrokCDNUrl ngrokCDNUrl = ngrokInstaller.getNgrokCDNUrl();
+
+        // THEN
+        assertEquals(NgrokV3CDNUrl.WINDOWS_x86_64_arm, ngrokCDNUrl);
+    }
+
+    @Test
+    public void testGetNgrokCDNUrlMinGWIsWindows() {
+        // GIVEN
+        mockSystemProperty("os.name", "MinGW NT");
+        mockSystemProperty("os.arch", "i386");
+
+        // WHEN
+        final NgrokCDNUrl ngrokCDNUrl = ngrokInstaller.getNgrokCDNUrl();
+
+        // THEN
+        assertEquals(NgrokV3CDNUrl.WINDOWS_i386, ngrokCDNUrl);
     }
 
     @Test
@@ -274,5 +378,31 @@ class NgrokInstallerTest extends NgrokTestCase {
 
         // THEN
         assertFalse(Files.exists(javaNgrokConfigV3.getNgrokPath()));
+    }
+
+    @Test
+    public void testEnsureInstallerUrlsExistV2()
+        throws IOException {
+        for (final NgrokCDNUrl ngrokCdnUrl : NgrokV2CDNUrl.values()) {
+            final URL url = new URL(ngrokCdnUrl.getUrl());
+            final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("HEAD");
+
+            final int responseCode = connection.getResponseCode();
+            assertEquals(200, responseCode, String.format("Installer URL returned 404: %s", url));
+        }
+    }
+
+    @Test
+    public void testEnsureInstallerUrlsExistV3()
+        throws IOException {
+        for (final NgrokCDNUrl ngrokCdnUrl : NgrokV3CDNUrl.values()) {
+            final URL url = new URL(ngrokCdnUrl.getUrl());
+            final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("HEAD");
+
+            final int responseCode = connection.getResponseCode();
+            assertEquals(200, responseCode, String.format("Installer URL returned 404: %s", url));
+        }
     }
 }
