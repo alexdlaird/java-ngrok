@@ -104,7 +104,7 @@ public class NgrokInstaller {
     }
 
     /**
-     * Parse the name fo the OS from system properties and return a friendly name.
+     * Parse the name of the OS from system properties and return a friendly name.
      *
      * @return The friendly name of the OS.
      * @throws JavaNgrokInstallerException The OS is not supported.
