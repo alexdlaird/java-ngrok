@@ -99,39 +99,6 @@ final ApiResponse endpointResponse = ngrokClient.api(
         "--traffic-policy-file", "policy.yml"));
 ```
 
-### `ngrok`'s Edge
-
-> `ngrok` has deprecated Edges and will sunset Labeled Tunnels on December 31st, 2025. See
-> [this issue](https://github.com/alexdlaird/java-ngrok/issues/158) for more details.
-
-To use [`ngrok`'s Edge](https://ngrok.com/docs/universal-gateway/edges/) with `java-ngrok`, first
-[configure an Edge](https://dashboard.ngrok.com/edges) [on ngrok's dashboard](https://dashboard.ngrok.com/edges) (with
-at least one Endpoint mapped to the Edge), and define a labeled tunnel in
-[the `ngrok` config file](https://ngrok.com/docs/agent/config/v2/#define-two-labeled-tunnels) that points to the Edge.
-
-```yaml
-tunnels:
-  some-edge-tunnel:
-    labels:
-      - edge=my_edge_id
-    addr: http://localhost:80
-```
-
-To start a labeled tunnel in `java-ngrok`,
-set [`withName()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withName(java.lang.String)).
-
-```java
-final NgrokClient ngrokClient = new NgrokClient.Builder().build();
-
-// Open the Edge tunnel that is defined in the config file
-final CreateTunnel createNamedTunnel = new CreateTunnel.Builder()
-    .withName("some-edge-tunnel")
-    .build();
-final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
-```
-
-Once an Edge tunnel is started, it can be managed through [`ngrok`'s dashboard](https://dashboard.ngrok.com/edges).
-
 ### Command Line Usage
 
 Assuming we have also installed [pyngrok](https://pyngrok.readthedocs.io/en/latest/#installation), all features of
