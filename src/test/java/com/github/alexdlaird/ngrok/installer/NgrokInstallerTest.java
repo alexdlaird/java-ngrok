@@ -180,39 +180,39 @@ class NgrokInstallerTest extends NgrokTestCase {
     public void testGetDefaultNgrokDirMac() {
         // GIVEN
         mockSystemProperty("os.name", "macOS");
-        mockSystemProperty("user.home", "/my/user/home");
+        mockSystemProperty("user.home", Path.of("my", "home").toString());
 
         // WHEN
         final Path defaultConfigPath = NgrokInstaller.getDefaultNgrokDir();
 
         // THEN
-        assertEquals("/my/user/home/Library/Application Support/ngrok", defaultConfigPath.toString());
+        assertEquals(Path.of("my", "home", "Library", "Application Support", "ngrok"), defaultConfigPath);
     }
 
     @Test
     public void testGetDefaultNgrokDirWindows() {
         // GIVEN
         mockSystemProperty("os.name", "Windows 10");
-        mockSystemProperty("user.home", "/my/user/home");
+        mockSystemProperty("user.home", Path.of("my", "home").toString());
 
         // WHEN
         final Path defaultConfigPath = NgrokInstaller.getDefaultNgrokDir();
 
         // THEN
-        assertEquals("/my/user/home/AppData/Local/ngrok", defaultConfigPath.toString());
+        assertEquals(Path.of("my", "home", "AppData", "Local", "ngrok"), defaultConfigPath);
     }
 
     @Test
     public void testGetDefaultNgrokDirUnix() {
         // GIVEN
         mockSystemProperty("os.name", "Linux");
-        mockSystemProperty("user.home", "/my/user/home");
+        mockSystemProperty("user.home", Path.of("my", "home").toString());
 
         // WHEN
         final Path defaultConfigPath = NgrokInstaller.getDefaultNgrokDir();
 
         // THEN
-        assertEquals("/my/user/home/.config/ngrok", defaultConfigPath.toString());
+        assertEquals(Path.of("my", "home", ".config", "ngrok"), defaultConfigPath);
     }
 
     @Test
