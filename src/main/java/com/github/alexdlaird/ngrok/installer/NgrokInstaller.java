@@ -114,7 +114,9 @@ public class NgrokInstaller {
 
         if (os.startsWith("mac")) {
             return MAC;
-        } else if (os.startsWith("windows") || os.contains("cygwin")) {
+        } else if (os.startsWith("windows")
+                   || os.contains("cygwin")
+                   || os.contains("ming")) {
             return WINDOWS;
         } else if (os.startsWith("linux")) {
             return LINUX;
@@ -125,7 +127,7 @@ public class NgrokInstaller {
         }
     }
 
-    private static Path getDefaultNgrokDir() {
+    static Path getDefaultNgrokDir() {
         final String system = getSystem();
         final String userHome = System.getProperty("user.home");
         if (system.equals(MAC)) {
@@ -408,10 +410,11 @@ public class NgrokInstaller {
     }
 
     private String getArch() {
-        final String archProperty = System.getProperty("os.arch");
+        final String archProperty = System.getProperty("os.arch").toLowerCase();
 
         final StringBuilder arch = new StringBuilder();
-        if (archProperty.contains("x86_64")) {
+        if (archProperty.contains("x86_64")
+            || archProperty.contains("aarch64")) {
             arch.append("x86_64");
         } else {
             arch.append("i386");
