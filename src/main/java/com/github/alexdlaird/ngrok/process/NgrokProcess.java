@@ -263,7 +263,7 @@ public class NgrokProcess {
                 reader.close();
             }
         } catch (final IOException e) {
-            LOGGER.warn("An error occurred when closing \"ProcessMonitor.reader\"", e);
+            LOGGER.warn("An error occurred when closing \"reader\"", e);
         }
     }
 
@@ -488,7 +488,8 @@ public class NgrokProcess {
         @Override
         public void run() {
             try {
-                while (alive && ngrokProcess.process.isAlive()
+                while (alive
+                       && ngrokProcess.isRunning()
                        && javaNgrokConfig.isKeepMonitoring()) {
                     final String line = ngrokProcess.reader.readLine();
                     if (isNull(line)) {
@@ -502,7 +503,7 @@ public class NgrokProcess {
 
                 alive = false;
             } catch (final IOException e) {
-                throw new NgrokException("An error occurred in the ngrok process.", e);
+                LOGGER.info("\"reader\" was closed, ProcessMonitor thread is shutting down.", e);
             }
         }
 
