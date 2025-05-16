@@ -124,8 +124,10 @@ at [https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.16/overview-
 
 ### Java 8
 
-A Java 8-compatible build was maintained in this branch, but it is not actively supported. To use it, include
-the `java8-ngrok` dependency from [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok).
+This is the `1.4.x` branch, where a Java 8-compatible build of `java8-ngrok` was maintained. It is still available on
+[Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok), but it is no longer
+supported. It is recommended that you upgrade to a modern version of Java and switch to the [`main`](https://github.com/alexdlaird/java-ngrok) branch, where you
+will more information about the current version of [`java-ngrok`](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok).
 
 For more details on what differs in the `java8-ngrok` dependency,
 see [the "Java 8" section of the docs](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.16/overview-summary.html#java8).
