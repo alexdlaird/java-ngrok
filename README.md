@@ -118,9 +118,8 @@ at [https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.16/overview-
 
 ### Integration Examples
 
-- [Spring](https://github.com/alexdlaird/java-ngrok-example-spring)
-- [Dropwizard](https://github.com/alexdlaird/java-ngrok-example-dropwizard)
-- [Play (Scala)](https://github.com/alexdlaird/java-ngrok-example-play)
+- [Dropwizard](https://github.com/alexdlaird/java-ngrok-example-dropwizard/tree/java8)
+- [Java TCP Server and Client](https://github.com/alexdlaird/java-ngrok-example-tcp-server-and-client/tree/java8)
 
 ### Java 8
 
