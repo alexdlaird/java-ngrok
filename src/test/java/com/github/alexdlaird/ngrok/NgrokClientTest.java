@@ -893,10 +893,10 @@ class NgrokClientTest extends NgrokTestCase {
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3).withConfigPath(
             configPath2).build();
-        ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
         final NgrokClient ngrokClient2 = new NgrokClient.Builder().withJavaNgrokConfig(javaNgrokConfig2)
-                                                                  .withNgrokProcess(ngrokProcessV3_2)
+                                                                  .withNgrokInstaller(ngrokInstaller)
                                                                   .build();
+        ngrokProcessV3_2 = ngrokClient2.getNgrokProcess();
 
         // WHEN
         final CreateTunnel createHttpTunnel = new CreateTunnel.Builder().withNgrokVersion(NgrokVersion.V3)

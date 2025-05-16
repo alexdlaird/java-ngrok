@@ -32,9 +32,11 @@ jobs:
       - name: Test downstream
         run: make test-downstream
       - name: Cleanup temporary test resources
+        if: ${{ !cancelled() }}
         continue-on-error: true
         run: make delete-temp-test-resources
       - name: Upload test coverage
+        if: ${{ !cancelled() }}
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

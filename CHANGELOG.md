@@ -6,6 +6,18 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.11...HEAD)
 
+### Added
+
+- Support for [MSYS2's `mingw`](https://www.msys2.org/) when installing the agent. Like `cygwin`, it is mapped to its corresponding Windows binary.
+- Windows ARM 64-bit support.
+- FreeBSD ARM support.
+- Build and stability improvements.
+- Documentation improvements.
+
+### Fixed
+
+- `NgrokV2CDNUrl` and `NgrokV3CDNUrl` both improperly defined the constant for Apple Silicon as `DARWIN_i386_arm`. It has been renamed to `DARWIN_x86_64_arm`.
+
 ## [2.3.11](https://github.com/alexdlaird/java-ngrok/compare/2.3.10...2.3.11) - 2025-05-11
 
 ### Added

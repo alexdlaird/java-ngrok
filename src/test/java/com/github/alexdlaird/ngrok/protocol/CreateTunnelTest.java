@@ -6,6 +6,7 @@
 
 package com.github.alexdlaird.ngrok.protocol;
 
+import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,17 +41,15 @@ public class CreateTunnelTest {
             .withKey("key")
             .withRemoteAddr("remoteAddr")
             .withMetadata("metadata")
-            .withOAuth(new TunnelOAuth.Builder().withProvider("testcase")
-                                                .withAllowDomains(Collections.unmodifiableList(
-                                                    Stream.of("one.domain", "two.domain")
-                                                          .collect(Collectors.toList())))
-                                                .withAllowEmails(Collections.unmodifiableList(
-                                                    Stream.of("one@email", "two@email")
-                                                          .collect(Collectors.toList())))
-                                                .withScopes(Collections.unmodifiableList(
-                                                    Stream.of("ascope", "bscope")
-                                                          .collect(Collectors.toList())))
-                                                .build())
+            .withOAuth(new TunnelOAuth.Builder()
+                .withProvider("testcase")
+                .withAllowDomains(Collections.unmodifiableList(
+                    Stream.of("one.domain", "two.domain").collect(Collectors.toList())))
+                .withAllowEmails(Collections.unmodifiableList(
+                    Stream.of("one@email", "two@email").collect(Collectors.toList())))
+                .withScopes(Collections.unmodifiableList(Stream.of("ascope", "bscope")
+                                                               .collect(Collectors.toList())))
+                .build())
             .withCircuitBreaker(0.5f)
             .withCompression(false)
             .withMutualTlsCas("mutualTlsCas")
@@ -139,6 +138,28 @@ public class CreateTunnelTest {
         assertFalse(createTunnel.isPoolingEnabled());
 
         assertNull(createTunnel.getSchemes());
+    }
+
+    @Test
+    public void testCreateTunnelWithDefaults() {
+        // WHEN
+        final CreateTunnel createTunnel1 = new CreateTunnel.Builder(true)
+            .withNgrokVersion(NgrokVersion.V3)
+            .withBindTls(true)
+            .build();
+        final CreateTunnel createTunnel2 = new CreateTunnel.Builder(true)
+            .withNgrokVersion(NgrokVersion.V3)
+            .withBindTls(false)
+            .build();
+
+        // THEN
+        assertEquals(NgrokVersion.V3, createTunnel1.getNgrokVersion());
+        assertEquals(1, createTunnel1.getSchemes().size());
+        assertEquals("https", createTunnel1.getSchemes().get(0));
+
+        assertEquals(NgrokVersion.V3, createTunnel2.getNgrokVersion());
+        assertEquals(1, createTunnel2.getSchemes().size());
+        assertEquals("http", createTunnel2.getSchemes().get(0));
     }
 
     @Test
@@ -327,6 +348,17 @@ public class CreateTunnelTest {
     }
 
     @Test
+    public void testCreateWithTunnelDefinitionLegacyAuth() {
+        // WHEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+            .withTunnelDefinition(Collections.singletonMap("auth", "some-token"))
+            .build();
+
+        // THEN
+        assertEquals("some-token", createTunnel.getAuth());
+    }
+
+    @Test
     public void testCreateWithTunnelDefinitionBasicAuth() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
@@ -339,5 +371,43 @@ public class CreateTunnelTest {
         assertEquals(2, createTunnel.getBasicAuth().size());
         assertEquals("token-1", createTunnel.getBasicAuth().get(0));
         assertEquals("token-2", createTunnel.getBasicAuth().get(1));
+    }
+
+    @Test
+    public void testCreateWithTunnelDefinitionOnHttpRequestResponse() {
+        // WHEN
+        final Map<String, Object> tunnelDefinition = new HashMap<>();
+        final Map<String, Object> inboundPolicy = new HashMap<>();
+        inboundPolicy.put("name", "inbound-policy");
+        inboundPolicy.put("expressions", Collections.singletonList("inbound-policy-expression"));
+        final Map<String, Object> inboundPolicyActions = new HashMap<>();
+        inboundPolicyActions.put("type", "inbound-policy-actions-type");
+        inboundPolicyActions.put("config", "inbound-policy-actions-config");
+        inboundPolicy.put("actions", Collections.unmodifiableMap(inboundPolicyActions));
+        final Map<String, Object> outboundPolicy = new HashMap<>();
+        outboundPolicy.put("name", "outbound-policy");
+        outboundPolicy.put("expressions", Collections.singletonList("outbound-policy-expression"));
+        final Map<String, Object> outboundPolicyActions = new HashMap<>();
+        outboundPolicyActions.put("type", "outbound-policy-actions-type");
+        outboundPolicyActions.put("config", "outbound-policy-actions-config");
+        outboundPolicy.put("actions", Collections.unmodifiableMap(outboundPolicyActions));
+        final Map<String, Object> policies = new HashMap<>();
+        policies.put("on_http_request", Collections.unmodifiableMap(inboundPolicy));
+        policies.put("on_http_response", Collections.unmodifiableMap(outboundPolicy));
+        tunnelDefinition.put("policy", Collections.unmodifiableMap(policies));
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+            .withTunnelDefinition(tunnelDefinition).build();
+
+        // THEN
+        assertEquals("inbound-policy", createTunnel.getPolicyInbound().getName());
+        assertTrue(createTunnel.getPolicyInbound().getExpressions().contains("inbound-policy-expression"));
+        assertEquals("inbound-policy-actions-type", createTunnel.getPolicyInbound().getActions().getType());
+        assertEquals("inbound-policy-actions-config", createTunnel.getPolicyInbound().getActions().getConfig());
+        assertEquals("outbound-policy", createTunnel.getPolicyOutbound().getName());
+        assertTrue(createTunnel.getPolicyOutbound().getExpressions().contains("outbound-policy-expression"));
+        assertEquals("outbound-policy-actions-type", createTunnel.getPolicyOutbound().getActions().getType());
+        assertEquals("outbound-policy-actions-config", createTunnel.getPolicyOutbound().getActions().getConfig());
+
+        assertNull(createTunnel.getBindTls());
     }
 }
