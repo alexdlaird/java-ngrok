@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.11...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.12...HEAD)
+
+## [2.3.12](https://github.com/alexdlaird/java-ngrok/compare/2.3.11...2.3.12) - 2025-05-16
 
 ### Added
 
@@ -414,11 +416,25 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   from [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.5.0/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html),
   instead relying on `ngrok`'s own built-in retry mechanism on startup fails.
 
-## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.16...1.4.x)
+## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.17...1.4.x)
 
 The `1.4.x` branch is where support for Java 8 of `java-ngrok` was maintained. It is available through
 the `java8-ngrok` artifact
 on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok).
+
+## [1.4.17](https://github.com/alexdlaird/java-ngrok/compare/1.4.16...1.4.17) - 2025-05-16
+
+### Added
+
+- Support for [MSYS2's `mingw`](https://www.msys2.org/) when installing the agent. Like `cygwin`, it is mapped to its corresponding Windows binary.
+- Windows ARM 64-bit support.
+- FreeBSD ARM support.
+- Build and stability improvements.
+- Documentation improvements.
+
+### Fixed
+
+- `NgrokV2CDNUrl` and `NgrokV3CDNUrl` both improperly defined the constant for Apple Silicon as `DARWIN_i386_arm`. It has been renamed to `DARWIN_x86_64_arm`.
 
 ## [1.4.16](https://github.com/alexdlaird/java-ngrok/compare/1.4.15...1.4.16) - 2025-05-11
 

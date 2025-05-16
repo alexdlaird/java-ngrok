@@ -132,12 +132,11 @@ at [https://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/
 [![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok)
 [![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)](https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE)
 
-A Java 8-compatible build was maintained in the `1.4.x` branch, but it is not actively supported. To use it, include
-the `java8-ngrok` dependency
-from [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok).
+A Java 8-compatible build was previously maintained in the `1.4.x` branch. It is available through the `java8-ngrok`
+artifact instead on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok).
 
 For more details on what differs in the `java8-ngrok` dependency,
-see [the "Java 8" section of the docs](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.16/overview-summary.html#java8).
+see [the "Java 8" section of the docs](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.17/overview-summary.html#java8).
 
 ## Contributing
 
