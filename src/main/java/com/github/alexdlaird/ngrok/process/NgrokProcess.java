@@ -503,7 +503,7 @@ public class NgrokProcess {
 
                 alive = false;
             } catch (final IOException e) {
-                LOGGER.info("\"reader\" was closed, ProcessMonitor thread is shutting down.", e);
+                LOGGER.debug("\"reader\" was read when closed, ProcessMonitor thread is shutting down.");
             }
         }
 

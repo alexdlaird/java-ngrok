@@ -130,7 +130,7 @@ upgrade to a modern version of Java and switch to the [`main`](https://github.co
 you will find more information about the current version of [`java-ngrok`](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok).
 
 For more details on what differs in the `java8-ngrok` dependency,
-see [the "Java 8" section of the docs](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.18/overview-summary.html#java8).
+see [the "Java 8" section of the docs](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.19/overview-summary.html#java8).
 
 ## Contributing
 
