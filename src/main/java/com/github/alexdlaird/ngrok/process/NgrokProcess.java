@@ -498,7 +498,7 @@ public class NgrokProcess {
 
                 alive = false;
             } catch (final IOException e) {
-                throw new NgrokException("An error occurred in the ngrok process.", e);
+                LOGGER.debug("Reader closed, monitoring thread is shutting down.", e);
             }
         }
 
