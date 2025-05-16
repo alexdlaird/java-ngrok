@@ -4,7 +4,17 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.12...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.13...HEAD)
+
+## [2.3.13](https://github.com/alexdlaird/java-ngrok/compare/2.3.12...2.3.13) - 2025-05-16
+
+### Added
+
+- Documentation improvements.
+
+### Fixed
+
+- Noisy log around `ProcessMonitor` thread shutting down.
 
 ## [2.3.12](https://github.com/alexdlaird/java-ngrok/compare/2.3.11...2.3.12) - 2025-05-16
 
@@ -416,11 +426,21 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   from [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.5.0/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html),
   instead relying on `ngrok`'s own built-in retry mechanism on startup fails.
 
-## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.17...1.4.x)
+## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.18...1.4.x)
 
 The `1.4.x` branch is where support for Java 8 of `java-ngrok` was maintained. It is available through
 the `java8-ngrok` artifact
 on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok).
+
+## [1.4.18](https://github.com/alexdlaird/java-ngrok/compare/1.4.17...1.4.18) - 2025-05-16
+
+### Added
+
+- Documentation improvements.
+
+### Fixed
+
+- Noisy log around `ProcessMonitor` thread shutting down.
 
 ## [1.4.17](https://github.com/alexdlaird/java-ngrok/compare/1.4.16...1.4.17) - 2025-05-16
 
