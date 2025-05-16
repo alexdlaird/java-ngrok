@@ -122,7 +122,7 @@ at [https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.16/overview-
 - [Dropwizard](https://github.com/alexdlaird/java-ngrok-example-dropwizard)
 - [Play (Scala)](https://github.com/alexdlaird/java-ngrok-example-play)
 
-## Java 8
+### Java 8
 
 This is the `1.4.x` branch, where a Java 8-compatible build of `java-ngrok` was previously maintained. While it is no
 longer supported, it is still available through the `java8-ngrok` artifact instead on 
