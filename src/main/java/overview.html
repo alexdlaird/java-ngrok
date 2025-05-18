@@ -59,10 +59,10 @@ it's made even more powerful with native Java integration through the <code>java
         href="https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok" target="_blank">Maven
     Central</a>.</p>
 
-<p>If we want <code>ngrok</code> to be available from the command line,
+<p>If you want <code>ngrok</code> to be available from the command line,
     <a href="https://pyngrok.readthedocs.io/en/latest/#installation" target="_blank"><code>pyngrok</code></a> can be
     installed using <code>pip</code> to manage that for
-    us.</p>
+    you.</p>
 
 <h2>Getting Around</h2>
 
@@ -130,8 +130,8 @@ and {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withNgrokVe
 <p>The <a href="https://docs.oracle.com/javase/9/docs/api/java/lang/ProcessHandle.html" target="_blank">Process API</a>
     was introduced in Java 9, so certain convenience methods around managing the <code>ngrok</code> process are
     not available in the Java 8 build. For instance, without the Process API, <code>java8-ngrok</code> cannot teardown
-    the external <code>ngrok</code> process for us. So even though the Java process will terminate gracefully,
-    <code>ngrok</code> will not. On a Unix-like system, we can remedy this with:
+    the external <code>ngrok</code> process for you. So even though the Java process will terminate gracefully,
+    <code>ngrok</code> will not. On a Unix-like system, you can remedy this with:
 
 <pre>
 Runtime.getRuntime().addShutdownHook(new Thread(() -> {

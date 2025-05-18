@@ -83,7 +83,7 @@ import static java.util.Objects.nonNull;
  * </pre>
  *
  * <p>The {@link NgrokClient#connect(CreateTunnel) connect()} method can also take a {@link CreateTunnel}
- * (which can be built through {@link CreateTunnel.Builder its Builder}), which allows us to pass additional tunnel
+ * (which can be built through {@link CreateTunnel.Builder its Builder}), which allows you to pass additional tunnel
  * configurations that are supported by <code>ngrok</code> (or {@link CreateTunnel.Builder#withName(String)} to use a
  * tunnel defined in <code>ngrok</code>`'s config file), <a href="#tunnel-configurations">as documented here</a>.
  *
@@ -98,9 +98,9 @@ import static java.util.Objects.nonNull;
  * <code>https</code> tunnel will be returned.
  * <h3><code>ngrok</code>'s API</h3>
  *
- * <p>The {@link NgrokClient#api(List) api()} method allows us to use the local <code>ngrok</code> agent to make
+ * <p>The {@link NgrokClient#api(List) api()} method allows you to use the local <code>ngrok</code> agent to make
  * requests against <a href="https://ngrok.com/docs/agent/cli-api/" target="_blank">the <code>ngrok</code> API</a>,
- * if we have {@link NgrokClient#setApiKey(String) set an API key}. For example, here we reserve a ngrok domain, then
+ * if you have {@link NgrokClient#setApiKey(String) set an API key}. For example, here you reserve a ngrok domain, then
  * create a Cloud Endpoint with an associated traffic policy:
  *
  * <p><pre>
@@ -158,7 +158,7 @@ import static java.util.Objects.nonNull;
  * final List&lt;Tunnel&gt; tunnels = ngrokClient.getTunnels();
  * </pre>
  * <h3>Close a Tunnel</h3>
- * All open tunnels will automatically be closed when the Java process terminates, but we can also close them manually
+ * All open tunnels will automatically be closed when the Java process terminates, but you can also close them manually
  * with {@link NgrokClient#disconnect(String)}.
  *
  * <p><pre>
@@ -166,7 +166,7 @@ import static java.util.Objects.nonNull;
  * ngrokClient.disconnect(publicUrl);
  * </pre>
  * <h3>Expose Other Services</h3>
- * Using <code>ngrok</code> we can expose any number of non-HTTP services, for instances databases, game servers, etc.
+ * Using <code>ngrok</code> you can expose any number of non-HTTP services, for instances databases, game servers, etc.
  * This can be accomplished by using <code>java-ngrok</code> to open a <code>tcp</code> tunnel to the desired service.
  *
  * <p><pre>
@@ -182,7 +182,7 @@ import static java.util.Objects.nonNull;
  * final Tunnel mysqlTunnel = ngrokClient.connect(mysqlCreateTunnel);
  * </pre>
  *
- * <p>We can also serve up local directories via
+ * <p>You can also serve up local directories via
  * <a href="https://ngrok.com/docs/universal-gateway/http/?cty=agent-config#agent-endpoint" target="_blank">ngrok's
  * built-in fileserver</a>.
  *
@@ -217,9 +217,9 @@ import static java.util.Objects.nonNull;
  * final Tunnel tunnel = ngrokClient.connect(createTunnel);
  * </pre>
  *
- * <p>If we already have a tunnel
+ * <p>If you already have a tunnel
  * <a href ="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations" target="_blank">defined in
- * <code>ngrok</code>'s config file</a>, we can start it by its <code>name</code>.</p>
+ * <code>ngrok</code>'s config file</a>, you can start it by its <code>name</code>.</p>
  *
  * <pre>
  * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
@@ -456,7 +456,7 @@ public class NgrokClient {
      * {@link NgrokClient.Builder}, or use the environment variable <code>NGROK_AUTHTOKEN</code>.
      *
      * <pre>
-     * // Setting an auth token allows us to do things like open multiple tunnels at the same time
+     * // Setting an auth token allows you to do things like open multiple tunnels at the same time
      * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
      * ngrokClient.setAuthToken("&lt;NGROK_AUTHTOKEN&gt;")
      *

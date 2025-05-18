@@ -48,8 +48,8 @@ import static java.util.Objects.nonNull;
  * When <code>ngrok</code> emits logs, <code>java-ngrok</code> can surface them to a callback function. To register this
  * callback, use {@link JavaNgrokConfig.Builder#withLogEventCallback}.
  *
- * <p>If these events aren't necessary for our use case, some resources can be freed up by turning them off.
- * {@link JavaNgrokConfig.Builder#withoutMonitoring} will disable logging, or we can call
+ * <p>If these events aren't necessary for your use case, some resources can be freed up by turning them off.
+ * {@link JavaNgrokConfig.Builder#withoutMonitoring} will disable logging, or you can call
  * {@link NgrokProcess.ProcessMonitor#stop()} to stop monitoring on a running process.
  */
 public class NgrokProcess {

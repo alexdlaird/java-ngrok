@@ -22,9 +22,9 @@ it's made even more powerful with native Java integration through the `java-ngro
 `java-ngrok` is available
 on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok).
 
-If we want `ngrok` to be available from the command
+If you want `ngrok` to be available from the command
 line, [`pyngrok`](https://pyngrok.readthedocs.io/en/latest/#installation)
-can be installed using `pip` to manage that for us.
+can be installed using `pip` to manage that for you.
 
 ## Basic Usage
 
@@ -73,17 +73,18 @@ The [`connect()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest
 method can also take
 a [`CreateTunnel`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html)
 (which can be built through [its Builder](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html))
-that allows us to pass additional properties that
+that allows you to pass additional properties that
 are supported by `ngrok` (or [`withName()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withName(java.lang.String))
 to use a tunnel defined in `ngrok`'s config
 file), [as documented here](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#tunnel-configurations).
 
 ### `ngrok`'s API
 
-The [`api()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#api(java.util.List)) method allows us to use the local
-`ngrok` agent to make requests against [the `ngrok` API](https://ngrok.com/docs/agent/cli-api/), if we
+The [`api()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#api(java.util.List)) method allows you to use the local
+`ngrok` agent to make requests against [the `ngrok` API](https://ngrok.com/docs/agent/cli-api/), if you
 have [set an API key](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#setApiKey(java.lang.String)).
-For example, here we reserve a `ngrok` domain, then create a Cloud Endpoint with an associated traffic policy:
+For example, here's how you would reserve a `ngrok` domain, then create a Cloud Endpoint with an associated traffic
+policy:
 
 ```java
 final NgrokClient ngrokClient = new NgrokClient.Builder().build();
@@ -101,7 +102,7 @@ final ApiResponse endpointResponse = ngrokClient.api(
 
 ### Command Line Usage
 
-Assuming we have also installed [`pyngrok`](https://pyngrok.readthedocs.io/en/latest/#installation), all features of
+Assuming you have also installed [`pyngrok`](https://pyngrok.readthedocs.io/en/latest/#installation), all features of
 `ngrok` are available
 on the command line.
 

@@ -45,11 +45,11 @@ import static java.util.Objects.nonNull;
  * <h2>Config File</h2>
  * By default, <code>ngrok</code> will look for its config file in
  * <a href="https://ngrok.com/docs/agent/config/#default-locations" target="_blank">the default location</a>.
- * We can override this behavior with {@link JavaNgrokConfig.Builder#withConfigPath(Path)}.
+ * You can override this behavior with {@link JavaNgrokConfig.Builder#withConfigPath(Path)}.
  *
  * <h2>Binary Path</h2>
- * The <code>java-ngrok</code> package manages its own <code>ngrok</code> binary. We can use our <code>ngrok</code>
- * binary if we want by setting it with {@link JavaNgrokConfig.Builder#withNgrokPath(Path)} and passing that config to
+ * The <code>java-ngrok</code> package manages its own <code>ngrok</code> binary. You can use your <code>ngrok</code>
+ * binary if you want by setting it with {@link JavaNgrokConfig.Builder#withNgrokPath(Path)} and passing that config to
  * {@link NgrokClient}.
  */
 public class NgrokInstaller {
