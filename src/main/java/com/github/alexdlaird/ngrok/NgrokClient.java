@@ -100,8 +100,8 @@ import static java.util.Objects.nonNull;
  *
  * <p>The {@link NgrokClient#api(List) api()} method allows you to use the local <code>ngrok</code> agent to make
  * requests against <a href="https://ngrok.com/docs/agent/cli-api/" target="_blank">the <code>ngrok</code> API</a>,
- * if you have {@link NgrokClient#setApiKey(String) set an API key}. For example, here you reserve a ngrok domain, then
- * create a Cloud Endpoint with an associated traffic policy:
+ * if you have {@link NgrokClient#setApiKey(String) set an API key}. For example, here's how you would reserve a
+ * <code>ngrok</code> domain, then create a Cloud Endpoint with an associated traffic policy:
  *
  * <p><pre>
  * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
@@ -483,7 +483,7 @@ public class NgrokClient {
      * {@link NgrokClient.Builder}, or use the environment variable <code>NGROK_API_KEY</code>.
      *
      * <pre>
-     * // Setting an API key allows us to use things like Internal Endpoints
+     * // Setting an API key allows you to use things like Internal Endpoints
      * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
      * ngrokClient.setApiKey("&lt;NGROK_API_KEY&gt;")
      *
