@@ -77,14 +77,32 @@ file), [as documented here](#tunnel-configuration).
 > one `http` and one `https`. `java-ngrok`s connect method will return a reference to the `http` tunnel in this case.
 > If only a single tunnel is needed, use [`withBindTls(true)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withBindTls(boolean)) and a reference to the `https` tunnel will be returned.
 
+### Get Active Tunnels
+
+It can be useful to ask the `ngrok` client what tunnels are currently open. This can be accomplished with the
+[`getTunnels()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#getTunnels()) method, which returns a list of Tunnel objects.
+
+```java
+// [<Tunnel: "https://<public_sub>.ngrok.io" -> "http://localhost:80">]
+final List<Tunnel> tunnels = ngrokClient.getTunnels();
+```
+
+### Close a Tunnel
+
+All open tunnels will automatically be closed when the Java process terminates, but we can also close them manually
+with [`disconnect(String)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#disconnect(java.lang.String)).
+
+```java
+// The Tunnel returned from methods like connect(), getTunnels(), etc. contains the public URL
+ngrokClient.disconnect(publicUrl);
+```
+
 ### Expose Other Services
 
 Using `ngrok` you can expose any number of non-HTTP services, for instances databases, game servers, etc. This can be
 accomplished by using `java-ngrok` to open a TCP tunnel to the desired service.
 
 ```java
-final NgrokClient ngrokClient = new NgrokClient.Builder().build();
-
 // Open a tunnel to MySQL with a Reserved TCP Address
 // <NgrokTunnel: "tcp://1.tcp.ngrok.io:12345" -> "localhost:3306">
 final CreateTunnel mysqlCreateTunnel = new CreateTunnel.Builder()
@@ -98,8 +116,6 @@ final Tunnel mysqlTunnel = ngrokClient.connect(mysqlCreateTunnel);
 You can also serve up local directories via [`ngrok`'s built-in fileserver](https://ngrok.com/docs/universal-gateway/http/?cty=agent-config#agent-endpoint).
 
 ```java
-final NgrokClient ngrokClient = new NgrokClient.Builder().build();
-
 // Open a tunnel to a local file server
 // <NgrokTunnel: "https://<public_sub>.ngrok.io" -> "file:///">
 final CreateTunnel fileserverCreateTunnel = new CreateTunnel.Builder()
@@ -117,8 +133,6 @@ to set what properties will be used when the tunnel is created. Here is an examp
 `foo`, requires basic authentication for requests, and defines a circuit breaker.
 
 ```java
-final NgrokClient ngrokClient = new NgrokClient.Builder().build();
-
 final CreateTunnel createTunnel = new CreateTunnel.Builder()
         .withSubdomain("foo")
         .withAuth("username:password")
@@ -131,8 +145,6 @@ final Tunnel tunnel = ngrokClient.connect(createTunnel);
 If you already have a tunnel [defined in `ngrok`'s config file](https://ngrok.com/docs/agent/config/v2/#tunnel-configurations), you can start it by its name.
 
 ```java
-final NgrokClient ngrokClient = new NgrokClient.Builder().build();
-
 final CreateTunnel createTunnel = new CreateTunnel.Builder()
         .withName("my-config-file-tunnel")
         .build();
@@ -149,8 +161,6 @@ For example, here's how you would reserve a `ngrok` domain, then create a Cloud 
 policy:
 
 ```java
-final NgrokClient ngrokClient = new NgrokClient.Builder().build();
-
 final String domain = "some-domain.ngrok.dev";
 final ApiResponse domainResponse = ngrokClient.api(
         List.of("reserved-domains", "create",
