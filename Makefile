@@ -40,7 +40,7 @@ test:
 
 docs:
 	$(GRADLE_BIN) javadoc
-	$(PYTHON_BIN) -m pip install mkdocs
+	$(PYTHON_BIN) -m pip install mkdocs mkdocs-material
 	mkdocs build
 
 publish-docs:

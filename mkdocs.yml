@@ -1,9 +1,16 @@
-site_name: java-ngrok
+site_name: java-ngrok - A Java wrapper for ngrok
 repo_url: https://github.com/alexdlaird/java-ngrok
-site_description: Java wrapper for ngrok
+site_description: A Java wrapper for ngrok that manages its own binary, making ngrok available via a convenient Java API.
 site_author: Alex Laird
+copyright: 2021-2025, Alex Laird
 nav:
-  - Basic Usage: index.md
+  - Basic Usage:
+    - Installation: index.html#installation
+    - Open a Tunnel: index.html#open-a-tunnel
+    - ngrok's API: index.html#ngroks-api
+    - Configuration: index.html#configuration
+    - Command Line Usage: index.html#command-line-usage
+    - Event Logs: index.html#event-logs
   - Dive Deeper:
     - API Documentation: https://javadoc.io/doc/com.github.alexdlaird/java-ngrok
     - Integration Examples: integration.md
@@ -16,6 +23,8 @@ nav:
       - java-ngrok on Maven Central: https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok
       - Sponsor java-ngrok: https://github.com/sponsors/alexdlaird
 theme:
-  name: readthedocs
+  name: material
+  features:
+    - navigation.expand
   analytics:
     gtag: G-KFG5ZKV466

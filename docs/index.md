@@ -17,8 +17,6 @@ development (test webhooks, demo local websites, enable SSH access), establishin
 networks and devices, building production APIs (traffic policies, OAuth, load balancing), and more. And
 it's made even more powerful with native Java integration through the `java-ngrok` client.
 
-# Basic Usage
-
 ## Installation
 
 `java-ngrok` is available

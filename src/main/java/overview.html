@@ -13,18 +13,6 @@
         <img alt="Java Versions"
              src="https://img.shields.io/badge/Java-11+-blue"/>
     </a>
-    <a href="https://codecov.io/gh/alexdlaird/java-ngrok">
-        <img alt="Coverage"
-             src="https://img.shields.io/codecov/c/github/alexdlaird/java-ngrok"/>
-    </a>
-    <a href="https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml">
-        <img alt="Build"
-             src="https://img.shields.io/github/actions/workflow/status/alexdlaird/java-ngrok/build.yml"/>
-    </a>
-    <a href="https://app.codacy.com/gh/alexdlaird/java-ngrok?utm_source=github.com&utm_medium=referral&utm_content=alexdlaird/java-ngrok&utm_campaign=Badge_Grade">
-        <img alt="Code Quality"
-             src="https://api.codacy.com/project/badge/Grade/940d16178f8f4e8abfcf9bf2873894b3"/>
-    </a>
     <a href="https://alexdlaird.github.io/java-ngrok">
         <img alt="Docs"
              src="https://img.shields.io/badge/docs-passing-brightgreen"/>
@@ -38,11 +26,6 @@
 <p><code>java-ngrok</code> is a Java wrapper for <code>ngrok</code> that manages its own binary, making
     <code>ngrok</code> available via a convenient Java API.</p>
 
-<p><a href="https://ngrok.com" target="_blank">ngrok</a> is a reverse proxy that opens secure tunnels from public URLs to localhost. It's perfect for rapid
-development (test webhooks, demo local websites, enable SSH access), establishing ingress to external
-networks and devices, building production APIs (traffic policies, OAuth, load balancing), and more. And
-it's made even more powerful with native Java integration through the <code>java-ngrok</code> client.
-
 <h2>Useful Links</h2>
 
 <ul>
@@ -54,17 +37,6 @@ it's made even more powerful with native Java integration through the <code>java
     <li><a href="https://github.com/sponsors/alexdlaird" target="_blank">Sponsor <code>java-ngrok</code></a></li>
 </ul>
 
-<h2>Installation</h2>
-
-<p><code>java-ngrok</code> is available on <a
-        href="https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok" target="_blank">Maven
-    Central</a>.</p>
-
-<p>If you want <code>ngrok</code> to be available from the command line,
-    <a href="https://pyngrok.readthedocs.io/en/latest/#installation" target="_blank"><code>pyngrok</code></a> can be
-    installed using <code>pip</code> to manage that for
-    you.</p>
-
 <h2>Getting Around</h2>
 
 <ul>
@@ -73,13 +45,6 @@ it's made even more powerful with native Java integration through the <code>java
     <li>{@link com.github.alexdlaird.ngrok.process.NgrokProcess} - Advanced usage of the <code>ngrok</code> process</li>
     <li>{@link com.github.alexdlaird.ngrok.agent.NgrokAgent} - Interact with the running <code>ngrok</code> agent</li>
 </ul>
-
-<h2><code>ngrok</code> Version Compatibility</h2>
-
-<code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To install
-v2 instead, set the version with {@link
-com.github.alexdlaird.ngrok.conf.JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)}
-and {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
 
 <h2 id="java8">Java 8</h2>
 
@@ -91,14 +56,6 @@ and {@link com.github.alexdlaird.ngrok.protocol.CreateTunnel.Builder#withNgrokVe
     <a href="https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok">
         <img alt="Java Versions"
              src="https://img.shields.io/badge/Java-8+-blue"/>
-    </a>
-    <a href="https://codecov.io/gh/alexdlaird/java-ngrok/tree/1.4.x">
-        <img alt="Coverage"
-             src="https://img.shields.io/codecov/c/github/alexdlaird/java-ngrok/1.4.x"/>
-    </a>
-    <a href="https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml?query=branch%3A1.4.x">
-        <img alt="Build"
-             src="https://img.shields.io/github/actions/workflow/status/alexdlaird/java-ngrok/build.yml?branch=1.4.x"/>
     </a>
     <a href="https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok">
         <img alt="Docs"
