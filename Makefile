@@ -43,6 +43,9 @@ docs:
 	$(PYTHON_BIN) -m pip install mkdocs
 	mkdocs build
 
+publish-docs:
+	mkdocs gh-deploy
+
 check:
 	$(GRADLE_BIN) checkstyleMain spotbugsMain
 
