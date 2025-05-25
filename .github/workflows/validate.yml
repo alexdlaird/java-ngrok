@@ -26,7 +26,7 @@ jobs:
       - name: Build docs
         run: make docs
       - name: Publish docs
-        if: github.ref == "refs/heads/main"
+        if: github.ref == 'refs/heads/main'
         run: make publish-docs
       - name: Check code
         run: make check
