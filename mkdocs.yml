@@ -1,0 +1,23 @@
+site_name: java-ngrok
+repo_url: https://github.com/alexdlaird/java-ngrok
+site_description: Java wrapper for ngrok
+site_author: Alex Laird
+nav:
+  - Basic Usage:
+    - Installation: /#installation
+    - Open a Tunnel: /#open-a-tunnel
+    - ngrok's API: /#ngroks-api
+    # TODO: add - Configuration: /#configuration
+    # TODO: add - Event Logs: /#event-logs
+  - Dive Deeper:
+    - API Documentation: https://javadoc.io/doc/com.github.alexdlaird/java-ngrok
+    - Integration Examples: integration.md
+    - Changelog: https://github.com/alexdlaird/java-ngrok/blob/main/CHANGELOG.md
+    - Issues: https://github.com/alexdlaird/java-ngrok/issues
+    - Contributing: https://github.com/alexdlaird/java-ngrok/blob/main/CONTRIBUTING.md
+  - Useful Links:
+      - ngrok Documentation: https://ngrok.com/docs
+      - java-ngrok on GitHub: https://github.com/alexdlaird/java-ngrok
+      - java-ngrok on Maven Central: https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok
+      - Sponsor java-ngrok: https://github.com/sponsors/alexdlaird
+theme: readthedocs

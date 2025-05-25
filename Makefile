@@ -10,6 +10,7 @@ ifeq ($(OS),Windows_NT)
 else
 	GRADLE_BIN := ./gradlew
 endif
+PYTHON_BIN ?= python
 
 all: test
 
@@ -23,22 +24,24 @@ clean:
 	@rm -rf java-ngrok-example-dropwizard
 
 create-test-resources:
-	python -m pip install pyngrok
-	python scripts/create_test_resources.py
+	$(PYTHON_BIN) -m pip install pyngrok
+	$(PYTHON_BIN) scripts/create_test_resources.py
 
 delete-test-resources:
-	python -m pip install pyngrok
-	python scripts/delete_test_resources.py
+	$(PYTHON_BIN) -m pip install pyngrok
+	$(PYTHON_BIN) scripts/delete_test_resources.py
 
 delete-temp-test-resources:
-	python -m pip install pyngrok
-	python scripts/delete_test_resources.py --temp
+	$(PYTHON_BIN) -m pip install pyngrok
+	$(PYTHON_BIN) scripts/delete_test_resources.py --temp
 
 test:
 	$(GRADLE_BIN) test
 
 docs:
 	$(GRADLE_BIN) javadoc
+	$(PYTHON_BIN) -m pip install mkdocs
+	mkdocs build
 
 check:
 	$(GRADLE_BIN) checkstyleMain spotbugsMain
