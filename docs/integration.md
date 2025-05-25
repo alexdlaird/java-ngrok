@@ -300,7 +300,7 @@ class JavaNgrokTestCase extends TestCase {
 
     @AfterAll
     public void tearUpClass() {
-        ngrokClient.disconnect(thispublicUrl);
+        ngrokClient.disconnect(this.publicUrl);
     }
 }
 ```
