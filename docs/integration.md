@@ -81,6 +81,13 @@ public class NgrokWebServerEventListener {
 }
 ```
 
+Now Spring can be started by the usual means, setting `ngrok.enabled` in the config to open a tunnel.
+
+1. Run `./gradlew build` to build the application
+1. Start application with `java -jar build/libs/java-ngrok-example-spring-1.0.0-SNAPSHOT.jar`
+1. Check the logs for the `ngrok` tunnel's public URL, which should tunnel to  `http://localhost:8080`
+
+
 ## Dropwizard
 [![Clone on GitHub](https://img.shields.io/badge/Clone_on_GitHub-black?logo=github)](https://github.com/alexdlaird/java-ngrok-example-dropwizard)
 
@@ -129,6 +136,12 @@ And pass parameters to your Dropwizard application through
 ngrok:
   enabled: true
 ```
+
+Now Dropwizard can be started by the usual means, setting `ngrok.enabled` in the config to open a tunnel.
+
+1. Run `mvn install` to build the application
+1. Start application with `java -jar target/java-ngrok-example-dropwizard-1.0.0-SNAPSHOT.jar server src/main/resources/config.yml`
+1. Check the logs for the `ngrok` tunnel's public URL, which should tunnel to  `http://localhost:8080`
 
 ### Application Integration
 
@@ -188,7 +201,7 @@ public class JavaNgrokExampleDropwizardApplication extends Application<JavaNgrok
 ## Play (Scala)
 [![Clone on GitHub](https://img.shields.io/badge/Clone_on_GitHub-black?logo=github)](https://github.com/alexdlaird/java-ngrok-example-play)
 
-## Application Integration
+### Application Integration
 
 Register an eager `Singleton` in [the app's base `Module`](https://github.com/alexdlaird/java-ngrok-example-play/blob/main/app/Module.scala).
 
@@ -238,6 +251,12 @@ play.filters.hosts {
   allowed = [".ngrok.io", "localhost:9000"]
 }
 ```
+
+Now Play can be started by the usual means, setting `ngrok.enabled` in the config to open a tunnel.
+
+1. Run `sbt compile package` to build the application
+1. Start application with `sbt run`
+1. Check the logs for the `ngrok` tunnel's public URL, which should tunnel to  `http://localhost:9000`
 
 [// TODO add]: # (## End-to-End Testing)
 

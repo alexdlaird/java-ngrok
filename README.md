@@ -5,7 +5,7 @@
 [![Coverage](https://img.shields.io/codecov/c/github/alexdlaird/java-ngrok)](https://codecov.io/gh/alexdlaird/java-ngrok)
 [![Build](https://img.shields.io/github/actions/workflow/status/alexdlaird/java-ngrok/build.yml)](https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml)
 [![Code Quality](https://api.codacy.com/project/badge/Grade/940d16178f8f4e8abfcf9bf2873894b3)](https://app.codacy.com/gh/alexdlaird/java-ngrok?utm_source=github.com&utm_medium=referral&utm_content=alexdlaird/java-ngrok&utm_campaign=Badge_Grade)
-[![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok)
+[![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://alexdlaird.github.io/java-ngrok/)
 [![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)](https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE)
 
 `java-ngrok` is a Java wrapper for `ngrok` that manages its own binary, making `ngrok` available via a convenient Java
@@ -112,14 +112,14 @@ see [`ngrok`'s official documentation](https://ngrok.com/docs/agent/cli/).
 
 ## Documentation
 
-For more advanced usage, `java-ngrok`'s official documentation is available
-at [https://javadoc.io/doc/com.github.alexdlaird/java-ngrok](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok).
+For more advanced usage, `java-ngrok`'s official documentation is available on
+[GitHub Pages](https://alexdlaird.github.io/java-ngrok/), with additional API documentation on [javadoc.io](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest).
 
 ### Integration Examples
 
-- [Spring](https://github.com/alexdlaird/java-ngrok-example-spring)
-- [Dropwizard](https://github.com/alexdlaird/java-ngrok-example-dropwizard)
-- [Play (Scala)](https://github.com/alexdlaird/java-ngrok-example-play)
+- [Spring](https://alexdlaird.github.io/java-ngrok/integration/#spring)
+- [Dropwizard](https://alexdlaird.github.io/java-ngrok/integration/#dropwizard)
+- [Play (Scala)](https://alexdlaird.github.io/java-ngrok/integration/#play-scala)
 
 ### Java 8
 

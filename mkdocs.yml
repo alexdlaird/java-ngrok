@@ -4,11 +4,11 @@ site_description: Java wrapper for ngrok
 site_author: Alex Laird
 nav:
   - Basic Usage:
-    - Installation: /#installation
-    - Open a Tunnel: /#open-a-tunnel
-    - ngrok's API: /#ngroks-api
-    # TODO: add - Configuration: /#configuration
-    # TODO: add - Event Logs: /#event-logs
+    - Installation: index.html#installation
+    - Open a Tunnel: index.html#open-a-tunnel
+    - ngrok's API: index.html#ngroks-api
+    # TODO: add - Configuration: index.html#configuration
+    # TODO: add - Event Logs: index.html#event-logs
   - Dive Deeper:
     - API Documentation: https://javadoc.io/doc/com.github.alexdlaird/java-ngrok
     - Integration Examples: integration.md
