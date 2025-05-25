@@ -73,13 +73,13 @@ a [`CreateTunnel`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/lates
 that allows you to pass additional properties that
 are supported by `ngrok` (or [`withName()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withName(java.lang.String))
 to use a tunnel defined in `ngrok`'s config
-file), [as documented here](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#tunnel-configurations).
+file), [as documented here](https://alexdlaird.github.io/java-ngrok/#tunnel-configuration).
 
 ### `ngrok`'s API
 
 The [`api()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#api(java.util.List)) method allows you to use the local
 `ngrok` agent to make requests against [the `ngrok` API](https://ngrok.com/docs/agent/cli-api/), if you
-have [set an API key](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#setApiKey(java.lang.String)).
+have [set an API key](https://alexdlaird.github.io/java-ngrok/#setting-the-authtoken-or-api_key).
 For example, here's how you would reserve a `ngrok` domain, then create a Cloud Endpoint with an associated traffic
 policy:
 

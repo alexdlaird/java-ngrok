@@ -25,6 +25,9 @@ import static java.util.Objects.nonNull;
 
 /**
  * A client for interaction with the <code>ngrok</code> agent.
+ *
+ * <p>For usage examples, see
+ * <a href="https://alexdlaird.github.io/java-ngrok/" target="_blank"><code>java-ngrok</code>'s documentation</a>.
  */
 public class NgrokAgent {
 

@@ -10,7 +10,6 @@ import com.github.alexdlaird.ngrok.installer.ConfigVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokLog;
-import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Region;
 import java.nio.file.Path;
 import java.util.function.Function;
@@ -21,27 +20,8 @@ import static java.util.Objects.nonNull;
 /**
  * An object for managing <code>java-ngrok</code>'s configuration to interact the <code>ngrok</code> binary.
  *
- * <h2>Basic Usage</h2>
- * <pre>
- * final Function&lt;NgrokLog, Void&gt; logEventCallback = ngrokLog -&gt; {
- *     System.out.println(ngrokLog.getLine());
- *     return null;
- * };
- * final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
- *         .withAuthToken("&lt;NGROK_AUTHTOKEN&gt;")
- *         .withApiKey("&lt;NGROK_API_KEY&gt;")
- *         .withRegion(Region.AU)
- *         .withLogEventCallback(logEventCallback)
- *         .withMaxLogs(10);
- *
- * final NgrokClient ngrokClient = new NgrokClient.Builder()
- *         .withJavaNgrokConfig(javaNgrokConfig)
- *         .build();
- * </pre>
- * <h2><code>ngrok</code> Version Compatibility</h2>
- * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
- * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
- * {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
+ * <p>For usage examples, see
+ * <a href="https://alexdlaird.github.io/java-ngrok/" target="_blank"><code>java-ngrok</code>'s documentation</a>.
  */
 public class JavaNgrokConfig {
 
@@ -245,9 +225,8 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * The path to the <code>ngrok</code> config file, defaults to <a
-         * href="https://ngrok.com/docs/agent/config/v2" target="_blank"><code>ngrok's</code> default config
-         * location</a>.
+         * The path to the <code>ngrok</code> config file, defaults to <a href="https://ngrok.com/docs/agent/config/v2"
+         * target="_blank"><code>ngrok's</code> default config location</a>.
          */
         public Builder withConfigPath(final Path configPath) {
             this.configPath = configPath;
@@ -273,8 +252,8 @@ public class JavaNgrokConfig {
 
         /**
          * A callback that will be invoked each time <code>ngrok</code> emits a log. {@link #keepMonitoring} must be set
-         * to <code>true</code> or the function will stop being called after <code>ngrok</code> finishes starting.
-         * See {@link JavaNgrokConfig} for example usage.
+         * to <code>true</code> or the function will stop being called after <code>ngrok</code> finishes starting. See
+         * {@link JavaNgrokConfig} for example usage.
          */
         public Builder withLogEventCallback(final Function<NgrokLog, Void> logEventCallback) {
             this.logEventCallback = logEventCallback;

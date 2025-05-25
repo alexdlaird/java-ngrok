@@ -71,13 +71,80 @@ a [`CreateTunnel`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/lates
 that allows you to pass additional properties that
 are supported by `ngrok` (or [`withName()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withName(java.lang.String))
 to use a tunnel defined in `ngrok`'s config
-file), [as documented here](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#tunnel-configurations).
+file), [as documented here](#tunnel-configuration).
+
+> **_Note:_** `ngrok` v2's default behavior for `http` when no additional properties are set is to open two tunnels,
+> one `http` and one `https`. `java-ngrok`s connect method will return a reference to the `http` tunnel in this case.
+> If only a single tunnel is needed, use [`withBindTls(true)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withBindTls(boolean)) and a reference to the `https` tunnel will be returned.
+
+### Expose Other Services
+
+Using `ngrok` you can expose any number of non-HTTP services, for instances databases, game servers, etc. This can be
+accomplished by using `java-ngrok` to open a TCP tunnel to the desired service.
+
+```java
+final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+
+// Open a tunnel to MySQL with a Reserved TCP Address
+// <NgrokTunnel: "tcp://1.tcp.ngrok.io:12345" -> "localhost:3306">
+final CreateTunnel mysqlCreateTunnel = new CreateTunnel.Builder()
+    .withProto(Proto.TCP)
+    .withAddr(3306)
+    .withRemoteAddr("1.tcp.ngrok.io:12345")
+    .build();
+final Tunnel mysqlTunnel = ngrokClient.connect(mysqlCreateTunnel);
+```
+
+You can also serve up local directories via [`ngrok`'s built-in fileserver](https://ngrok.com/docs/universal-gateway/http/?cty=agent-config#agent-endpoint).
+
+```java
+final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+
+// Open a tunnel to a local file server
+// <NgrokTunnel: "https://<public_sub>.ngrok.io" -> "file:///">
+final CreateTunnel fileserverCreateTunnel = new CreateTunnel.Builder()
+    .withAddr("file:///")
+    .build();
+final Tunnel fileserverTunnel = ngrokClient.connect(fileserverCreateTunnel);
+```
+
+### Tunnel Configuration
+
+It is possible to configure the tunnel when it is created, for instance adding authentication, a subdomain, or other
+additional [tunnel configurations that are supported by `ngrok`](https://ngrok.com/docs/agent/config/v2/#common-tunnel-configuration-properties).
+This is accomplished by using [`CreateTunnel.Builder`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html)
+to set what properties will be used when the tunnel is created. Here is an example that opens a tunnel with subdomain
+`foo`, requires basic authentication for requests, and defines a circuit breaker.
+
+```java
+final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+
+final CreateTunnel createTunnel = new CreateTunnel.Builder()
+    .withSubdomain("foo")
+    .withAuth("username:password")
+    .withCircuitBreaker(50)
+    .build();
+
+final Tunnel tunnel = ngrokClient.connect(createTunnel);
+```
+
+If you already have a tunnel [defined in `ngrok`'s config file](https://ngrok.com/docs/agent/config/v2/#tunnel-configurations), you can start it by its name.
+
+```java
+final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+
+final CreateTunnel createTunnel = new CreateTunnel.Builder()
+    .withName("my-config-file-tunnel")
+    .build();
+
+final Tunnel tunnel = ngrokClient.connect(createTunnel);
+```
 
 ## `ngrok`'s API
 
 The [`api()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#api(java.util.List)) method allows you to use the local
 `ngrok` agent to make requests against [the `ngrok` API](https://ngrok.com/docs/agent/cli-api/), if you
-have [set an API key](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#setApiKey(java.lang.String)).
+have [set an API key](#setting-the-authtoken-or-api_key).
 For example, here's how you would reserve a `ngrok` domain, then create a Cloud Endpoint with an associated traffic
 policy:
 
@@ -95,21 +162,120 @@ final ApiResponse endpointResponse = ngrokClient.api(
         "--traffic-policy-file", "policy.yml"));
 ```
 
-[// TODO pull example from javadoc.io]: # (### Expose Other Services)
+## Event Logs
 
-[// TODO pull example from javadoc.io]: # (### Tunnel Configuration)
+When `ngrok` emits logs, `java-ngrok` can surface them to a callback function. To register this callback, use [`JavaNgrokConfig.Builder.withLogEventCallback(Function<NgrokLog, Void>)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withLogEventCallback(java.util.function.Function)), as show here:
 
-[// TODO pull example from javadoc.io]: # (## Event Logs)
+```java
+ final Function<NgrokLog, Void> logEventCallback = ngrokLog -> {
+     System.out.println(ngrokLog.getLine());
+     return null;
+ };
 
-[// TODO pull example from javadoc.io]: # (## Configuration)
+ final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+     .withLogEventCallback(logEventCallback);
 
-[// TODO pull example from javadoc.io]: # (### `JavaNgrokConfig`)
+ final NgrokClient ngrokClient = new NgrokClient.Builder()
+     .withJavaNgrokConfig(javaNgrokConfig)
+     .build();
+```
 
-[// TODO pull example from javadoc.io]: # (### Config File)
+If these events aren't necessary for your use case, some resources can be freed up by turning them off. [`JavaNgrokConfig.Builder.withoutMonitoring()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withoutMonitoring())
+will disable logging, or you can call [`NgrokProcess.ProcessMonitor.stop()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/process/NgrokProcess.ProcessMonitor.html#stop())
+to stop monitoring on a running process.
 
-[// TODO pull example from javadoc.io]: # (### Binary Path)
+## Configuration
 
-[// TODO pull example from javadoc.io]: # (### `ngrok` Version Compatibility)
+### `JavaNgrokConfig`
+
+`java-ngrok`s interactions with the `ngrok` binary can be configured using [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html),
+which can then be passed to [`NgrokClient`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html).
+
+```java
+final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+    .withRegion(Region.AU)
+    .withMaxLogs(10);
+
+final NgrokClient ngrokClient = new NgrokClient.Builder()
+    .withJavaNgrokConfig(javaNgrokConfig)
+    .build();
+```
+
+> **_Note:_** If `ngrok` is not already installed at [`JavaNgrokConfig.getNgrokPath`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html#getNgrokPath()),
+> it will be installed the first time most methods in `NgrokClient` are called.
+>
+> If you need to customize the installation of `ngrok`, perhaps specifying a timeout, proxy, use a custom mirror for
+> the download, etc., you can do so by leveraging the [`NgrokInstaller`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/installer/NgrokInstaller.html).
+
+### Setting the `authtoken` or `api_key`
+
+Running `ngrok` with an auth token and API key enables access to more features available on your account (for instance,
+multiple concurrent tunnels, custom domains, use of [Internal Endpoints](https://ngrok.com/docs/universal-gateway/internal-endpoints/),
+etc). You can obtain your auth token and generate API keys from the [ngrok dashboard](https://dashboard.ngrok.com/),
+then install it to ngrok’s config file.
+
+```java
+ final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+    .withAuthToken("<NGROK_AUTHTOKEN>")
+    .withApiKey("<NGROK_API_KEY>");
+
+final NgrokClient ngrokClient = new NgrokClient.Builder()
+    .withJavaNgrokConfig(javaNgrokConfig)
+    .build();
+```
+
+You could instead define `NGROK_AUTHTOKEN` or `NGROK_API_KEY` as environment variables, if you don’t want to define
+them in code.
+
+### Config File
+
+By default, `ngrok` will look for its config file in [the default location](https://ngrok.com/docs/agent/config/#default-locations).
+You can override this behavior with [`JavaNgrokConfig.Builder.withConfigPath(Path)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withConfigPath(java.nio.file.Path)).
+
+```java
+final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+     .withConfigPath(Path.of("opt", "ngrok", "config.yml"));
+
+ final NgrokClient ngrokClient = new NgrokClient.Builder()
+     .withJavaNgrokConfig(javaNgrokConfig)
+     .build();
+```
+
+### Binary Path
+
+The `java-ngrok` package manages its own `ngrok` binary. You can use your `ngrok` binary if you want by setting it with [`JavaNgrokConfig.Builder.withNgrokPath(Path)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withNgrokPath(java.nio.file.Path))
+and passing that config to [`NgrokClient`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html).
+
+```java
+final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+     .withNgrokPath(Path.of("usr", "local", "bin", "ngrok"));
+
+ final NgrokClient ngrokClient = new NgrokClient.Builder()
+     .withJavaNgrokConfig(javaNgrokConfig)
+     .build();
+```
+
+### `ngrok` Version Compatibility
+
+`java-ngrok` is compatible with `ngrok` v2 and v3, but by default it will install v3. To install v2 instead, set the
+version with [`JavaNgrokConfig.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withNgrokVersion(com.github.alexdlaird.ngrok.installer.NgrokVersion))
+and [`CreateTunnel.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withNgrokVersion(com.github.alexdlaird.ngrok.installer.NgrokVersion)).
+
+```java
+final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+    .withNgrokVersion(NgrokVersion.V2);
+
+final NgrokClient ngrokClient = new NgrokClient.Builder()
+    .withJavaNgrokConfig(javaNgrokConfig)
+    .build();
+
+// Open a V2 tunnel
+// <Tunnel: "http://<public_sub>.ngrok.io" -> "http://localhost:80">
+final CreateTunnel v2Tunnel = new CreateTunnel.Builder()
+    .withNgrokVersion(NgrokVersion.V2)
+    .build();
+final Tunnel sshTunnel = ngrokClient.connect(v2Tunnel);
+```
 
 ## Command Line Usage
 
