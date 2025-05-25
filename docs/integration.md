@@ -264,9 +264,9 @@ Some testing use-cases might mean you want to temporarily expose a route via a `
 workflow. For example, an internal end-to-end tester, a step in a pre-deployment validation pipeline, or a service that
 automatically updates a status page.
 
-Whatever the case may be, using JUnit's `BeforeAll` and `AfterAll` fixtures are a good place to hook `java-ngrok` in to
-your integration server. This snippet builds on the Dropwizard example above, but it could be easily modified to work
-with other frameworks.
+Whatever the case may be, using [JUnit's `BeforeAll` and `AfterAll`](https://junit.org/junit5/docs/current/api/org.junit.jupiter.api/org/junit/jupiter/api/BeforeAll.html)
+fixtures are a good place to hook `java-ngrok` in to your integration tests. This snippet builds on the Dropwizard
+example above, but it could be easily modified to work with other frameworks.
 
 ```java
 @ExtendWith(DropwizardExtensionsSupport.class)
