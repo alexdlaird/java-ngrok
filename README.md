@@ -45,24 +45,24 @@ final Tunnel httpTunnel = ngrokClient.connect();
 // Open a SSH tunnel
 // <Tunnel: "tcp://0.tcp.ngrok.io:12345" -> "localhost:22">
 final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder()
-    .withProto(Proto.TCP)
-    .withAddr(22)
-    .build();
+        .withProto(Proto.TCP)
+        .withAddr(22)
+        .build();
 final Tunnel sshTunnel = ngrokClient.connect(sshCreateTunnel);
 
 // Open a named tunnel from the config file
 final CreateTunnel createNamedTunnel = new CreateTunnel.Builder()
-    .withName("my-config-file-tunnel")
-    .build();
+        .withName("my-config-file-tunnel")
+        .build();
 final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
 
 // Open an Internal Endpoint that's load balanced
 // <Tunnel: "https://some-endpoint.internal" -> "http://localhost:9000">
 final CreateTunnel createInternalEndpoint = new CreateTunnel.Builder()
-    .withAddr("9000")
-    .withDomain("some-endpoint.internal")
-    .withPoolingEnabled(true)
-    .build();
+        .withAddr("9000")
+        .withDomain("some-endpoint.internal")
+        .withPoolingEnabled(true)
+        .build();
 final Tunnel internalEndpoint = ngrokClient.connect(createInternalEndpoint);
 ```
 
@@ -88,13 +88,13 @@ final NgrokClient ngrokClient = new NgrokClient.Builder().build();
 
 final String domain = "some-domain.ngrok.dev";
 final ApiResponse domainResponse = ngrokClient.api(
-    List.of("reserved-domains", "create",
-        "--domain", domain));
+        List.of("reserved-domains", "create",
+                "--domain", domain));
 final ApiResponse endpointResponse = ngrokClient.api(
-    List.of("endpoints", "create",
-        "--bindings", "public",
-        "--url", String.format("https://%s", domain),
-        "--traffic-policy-file", "policy.yml"));
+        List.of("endpoints", "create",
+                "--bindings", "public",
+                "--url", String.format("https://%s", domain),
+                "--traffic-policy-file", "policy.yml"));
 ```
 
 ### Command Line Usage
@@ -120,6 +120,7 @@ For more advanced usage, `java-ngrok`'s official documentation is available on
 - [Spring](https://alexdlaird.github.io/java-ngrok/integration/#spring)
 - [Dropwizard](https://alexdlaird.github.io/java-ngrok/integration/#dropwizard)
 - [Play (Scala)](https://alexdlaird.github.io/java-ngrok/integration/#play-scala)
+- [End-to-End Testing](https://alexdlaird.github.io/java-ngrok/integration/#end-to-end-testing)
 
 ### Java 8
 

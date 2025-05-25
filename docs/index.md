@@ -43,24 +43,24 @@ final Tunnel httpTunnel = ngrokClient.connect();
 // Open a SSH tunnel
 // <Tunnel: "tcp://0.tcp.ngrok.io:12345" -> "localhost:22">
 final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder()
-    .withProto(Proto.TCP)
-    .withAddr(22)
-    .build();
+        .withProto(Proto.TCP)
+        .withAddr(22)
+        .build();
 final Tunnel sshTunnel = ngrokClient.connect(sshCreateTunnel);
 
 // Open a named tunnel from the config file
 final CreateTunnel createNamedTunnel = new CreateTunnel.Builder()
-    .withName("my-config-file-tunnel")
-    .build();
+        .withName("my-config-file-tunnel")
+        .build();
 final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
 
 // Open an Internal Endpoint that's load balanced
 // <Tunnel: "https://some-endpoint.internal" -> "http://localhost:9000">
 final CreateTunnel createInternalEndpoint = new CreateTunnel.Builder()
-    .withAddr("9000")
-    .withDomain("some-endpoint.internal")
-    .withPoolingEnabled(true)
-    .build();
+        .withAddr("9000")
+        .withDomain("some-endpoint.internal")
+        .withPoolingEnabled(true)
+        .build();
 final Tunnel internalEndpoint = ngrokClient.connect(createInternalEndpoint);
 ```
 
@@ -88,10 +88,10 @@ final NgrokClient ngrokClient = new NgrokClient.Builder().build();
 // Open a tunnel to MySQL with a Reserved TCP Address
 // <NgrokTunnel: "tcp://1.tcp.ngrok.io:12345" -> "localhost:3306">
 final CreateTunnel mysqlCreateTunnel = new CreateTunnel.Builder()
-    .withProto(Proto.TCP)
-    .withAddr(3306)
-    .withRemoteAddr("1.tcp.ngrok.io:12345")
-    .build();
+        .withProto(Proto.TCP)
+        .withAddr(3306)
+        .withRemoteAddr("1.tcp.ngrok.io:12345")
+        .build();
 final Tunnel mysqlTunnel = ngrokClient.connect(mysqlCreateTunnel);
 ```
 
@@ -103,8 +103,8 @@ final NgrokClient ngrokClient = new NgrokClient.Builder().build();
 // Open a tunnel to a local file server
 // <NgrokTunnel: "https://<public_sub>.ngrok.io" -> "file:///">
 final CreateTunnel fileserverCreateTunnel = new CreateTunnel.Builder()
-    .withAddr("file:///")
-    .build();
+        .withAddr("file:///")
+        .build();
 final Tunnel fileserverTunnel = ngrokClient.connect(fileserverCreateTunnel);
 ```
 
@@ -120,10 +120,10 @@ to set what properties will be used when the tunnel is created. Here is an examp
 final NgrokClient ngrokClient = new NgrokClient.Builder().build();
 
 final CreateTunnel createTunnel = new CreateTunnel.Builder()
-    .withSubdomain("foo")
-    .withAuth("username:password")
-    .withCircuitBreaker(50)
-    .build();
+        .withSubdomain("foo")
+        .withAuth("username:password")
+        .withCircuitBreaker(50)
+        .build();
 
 final Tunnel tunnel = ngrokClient.connect(createTunnel);
 ```
@@ -134,8 +134,8 @@ If you already have a tunnel [defined in `ngrok`'s config file](https://ngrok.co
 final NgrokClient ngrokClient = new NgrokClient.Builder().build();
 
 final CreateTunnel createTunnel = new CreateTunnel.Builder()
-    .withName("my-config-file-tunnel")
-    .build();
+        .withName("my-config-file-tunnel")
+        .build();
 
 final Tunnel tunnel = ngrokClient.connect(createTunnel);
 ```
@@ -153,13 +153,13 @@ final NgrokClient ngrokClient = new NgrokClient.Builder().build();
 
 final String domain = "some-domain.ngrok.dev";
 final ApiResponse domainResponse = ngrokClient.api(
-    List.of("reserved-domains", "create",
-        "--domain", domain));
+        List.of("reserved-domains", "create",
+                "--domain", domain));
 final ApiResponse endpointResponse = ngrokClient.api(
-    List.of("endpoints", "create",
-        "--bindings", "public",
-        "--url", String.format("https://%s", domain),
-        "--traffic-policy-file", "policy.yml"));
+        List.of("endpoints", "create",
+                "--bindings", "public",
+                "--url", String.format("https://%s", domain),
+                "--traffic-policy-file", "policy.yml"));
 ```
 
 ## Event Logs
@@ -167,17 +167,18 @@ final ApiResponse endpointResponse = ngrokClient.api(
 When `ngrok` emits logs, `java-ngrok` can surface them to a callback function. To register this callback, use [`JavaNgrokConfig.Builder.withLogEventCallback(Function<NgrokLog, Void>)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withLogEventCallback(java.util.function.Function)), as show here:
 
 ```java
- final Function<NgrokLog, Void> logEventCallback = ngrokLog -> {
-     System.out.println(ngrokLog.getLine());
-     return null;
- };
+final Function<NgrokLog, Void> logEventCallback = ngrokLog -> {
+    System.out.println(ngrokLog.getLine());
+    return null;
+};
 
- final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-     .withLogEventCallback(logEventCallback);
+final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+        .withLogEventCallback(logEventCallback)
+        .build();
 
- final NgrokClient ngrokClient = new NgrokClient.Builder()
-     .withJavaNgrokConfig(javaNgrokConfig)
-     .build();
+final NgrokClient ngrokClient = new NgrokClient.Builder()
+        .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
 ```
 
 If these events aren't necessary for your use case, some resources can be freed up by turning them off. [`JavaNgrokConfig.Builder.withoutMonitoring()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withoutMonitoring())
@@ -193,12 +194,12 @@ which can then be passed to [`NgrokClient`](https://javadoc.io/doc/com.github.al
 
 ```java
 final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-    .withRegion(Region.AU)
-    .withMaxLogs(10);
+        .withRegion(Region.AU)
+        .withMaxLogs(10);
 
 final NgrokClient ngrokClient = new NgrokClient.Builder()
-    .withJavaNgrokConfig(javaNgrokConfig)
-    .build();
+        .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
 ```
 
 > **_Note:_** If `ngrok` is not already installed at [`JavaNgrokConfig.getNgrokPath`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html#getNgrokPath()),
@@ -215,13 +216,14 @@ etc). You can obtain your auth token and generate API keys from the [ngrok dashb
 then install it to ngrok’s config file.
 
 ```java
- final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-    .withAuthToken("<NGROK_AUTHTOKEN>")
-    .withApiKey("<NGROK_API_KEY>");
+final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+        .withAuthToken("<NGROK_AUTHTOKEN>")
+        .withApiKey("<NGROK_API_KEY>")
+        .build();
 
 final NgrokClient ngrokClient = new NgrokClient.Builder()
-    .withJavaNgrokConfig(javaNgrokConfig)
-    .build();
+        .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
 ```
 
 You could instead define `NGROK_AUTHTOKEN` or `NGROK_API_KEY` as environment variables, if you don’t want to define
@@ -234,11 +236,12 @@ You can override this behavior with [`JavaNgrokConfig.Builder.withConfigPath(Pat
 
 ```java
 final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-     .withConfigPath(Path.of("opt", "ngrok", "config.yml"));
+        .withConfigPath(Path.of("opt", "ngrok", "config.yml"))
+        .build();
 
  final NgrokClient ngrokClient = new NgrokClient.Builder()
-     .withJavaNgrokConfig(javaNgrokConfig)
-     .build();
+        .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
 ```
 
 ### Binary Path
@@ -248,11 +251,12 @@ and passing that config to [`NgrokClient`](https://javadoc.io/doc/com.github.ale
 
 ```java
 final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-     .withNgrokPath(Path.of("usr", "local", "bin", "ngrok"));
+        .withNgrokPath(Path.of("usr", "local", "bin", "ngrok"))
+        .build();
 
- final NgrokClient ngrokClient = new NgrokClient.Builder()
-     .withJavaNgrokConfig(javaNgrokConfig)
-     .build();
+final NgrokClient ngrokClient = new NgrokClient.Builder()
+        .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
 ```
 
 ### `ngrok` Version Compatibility
@@ -263,17 +267,18 @@ and [`CreateTunnel.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/d
 
 ```java
 final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-    .withNgrokVersion(NgrokVersion.V2);
+        .withNgrokVersion(NgrokVersion.V2)
+        .build();
 
 final NgrokClient ngrokClient = new NgrokClient.Builder()
-    .withJavaNgrokConfig(javaNgrokConfig)
-    .build();
+        .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
 
 // Open a V2 tunnel
 // <Tunnel: "http://<public_sub>.ngrok.io" -> "http://localhost:80">
 final CreateTunnel v2Tunnel = new CreateTunnel.Builder()
-    .withNgrokVersion(NgrokVersion.V2)
-    .build();
+        .withNgrokVersion(NgrokVersion.V2)
+        .build();
 final Tunnel sshTunnel = ngrokClient.connect(v2Tunnel);
 ```
 

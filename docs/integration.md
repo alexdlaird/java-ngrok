@@ -258,9 +258,56 @@ Now Play can be started by the usual means, setting `ngrok.enabled` in the confi
 1. Start application with `sbt run`
 1. Check the logs for the `ngrok` tunnel's public URL, which should tunnel to  `http://localhost:9000`
 
-[// TODO add]: # (## End-to-End Testing)
+## End-to-End Testing
 
-## Java Simple HTTP Server
+Some testing use-cases might mean you want to temporarily expose a route via a `java-ngrok` tunnel to fully validate a
+workflow. For example, an internal end-to-end tester, a step in a pre-deployment validation pipeline, or a service that
+automatically updates a status page.
+
+Whatever the case may be, using JUnit's `BeforeAll` and `AfterAll` fixtures are a good place to hook `java-ngrok` in to
+your integration server. This snippet builds on the Dropwizard example above, but it could be easily modified to work
+with other frameworks.
+
+```java
+@ExtendWith(DropwizardExtensionsSupport.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class JavaNgrokTestCase extends TestCase {
+
+    private final static DropwizardAppExtension<JavaNgrokExampleDropwizardConfiguration> dropwizardAppExtension = new DropwizardAppExtension<>(
+        JavaNgrokExampleDropwizardApplication.class,
+        ResourceHelpers.resourceFilePath("config.yml")
+    );
+    
+    private NgrokClient ngrokClient;
+    
+    private String publicUrl;
+    
+    @BeforeAll
+    public void setUpClass() {
+        this.ngrokClient = new NgrokClient.Builder()
+                .build();
+
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withAddr(EXT.getLocalPort())
+                .build();
+        final Tunnel tunnel = ngrokClient.connect(createTunnel);
+        this.publicUrl = tunnel.getPublicUrl();
+
+        final String webhookUrl = String.format("%s/foo", this.publicUrl);
+
+        // ... Update inbound traffic via APIs to use the public-facing ngrok URL
+    }
+
+    @AfterAll
+    public void tearUpClass() {
+        ngrokClient.disconnect(thispublicUrl);
+    }
+}
+```
+
+Now, any test that needs a `java-ngrok` tunnel can simply extend `JavaNgrokTestCase` to inherit these fixtures.
+
+## Simple HTTP Server
 
 Java's `HttpServer` class also makes for a useful development server. You can use `java-ngrok` to expose it to the web
 via a tunnel, as shown here:
@@ -289,7 +336,7 @@ public class NgrokHttpServer {
 }
 ```
 
-## Java Simple TCP Server and Client
+## Simple TCP Server and Client
 [![Clone on GitHub](https://img.shields.io/badge/Clone_on_GitHub-black?logo=github)](https://github.com/alexdlaird/java-ngrok-example-tcp-server-and-client)
 
 This example project shows a simple TCP ping/pong server. It opens a local socket, uses ``ngrok`` to tunnel to that
