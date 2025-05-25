@@ -20,4 +20,7 @@ nav:
       - java-ngrok on GitHub: https://github.com/alexdlaird/java-ngrok
       - java-ngrok on Maven Central: https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok
       - Sponsor java-ngrok: https://github.com/sponsors/alexdlaird
-theme: readthedocs
+theme:
+  name: readthedocs
+  analytics:
+    gtag: G-KFG5ZKV466

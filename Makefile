@@ -44,7 +44,7 @@ docs:
 	mkdocs build
 
 publish-docs:
-	mkdocs gh-deploy
+	mkdocs gh-deploy --force
 
 check:
 	$(GRADLE_BIN) checkstyleMain spotbugsMain
