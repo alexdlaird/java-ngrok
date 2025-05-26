@@ -320,11 +320,3 @@ branch. While it is no longer supported, it is available through the `java8-ngro
 For more details on what differs in the `java8-ngrok` dependency,
 see [the "Java 8" section of the docs](https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.19/overview-summary.html#java8).
 
-## Contributing
-
-If you would like to get involved, be sure to review
-the [Contribution Guide](https://github.com/alexdlaird/java-ngrok/blob/main/CONTRIBUTING.md).
-
-Want to contribute financially? If you've found `java-ngrok`
-useful, [sponsorship](https://github.com/sponsors/alexdlaird)
-would also be greatly appreciated!
