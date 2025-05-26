@@ -266,7 +266,7 @@ automatically updates a status page.
 
 Whatever the case may be, using [JUnit's `BeforeAll` and `AfterAll`](https://junit.org/junit5/docs/current/api/org.junit.jupiter.api/org/junit/jupiter/api/BeforeAll.html)
 fixtures are a good place to hook `java-ngrok` in to your integration tests. This snippet builds on the Dropwizard
-example above, but it could be easily modified to work with other frameworks.
+example above, but it could be modified to work with other frameworks.
 
 ```java
 @ExtendWith(DropwizardExtensionsSupport.class)
@@ -280,7 +280,7 @@ class JavaNgrokTestCase extends TestCase {
     
     private NgrokClient ngrokClient;
     
-    private String publicUrl;
+    private String baseUrl;
     
     @BeforeAll
     public void setUpClass() {
@@ -291,9 +291,7 @@ class JavaNgrokTestCase extends TestCase {
                 .withAddr(EXT.getLocalPort())
                 .build();
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
-        this.publicUrl = tunnel.getPublicUrl();
-
-        final String webhookUrl = String.format("%s/foo", this.publicUrl);
+        this.baseUrl = tunnel.getPublicUrl();
 
         // ... Update inbound traffic via APIs to use the public-facing ngrok URL
     }
@@ -305,7 +303,8 @@ class JavaNgrokTestCase extends TestCase {
 }
 ```
 
-Now, any test that needs a `java-ngrok` tunnel can simply extend `JavaNgrokTestCase` to inherit these fixtures.
+Now, any test that needs to assert against responses through a `java-ngrok` tunnel can simply extend
+`JavaNgrokTestCase` to inherit these fixtures.
 
 ## Simple HTTP Server
 
