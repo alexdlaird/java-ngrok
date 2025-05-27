@@ -112,8 +112,8 @@ see [`ngrok`'s official documentation](https://ngrok.com/docs/agent/cli/).
 
 ## Documentation
 
-For more advanced usage, `java-ngrok`'s official documentation is available on
-[GitHub Pages](https://alexdlaird.github.io/java-ngrok/), with additional API documentation on [javadoc.io](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest).
+For more advanced usage, `java-ngrok`'s official documentation is available
+[here on GitHub](https://alexdlaird.github.io/java-ngrok/), with additional API documentation on [javadoc.io](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest).
 
 ### Integration Examples
 
