@@ -54,7 +54,7 @@ public class NgrokWebServerEventListener {
 
     @EventListener
     public void onApplicationEvent(final WebServerInitializedEvent event) {
-        // java-ngrok will only be installed, and should only ever be initialized, in a dev environment
+        // Only install and initialize ngrok if we're actually using it
         if (ngrokConfiguration.isEnabled()) {
             final NgrokClient ngrokClient = new NgrokClient.Builder()
                     .build();
@@ -76,7 +76,7 @@ public class NgrokWebServerEventListener {
     }
 
     private void initWebhooks(final String publicUrl) {
-        // Update inbound traffic via APIs to use the public-facing ngrok URL
+        // ... Implement updates necessary so inbound traffic uses the public-facing ngrok URL
     }
 }
 ```
@@ -156,7 +156,7 @@ public class JavaNgrokExampleDropwizardApplication extends Application<JavaNgrok
     @Override
     public void run(final JavaNgrokExampleDropwizardConfiguration configuration,
                     final Environment environment) {
-        // java-ngrok will only be installed, and should only ever be initialized, in a dev environment
+        // Only install and initialize ngrok if we're actually using it
         if (configuration.getEnvironment().equals("dev") &&
                 configuration.getNgrokConfiguration().isEnabled()) {
             final NgrokClient ngrokClient = new NgrokClient.Builder()
@@ -191,10 +191,10 @@ public class JavaNgrokExampleDropwizardApplication extends Application<JavaNgrok
     }
 
     private void initWebhooks(final String publicUrl) {
-        // Update inbound traffic via APIs to use the public-facing ngrok URL
+        // ... Implement updates necessary so inbound traffic uses the public-facing ngrok URL
     }
 
-    // ... The rest of your Dropwizard application
+    // ... Implement the rest of your Dropwizard application
 }
 ```
 
@@ -222,7 +222,7 @@ class NgrokApplicationLifecycle @Inject()(config: Configuration, lifecycle: Appl
   private val environment: String = config.getOptional[String]("environment").getOrElse("production")
   private val ngrokEnabled: Boolean = config.getOptional[Boolean]("ngrok.enabled").getOrElse(false)
 
-  // java-ngrok will only be installed, and should only ever be initialized, in a dev environment
+  // Only install and initialize ngrok if we're actually using it
   if (environment.equals("dev") && ngrokEnabled) {
     val ngrokClient: NgrokClient = new NgrokClient.Builder()
       .build
@@ -292,13 +292,13 @@ class JavaNgrokTestCase extends TestCase {
                 .build();
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
         this.baseUrl = tunnel.getPublicUrl();
-
-        // ... Update inbound traffic via APIs to use the public-facing ngrok URL
+        
+        // ... Implement other initializes so you can assert against the inbound traffic through your tunnel
     }
 
     @AfterAll
     public void tearUpClass() {
-        ngrokClient.disconnect(this.publicUrl);
+        ngrokClient.kill();
     }
 }
 ```
