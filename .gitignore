@@ -7,7 +7,6 @@
 hs_err_pid*
 .gradle
 build/
-site/
 !gradle-wrapper.jar
 **/build/
 java-ngrok-example-dropwizard

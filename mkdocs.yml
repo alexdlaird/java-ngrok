@@ -3,6 +3,7 @@ repo_url: https://github.com/alexdlaird/java-ngrok
 site_description: A Java wrapper for ngrok that manages its own binary, making ngrok available via a convenient Java API.
 site_author: Alex Laird
 copyright: 2021-2025, Alex Laird
+site_dir: build/site
 nav:
   - Basic Usage:
     - Installation: index.html#installation
