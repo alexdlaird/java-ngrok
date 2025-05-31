@@ -25,6 +25,7 @@ nav:
       - Sponsor java-ngrok: https://github.com/sponsors/alexdlaird
 theme:
   name: material
+  custom_dir: docs/overrides
   features:
     - navigation.expand
 extra:
