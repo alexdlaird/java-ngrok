@@ -27,5 +27,7 @@ theme:
   name: material
   features:
     - navigation.expand
+extra:
   analytics:
-    gtag: G-KFG5ZKV466
+    provider: google
+    property: G-KFG5ZKV466
