@@ -120,6 +120,7 @@ For more advanced usage, `java-ngrok`'s official documentation is available
 - [Spring](https://alexdlaird.github.io/java-ngrok/integration/#spring)
 - [Dropwizard](https://alexdlaird.github.io/java-ngrok/integration/#dropwizard)
 - [Play (Scala)](https://alexdlaird.github.io/java-ngrok/integration/#play-scala)
+- [Docker](https://alexdlaird.github.io/java-ngrok/integration/#docker)
 - [End-to-End Testing](https://alexdlaird.github.io/java-ngrok/integration/#end-to-end-testing)
 
 ### Java 8

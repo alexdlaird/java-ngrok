@@ -258,6 +258,94 @@ Now Play can be started by the usual means, setting `ngrok.enabled` in the confi
 1. Start application with `sbt run`
 1. Check the logs for the `ngrok` tunnel's public URL, which should tunnel to  `http://localhost:9000`
 
+## Docker
+
+To use `java-ngrok` in a container image, you'll want to make sure you download and install the `ngrok` binary while
+building the image. Here is an example `Dockerfile` for Ubuntu ARM64 that does this:
+
+```Dockerfile
+ARG NGROK_INSTALLER_PATH=ngrok-v3-stable-linux-arm64.tgz
+
+FROM ubuntu:24.04
+
+RUN mkdir -p /root/.config/ngrok
+RUN echo "version: 2\nweb_addr: 0.0.0.0:4040" >> /root/.config/ngrok/ngrok.yml
+
+RUN wget https://bin.equinox.io/c/bNyj1mQVY4c/$NGROK_INSTALLER_PATH
+RUN tar xvzf ./$NGROK_INSTALLER_PATH -C /usr/local/bin
+RUN rm ./$NGROK_INSTALLER_PATH
+
+# Provision your Java application
+COPY my-java-ngrok-app.jar /root/my-java-ngrok-app.jar
+CMD ["java", "-jar", "/root/my-java-ngrok-app.jar"]
+```
+
+In the above example, `ngrok` is being installed to `/usr/local/bin/ngrok`. You'll need to [specify this binary path](https://alexdlaird.github.io/java-ngrok/#binary-path)
+for `ngrok` in your Java application to ensure `java-ngrok`'s installer is bypassed.
+
+```java
+final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+        .withNgrokPath(Path.of("usr", "local", "bin", "ngrok"))
+        .build();
+
+final NgrokClient ngrokClient = new NgrokClient.Builder()
+        .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
+```
+
+Now build your Java application, then build and launch the container image with:
+
+```sh
+# ... Command to build my-java-ngrok-app.jar
+docker build -t my-java-ngrok .
+docker run -e NGROK_AUTHTOKEN=<NGROK_AUTHTOKEN> -it my-java-ngrok
+```
+
+If you want to start in a `bash` shell instead of your Java application, you can launch the container with.
+
+```sh
+docker run -e NGROK_AUTHTOKEN=<NGROK_AUTHTOKEN> -it my-java-ngrok /bin/bash
+```
+
+### Config File
+
+`ngrok` will look for its config file in this container at `/root/.config/ngrok/ngrok.yml`. If you want to provide a
+custom config file, specify a mount to this file when launching the container.
+
+```sh
+docker run -v ./ngrok.yml:/root/.config/ngrok/ngrok.yml -it my-java-ngrok
+```
+
+### Web Inspector
+
+If you want to use `ngrok`'s web inspector, be sure to expose its port. Be sure whatever config file you use
+[sets `web_addr: 0.0.0.0:4040`](https://ngrok.com/docs/agent/config/v2/#web_addr).
+
+```sh
+docker run --env-file .env -p 4040:4040 -it my-java-ngrok
+```
+
+### Docker Compose
+
+You could also launch the container using `docker-compose.yml`:
+
+```yaml
+services:
+  ngrok:
+    image: my-java-ngrok
+    env_file: ".env"
+    volumes:
+      - ./ngrok.yml:/root/.config/ngrok/ngrok.yml
+    ports:
+      - 4040:4040
+```
+
+Then launch it with:
+
+```sh
+docker compose up -d
+```
+
 ## End-to-End Testing
 
 Some testing use-cases might mean you want to temporarily expose a route via a `java-ngrok` tunnel to fully validate a
