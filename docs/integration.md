@@ -3,6 +3,8 @@
 ## Spring
 [![Clone on GitHub](https://img.shields.io/badge/Clone_on_GitHub-black?logo=github)](https://github.com/alexdlaird/java-ngrok-example-spring)
 
+This example project is also setup to [show Docker usage](https://alexdlaird.github.io/java-ngrok/integration/#docker).
+
 ### Configuration
 
 Create a [`NgrokConfiguration`](https://github.com/alexdlaird/java-ngrok-example-spring/blob/main/src/main/java/com/github/alexdlaird/ngrok/example/spring/conf/NgrokConfiguration.java)
@@ -264,9 +266,9 @@ To use `java-ngrok` in a container image, you'll want to make sure you download 
 building the image. Here is an example `Dockerfile` for Ubuntu ARM64 that does this:
 
 ```Dockerfile
-ARG NGROK_INSTALLER_PATH=ngrok-v3-stable-linux-arm64.tgz
-
 FROM ubuntu:24.04
+
+ARG NGROK_INSTALLER_PATH=ngrok-v3-stable-linux-arm64.tgz
 
 RUN apt-get update
 RUN apt-get install -y wget openjdk-21-jre-headless
@@ -309,6 +311,9 @@ If you want to start in a `bash` shell instead of your Java application, you can
 ```sh
 docker run -e NGROK_AUTHTOKEN=<NGROK_AUTHTOKEN> -it my-java-ngrok /bin/bash
 ```
+
+The [`java-ngrok-example-spring` repository](https://github.com/alexdlaird/java-ngrok-example-spring/) includes a
+`Dockerfile` and `make` commands to run it, if you would like to see a complete example.
 
 ### Config File
 
