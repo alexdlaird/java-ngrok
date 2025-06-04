@@ -312,7 +312,7 @@ If you want to start in a `bash` shell instead of your Java application, you can
 docker run -e NGROK_AUTHTOKEN=<NGROK_AUTHTOKEN> -it my-java-ngrok /bin/bash
 ```
 
-The [`java-ngrok-example-spring` repository](https://github.com/alexdlaird/java-ngrok-example-spring/) includes a
+The [`java-ngrok-example-spring` repository](https://github.com/alexdlaird/java-ngrok-example-spring/) also includes a
 `Dockerfile` and `make` commands to run it, if you would like to see a complete example.
 
 ### Config File
