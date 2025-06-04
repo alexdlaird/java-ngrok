@@ -268,6 +268,9 @@ ARG NGROK_INSTALLER_PATH=ngrok-v3-stable-linux-arm64.tgz
 
 FROM ubuntu:24.04
 
+RUN apt-get update
+RUN apt-get install -y wget openjdk-21-jre-headless
+
 RUN mkdir -p /root/.config/ngrok
 RUN echo "version: 2\nweb_addr: 0.0.0.0:4040" >> /root/.config/ngrok/ngrok.yml
 
