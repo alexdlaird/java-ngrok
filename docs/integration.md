@@ -60,7 +60,7 @@ public class NgrokWebServerEventListener {
             final Tunnel tunnel = ngrokClient.connect(createTunnel);
             final String publicUrl = tunnel.getPublicUrl();
 
-            LOGGER.info(String.format("ngrok tunnel \"%s\" -> \"http://127.0.0.1:%d\"",publicUrl, port));
+            log.info(String.format("ngrok tunnel \"%s\" -> \"http://127.0.0.1:%d\"",publicUrl, port));
 
             // Update any base URLs or webhooks to use the public ngrok URL
             ngrokConfiguration.setPublicUrl(publicUrl);
