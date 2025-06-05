@@ -39,20 +39,11 @@ that is executed when `WebServerInitializedEvent` is emitted.
 ```java
 @Component
 @Profile("dev")
+@Slf4j
 public class NgrokWebServerEventListener {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NgrokWebServerEventListener.class);
-
-    private final Environment environment;
-
-    private final NgrokConfiguration ngrokConfiguration;
-
     @Autowired
-    public NgrokWebServerEventListener(final Environment environment,
-                                       final NgrokConfiguration ngrokConfiguration) {
-        this.environment = environment;
-        this.ngrokConfiguration = ngrokConfiguration;
-    }
+    private NgrokConfiguration ngrokConfiguration;
 
     @EventListener
     public void onApplicationEvent(final WebServerInitializedEvent event) {
