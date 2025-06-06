@@ -296,13 +296,13 @@ Now build your Java application, then build and launch the container image with:
 ```sh
 # ... Command to build my-java-ngrok-app.jar
 docker build -t my-java-ngrok .
-docker run -e NGROK_AUTHTOKEN=<NGROK_AUTHTOKEN> -it my-java-ngrok
+docker run -e NGROK_AUTHTOKEN=$NGROK_AUTHTOKEN -it my-java-ngrok
 ```
 
 If you want to start in a `bash` shell instead of your Java application, you can launch the container with.
 
 ```sh
-docker run -e NGROK_AUTHTOKEN=<NGROK_AUTHTOKEN> -it my-java-ngrok /bin/bash
+docker run -e NGROK_AUTHTOKEN=$NGROK_AUTHTOKEN -it my-java-ngrok /bin/bash
 ```
 
 The [`java-ngrok-example-spring` repository](https://github.com/alexdlaird/java-ngrok-example-spring/) also includes a
