@@ -12,7 +12,6 @@ import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokLog;
 import com.github.alexdlaird.ngrok.protocol.Region;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
@@ -27,8 +26,8 @@ public class JavaNgrokConfigTest extends TestCase {
     @Test
     public void testJavaNgrokConfig() {
         // GIVEN
-        final Path ngrokPath = Paths.get("custom-ngrok");
-        final Path configPath = Paths.get("custom-config");
+        final Path ngrokPath = Path.of("custom-ngrok");
+        final Path configPath = Path.of("custom-config");
         final Function<NgrokLog, Void> logEventCallback = ngrokLog -> null;
 
         // WHEN

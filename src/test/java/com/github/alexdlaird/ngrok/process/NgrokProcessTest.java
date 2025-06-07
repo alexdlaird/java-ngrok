@@ -13,7 +13,6 @@ import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
@@ -71,10 +70,10 @@ public class NgrokProcessTest extends NgrokTestCase {
         assertFalse(ngrokProcessV2.isRunning());
         ngrokProcessV2.start();
         assertTrue(ngrokProcessV2.isRunning());
-        final Path ngrokPath2 = Paths.get(javaNgrokConfigV2.getNgrokPath().getParent().toString(),
+        final Path ngrokPath2 = Path.of(javaNgrokConfigV2.getNgrokPath().getParent().toString(),
             "2",
             NgrokInstaller.getNgrokBin());
-        final Path configPath2 = Paths.get(javaNgrokConfigV2.getConfigPath().getParent().toString(),
+        final Path configPath2 = Path.of(javaNgrokConfigV2.getConfigPath().getParent().toString(),
             "config2.yml");
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV2)
             .withNgrokPath(ngrokPath2)
@@ -111,10 +110,10 @@ public class NgrokProcessTest extends NgrokTestCase {
         assertFalse(ngrokProcessV3.isRunning());
         ngrokProcessV3.start();
         assertTrue(ngrokProcessV3.isRunning());
-        final Path ngrokPath2 = Paths.get(javaNgrokConfigV3.getNgrokPath().getParent().toString(),
+        final Path ngrokPath2 = Path.of(javaNgrokConfigV3.getNgrokPath().getParent().toString(),
             "2",
             NgrokInstaller.getNgrokBin());
-        final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
+        final Path configPath2 = Path.of(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
             .withNgrokPath(ngrokPath2)
             .withConfigPath(configPath2)
@@ -180,10 +179,10 @@ public class NgrokProcessTest extends NgrokTestCase {
         // GIVEN
         ngrokInstaller.installDefaultConfig(javaNgrokConfigV2.getConfigPath(),
             Map.of("web_addr", "localhost:4040"), javaNgrokConfigV2.getNgrokVersion());
-        final Path ngrokPathV2_2 = Paths.get(javaNgrokConfigV2.getNgrokPath().getParent().toString(),
+        final Path ngrokPathV2_2 = Path.of(javaNgrokConfigV2.getNgrokPath().getParent().toString(),
             "2",
             NgrokInstaller.getNgrokBin());
-        final Path configPathV2_2 = Paths.get(javaNgrokConfigV2.getConfigPath().getParent().toString(),
+        final Path configPathV2_2 = Path.of(javaNgrokConfigV2.getConfigPath().getParent().toString(),
             "configV2_2.yml");
         final JavaNgrokConfig javaNgrokConfigV2_2 = new JavaNgrokConfig.Builder(javaNgrokConfigV2)
             .withNgrokPath(ngrokPathV2_2)
@@ -195,10 +194,10 @@ public class NgrokProcessTest extends NgrokTestCase {
 
         ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(), Map.of("web_addr", "localhost:4042"),
             javaNgrokConfigV3.getNgrokVersion());
-        final Path ngrokPath2 = Paths.get(javaNgrokConfigV3.getNgrokPath().getParent().toString(),
+        final Path ngrokPath2 = Path.of(javaNgrokConfigV3.getNgrokPath().getParent().toString(),
             "2",
             NgrokInstaller.getNgrokBin());
-        final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(),
+        final Path configPath2 = Path.of(javaNgrokConfigV3.getConfigPath().getParent().toString(),
             "configV3_2.yml");
         final JavaNgrokConfig javaNgrokConfigV3_2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
             .withNgrokPath(ngrokPath2)

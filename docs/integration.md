@@ -3,7 +3,7 @@
 ## Spring
 [![Clone on GitHub](https://img.shields.io/badge/Clone_on_GitHub-black?logo=github)](https://github.com/alexdlaird/java-ngrok-example-spring)
 
-This example project is also setup to [show Docker usage](https://alexdlaird.github.io/java-ngrok/integration/#docker).
+This Spring example includes a `Dockerfile` to highlight a [containerized use case](#docker).
 
 ### Configuration
 
@@ -278,7 +278,7 @@ COPY my-java-ngrok-app.jar /root/my-java-ngrok-app.jar
 CMD ["java", "-jar", "/root/my-java-ngrok-app.jar"]
 ```
 
-In the above example, `ngrok` is being installed to `/usr/local/bin/ngrok`. You'll need to [specify this binary path](https://alexdlaird.github.io/java-ngrok/#binary-path)
+In the above example, `ngrok` will be installed to `/usr/local/bin/ngrok`. You'll need to [specify this binary path](https://alexdlaird.github.io/java-ngrok/#binary-path)
 for `ngrok` in your Java application to ensure `java-ngrok`'s installer is bypassed.
 
 ```java

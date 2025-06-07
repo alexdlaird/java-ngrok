@@ -29,7 +29,6 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.AfterAll;
@@ -93,8 +92,8 @@ class NgrokClientTest extends NgrokTestCase {
     private String tlsEdgeId;
 
     private final JavaNgrokConfig testcaseJavaNgrokConfig = new JavaNgrokConfig.Builder()
-        .withConfigPath(Paths.get("build", ".testcase-ngrok", "config.yml").toAbsolutePath())
-        .withNgrokPath(Paths.get("build", "bin", "testcase-ngrok", getNgrokBin()))
+        .withConfigPath(Path.of("build", ".testcase-ngrok", "config.yml").toAbsolutePath())
+        .withNgrokPath(Path.of("build", "bin", "testcase-ngrok", getNgrokBin()))
         .build();
 
     private final NgrokClient testcaseClient = new NgrokClient.Builder().withJavaNgrokConfig(testcaseJavaNgrokConfig)
@@ -817,7 +816,7 @@ class NgrokClientTest extends NgrokTestCase {
             tcpTunnelConfig);
         final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
 
-        final Path configPath2 = Paths.get(javaNgrokConfigV2.getConfigPath().getParent().toString(), "config2.yml");
+        final Path configPath2 = Path.of(javaNgrokConfigV2.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV2.getNgrokVersion());
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV2).withConfigPath(
             configPath2).build();
@@ -863,7 +862,7 @@ class NgrokClientTest extends NgrokTestCase {
             tcpTunnelConfig);
         final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
 
-        final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
+        final Path configPath2 = Path.of(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3).withConfigPath(
             configPath2).build();
@@ -907,7 +906,7 @@ class NgrokClientTest extends NgrokTestCase {
         final Map<String, Object> tunnelsConfig = Map.of("tls-tunnel", tlsTunnelConfig);
         final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
 
-        final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
+        final Path configPath2 = Path.of(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3).withConfigPath(
             configPath2).build();
@@ -943,7 +942,7 @@ class NgrokClientTest extends NgrokTestCase {
         final Map<String, Object> tunnelsConfig = Map.of("edge-http-tunnel", edgeHttpTunnelConfig);
         final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
 
-        final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
+        final Path configPath2 = Path.of(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3).withConfigPath(
             configPath2).build();
@@ -983,7 +982,7 @@ class NgrokClientTest extends NgrokTestCase {
         final Map<String, Object> tunnelsConfig = Map.of("edge-tcp-tunnel", edgeTcpTunnelConfig);
         final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
 
-        final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
+        final Path configPath2 = Path.of(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3).withConfigPath(
             configPath2).build();
@@ -1022,7 +1021,7 @@ class NgrokClientTest extends NgrokTestCase {
         final Map<String, Object> tunnelsConfig = Map.of("edge-tls-tunnel", edgeTlsTunnelConfig);
         final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
 
-        final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
+        final Path configPath2 = Path.of(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3).withConfigPath(
             configPath2).build();
@@ -1061,7 +1060,7 @@ class NgrokClientTest extends NgrokTestCase {
         final Map<String, Object> tunnelsConfig = Map.of("edge-tls-tunnel", edgeTlsTunnelConfig);
         final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
 
-        final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
+        final Path configPath2 = Path.of(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3).withConfigPath(
             configPath2).build();
@@ -1088,7 +1087,7 @@ class NgrokClientTest extends NgrokTestCase {
         final Map<String, Object> tunnelsConfig = Map.of("edge-tunnel", edgeHttpTunnelConfig);
         final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
 
-        final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
+        final Path configPath2 = Path.of(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3).withConfigPath(
             configPath2).withApiKey(null).build();
@@ -1163,7 +1162,7 @@ class NgrokClientTest extends NgrokTestCase {
         final Map<String, Object> tunnelsConfig = Map.of("http-tunnel", httpTunnelConfig);
         final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
 
-        final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
+        final Path configPath2 = Path.of(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3).withConfigPath(
             configPath2).build();
@@ -1201,7 +1200,7 @@ class NgrokClientTest extends NgrokTestCase {
         final Map<String, Object> tunnelsConfig = Map.of("java-ngrok-default", defaultTunnelConfig);
         final Map<String, Object> config = Map.of("tunnels", tunnelsConfig);
 
-        final Path configPath2 = Paths.get(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
+        final Path configPath2 = Path.of(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
         ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfigV3.getNgrokVersion());
         final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3).withConfigPath(
             configPath2).build();

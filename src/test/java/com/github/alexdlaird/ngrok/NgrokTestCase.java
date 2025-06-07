@@ -16,7 +16,6 @@ import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,14 +31,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class NgrokTestCase extends TestCase {
 
     protected final JavaNgrokConfig javaNgrokConfigV2 = new JavaNgrokConfig.Builder()
-        .withConfigPath(Paths.get("build", ".ngrok", "config_v2.yml").toAbsolutePath())
-        .withNgrokPath(Paths.get("build", "bin", "v2", getNgrokBin()))
+        .withConfigPath(Path.of("build", ".ngrok", "config_v2.yml").toAbsolutePath())
+        .withNgrokPath(Path.of("build", "bin", "v2", getNgrokBin()))
         .withNgrokVersion(NgrokVersion.V2)
         .build();
 
     protected final JavaNgrokConfig javaNgrokConfigV3 = new JavaNgrokConfig.Builder()
-        .withConfigPath(Paths.get("build", ".ngrok", "config_v3.yml").toAbsolutePath())
-        .withNgrokPath(Paths.get("build", "bin", "v3", getNgrokBin()))
+        .withConfigPath(Path.of("build", ".ngrok", "config_v3.yml").toAbsolutePath())
+        .withNgrokPath(Path.of("build", "bin", "v3", getNgrokBin()))
         .withNgrokVersion(NgrokVersion.V3)
         .build();
 

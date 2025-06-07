@@ -12,8 +12,6 @@ import com.github.alexdlaird.exception.JavaNgrokSecurityException;
 import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.http.HttpClientException;
-import com.github.alexdlaird.ngrok.NgrokClient;
-import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.google.gson.JsonParseException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -22,7 +20,6 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashMap;
@@ -54,9 +51,9 @@ public class NgrokInstaller {
     public static final String LINUX = "LINUX";
     public static final String FREEBSD = "FREEBSD";
     public static final List<String> UNIX_BINARIES = List.of(MAC, LINUX, FREEBSD);
-    public static final Path DEFAULT_NGROK_PATH = Paths.get(getDefaultNgrokDir().toString(),
+    public static final Path DEFAULT_NGROK_PATH = Path.of(getDefaultNgrokDir().toString(),
         NgrokInstaller.getNgrokBin());
-    public static final Path DEFAULT_CONFIG_PATH = Paths.get(getDefaultNgrokDir().toString(), "ngrok.yml");
+    public static final Path DEFAULT_CONFIG_PATH = Path.of(getDefaultNgrokDir().toString(), "ngrok.yml");
     private final List<String> validLogLevels = List.of("info", "debug");
     private final Yaml yaml = new Yaml();
     private final Map<String, Map<String, Object>> configCache = new HashMap<>();
@@ -124,11 +121,11 @@ public class NgrokInstaller {
         final String system = getSystem();
         final String userHome = System.getProperty("user.home");
         if (system.equals(MAC)) {
-            return Paths.get(userHome, "Library", "Application Support", "ngrok");
+            return Path.of(userHome, "Library", "Application Support", "ngrok");
         } else if (system.equals(WINDOWS)) {
-            return Paths.get(userHome, "AppData", "Local", "ngrok");
+            return Path.of(userHome, "AppData", "Local", "ngrok");
         } else {
-            return Paths.get(userHome, ".config", "ngrok");
+            return Path.of(userHome, ".config", "ngrok");
         }
     }
 
@@ -211,7 +208,7 @@ public class NgrokInstaller {
         LOGGER.trace("Installing ngrok {} to {}{} ...", ngrokVersion, ngrokPath,
             Files.exists(ngrokPath) ? ", overwriting" : "");
 
-        final Path ngrokZip = Paths.get(ngrokPath.getParent().toString(), "ngrok.zip");
+        final Path ngrokZip = Path.of(ngrokPath.getParent().toString(), "ngrok.zip");
         downloadFile(ngrokCDNUrl.getUrl(), ngrokZip);
 
         installNgrokZip(ngrokZip, ngrokPath);
@@ -353,7 +350,7 @@ public class NgrokInstaller {
             final ZipInputStream in = new ZipInputStream(new FileInputStream(zipPath.toFile()));
             ZipEntry zipEntry;
             while (nonNull(zipEntry = in.getNextEntry())) {
-                final Path file = Paths.get(dir.toString(), zipEntry.getName());
+                final Path file = Path.of(dir.toString(), zipEntry.getName());
                 if (!file.normalize().startsWith(dir)) {
                     throw new JavaNgrokSecurityException("Bad zip entry, paths don't match");
                 }

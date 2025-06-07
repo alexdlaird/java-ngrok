@@ -18,7 +18,6 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
@@ -70,8 +69,8 @@ class NgrokInstallerTest extends NgrokTestCase {
         throws IOException, InterruptedException {
         // GIVEN
         JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-            .withConfigPath(Paths.get("build", ".ngrok", "config_default.yml").toAbsolutePath())
-            .withNgrokPath(Paths.get("build", "bin", "default", NgrokInstaller.getNgrokBin()))
+            .withConfigPath(Path.of("build", ".ngrok", "config_default.yml").toAbsolutePath())
+            .withNgrokPath(Path.of("build", "bin", "default", NgrokInstaller.getNgrokBin()))
             .build();
         givenNgrokNotInstalled(javaNgrokConfig);
 
@@ -108,8 +107,8 @@ class NgrokInstallerTest extends NgrokTestCase {
     public void testGetDefaultNgrokV2Config() {
         // GIVEN
         final JavaNgrokConfig javaNgrokConfigV3Tmp = new JavaNgrokConfig.Builder()
-            .withConfigPath(Paths.get("build", ".ngrok", "config_v3_tmp.yml").toAbsolutePath())
-            .withNgrokPath(Paths.get("build", "bin", "v3", NgrokInstaller.getNgrokBin()))
+            .withConfigPath(Path.of("build", ".ngrok", "config_v3_tmp.yml").toAbsolutePath())
+            .withNgrokPath(Path.of("build", "bin", "v3", NgrokInstaller.getNgrokBin()))
             .withNgrokVersion(NgrokVersion.V3)
             .build();
         ngrokInstaller.installDefaultConfig(javaNgrokConfigV3Tmp.getConfigPath(),
@@ -130,8 +129,8 @@ class NgrokInstallerTest extends NgrokTestCase {
     public void testGetDefaultNgrokV3Config() {
         // GIVEN
         final JavaNgrokConfig javaNgrokConfigV3Tmp = new JavaNgrokConfig.Builder()
-            .withConfigPath(Paths.get("build", ".ngrok", "config_v3_tmp.yml").toAbsolutePath())
-            .withNgrokPath(Paths.get("build", "bin", "v3", NgrokInstaller.getNgrokBin()))
+            .withConfigPath(Path.of("build", ".ngrok", "config_v3_tmp.yml").toAbsolutePath())
+            .withNgrokPath(Path.of("build", "bin", "v3", NgrokInstaller.getNgrokBin()))
             .withNgrokVersion(NgrokVersion.V3)
             .build();
         ngrokInstaller.installDefaultConfig(javaNgrokConfigV3Tmp.getConfigPath(),
@@ -152,7 +151,7 @@ class NgrokInstallerTest extends NgrokTestCase {
         assumeFalse(NgrokInstaller.getSystem().equals(WINDOWS));
 
         // WHEN
-        assertThrows(JavaNgrokInstallerException.class, () -> ngrokInstaller.installNgrok(Paths.get("/no-perms")));
+        assertThrows(JavaNgrokInstallerException.class, () -> ngrokInstaller.installNgrok(Path.of("/no-perms")));
     }
 
     @Test

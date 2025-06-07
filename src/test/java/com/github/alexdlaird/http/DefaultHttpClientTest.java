@@ -21,7 +21,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -205,7 +204,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
         // WHEN
         assertThrows(HttpClientException.class, () -> defaultHttpClient.get(
-            "/some-url", List.of(), Map.of(), Paths.get("some", "path")));
+            "/some-url", List.of(), Map.of(), Path.of("some", "path")));
 
         // THEN
         verify(defaultHttpClient, times(4)).get(any(), any(), any(), any(), anyInt());
