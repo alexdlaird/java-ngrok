@@ -253,7 +253,7 @@ Now Play can be started by the usual means, setting `ngrok.enabled` in the confi
 
 ## Docker
 
-To use `java-ngrok` in a container image, you'll want to make sure you download and install the `ngrok` binary while
+To use `java-ngrok` in a container image, it's recommended that you download and install the `ngrok` binary while
 building the image. Here is an example `Dockerfile` that does this:
 
 ```Dockerfile
