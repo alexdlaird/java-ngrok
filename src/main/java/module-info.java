@@ -8,7 +8,6 @@
  * This module contains a Java wrapped for <code>ngrok</code> that manages its own binary.
  */
 module com.github.alexdlaird.ngrok {
-    requires java.logging;
     requires com.google.gson;
     requires org.yaml.snakeyaml;
     requires org.slf4j;
