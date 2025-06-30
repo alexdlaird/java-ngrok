@@ -458,7 +458,7 @@ public class NgrokProcess {
         private final NgrokProcess ngrokProcess;
         private final JavaNgrokConfig javaNgrokConfig;
 
-        private boolean alive = true;
+        private volatile boolean alive = true;
 
         /**
          * Construct to monitor a {link @Process} monitor.
