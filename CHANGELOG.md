@@ -13,10 +13,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Support for `s390x`, `ppc64`, and `ppc64le` architectures.
 - Stability improvements.
 
-### Added
-
-- Stability improvements.
-
 ## [2.3.15](https://github.com/alexdlaird/java-ngrok/compare/2.3.14...2.3.15) - 2025-05-28
 
 ### Added
