@@ -402,13 +402,17 @@ public class NgrokInstaller {
     private String getArch() {
         final String archProperty = System.getProperty("os.arch").toLowerCase();
 
+        if (List.of("s390x", "ppc64", "ppc64le").contains(archProperty)) {
+            return archProperty;
+        }
+
         final StringBuilder arch = new StringBuilder();
-        if (archProperty.contains("x86_64")
-            || archProperty.contains("aarch64")) {
+        if (archProperty.endsWith("64")) {
             arch.append("x86_64");
         } else {
             arch.append("i386");
         }
+
         if (archProperty.startsWith("arm") || archProperty.startsWith("aarch64")) {
             arch.append("_arm");
         }

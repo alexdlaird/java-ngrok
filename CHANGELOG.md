@@ -4,7 +4,14 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.15...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.16...HEAD)
+
+## [2.3.16](https://github.com/alexdlaird/java-ngrok/compare/2.3.15...2.3.16) - 2025-07-09
+
+### Added
+
+- Support for `s390x`, `ppc64`, and `ppc64le` architectures.
+- Stability improvements.
 
 ## [2.3.15](https://github.com/alexdlaird/java-ngrok/compare/2.3.14...2.3.15) - 2025-05-28
 

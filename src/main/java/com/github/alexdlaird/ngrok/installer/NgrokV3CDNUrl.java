@@ -20,6 +20,9 @@ public enum NgrokV3CDNUrl implements NgrokCDNUrl {
     LINUX_i386_arm("ngrok-v3-stable-linux-arm.zip"),
     LINUX_x86_64("ngrok-v3-stable-linux-amd64.zip"),
     LINUX_x86_64_arm("ngrok-v3-stable-linux-arm64.zip"),
+    LINUX_s390x("ngrok-v3-stable-linux-s390x.zip"),
+    LINUX_ppc64("ngrok-v3-stable-linux-ppc64.zip"),
+    LINUX_ppc64le("ngrok-v3-stable-linux-ppc64le.zip"),
     FREEBSD_i386("ngrok-v3-stable-freebsd-386.zip"),
     FREEBSD_i386_arm("ngrok-v3-stable-freebsd-arm.zip"),
     FREEBSD_x86_64("ngrok-v3-stable-freebsd-amd64.zip");
