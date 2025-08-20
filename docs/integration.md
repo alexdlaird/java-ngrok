@@ -259,8 +259,6 @@ building the image. Here is an example `Dockerfile` that does this:
 ```Dockerfile
 FROM ubuntu:24.04
 
-ARG NGROK_INSTALLER_PATH=ngrok-v3-stable-linux-arm64.tgz
-
 RUN apt-get update
 RUN apt-get install -y curl openjdk-21-jre-headless
 RUN curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc \
@@ -274,6 +272,7 @@ RUN mkdir -p /root/.config/ngrok
 RUN echo "version: 2\nweb_addr: 0.0.0.0:4040" >> /root/.config/ngrok/ngrok.yml
 
 # Provision your Java application
+ENV NGROK_BINARY_PATH="/usr/local/bin/ngrok"
 COPY my-java-ngrok-app.jar /root/my-java-ngrok-app.jar
 CMD ["java", "-jar", "/root/my-java-ngrok-app.jar"]
 ```
