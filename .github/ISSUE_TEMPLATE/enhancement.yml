@@ -16,6 +16,8 @@ body:
     options:
     - label: I have written a descriptive issue title
       required: true
+    - label: I have searched [`java-ngrok`'s documentation](https://alexdlaird.github.io/java-ngrok) to see if the feature is already support
+      required: true
     - label: I have searched [Issues](issues?q=is%3Aissue) to see if the feature has already been requested
       required: true
 
