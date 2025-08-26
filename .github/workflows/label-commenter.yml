@@ -1,12 +1,13 @@
 name: "Label Commenter"
 
-permissions:
-  issues: write
-
 on:
   issues:
     types:
       - labeled
+
+permissions:
+  issues: write
+  pull-requests: write
 
 jobs:
   comment:
