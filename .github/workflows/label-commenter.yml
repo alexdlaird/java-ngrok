@@ -1,5 +1,9 @@
 name: "Label Commenter"
 
+permissions:
+  contents: read
+  issues: write
+
 on:
   issues:
     types:
