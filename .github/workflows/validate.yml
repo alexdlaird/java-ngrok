@@ -3,6 +3,11 @@ name: Validate
 on:
   workflow_call:
 
+permissions:
+  contents: write
+  issues: none
+  pull-requests: none
+
 jobs:
   build:
     name: Validate

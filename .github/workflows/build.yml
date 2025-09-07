@@ -12,6 +12,11 @@ on:
   workflow_dispatch:
   workflow_call:
 
+permissions:
+  contents: write
+  issues: none
+  pull-requests: none
+
 concurrency:
   group: java-ngrok-singleton
 
