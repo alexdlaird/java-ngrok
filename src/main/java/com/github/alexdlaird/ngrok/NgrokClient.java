@@ -73,8 +73,9 @@ public class NgrokClient {
      *
      * <p>If a <a href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
      * target="_blank">tunnel definition in ngrok's config file</a> matches the given
-     * {@link CreateTunnel.Builder#withName(String)}, it will be loaded and used to start the tunnel. When
-     * {@link CreateTunnel.Builder#withName(String)} is not set and a "java-ngrok-default" tunnel definition exists in
+     * {@link CreateTunnel.Builder#withName(String)}, it will be loaded and used to start the tunnel (note that "-api"
+     * will be appended to its name when started). When {@link CreateTunnel.Builder#withName(String)} is not set and a
+     * "java-ngrok-default" tunnel definition exists in
      * <code>ngrok</code>'s config, it will be loaded and used. Any properties defined on {@link CreateTunnel} will
      * override properties from the loaded tunnel definition.
      *

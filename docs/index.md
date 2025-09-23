@@ -142,7 +142,8 @@ final CreateTunnel createTunnel = new CreateTunnel.Builder()
 final Tunnel tunnel = ngrokClient.connect(createTunnel);
 ```
 
-If you already have a tunnel [defined in `ngrok`'s config file](https://ngrok.com/docs/agent/config/v2/#tunnel-configurations), you can start it by its name.
+If you already have a tunnel [defined in `ngrok`'s config file](https://ngrok.com/docs/agent/config/v2/#tunnel-configurations), you can start it by its name (note that "-api"
+will be appended to its name when started).
 
 ```java
 final CreateTunnel createTunnel = new CreateTunnel.Builder()
