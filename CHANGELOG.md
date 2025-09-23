@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.3.16...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.4.0...HEAD)
+
+## [2.4.0](https://github.com/alexdlaird/java-ngrok/compare/2.3.16...2.4.0) - 2025-09-23
+
+### Changed
+
+- As of [`ngrok` Agent 3.29.0](https://ngrok.com/docs/agent/changelog/#ngrok-agent-3290-2025-09-17), two tunnels cannot have the same name (and this includes tunnel's defined in the config, even if they are not started). As such, when ``withName()`` is given and matches a tunnel defined in the config, `java-ngrok` will append "-api" to the tunnel's name when starting it.
 
 ## [2.3.16](https://github.com/alexdlaird/java-ngrok/compare/2.3.15...2.3.16) - 2025-07-09
 
