@@ -27,7 +27,7 @@ dependencies {
     implementation "org.slf4j:slf4j-api:2.0.17"
     testImplementation "org.slf4j:slf4j-simple:2.0.17"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.13.4"
-    testImplementation "org.mockito:mockito-core:5.19.0"
+    testImplementation "org.mockito:mockito-core:5.20.0"
     testImplementation "org.hamcrest:hamcrest:3.0"
     testImplementation "org.junit-pioneer:junit-pioneer:2.3.0"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.13.4"
