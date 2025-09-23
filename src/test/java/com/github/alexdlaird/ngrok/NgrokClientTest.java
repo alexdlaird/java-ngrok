@@ -838,12 +838,12 @@ class NgrokClientTest extends NgrokTestCase {
 
         // THEN
         assertEquals(2, tunnels.size());
-        assertEquals("http-tunnel-agent", httpTunnel.getName());
+        assertEquals("http-tunnel-api", httpTunnel.getName());
         assertEquals("http://localhost:8000", httpTunnel.getConfig().getAddr());
         assertEquals("https", httpTunnel.getProto());
         assertFalse(httpTunnel.getConfig().isInspect());
         assertEquals(String.format("https://%s.ngrok.io", subdomain), httpTunnel.getPublicUrl());
-        assertEquals("tcp-tunnel-agent", sshTunnel.getName());
+        assertEquals("tcp-tunnel-api", sshTunnel.getName());
         assertEquals("localhost:22", sshTunnel.getConfig().getAddr());
         assertEquals("tcp", sshTunnel.getProto());
         assertThat(sshTunnel.getPublicUrl(), startsWith("tcp://"));
@@ -884,12 +884,12 @@ class NgrokClientTest extends NgrokTestCase {
 
         // THEN
         assertEquals(2, tunnels.size());
-        assertEquals("http-tunnel-agent", httpTunnel.getName());
+        assertEquals("http-tunnel-api", httpTunnel.getName());
         assertEquals("http://localhost:8000", httpTunnel.getConfig().getAddr());
         assertEquals("http", httpTunnel.getProto());
         assertFalse(httpTunnel.getConfig().isInspect());
         assertEquals(String.format("http://%s.ngrok.io", subdomain), httpTunnel.getPublicUrl());
-        assertEquals("tcp-tunnel-agent", sshTunnel.getName());
+        assertEquals("tcp-tunnel-api", sshTunnel.getName());
         assertEquals("localhost:22", sshTunnel.getConfig().getAddr());
         assertEquals("tcp", sshTunnel.getProto());
         assertThat(sshTunnel.getPublicUrl(), startsWith("tcp://"));
@@ -924,7 +924,7 @@ class NgrokClientTest extends NgrokTestCase {
 
         // THEN
         assertEquals(1, tunnels.size());
-        assertEquals("tls-tunnel-agent", tlsTunnel.getName());
+        assertEquals("tls-tunnel-api", tlsTunnel.getName());
         assertEquals("tls://localhost:443", tlsTunnel.getConfig().getAddr());
         assertEquals("tls", tlsTunnel.getProto());
         assertFalse(tlsTunnel.getConfig().isInspect());
@@ -959,12 +959,12 @@ class NgrokClientTest extends NgrokTestCase {
         final List<Tunnel> tunnels = ngrokClient2.getTunnels();
 
         // THEN
-        assertEquals("edge-http-tunnel-agent", httpEdgeTunnel.getName());
+        assertEquals("edge-http-tunnel-api", httpEdgeTunnel.getName());
         assertEquals("http://localhost:80", httpEdgeTunnel.getConfig().getAddr());
         assertEquals("https", httpEdgeTunnel.getProto());
         assertEquals(String.format("https://%s:443", this.httpEdgeReservedDomain), httpEdgeTunnel.getPublicUrl());
         assertEquals(1, tunnels.size());
-        assertEquals("edge-http-tunnel-agent", tunnels.get(0).getName());
+        assertEquals("edge-http-tunnel-api", tunnels.get(0).getName());
         assertEquals("http://localhost:80", tunnels.get(0).getConfig().getAddr());
         assertEquals("https", tunnels.get(0).getProto());
         assertEquals(String.format("https://%s:443", this.httpEdgeReservedDomain), tunnels.get(0).getPublicUrl());
@@ -999,12 +999,12 @@ class NgrokClientTest extends NgrokTestCase {
         final List<Tunnel> tunnels = ngrokClient2.getTunnels();
 
         // THEN
-        assertEquals("edge-tcp-tunnel-agent", tcpEdgeTunnel.getName());
+        assertEquals("edge-tcp-tunnel-api", tcpEdgeTunnel.getName());
         assertEquals("tcp://localhost:22", tcpEdgeTunnel.getConfig().getAddr());
         assertEquals("tcp", tcpEdgeTunnel.getProto());
         assertEquals(String.format("tcp://%s:%s", hostAndPort[0], hostAndPort[1]), tcpEdgeTunnel.getPublicUrl());
         assertEquals(1, tunnels.size());
-        assertEquals("edge-tcp-tunnel-agent", tunnels.get(0).getName());
+        assertEquals("edge-tcp-tunnel-api", tunnels.get(0).getName());
         assertEquals("tcp://localhost:22", tunnels.get(0).getConfig().getAddr());
         assertEquals("tcp", tunnels.get(0).getProto());
         assertEquals(String.format("tcp://%s:%s", hostAndPort[0], hostAndPort[1]), tunnels.get(0).getPublicUrl());
@@ -1038,12 +1038,12 @@ class NgrokClientTest extends NgrokTestCase {
         final List<Tunnel> tunnels = ngrokClient2.getTunnels();
 
         // THEN
-        assertEquals("edge-tls-tunnel-agent", tlsEdgeTunnel.getName());
+        assertEquals("edge-tls-tunnel-api", tlsEdgeTunnel.getName());
         assertEquals("https://localhost:443", tlsEdgeTunnel.getConfig().getAddr());
         assertEquals("tls", tlsEdgeTunnel.getProto());
         assertEquals(String.format("tls://%s:443", this.tlsEdgeReservedDomain), tlsEdgeTunnel.getPublicUrl());
         assertEquals(1, tunnels.size());
-        assertEquals("edge-tls-tunnel-agent", tunnels.get(0).getName());
+        assertEquals("edge-tls-tunnel-api", tunnels.get(0).getName());
         assertEquals("https://localhost:443", tunnels.get(0).getConfig().getAddr());
         assertEquals("tls", tunnels.get(0).getProto());
         assertEquals(String.format("tls://%s:443", this.tlsEdgeReservedDomain), tunnels.get(0).getPublicUrl());
@@ -1182,7 +1182,7 @@ class NgrokClientTest extends NgrokTestCase {
 
         // THEN
         assertEquals(1, tunnels.size());
-        assertEquals("http-tunnel-agent", httpTunnel.getName());
+        assertEquals("http-tunnel-api", httpTunnel.getName());
         assertEquals("http://localhost:8000", httpTunnel.getConfig().getAddr());
         assertEquals("https", httpTunnel.getProto());
         assertEquals(String.format("https://%s.ngrok.io", subdomain), httpTunnel.getPublicUrl());
@@ -1213,7 +1213,7 @@ class NgrokClientTest extends NgrokTestCase {
         final Tunnel ngrokTunnel = ngrokClient2.connect();
 
         // THEN
-        assertEquals("java-ngrok-default-agent", ngrokTunnel.getName());
+        assertEquals("java-ngrok-default-api", ngrokTunnel.getName());
         assertEquals("http://localhost:8080", ngrokTunnel.getConfig().getAddr());
         assertEquals("https", ngrokTunnel.getProto());
         assertEquals(String.format("https://%s.ngrok.io", subdomain1), ngrokTunnel.getPublicUrl());
@@ -1247,7 +1247,7 @@ class NgrokClientTest extends NgrokTestCase {
         final Tunnel ngrokTunnel = ngrokClient2.connect(createTunnelSubdomain);
 
         // THEN
-        assertEquals("java-ngrok-default-agent", ngrokTunnel.getName());
+        assertEquals("java-ngrok-default-api", ngrokTunnel.getName());
         assertEquals("http://localhost:5000", ngrokTunnel.getConfig().getAddr());
         assertEquals("https", ngrokTunnel.getProto());
         assertEquals(String.format("https://%s.ngrok.io", subdomain), ngrokTunnel.getPublicUrl());

@@ -459,7 +459,7 @@ public class NgrokClient {
             }
 
             createTunnelBuilder.withTunnelDefinition((Map<String, Object>) tunnelDefinitions.get(name));
-            createTunnelBuilder.withName(String.format("%s-agent", name));
+            createTunnelBuilder.withName(String.format("%s-api", name));
         }
 
         return createTunnelBuilder.build();
