@@ -5,8 +5,8 @@ plugins {
     id "idea"
     id "com.adarshr.test-logger" version "4.0.0"
     id "checkstyle"
-    id "com.github.spotbugs" version "6.2.5"
-    id "org.jreleaser" version "1.19.0"
+    id "com.github.spotbugs" version "6.4.1"
+    id "org.jreleaser" version "1.20.0"
 }
 
 group "com.github.alexdlaird"
@@ -22,8 +22,8 @@ repositories {
 }
 
 dependencies {
-    implementation "com.google.code.gson:gson:2.13.1"
-    implementation "org.yaml:snakeyaml:2.4"
+    implementation "com.google.code.gson:gson:2.13.2"
+    implementation "org.yaml:snakeyaml:2.5"
     implementation "org.slf4j:slf4j-api:2.0.17"
     testImplementation "org.slf4j:slf4j-simple:2.0.17"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.13.4"
