@@ -5,7 +5,7 @@ plugins {
     id "idea"
     id "com.adarshr.test-logger" version "4.0.0"
     id "checkstyle"
-    id "com.github.spotbugs" version "6.4.2"
+    id "com.github.spotbugs" version "6.4.4"
     id "org.jreleaser" version "1.20.0"
 }
 
