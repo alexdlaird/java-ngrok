@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.ClearEnvironmentVariable;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -202,6 +203,7 @@ class NgrokInstallerTest extends NgrokTestCase {
     }
 
     @Test
+	@ClearEnvironmentVariable(key = "XDG_CONFIG_HOME")
     public void testGetDefaultNgrokDirUnix() {
         // GIVEN
         mockSystemProperty("os.name", "Linux");
