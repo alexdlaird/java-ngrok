@@ -126,8 +126,8 @@ public class NgrokInstaller {
             return Path.of(userHome, "AppData", "Local", "ngrok");
         } else {
             final String xdgConfigHome = System
-				.getenv()
-				.getOrDefault("XDG_CONFIG_HOME", Path.of(userHome, ".config").toString());
+                .getenv()
+                .getOrDefault("XDG_CONFIG_HOME", Path.of(userHome, ".config").toString());
             return Path.of(xdgConfigHome, "ngrok");
         }
     }
