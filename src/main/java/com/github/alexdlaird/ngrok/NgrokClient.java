@@ -398,12 +398,6 @@ public class NgrokClient {
         }
 
         if (nonNull(name) && tunnelDefinitions.containsKey(name)) {
-            if (((Map<String, Object>) tunnelDefinitions.get(name)).containsKey("labels")
-                && isBlank(javaNgrokConfig.getApiKey())) {
-                throw new JavaNgrokException("'JavaNgrokConfig.apiKey' must be set when 'labels' is "
-                                             + "on the tunnel definition.");
-            }
-
             createTunnelBuilder.withTunnelDefinition((Map<String, Object>) tunnelDefinitions.get(name));
             createTunnelBuilder.withName(String.format("%s-api", name));
         }

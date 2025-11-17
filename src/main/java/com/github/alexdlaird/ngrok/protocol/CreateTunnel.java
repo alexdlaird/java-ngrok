@@ -72,7 +72,6 @@ public class CreateTunnel {
     private final TunnelUserAgentFilter userAgentFilter;
     private final TunnelPolicy policyInbound;
     private final TunnelPolicy policyOutbound;
-    private final List<String> labels;
     private final Boolean poolingEnabled;
 
     private CreateTunnel(final Builder builder) {
@@ -106,7 +105,6 @@ public class CreateTunnel {
         this.userAgentFilter = builder.userAgentFilter;
         this.policyInbound = builder.policyInbound;
         this.policyOutbound = builder.policyOutbound;
-        this.labels = builder.labels;
         this.poolingEnabled = builder.poolingEnabled;
     }
 
@@ -321,14 +319,6 @@ public class CreateTunnel {
     }
 
     /**
-     * Get the labels. Note that labels can only be provisioned from the <code>ngrok</code> config file and not the
-     * Builder.
-     */
-    public List<String> getLabels() {
-        return labels;
-    }
-
-    /**
      * Whether pooling is enabled on this tunnel.
      */
     public Boolean isPoolingEnabled() {
@@ -374,7 +364,6 @@ public class CreateTunnel {
         private TunnelUserAgentFilter userAgentFilter;
         private TunnelPolicy policyInbound;
         private TunnelPolicy policyOutbound;
-        private List<String> labels;
         private Boolean poolingEnabled;
 
         /**
@@ -861,15 +850,6 @@ public class CreateTunnel {
                         .build();
                 }
             }
-            if (tunnelDefinition.containsKey("labels")) {
-                if (nonNull(bindTls)) {
-                    throw new IllegalArgumentException("'bindTls' cannot be set when 'labels' is also on the "
-                                                       + "tunnel definition.");
-                }
-                this.labels = Collections.unmodifiableList(
-                    (List<String>) tunnelDefinition.get("labels")
-                );
-            }
 
             // Returning this to allow chained configuration of
             // properties not visible in ngrok's GET /api/tunnels endpoint
@@ -885,7 +865,7 @@ public class CreateTunnel {
             }
 
             if (setDefaults) {
-                if (isNull(proto) && isNull(labels)) {
+                if (isNull(proto)) {
                     proto = Proto.HTTP;
                 }
                 if (isNull(addr)) {

@@ -8,12 +8,11 @@ import os
 import shutil
 import subprocess
 import sys
-from random import randint
-from subprocess import CalledProcessError
-
 from pyngrok import ngrok
 from pyngrok.conf import PyngrokConfig
 from pyngrok.exception import PyngrokNgrokError
+from random import randint
+from subprocess import CalledProcessError
 
 project = os.path.basename(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -110,13 +109,6 @@ def reserve_ngrok_domain(pyngrok_config, description, domain):
 
 def reserve_ngrok_addr(pyngrok_config, description):
     return ngrok.api("reserved-addrs", "create",
-                     "--description", description,
-                     pyngrok_config=pyngrok_config).data
-
-
-def create_ngrok_edge(pyngrok_config, description, proto, domain, port):
-    return ngrok.api("edges", proto,
-                     "create", "--hostports", f"{domain}:{port}",
                      "--description", description,
                      pyngrok_config=pyngrok_config).data
 
