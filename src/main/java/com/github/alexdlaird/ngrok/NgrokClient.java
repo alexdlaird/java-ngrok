@@ -138,8 +138,6 @@ public class NgrokClient {
             tunnel = response.getBody();
         }
 
-        applyEdgeToTunnel(tunnel);
-
         currentTunnels.put(tunnel.getPublicUrl(), tunnel);
 
         return tunnel;
@@ -213,7 +211,6 @@ public class NgrokClient {
 
             currentTunnels.clear();
             for (final Tunnel tunnel : response.getBody().getTunnels()) {
-                applyEdgeToTunnel(tunnel);
                 currentTunnels.put(tunnel.getPublicUrl(), tunnel);
             }
 
@@ -378,58 +375,6 @@ public class NgrokClient {
         return httpClient;
     }
 
-    @Deprecated
-    private void applyEdgeToTunnel(final Tunnel tunnel) {
-        if ((isNull(tunnel.getPublicUrl()) || tunnel.getPublicUrl().isEmpty())
-            && nonNull(javaNgrokConfig.getApiKey()) && nonNull(tunnel.getId())) {
-            final Map<String, String> ngrokApiHeaders = Map.of(
-                "Authorization", String.format("Bearer %s", javaNgrokConfig.getApiKey()),
-                "Ngrok-Version", "2");
-            final Response<Map> tunnelResponse = httpClient.get(String.format("https://api.ngrok.com/tunnels/%s",
-                tunnel.getId()), List.of(), ngrokApiHeaders, Map.class);
-
-            if (!tunnelResponse.getBody().containsKey("labels")
-                || !(tunnelResponse.getBody().get("labels") instanceof Map)
-                || !((Map) tunnelResponse.getBody().get("labels")).containsKey("edge")) {
-                throw new JavaNgrokException(String.format("Tunnel %s does not have 'labels', use a Tunnel "
-                                                           + "configured on an Edge.", tunnel.getId()));
-            }
-
-            final String edge = (String) ((Map) tunnelResponse.getBody().get("labels")).get("edge");
-            final String edgesPrefix;
-            if (edge.startsWith("edghts_")) {
-                edgesPrefix = "https";
-            } else if (edge.startsWith("edgtcp")) {
-                edgesPrefix = "tcp";
-            } else if (edge.startsWith("edgtls")) {
-                edgesPrefix = "tls";
-            } else {
-                throw new JavaNgrokException(String.format("Unknown Edge prefix: %s.", edge));
-            }
-
-            LOGGER.info("Applying edge {} to tunnel {}", edge, tunnel.getId());
-
-            final Response<Map> edgeResponse = httpClient.get(String.format("https://api.ngrok.com/edges/%s/%s",
-                edgesPrefix, edge), List.of(), ngrokApiHeaders, Map.class);
-
-            if (!edgeResponse.getBody().containsKey("hostports")
-                || !(edgeResponse.getBody().get("hostports") instanceof List)
-                || ((List) edgeResponse.getBody().get("hostports")).isEmpty()) {
-                throw new JavaNgrokException(String.format("No Endpoint is attached to your Edge %s, "
-                                                           + "login to the ngrok dashboard to attach an Endpoint to "
-                                                           + "your Edge first.",
-                    edge));
-            }
-
-            tunnel.setPublicUrl(String.format("%s://%s", edgesPrefix,
-                ((List) edgeResponse.getBody().get("hostports")).get(0)));
-            tunnel.setProto(edgesPrefix);
-
-            LOGGER.warn("ngrok has deprecated Edges and will sunset Labeled Tunnels on December 31st, 2025. "
-                        + "See https://github.com/alexdlaird/java-ngrok/issues/158 for more details.");
-        }
-    }
-
     private synchronized CreateTunnel interpolateTunnelDefinition(final CreateTunnel createTunnel) {
         final CreateTunnel.Builder createTunnelBuilder = new CreateTunnel.Builder(createTunnel);
 
@@ -453,12 +398,6 @@ public class NgrokClient {
         }
 
         if (nonNull(name) && tunnelDefinitions.containsKey(name)) {
-            if (((Map<String, Object>) tunnelDefinitions.get(name)).containsKey("labels")
-                && isBlank(javaNgrokConfig.getApiKey())) {
-                throw new JavaNgrokException("'JavaNgrokConfig.apiKey' must be set when 'labels' is "
-                                             + "on the tunnel definition.");
-            }
-
             createTunnelBuilder.withTunnelDefinition((Map<String, Object>) tunnelDefinitions.get(name));
             createTunnelBuilder.withName(String.format("%s-api", name));
         }

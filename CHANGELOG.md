@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.4.1...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.5.0...HEAD)
+
+## [2.5.0](https://github.com/alexdlaird/java-ngrok/compare/2.4.0...2.4.1) - 2025-11-17
+
+### Removed
+
+- Removed support for `ngrok` Edges, as they are deprecated by `ngrok` and will be sunset December 31st, 2025. See [this issue](https://github.com/alexdlaird/java-ngrok/issues/158) for more details.
 
 ## [2.4.1](https://github.com/alexdlaird/java-ngrok/compare/2.4.0...2.4.1) - 2025-10-23
 
