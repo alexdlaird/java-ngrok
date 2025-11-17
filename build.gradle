@@ -6,7 +6,7 @@ plugins {
     id "com.adarshr.test-logger" version "4.0.0"
     id "checkstyle"
     id "com.github.spotbugs" version "6.4.5"
-    id "org.jreleaser" version "1.21.0"
+    id "org.jreleaser" version "1.20.0"
 }
 
 group "com.github.alexdlaird"
