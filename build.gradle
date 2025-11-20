@@ -5,12 +5,12 @@ plugins {
     id "idea"
     id "com.adarshr.test-logger" version "4.0.0"
     id "checkstyle"
-    id "com.github.spotbugs" version "6.4.4"
+    id "com.github.spotbugs" version "6.4.5"
     id "org.jreleaser" version "1.20.0"
 }
 
 group "com.github.alexdlaird"
-version "2.4.1"
+version "2.5.0"
 
 java {
     withJavadocJar()

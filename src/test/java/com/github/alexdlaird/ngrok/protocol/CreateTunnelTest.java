@@ -207,18 +207,10 @@ public class CreateTunnelTest {
     }
 
     @Test
-    public void testCreateBindTlsLabelsFails() {
-        // WHEN
-        assertThrows(IllegalArgumentException.class, () -> new CreateTunnel.Builder()
-            .withTunnelDefinition(Map.of("bind_tls", true, "labels", List.of("edge=some-edge-id"))));
-    }
-
-    @Test
     public void testCreateWithTunnelDefinitions() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
             .withTunnelDefinition(Map.ofEntries(
-                    Map.entry("labels", List.of("edge=some-edge-id")),
                     Map.entry("proto", "tcp"),
                     Map.entry("domain", "java-ngrok.com"),
                     Map.entry("addr", "5000"),
@@ -262,12 +254,10 @@ public class CreateTunnelTest {
             ).build();
 
         // THEN
-        assertEquals(1, createTunnel.getLabels().size());
         assertEquals(Proto.TCP, createTunnel.getProto());
         assertEquals("java-ngrok.com", createTunnel.getDomain());
         assertEquals("5000", createTunnel.getAddr());
         assertFalse(createTunnel.isInspect());
-        assertEquals("edge=some-edge-id", createTunnel.getLabels().get(0));
         assertTrue(createTunnel.getBasicAuth().contains("auth-token"));
         assertEquals("host-header", createTunnel.getHostHeader());
         assertEquals("crt", createTunnel.getCrt());
