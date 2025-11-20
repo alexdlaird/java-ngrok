@@ -10,3 +10,4 @@ build/
 !gradle-wrapper.jar
 **/build/
 java-ngrok-example-dropwizard
+.env
