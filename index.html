@@ -1,0 +1,1364 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A Java wrapper for ngrok that manages its own binary, making ngrok available via a convenient Java API.">
+      
+      
+        <meta name="author" content="Alex Laird">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>java-ngrok - A Java wrapper for ngrok</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-KFG5ZKV466"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-KFG5ZKV466",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-KFG5ZKV466",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+<meta name="google-site-verification" content="t99S86vWzqAXMI5YN66Viuh9esuMQCveAD3RBbJXLdY" />
+
+
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#installation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="java-ngrok - A Java wrapper for ngrok" class="md-header__button md-logo" aria-label="java-ngrok - A Java wrapper for ngrok" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            java-ngrok - A Java wrapper for ngrok
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Home
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/alexdlaird/java-ngrok" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="java-ngrok - A Java wrapper for ngrok" class="md-nav__button md-logo" aria-label="java-ngrok - A Java wrapper for ngrok" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    java-ngrok - A Java wrapper for ngrok
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/alexdlaird/java-ngrok" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Basic Usage
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Basic Usage
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html#installation" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html#open-a-tunnel" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open a Tunnel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html#ngroks-api" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ngrok's API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html#configuration" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html#command-line-usage" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command Line Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html#event-logs" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Event Logs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dive Deeper
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Dive Deeper
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integration Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/alexdlaird/java-ngrok/blob/main/CHANGELOG.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/alexdlaird/java-ngrok/issues" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Issues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/alexdlaird/java-ngrok/blob/main/CONTRIBUTING.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Useful Links
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Useful Links
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://ngrok.com/docs" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ngrok Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/alexdlaird/java-ngrok" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    java-ngrok on GitHub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    java-ngrok on Maven Central
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/sponsors/alexdlaird" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sponsor java-ngrok
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-a-tunnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open a Tunnel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Open a Tunnel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get-active-tunnels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Active Tunnels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#close-a-tunnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Close a Tunnel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expose-other-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expose Other Services
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tunnel Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ngroks-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ngrok's API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#event-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Event Logs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#javangrokconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JavaNgrokConfig
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-the-authtoken-or-api_key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting the authtoken or api_key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config File
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#binary-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Binary Path
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ngrok-version-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ngrok Version Compatibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-line-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command Line Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#java-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Java 8
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>Home</h1>
+
+<p align="center"><img alt="java-ngrok - a Java wrapper for ngrok" src="https://github.com/alexdlaird/java-ngrok/raw/main/logo.png" /></p>
+
+<p><a href="https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok"><img alt="Version" src="https://img.shields.io/maven-central/v/com.github.alexdlaird/java-ngrok" /></a>
+<a href="https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok"><img alt="Java Versions" src="https://img.shields.io/badge/Java-11+-blue" /></a>
+<a href="https://codecov.io/gh/alexdlaird/java-ngrok"><img alt="Coverage" src="https://img.shields.io/codecov/c/github/alexdlaird/java-ngrok" /></a>
+<a href="https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/alexdlaird/java-ngrok/build.yml" /></a>
+<a href="https://app.codacy.com/gh/alexdlaird/java-ngrok?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=alexdlaird/java-ngrok&amp;utm_campaign=Badge_Grade"><img alt="Code Quality" src="https://api.codacy.com/project/badge/Grade/940d16178f8f4e8abfcf9bf2873894b3" /></a>
+<a href="https://alexdlaird.github.io/java-ngrok/"><img alt="Docs" src="https://img.shields.io/badge/docs-passing-brightgreen" /></a>
+<a href="https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE"><img alt="GitHub License" src="https://img.shields.io/github/license/alexdlaird/java-ngrok" /></a></p>
+<p><code>java-ngrok</code> is a Java wrapper for <code>ngrok</code> that manages its own binary, making <code>ngrok</code> available via a convenient Java
+API.</p>
+<p><a href="https://ngrok.com"><code>ngrok</code></a> is a reverse proxy that opens secure tunnels from public URLs to localhost. It's perfect
+for rapid
+development (test webhooks, demo local websites, enable SSH access), establishing ingress to external
+networks and devices, building production APIs (traffic policies, OAuth, load balancing), and more. And
+it's made even more powerful with native Java integration through the <code>java-ngrok</code> client.</p>
+<h2 id="installation">Installation</h2>
+<p><code>java-ngrok</code> is available
+on <a href="https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok">Maven Central</a>.</p>
+<p>If you want <code>ngrok</code> to be available from the command
+line, <a href="https://pyngrok.readthedocs.io/en/latest/#installation"><code>pyngrok</code></a>
+can be installed using <code>pip</code> to manage that for you.</p>
+<h2 id="open-a-tunnel">Open a Tunnel</h2>
+<p>To open a tunnel, use the <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html"><code>NgrokClient</code></a>'s <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)"><code>connect()</code></a>
+method, which returns a <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)"><code>Tunnel</code></a>,
+and this returned object has a reference to the public URL generated by <code>ngrok</code>, which can be retrieved with
+<a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/Tunnel.html#getPublicUrl()"><code>getPublicUrl()</code></a>.</p>
+<pre><code class="language-java">final NgrokClient ngrokClient = new NgrokClient.Builder().build();
+
+// Open a HTTP tunnel on the default port 80
+// &lt;Tunnel: &quot;https://&lt;public_sub&gt;.ngrok.io&quot; -&gt; &quot;http://localhost:80&quot;&gt;
+final Tunnel httpTunnel = ngrokClient.connect();
+
+// Open a SSH tunnel
+// &lt;Tunnel: &quot;tcp://0.tcp.ngrok.io:12345&quot; -&gt; &quot;localhost:22&quot;&gt;
+final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder()
+        .withProto(Proto.TCP)
+        .withAddr(22)
+        .build();
+final Tunnel sshTunnel = ngrokClient.connect(sshCreateTunnel);
+
+// Open a named tunnel from the config file
+final CreateTunnel createNamedTunnel = new CreateTunnel.Builder()
+        .withName(&quot;my-config-file-tunnel&quot;)
+        .build();
+final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
+
+// Open an Internal Endpoint that's load balanced
+// &lt;Tunnel: &quot;https://some-endpoint.internal&quot; -&gt; &quot;http://localhost:9000&quot;&gt;
+final CreateTunnel createInternalEndpoint = new CreateTunnel.Builder()
+        .withAddr(&quot;9000&quot;)
+        .withDomain(&quot;some-endpoint.internal&quot;)
+        .withPoolingEnabled(true)
+        .build();
+final Tunnel internalEndpoint = ngrokClient.connect(createInternalEndpoint);
+</code></pre>
+<p>The <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel)"><code>connect()</code></a>
+method can also take
+a <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.html"><code>CreateTunnel</code></a>
+(which can be built through <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html">its Builder</a>)
+that allows you to pass additional properties that
+are supported by <code>ngrok</code> (or <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withName(java.lang.String)"><code>withName()</code></a>
+to use a tunnel defined in <code>ngrok</code>'s config
+file), <a href="#tunnel-configuration">as documented here</a>.</p>
+<blockquote>
+<p><strong><em>Note:</em></strong> <code>ngrok</code> v2's default behavior for <code>http</code> when no additional properties are set is to open two tunnels,
+one <code>http</code> and one <code>https</code>. <code>java-ngrok</code>s connect method will return a reference to the <code>http</code> tunnel in this case.
+If only a single tunnel is needed, use <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withBindTls(boolean)"><code>withBindTls(true)</code></a> and a reference to the <code>https</code> tunnel will be returned.</p>
+</blockquote>
+<h3 id="get-active-tunnels">Get Active Tunnels</h3>
+<p>It can be useful to ask the <code>ngrok</code> client what tunnels are currently open. This can be accomplished with the
+<a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#getTunnels()"><code>getTunnels()</code></a> method, which returns a list of Tunnel objects.</p>
+<pre><code class="language-java">// [&lt;Tunnel: &quot;https://&lt;public_sub&gt;.ngrok.io&quot; -&gt; &quot;http://localhost:80&quot;&gt;]
+final List&lt;Tunnel&gt; tunnels = ngrokClient.getTunnels();
+</code></pre>
+<h3 id="close-a-tunnel">Close a Tunnel</h3>
+<p>All open tunnels will automatically be closed when the Java process terminates, but we can also close them manually
+with <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#disconnect(java.lang.String)"><code>disconnect(String)</code></a>.</p>
+<pre><code class="language-java">// The Tunnel returned from methods like connect(), getTunnels(), etc. contains the public URL
+ngrokClient.disconnect(publicUrl);
+</code></pre>
+<h3 id="expose-other-services">Expose Other Services</h3>
+<p>Using <code>ngrok</code> you can expose any number of non-HTTP services, for instances databases, game servers, etc. This can be
+accomplished by using <code>java-ngrok</code> to open a TCP tunnel to the desired service.</p>
+<pre><code class="language-java">// Open a tunnel to MySQL with a Reserved TCP Address
+// &lt;NgrokTunnel: &quot;tcp://1.tcp.ngrok.io:12345&quot; -&gt; &quot;localhost:3306&quot;&gt;
+final CreateTunnel mysqlCreateTunnel = new CreateTunnel.Builder()
+        .withProto(Proto.TCP)
+        .withAddr(3306)
+        .withRemoteAddr(&quot;1.tcp.ngrok.io:12345&quot;)
+        .build();
+final Tunnel mysqlTunnel = ngrokClient.connect(mysqlCreateTunnel);
+</code></pre>
+<p>You can also serve up local directories via <a href="https://ngrok.com/docs/universal-gateway/http/?cty=agent-config#agent-endpoint"><code>ngrok</code>'s built-in fileserver</a>.</p>
+<pre><code class="language-java">// Open a tunnel to a local file server
+// &lt;NgrokTunnel: &quot;https://&lt;public_sub&gt;.ngrok.io&quot; -&gt; &quot;file:///&quot;&gt;
+final CreateTunnel fileserverCreateTunnel = new CreateTunnel.Builder()
+        .withAddr(&quot;file:///&quot;)
+        .build();
+final Tunnel fileserverTunnel = ngrokClient.connect(fileserverCreateTunnel);
+</code></pre>
+<h3 id="tunnel-configuration">Tunnel Configuration</h3>
+<p>It is possible to configure the tunnel when it is created, for instance adding authentication, a subdomain, or other
+additional <a href="https://ngrok.com/docs/agent/config/v2/#common-tunnel-configuration-properties">tunnel configurations that are supported by <code>ngrok</code></a>.
+This is accomplished by using <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html"><code>CreateTunnel.Builder</code></a>
+to set what properties will be used when the tunnel is created. Here is an example that opens a tunnel with subdomain
+<code>foo</code>, requires basic authentication for requests, and defines a circuit breaker.</p>
+<pre><code class="language-java">final CreateTunnel createTunnel = new CreateTunnel.Builder()
+        .withSubdomain(&quot;foo&quot;)
+        .withAuth(&quot;username:password&quot;)
+        .withCircuitBreaker(50)
+        .build();
+
+final Tunnel tunnel = ngrokClient.connect(createTunnel);
+</code></pre>
+<p>If you already have a tunnel <a href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations">defined in <code>ngrok</code>'s config file</a>, you can start it by its name (note that "-api"
+will be appended to its name when started).</p>
+<pre><code class="language-java">final CreateTunnel createTunnel = new CreateTunnel.Builder()
+        .withName(&quot;my-config-file-tunnel&quot;)
+        .build();
+
+final Tunnel tunnel = ngrokClient.connect(createTunnel);
+</code></pre>
+<h2 id="ngroks-api"><code>ngrok</code>'s API</h2>
+<p>The <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#api(java.util.List)"><code>api()</code></a> method allows you to use the local
+<code>ngrok</code> agent to make requests against <a href="https://ngrok.com/docs/agent/cli-api/">the <code>ngrok</code> API</a>, if you
+have <a href="#setting-the-authtoken-or-api_key">set an API key</a>.
+For example, here's how you would reserve a <code>ngrok</code> domain, then create a Cloud Endpoint with an associated traffic
+policy:</p>
+<pre><code class="language-java">final String domain = &quot;some-domain.ngrok.dev&quot;;
+final ApiResponse domainResponse = ngrokClient.api(
+        List.of(&quot;reserved-domains&quot;, &quot;create&quot;,
+                &quot;--domain&quot;, domain));
+final ApiResponse endpointResponse = ngrokClient.api(
+        List.of(&quot;endpoints&quot;, &quot;create&quot;,
+                &quot;--bindings&quot;, &quot;public&quot;,
+                &quot;--url&quot;, String.format(&quot;https://%s&quot;, domain),
+                &quot;--traffic-policy-file&quot;, &quot;policy.yml&quot;));
+</code></pre>
+<h2 id="event-logs">Event Logs</h2>
+<p>When <code>ngrok</code> emits logs, <code>java-ngrok</code> can surface them to a callback function. To register this callback, use <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withLogEventCallback(java.util.function.Function)"><code>JavaNgrokConfig.Builder.withLogEventCallback(Function&lt;NgrokLog, Void&gt;)</code></a>, as show here:</p>
+<pre><code class="language-java">final Function&lt;NgrokLog, Void&gt; logEventCallback = ngrokLog -&gt; {
+    System.out.println(ngrokLog.getLine());
+    return null;
+};
+
+final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+        .withLogEventCallback(logEventCallback)
+        .build();
+
+final NgrokClient ngrokClient = new NgrokClient.Builder()
+        .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
+</code></pre>
+<p>If these events aren't necessary for your use case, some resources can be freed up by turning them off. <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withoutMonitoring()"><code>JavaNgrokConfig.Builder.withoutMonitoring()</code></a>
+will disable logging, or you can call <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/process/NgrokProcess.ProcessMonitor.html#stop()"><code>NgrokProcess.ProcessMonitor.stop()</code></a>
+to stop monitoring on a running process.</p>
+<h2 id="configuration">Configuration</h2>
+<h3 id="javangrokconfig"><code>JavaNgrokConfig</code></h3>
+<p><code>java-ngrok</code>s interactions with the <code>ngrok</code> binary can be configured using <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html"><code>JavaNgrokConfig</code></a>,
+which can then be passed to <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html"><code>NgrokClient</code></a>.</p>
+<pre><code class="language-java">final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+        .withRegion(Region.AU)
+        .withMaxLogs(10);
+
+final NgrokClient ngrokClient = new NgrokClient.Builder()
+        .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
+</code></pre>
+<blockquote>
+<p><strong><em>Note:</em></strong> If <code>ngrok</code> is not already installed at <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html#getNgrokPath()"><code>JavaNgrokConfig.getNgrokPath</code></a>,
+it will be installed the first time most methods in <code>NgrokClient</code> are called.</p>
+<p>If you need to customize the installation of <code>ngrok</code>, perhaps specifying a timeout, proxy, use a custom mirror for
+the download, etc., you can do so by leveraging the <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/installer/NgrokInstaller.html"><code>NgrokInstaller</code></a>.</p>
+</blockquote>
+<h3 id="setting-the-authtoken-or-api_key">Setting the <code>authtoken</code> or <code>api_key</code></h3>
+<p>Running <code>ngrok</code> with an auth token and API key enables access to more features available on your account (for instance,
+multiple concurrent tunnels, custom domains, use of <a href="https://ngrok.com/docs/universal-gateway/internal-endpoints/">Internal Endpoints</a>,
+etc). You can obtain your auth token and generate API keys from the <a href="https://dashboard.ngrok.com/">ngrok dashboard</a>,
+then install it to ngrok’s config file.</p>
+<pre><code class="language-java">final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+        .withAuthToken(&quot;&lt;NGROK_AUTHTOKEN&gt;&quot;)
+        .withApiKey(&quot;&lt;NGROK_API_KEY&gt;&quot;)
+        .build();
+
+final NgrokClient ngrokClient = new NgrokClient.Builder()
+        .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
+</code></pre>
+<p>You could instead define <code>NGROK_AUTHTOKEN</code> or <code>NGROK_API_KEY</code> as environment variables, if you don’t want to define
+them in code.</p>
+<h3 id="config-file">Config File</h3>
+<p>By default, <code>ngrok</code> will look for its config file in <a href="https://ngrok.com/docs/agent/config/#default-locations">the default location</a>.
+You can override this behavior with <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withConfigPath(java.nio.file.Path)"><code>JavaNgrokConfig.Builder.withConfigPath(Path)</code></a>.</p>
+<pre><code class="language-java">final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+        .withConfigPath(Path.of(&quot;opt&quot;, &quot;ngrok&quot;, &quot;config.yml&quot;))
+        .build();
+
+ final NgrokClient ngrokClient = new NgrokClient.Builder()
+        .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
+</code></pre>
+<h3 id="binary-path">Binary Path</h3>
+<p>The <code>java-ngrok</code> package manages its own <code>ngrok</code> binary. You can use your <code>ngrok</code> binary if you want by setting it with <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withNgrokPath(java.nio.file.Path)"><code>JavaNgrokConfig.Builder.withNgrokPath(Path)</code></a>
+and passing that config to <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html"><code>NgrokClient</code></a>.</p>
+<pre><code class="language-java">final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+        .withNgrokPath(Path.of(&quot;usr&quot;, &quot;local&quot;, &quot;bin&quot;, &quot;ngrok&quot;))
+        .build();
+
+final NgrokClient ngrokClient = new NgrokClient.Builder()
+        .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
+</code></pre>
+<h3 id="ngrok-version-compatibility"><code>ngrok</code> Version Compatibility</h3>
+<p><code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To install v2 instead, set the
+version with <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withNgrokVersion(com.github.alexdlaird.ngrok.installer.NgrokVersion)"><code>JavaNgrokConfig.Builder.withNgrokVersion(NgrokVersion)</code></a>
+and <a href="https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withNgrokVersion(com.github.alexdlaird.ngrok.installer.NgrokVersion)"><code>CreateTunnel.Builder.withNgrokVersion(NgrokVersion)</code></a>.</p>
+<pre><code class="language-java">final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+        .withNgrokVersion(NgrokVersion.V2)
+        .build();
+
+final NgrokClient ngrokClient = new NgrokClient.Builder()
+        .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
+
+// Open a V2 tunnel
+// &lt;Tunnel: &quot;http://&lt;public_sub&gt;.ngrok.io&quot; -&gt; &quot;http://localhost:80&quot;&gt;
+final CreateTunnel v2Tunnel = new CreateTunnel.Builder()
+        .withNgrokVersion(NgrokVersion.V2)
+        .build();
+final Tunnel sshTunnel = ngrokClient.connect(v2Tunnel);
+</code></pre>
+<h2 id="command-line-usage">Command Line Usage</h2>
+<p>Assuming you have also installed <a href="https://pyngrok.readthedocs.io/en/latest/#installation"><code>pyngrok</code></a>, all features of
+<code>ngrok</code> are available
+on the command line.</p>
+<pre><code class="language-sh">ngrok http 80
+</code></pre>
+<p>For details on how to fully leverage <code>ngrok</code> from the command line,
+see <a href="https://ngrok.com/docs/agent/cli/"><code>ngrok</code>'s official documentation</a>.</p>
+<h2 id="java-8">Java 8</h2>
+<p><a href="https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok"><img alt="Version" src="https://img.shields.io/maven-central/v/com.github.alexdlaird/java8-ngrok" /></a>
+<a href="https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok"><img alt="Java Versions" src="https://img.shields.io/badge/Java-8+-blue" /></a>
+<a href="https://codecov.io/gh/alexdlaird/java-ngrok/tree/1.4.x"><img alt="Coverage" src="https://img.shields.io/codecov/c/github/alexdlaird/java-ngrok/1.4.x" /></a>
+<a href="https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml?query=branch%3A1.4.x"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/alexdlaird/java-ngrok/build.yml?branch=1.4.x" /></a>
+<a href="https://javadoc.io/doc/com.github.alexdlaird/java8-ngrok"><img alt="Docs" src="https://img.shields.io/badge/docs-passing-brightgreen" /></a>
+<a href="https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE"><img alt="GitHub License" src="https://img.shields.io/github/license/alexdlaird/java-ngrok" /></a></p>
+<p>A Java 8-compatible build was previously maintained in the <a href="https://github.com/alexdlaird/java-ngrok/tree/1.4.x"><code>1.4.x</code></a>
+branch. While it is no longer supported, it is available through the <code>java8-ngrok</code> artifact instead on <a href="https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok">Maven Central</a>.</p>
+<p>For more details on what differs in the <code>java8-ngrok</code> dependency,
+see <a href="https://javadoc.io/static/com.github.alexdlaird/java8-ngrok/1.4.19/overview-summary.html#java8">the "Java 8" section of the docs</a>.</p>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      2021-2025, Alex Laird
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.expand"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
