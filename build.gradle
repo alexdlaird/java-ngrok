@@ -111,7 +111,7 @@ publishing {
             pom {
                 name = Project.getName()
                 description = "A Java wrapper for ngrok that manages its own binary, making ngrok available via a convenient Java API"
-                url = "https://github.com/alexdlaird/java-ngrok"
+                url = "https://alexdlaird.github.io/java-ngrok/"
                 licenses {
                     license {
                         name = "MIT"
