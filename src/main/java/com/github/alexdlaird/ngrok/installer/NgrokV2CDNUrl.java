@@ -22,7 +22,7 @@ public enum NgrokV2CDNUrl implements NgrokCDNUrl {
     FREEBSD_i386("ngrok-stable-freebsd-386.zip"),
     FREEBSD_x86_64("ngrok-stable-freebsd-amd64.zip");
 
-    private static final String CDN_URL_PREFIX = "https://bin.equinox.io/c/4VmDzA7iaHb/";
+    private static final String CDN_URL_PREFIX = "https://bin.ngrok.io/c/4VmDzA7iaHb/";
 
     private final String url;
 
