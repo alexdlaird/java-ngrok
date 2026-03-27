@@ -48,7 +48,7 @@ jobs:
         uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./build/reports/jacoco/report.xml
+          files: ./build/reports/jacoco/report.xml
       - name: Upload test results
         if: ${{ !cancelled() }}
         uses: codecov/codecov-action@v6
