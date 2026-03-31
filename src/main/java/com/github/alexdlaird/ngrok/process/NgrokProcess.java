@@ -265,14 +265,9 @@ public class NgrokProcess {
      */
     public void setAuthToken(final String authToken) {
         final List<String> args = new ArrayList<>();
-        if (javaNgrokConfig.getNgrokVersion() == NgrokVersion.V2) {
-            args.add("authtoken");
-            args.add(authToken);
-        } else {
-            args.add("config");
-            args.add("add-authtoken");
-            args.add(authToken);
-        }
+        args.add("config");
+        args.add("add-authtoken");
+        args.add(authToken);
         args.add("--log");
         args.add("stdout");
 
@@ -301,14 +296,9 @@ public class NgrokProcess {
      */
     public void setApiKey(final String apiKey) {
         final List<String> args = new ArrayList<>();
-        if (javaNgrokConfig.getNgrokVersion() == NgrokVersion.V3) {
-            args.add("config");
-            args.add("add-api-key");
-            args.add(apiKey);
-        } else {
-            throw new JavaNgrokException(String.format("ngrok %s does not have this command.",
-                javaNgrokConfig.getNgrokVersion()));
-        }
+        args.add("config");
+        args.add("add-api-key");
+        args.add(apiKey);
         args.add("--log");
         args.add("stdout");
 

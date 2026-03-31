@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.slf4j.Logger;
@@ -207,14 +208,22 @@ public class NgrokInstaller {
      */
     public void installNgrok(final Path ngrokPath, final NgrokVersion ngrokVersion) {
         final NgrokCDNUrl ngrokCDNUrl = getNgrokCDNUrl(ngrokVersion);
+        final String url = ngrokCDNUrl.getUrl();
 
         LOGGER.trace("Installing ngrok {} to {}{} ...", ngrokVersion, ngrokPath,
             Files.exists(ngrokPath) ? ", overwriting" : "");
 
-        final Path ngrokZip = Path.of(ngrokPath.getParent().toString(), "ngrok.zip");
-        downloadFile(ngrokCDNUrl.getUrl(), ngrokZip);
-
-        installNgrokZip(ngrokZip, ngrokPath);
+        if (url.endsWith(".zip")) {
+            final Path archivePath = Path.of(ngrokPath.getParent().toString(), "ngrok.zip");
+            downloadFile(url, archivePath);
+            installNgrokZip(archivePath, ngrokPath);
+        } else if (url.endsWith(".tgz") || url.endsWith(".tar.gz")) {
+            final Path archivePath = Path.of(ngrokPath.getParent().toString(), "ngrok.tgz");
+            downloadFile(url, archivePath);
+            installNgrokTgz(archivePath, ngrokPath);
+        } else {
+            throw new JavaNgrokInstallerException(String.format("Unsupported archive format: %s", url));
+        }
     }
 
     /**
@@ -236,11 +245,8 @@ public class NgrokInstaller {
         final String plat = String.format("%s_%s", system, arch);
 
         LOGGER.trace("Platform to download: {}", plat);
-        if (ngrokVersion == NgrokVersion.V2) {
-            return NgrokV2CDNUrl.valueOf(plat);
-        } else {
-            return NgrokV3CDNUrl.valueOf(plat);
-        }
+
+        return NgrokV3CDNUrl.valueOf(plat);
     }
 
     /**
@@ -329,16 +335,12 @@ public class NgrokInstaller {
      */
     public Map<String, Object> getDefaultConfig(final NgrokVersion ngrokVersion,
                                                 final ConfigVersion configVersion) {
-        if (ngrokVersion == NgrokVersion.V2) {
-            return new HashMap<>();
-        } else {
-            final HashMap<String, Object> config = new HashMap<>();
-            config.put("version", configVersion.getVersion());
-            if (configVersion == ConfigVersion.V2) {
-                config.put("region", "us");
-            }
-            return config;
+        final HashMap<String, Object> config = new HashMap<>();
+        config.put("version", configVersion.getVersion());
+        if (configVersion == ConfigVersion.V2) {
+            config.put("region", "us");
         }
+        return config;
     }
 
     private void installNgrokZip(final Path zipPath, final Path ngrokPath) {
@@ -386,6 +388,88 @@ public class NgrokInstaller {
             }
         } catch (final IOException e) {
             throw new JavaNgrokInstallerException("An error occurred while unzipping ngrok.", e);
+        }
+    }
+
+    private void installNgrokTgz(final Path tgzPath, final Path ngrokPath) {
+        try {
+            final Path dir = ngrokPath.getParent();
+
+            LOGGER.trace("Extracting ngrok binary from {} to {} ...", tgzPath, ngrokPath);
+
+            Files.createDirectories(dir);
+
+            try (final GZIPInputStream gzipIn = new GZIPInputStream(new FileInputStream(tgzPath.toFile()))) {
+                final byte[] header = new byte[512];
+                int bytesRead;
+                while ((bytesRead = gzipIn.readNBytes(header, 0, 512)) == 512) {
+                    // Check for end-of-archive (two consecutive zero blocks)
+                    boolean allZero = true;
+                    for (final byte b : header) {
+                        if (b != 0) {
+                            allZero = false;
+                            break;
+                        }
+                    }
+                    if (allZero) {
+                        break;
+                    }
+
+                    final String entryName = new String(header, 0, 100, StandardCharsets.US_ASCII).trim()
+                        .replace('\0', ' ').trim();
+                    final String sizeStr = new String(header, 124, 12, StandardCharsets.US_ASCII).trim()
+                        .replace('\0', ' ').trim();
+                    final long size = sizeStr.isEmpty() ? 0 : Long.parseLong(sizeStr, 8);
+                    final byte typeflag = header[156];
+
+                    final Path file = Path.of(dir.toString(), entryName);
+                    if (!file.normalize().startsWith(dir)) {
+                        throw new JavaNgrokSecurityException("Bad tar entry, paths don't match");
+                    }
+
+                    if (typeflag == '5') {
+                        // Directory entry
+                        Files.createDirectories(file);
+                    } else if (typeflag == '0' || typeflag == 0) {
+                        // Regular file entry
+                        final Path parent = file.getParent();
+                        if (!Files.isDirectory(parent)) {
+                            Files.createDirectories(parent);
+                        }
+
+                        try (final FileOutputStream out = new FileOutputStream(file.toFile())) {
+                            long remaining = size;
+                            final byte[] buffer = new byte[1024];
+                            while (remaining > 0) {
+                                final int toRead = (int) Math.min(buffer.length, remaining);
+                                final int read = gzipIn.read(buffer, 0, toRead);
+                                if (read < 0) {
+                                    break;
+                                }
+                                out.write(buffer, 0, read);
+                                remaining -= read;
+                            }
+                        }
+
+                        // Tar entries are padded to 512-byte boundaries
+                        final long padding = (512 - (size % 512)) % 512;
+                        gzipIn.skipNBytes(padding);
+                    } else {
+                        // Skip unknown entry types
+                        final long totalSize = size + ((512 - (size % 512)) % 512);
+                        gzipIn.skipNBytes(totalSize);
+                    }
+                }
+            }
+
+            if (ngrokPath.getFileSystem().supportedFileAttributeViews().contains("posix")) {
+                final Set<PosixFilePermission> perms = Files.readAttributes(ngrokPath, PosixFileAttributes.class)
+                                                            .permissions();
+                perms.add(PosixFilePermission.OWNER_EXECUTE);
+                Files.setPosixFilePermissions(ngrokPath, perms);
+            }
+        } catch (final IOException e) {
+            throw new JavaNgrokInstallerException("An error occurred while extracting ngrok from tgz.", e);
         }
     }
 

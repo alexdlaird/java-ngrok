@@ -118,25 +118,7 @@ public class NgrokClient {
                 finalTunnel.getName()), e, e.getUrl(), e.getStatusCode(), e.getBody());
         }
 
-        final Tunnel tunnel;
-        if (javaNgrokConfig.getNgrokVersion() == NgrokVersion.V2
-            && finalTunnel.getProto() == Proto.HTTP
-            && finalTunnel.getBindTls() == BindTls.BOTH) {
-            try {
-                final Response<Tunnel> getResponse = httpClient.get(ngrokProcess.getApiUrl()
-                                                                    + response.getBody().getUri() + "%20%28http%29",
-                    Tunnel.class);
-                tunnel = getResponse.getBody();
-
-                LOGGER.info("ngrok v2 opens multiple tunnels, fetching just HTTP tunnel {} for return",
-                    tunnel.getId());
-            } catch (final HttpClientException e) {
-                throw new JavaNgrokHTTPException(String.format("An error occurred when GETing the HTTP tunnel %s.",
-                    response.getBody().getName()), e, e.getUrl(), e.getStatusCode(), e.getBody());
-            }
-        } else {
-            tunnel = response.getBody();
-        }
+        final Tunnel tunnel = response.getBody();
 
         currentTunnels.put(tunnel.getPublicUrl(), tunnel);
 
