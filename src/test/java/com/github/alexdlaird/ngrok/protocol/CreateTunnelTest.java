@@ -23,7 +23,7 @@ public class CreateTunnelTest {
     public void testCreateTunnelParams() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-            .withNgrokVersion(NgrokVersion.V2)
+            .withNgrokVersion(NgrokVersion.V3)
             .withName("name")
             .withProto(Proto.TCP)
             .withDomain("java-ngrok.com")
@@ -90,7 +90,7 @@ public class CreateTunnelTest {
             .build();
 
         // THEN
-        assertEquals(NgrokVersion.V2, createTunnel.getNgrokVersion());
+        assertEquals(NgrokVersion.V3, createTunnel.getNgrokVersion());
         assertEquals("name", createTunnel.getName());
         assertEquals(Proto.TCP, createTunnel.getProto());
         assertEquals("java-ngrok.com", createTunnel.getDomain());

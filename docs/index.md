@@ -73,10 +73,6 @@ are supported by `ngrok` (or [`withName()`](https://javadoc.io/doc/com.github.al
 to use a tunnel defined in `ngrok`'s config
 file), [as documented here](#tunnel-configuration).
 
-> **_Note:_** `ngrok` v2's default behavior for `http` when no additional properties are set is to open two tunnels,
-> one `http` and one `https`. `java-ngrok`s connect method will return a reference to the `http` tunnel in this case.
-> If only a single tunnel is needed, use [`withBindTls(true)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withBindTls(boolean)) and a reference to the `https` tunnel will be returned.
-
 ### Get Active Tunnels
 
 It can be useful to ask the `ngrok` client what tunnels are currently open. This can be accomplished with the
@@ -268,29 +264,6 @@ final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
 final NgrokClient ngrokClient = new NgrokClient.Builder()
         .withJavaNgrokConfig(javaNgrokConfig)
         .build();
-```
-
-### `ngrok` Version Compatibility
-
-`java-ngrok` is compatible with `ngrok` v2 and v3, but by default it will install v3. To install v2 instead, set the
-version with [`JavaNgrokConfig.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withNgrokVersion(com.github.alexdlaird.ngrok.installer.NgrokVersion))
-and [`CreateTunnel.Builder.withNgrokVersion(NgrokVersion)`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withNgrokVersion(com.github.alexdlaird.ngrok.installer.NgrokVersion)).
-
-```java
-final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-        .withNgrokVersion(NgrokVersion.V2)
-        .build();
-
-final NgrokClient ngrokClient = new NgrokClient.Builder()
-        .withJavaNgrokConfig(javaNgrokConfig)
-        .build();
-
-// Open a V2 tunnel
-// <Tunnel: "http://<public_sub>.ngrok.io" -> "http://localhost:80">
-final CreateTunnel v2Tunnel = new CreateTunnel.Builder()
-        .withNgrokVersion(NgrokVersion.V2)
-        .build();
-final Tunnel sshTunnel = ngrokClient.connect(v2Tunnel);
 ```
 
 ## Command Line Usage

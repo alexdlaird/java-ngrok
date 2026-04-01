@@ -878,9 +878,6 @@ public class CreateTunnel {
                         name = String.format("%s-file-%s", proto, UUID.randomUUID());
                     }
                 }
-                if (ngrokVersion == NgrokVersion.V2 && isNull(bindTls)) {
-                    bindTls = BindTls.BOTH;
-                }
                 if (ngrokVersion == NgrokVersion.V3) {
                     if (nonNull(bindTls)) {
                         if (bindTls == BindTls.TRUE) {
