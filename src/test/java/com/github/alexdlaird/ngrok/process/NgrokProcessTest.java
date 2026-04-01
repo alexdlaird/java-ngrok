@@ -36,13 +36,13 @@ public class NgrokProcessTest extends NgrokTestCase {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
-        assertFalse(ngrokProcessV3.isRunning());
+        assertFalse(ngrokProcess.isRunning());
 
         // WHEN
-        ngrokProcessV3.start();
+        ngrokProcess.start();
 
         // THEN
-        assertTrue(ngrokProcessV3.isRunning());
+        assertTrue(ngrokProcess.isRunning());
     }
 
     @Test
@@ -51,81 +51,41 @@ public class NgrokProcessTest extends NgrokTestCase {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
-        ngrokProcessV3.start();
+        ngrokProcess.start();
 
         // WHEN
-        ngrokProcessV3.stop();
+        ngrokProcess.stop();
         Thread.sleep(1000);
 
         // THEN
-        assertFalse(ngrokProcessV3.isRunning());
+        assertFalse(ngrokProcess.isRunning());
     }
 
     @Test
-    public void testStartPortInUseV2()
+    public void testStartPortInUse()
         throws InterruptedException {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
-        assertFalse(ngrokProcessV2.isRunning());
-        ngrokProcessV2.start();
-        assertTrue(ngrokProcessV2.isRunning());
-        final Path ngrokPath2 = Path.of(javaNgrokConfigV2.getNgrokPath().getParent().toString(),
+        assertFalse(ngrokProcess.isRunning());
+        ngrokProcess.start();
+        assertTrue(ngrokProcess.isRunning());
+        final Path ngrokPath2 = Path.of(javaNgrokConfig.getNgrokPath().getParent().toString(),
             "2",
             NgrokInstaller.getNgrokBin());
-        final Path configPath2 = Path.of(javaNgrokConfigV2.getConfigPath().getParent().toString(),
-            "config2.yml");
-        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV2)
-            .withNgrokPath(ngrokPath2)
-            .withConfigPath(configPath2)
-            .build();
-        ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(), Map.of("web_addr",
-            ngrokProcessV2.getApiUrl().replace("http://", "")), javaNgrokConfig2.getNgrokVersion());
-        Thread.sleep(3000);
-
-        // WHEN
-        ngrokProcessV2_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
-        final NgrokException exception = assertThrows(NgrokException.class, ngrokProcessV2_2::start);
-
-        // THEN
-        assertNotNull(exception);
-        assertNotNull(exception.getNgrokError());
-        if (NgrokInstaller.getSystem().equals(WINDOWS)) {
-            assertThat(exception.getMessage(), containsString("bind: Only one usage of each socket address"));
-            assertThat(exception.getNgrokError(), containsString("bind: Only one usage of each socket address"));
-        } else {
-            assertThat(exception.getMessage(), containsString("bind: address already in use"));
-            assertThat(exception.getNgrokError(), containsString("bind: address already in use"));
-        }
-        assertThat(exception.getNgrokLogs().size(), greaterThan(0));
-        assertFalse(ngrokProcessV2_2.isRunning());
-    }
-
-    @Test
-    public void testStartPortInUseV3()
-        throws InterruptedException {
-        testRequiresEnvVar("NGROK_AUTHTOKEN");
-
-        // GIVEN
-        assertFalse(ngrokProcessV3.isRunning());
-        ngrokProcessV3.start();
-        assertTrue(ngrokProcessV3.isRunning());
-        final Path ngrokPath2 = Path.of(javaNgrokConfigV3.getNgrokPath().getParent().toString(),
-            "2",
-            NgrokInstaller.getNgrokBin());
-        final Path configPath2 = Path.of(javaNgrokConfigV3.getConfigPath().getParent().toString(), "config2.yml");
-        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
+        final Path configPath2 = Path.of(javaNgrokConfig.getConfigPath().getParent().toString(), "config2.yml");
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfig)
             .withNgrokPath(ngrokPath2)
             .withConfigPath(configPath2)
             .build();
         ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(),
-            Map.of("web_addr", ngrokProcessV3.getApiUrl().replace("http://", "")), javaNgrokConfigV3.getNgrokVersion());
+            Map.of("web_addr", ngrokProcess.getApiUrl().replace("http://", "")), javaNgrokConfig.getNgrokVersion());
         Thread.sleep(3000);
 
         // WHEN
 
-        ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
-        final NgrokException exception = assertThrows(NgrokException.class, ngrokProcessV3_2::start);
+        ngrokProcess2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+        final NgrokException exception = assertThrows(NgrokException.class, ngrokProcess2::start);
 
         // THEN
         assertNotNull(exception);
@@ -138,7 +98,7 @@ public class NgrokProcessTest extends NgrokTestCase {
             assertThat(exception.getNgrokError(), containsString("bind: address already in use"));
         }
         assertThat(exception.getNgrokLogs().size(), greaterThan(0));
-        assertFalse(ngrokProcessV3_2.isRunning());
+        assertFalse(ngrokProcess2.isRunning());
     }
 
     @Test
@@ -147,29 +107,29 @@ public class NgrokProcessTest extends NgrokTestCase {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
-        ngrokProcessV3.start();
-        assertTrue(ngrokProcessV3.isRunning());
+        ngrokProcess.start();
+        assertTrue(ngrokProcess.isRunning());
         final ProcessHandle processHandle = ProcessHandle.allProcesses()
                                                          .filter(p -> p.info()
                                                                        .command()
                                                                        .orElse("")
                                                                        .contains(
-                                                                           javaNgrokConfigV3.getNgrokPath().toString()))
+                                                                           javaNgrokConfig.getNgrokPath().toString()))
                                                          .findFirst().orElse(null);
         assertNotNull(processHandle);
 
         // THEN Kill the process by external means, java-ngrok will clean up the state
         processHandle.destroy();
         long timeoutTime = System.currentTimeMillis() + 10 * 1000;
-        while (processHandle.isAlive() && ngrokProcessV3.isRunning() && System.currentTimeMillis() < timeoutTime) {
+        while (processHandle.isAlive() && ngrokProcess.isRunning() && System.currentTimeMillis() < timeoutTime) {
             Thread.sleep(50);
         }
         assertFalse(processHandle.isAlive());
-        assertFalse(ngrokProcessV3.isRunning());
+        assertFalse(ngrokProcess.isRunning());
 
         // THEN test we can successfully restart the process
-        ngrokProcessV3.start();
-        assertTrue(ngrokProcessV3.isRunning());
+        ngrokProcess.start();
+        assertTrue(ngrokProcess.isRunning());
     }
 
     @Test
@@ -177,51 +137,30 @@ public class NgrokProcessTest extends NgrokTestCase {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
-        ngrokInstaller.installDefaultConfig(javaNgrokConfigV2.getConfigPath(),
-            Map.of("web_addr", "localhost:4040"), javaNgrokConfigV2.getNgrokVersion());
-        final Path ngrokPathV2_2 = Path.of(javaNgrokConfigV2.getNgrokPath().getParent().toString(),
+        ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Map.of("web_addr", "localhost:4040"),
+            javaNgrokConfig.getNgrokVersion());
+        final Path ngrokPath2 = Path.of(javaNgrokConfig.getNgrokPath().getParent().toString(),
             "2",
             NgrokInstaller.getNgrokBin());
-        final Path configPathV2_2 = Path.of(javaNgrokConfigV2.getConfigPath().getParent().toString(),
-            "configV2_2.yml");
-        final JavaNgrokConfig javaNgrokConfigV2_2 = new JavaNgrokConfig.Builder(javaNgrokConfigV2)
-            .withNgrokPath(ngrokPathV2_2)
-            .withConfigPath(configPathV2_2)
-            .build();
-        ngrokInstaller.installDefaultConfig(javaNgrokConfigV2_2.getConfigPath(), Map.of("web_addr", "localhost:4041"),
-            javaNgrokConfigV2.getNgrokVersion());
-        ngrokProcessV2_2 = new NgrokProcess(javaNgrokConfigV2_2, ngrokInstaller);
-
-        ngrokInstaller.installDefaultConfig(javaNgrokConfigV3.getConfigPath(), Map.of("web_addr", "localhost:4042"),
-            javaNgrokConfigV3.getNgrokVersion());
-        final Path ngrokPath2 = Path.of(javaNgrokConfigV3.getNgrokPath().getParent().toString(),
-            "2",
-            NgrokInstaller.getNgrokBin());
-        final Path configPath2 = Path.of(javaNgrokConfigV3.getConfigPath().getParent().toString(),
-            "configV3_2.yml");
-        final JavaNgrokConfig javaNgrokConfigV3_2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
+        final Path configPath2 = Path.of(javaNgrokConfig.getConfigPath().getParent().toString(),
+            "config2.yml");
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfig)
             .withNgrokPath(ngrokPath2)
             .withConfigPath(configPath2)
             .build();
-        ngrokInstaller.installDefaultConfig(javaNgrokConfigV3_2.getConfigPath(),
-            Map.of("web_addr", "localhost:4043"), javaNgrokConfigV3.getNgrokVersion());
-        ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfigV3_2, ngrokInstaller);
+        ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(),
+            Map.of("web_addr", "localhost:4041"), javaNgrokConfig.getNgrokVersion());
+        ngrokProcess2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
 
         // WHEN
-        ngrokProcessV2.start();
-        ngrokProcessV2_2.start();
-        ngrokProcessV3.start();
-        ngrokProcessV3_2.start();
+        ngrokProcess.start();
+        ngrokProcess2.start();
 
         // THEN
-        assertTrue(ngrokProcessV2.isRunning());
-        assertEquals("http://localhost:4040", ngrokProcessV2.getApiUrl());
-        assertTrue(ngrokProcessV2_2.isRunning());
-        assertEquals("http://localhost:4041", ngrokProcessV2_2.getApiUrl());
-        assertTrue(ngrokProcessV3.isRunning());
-        assertEquals("http://localhost:4042", ngrokProcessV3.getApiUrl());
-        assertTrue(ngrokProcessV3_2.isRunning());
-        assertEquals("http://localhost:4043", ngrokProcessV3_2.getApiUrl());
+        assertTrue(ngrokProcess.isRunning());
+        assertEquals("http://localhost:4040", ngrokProcess.getApiUrl());
+        assertTrue(ngrokProcess2.isRunning());
+        assertEquals("http://localhost:4041", ngrokProcess2.getApiUrl());
     }
 
     @Test
@@ -229,11 +168,11 @@ public class NgrokProcessTest extends NgrokTestCase {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // WHEN
-        ngrokProcessV3.start();
+        ngrokProcess.start();
 
         // THEN
         int i = 0;
-        for (final NgrokLog log : ngrokProcessV3.getLogs()) {
+        for (final NgrokLog log : ngrokProcess.getLogs()) {
             assertNotNull(log.getT());
             assertNotNull(log.getLvl());
             assertNotNull(log.getMsg());
@@ -249,20 +188,20 @@ public class NgrokProcessTest extends NgrokTestCase {
 
         // GIVEN
         final Function<NgrokLog, Void> logEventCallbackMock = mock(Function.class);
-        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfig)
             .withLogEventCallback(logEventCallbackMock)
             .withMaxLogs(5)
             .build();
-        ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+        ngrokProcess2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
 
         // WHEN
-        ngrokProcessV3_2.start();
+        ngrokProcess2.start();
         Thread.sleep(1000);
 
         // THEN
         assertThat(Mockito.mockingDetails(logEventCallbackMock).getInvocations().size(),
-            greaterThan(ngrokProcessV3_2.getLogs().size()));
-        assertEquals(5, ngrokProcessV3_2.getLogs().size());
+            greaterThan(ngrokProcess2.getLogs().size()));
+        assertEquals(5, ngrokProcess2.getLogs().size());
     }
 
     @Test
@@ -271,18 +210,18 @@ public class NgrokProcessTest extends NgrokTestCase {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
-        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfigV3)
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfig)
             .withoutMonitoring()
             .build();
-        ngrokProcessV3_2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+        ngrokProcess2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
 
         // WHEN
-        ngrokProcessV3_2.start();
+        ngrokProcess2.start();
         Thread.sleep(1000);
 
         // THEN
-        assertTrue(ngrokProcessV3_2.isRunning());
-        assertFalse(ngrokProcessV3_2.getProcessMonitor().isMonitoring());
+        assertTrue(ngrokProcess2.isRunning());
+        assertFalse(ngrokProcess2.getProcessMonitor().isMonitoring());
     }
 
     @Test
@@ -294,15 +233,15 @@ public class NgrokProcessTest extends NgrokTestCase {
         }
 
         // GIVEN
-        if (Files.exists(javaNgrokConfigV3.getNgrokPath())) {
-            Files.delete(javaNgrokConfigV3.getNgrokPath());
+        if (Files.exists(javaNgrokConfig.getNgrokPath())) {
+            Files.delete(javaNgrokConfig.getNgrokPath());
         }
 
         // WHEN
-        final NgrokException exception = assertThrows(NgrokException.class, ngrokProcessV3::start);
+        final NgrokException exception = assertThrows(NgrokException.class, ngrokProcess::start);
 
         // THEN
         assertThat(exception.getMessage(), containsString("ngrok binary was not found"));
-        assertFalse(ngrokProcessV3.isRunning());
+        assertFalse(ngrokProcess.isRunning());
     }
 }

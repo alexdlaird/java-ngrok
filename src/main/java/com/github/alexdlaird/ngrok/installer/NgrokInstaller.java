@@ -16,6 +16,7 @@ import com.google.gson.JsonParseException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -453,11 +454,11 @@ public class NgrokInstaller {
 
                         // Tar entries are padded to 512-byte boundaries
                         final long padding = (512 - (size % 512)) % 512;
-                        gzipIn.skipNBytes(padding);
+                        skipFully(gzipIn, padding);
                     } else {
                         // Skip unknown entry types
                         final long totalSize = size + ((512 - (size % 512)) % 512);
-                        gzipIn.skipNBytes(totalSize);
+                        skipFully(gzipIn, totalSize);
                     }
                 }
             }
@@ -470,6 +471,20 @@ public class NgrokInstaller {
             }
         } catch (final IOException e) {
             throw new JavaNgrokInstallerException("An error occurred while extracting ngrok from tgz.", e);
+        }
+    }
+
+    private static void skipFully(final InputStream in, long bytes) throws IOException {
+        while (bytes > 0) {
+            final long skipped = in.skip(bytes);
+            if (skipped <= 0) {
+                if (in.read() < 0) {
+                    break;
+                }
+                bytes--;
+            } else {
+                bytes -= skipped;
+            }
         }
     }
 

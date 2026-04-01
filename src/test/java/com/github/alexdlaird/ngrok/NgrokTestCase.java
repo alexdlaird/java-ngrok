@@ -11,7 +11,6 @@ import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
-import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -31,16 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class NgrokTestCase extends TestCase {
 
-    protected final JavaNgrokConfig javaNgrokConfigV2 = new JavaNgrokConfig.Builder()
-        .withConfigPath(Path.of("build", ".ngrok", "config_v2.yml").toAbsolutePath())
-        .withNgrokPath(Path.of("build", "bin", "v2", getNgrokBin()))
-        .withNgrokVersion(NgrokVersion.V2)
-        .build();
-
-    protected final JavaNgrokConfig javaNgrokConfigV3 = new JavaNgrokConfig.Builder()
-        .withConfigPath(Path.of("build", ".ngrok", "config_v3.yml").toAbsolutePath())
+    protected final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+        .withConfigPath(Path.of("build", ".ngrok", "config.yml").toAbsolutePath())
         .withNgrokPath(Path.of("build", "bin", "v3", getNgrokBin()))
-        .withNgrokVersion(NgrokVersion.V3)
         .build();
 
     protected final HttpClient retryHttpClient = new DefaultHttpClient.Builder()
@@ -50,13 +42,9 @@ public class NgrokTestCase extends TestCase {
 
     protected final NgrokInstaller ngrokInstaller = new NgrokInstaller(retryHttpClient);
 
-    protected NgrokProcess ngrokProcessV2;
+    protected NgrokProcess ngrokProcess;
 
-    protected NgrokProcess ngrokProcessV2_2;
-
-    protected NgrokProcess ngrokProcessV3;
-
-    protected NgrokProcess ngrokProcessV3_2;
+    protected NgrokProcess ngrokProcess2;
 
     private final Map<String, String> mockedSystemProperties = new HashMap<>();
 
@@ -68,25 +56,19 @@ public class NgrokTestCase extends TestCase {
 
     @BeforeEach
     public void setUp() {
-        ngrokProcessV2 = new NgrokProcess(javaNgrokConfigV2, ngrokInstaller);
-        ngrokProcessV3 = new NgrokProcess(javaNgrokConfigV3, ngrokInstaller);
+        ngrokProcess = new NgrokProcess(javaNgrokConfig, ngrokInstaller);
     }
 
     @AfterEach
     public void tearDown()
         throws IOException {
-        ngrokProcessV2.stop();
-        ngrokProcessV3.stop();
+        ngrokProcess.stop();
 
-        if (nonNull(ngrokProcessV2_2)) {
-            ngrokProcessV2_2.stop();
-        }
-        if (nonNull(ngrokProcessV3_2)) {
-            ngrokProcessV3_2.stop();
+        if (nonNull(ngrokProcess2)) {
+            ngrokProcess2.stop();
         }
 
-        // This deletes all v2 and v3 configs
-        Files.walk(javaNgrokConfigV2.getConfigPath().getParent())
+        Files.walk(javaNgrokConfig.getConfigPath().getParent())
              .sorted(Comparator.reverseOrder())
              .forEach((path) -> {
                  try {
