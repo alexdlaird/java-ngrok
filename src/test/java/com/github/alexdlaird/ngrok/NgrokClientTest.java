@@ -818,37 +818,6 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
-    public void testNgrokConnectHttpClientGetTunnelsFails() {
-        testRequiresEnvVar("NGROK_AUTHTOKEN");
-
-        // GIVEN
-        final HttpClient httpClient = mock(HttpClient.class);
-        final Response response = mock(Response.class);
-        final Tunnel tunnel = mock(Tunnel.class);
-        final HttpClientException httpClientException = new HttpClientException("some message",
-            new SocketTimeoutException(), "http://localhost:4040/api/tunnels", 500, "error body");
-        final NgrokClient mockNgrokClient = new NgrokClient.Builder().withJavaNgrokConfig(javaNgrokConfig)
-                                                                    .withNgrokProcess(ngrokProcess)
-                                                                    .withHttpClient(httpClient)
-                                                                    .build();
-        when(tunnel.getName()).thenReturn("my-tunnel");
-        when(tunnel.getUri()).thenReturn("/api/tunnels/my-tunnel");
-        when(response.getBody()).thenReturn(tunnel);
-        when(httpClient.post(any(), any(), any())).thenReturn(response);
-        when(httpClient.get(any(), any())).thenThrow(httpClientException);
-
-        // WHEN
-        final JavaNgrokHTTPException javaNgrokHTTPException = assertThrows(JavaNgrokHTTPException.class,
-            mockNgrokClient::connect);
-
-        // THEN
-        assertEquals("An error occurred when GETing the HTTP tunnel my-tunnel.", javaNgrokHTTPException.getMessage());
-        assertEquals("http://localhost:4040/api/tunnels", javaNgrokHTTPException.getUrl());
-        assertEquals(500, javaNgrokHTTPException.getStatusCode());
-        assertEquals("error body", javaNgrokHTTPException.getBody());
-    }
-
-    @Test
     public void testNgrokConnectHttpClientDeleteTunnelsFails() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 

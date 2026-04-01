@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -353,33 +354,34 @@ public class NgrokInstaller {
             Files.createDirectories(dir);
 
             final byte[] buffer = new byte[1024];
-            final ZipInputStream in = new ZipInputStream(new FileInputStream(zipPath.toFile()));
-            ZipEntry zipEntry;
-            while (nonNull(zipEntry = in.getNextEntry())) {
-                final Path file = Path.of(dir.toString(), zipEntry.getName());
-                if (!file.normalize().startsWith(dir)) {
-                    throw new JavaNgrokSecurityException("Bad zip entry, paths don't match");
-                }
-                if (zipEntry.isDirectory()) {
-                    if (!Files.isDirectory(file)) {
-                        Files.createDirectories(file);
+            try (final ZipFile zipFile = new ZipFile(zipPath.toFile())) {
+                final Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                while (entries.hasMoreElements()) {
+                    final ZipEntry zipEntry = entries.nextElement();
+                    final Path file = Path.of(dir.toString(), zipEntry.getName());
+                    if (!file.normalize().startsWith(dir)) {
+                        throw new JavaNgrokSecurityException("Bad zip entry, paths don't match");
                     }
-                } else {
-                    final Path parent = file.getParent();
-                    if (!Files.isDirectory(parent)) {
-                        Files.createDirectories(parent);
-                    }
+                    if (zipEntry.isDirectory()) {
+                        if (!Files.isDirectory(file)) {
+                            Files.createDirectories(file);
+                        }
+                    } else {
+                        final Path parent = file.getParent();
+                        if (!Files.isDirectory(parent)) {
+                            Files.createDirectories(parent);
+                        }
 
-                    final FileOutputStream out = new FileOutputStream(file.toFile());
-                    int len;
-                    while ((len = in.read(buffer)) > 0) {
-                        out.write(buffer, 0, len);
+                        try (final InputStream in = zipFile.getInputStream(zipEntry);
+                             final FileOutputStream out = new FileOutputStream(file.toFile())) {
+                            int len;
+                            while ((len = in.read(buffer)) > 0) {
+                                out.write(buffer, 0, len);
+                            }
+                        }
                     }
-                    out.close();
                 }
             }
-            in.closeEntry();
-            in.close();
 
             if (ngrokPath.getFileSystem().supportedFileAttributeViews().contains("posix")) {
                 final Set<PosixFilePermission> perms = Files.readAttributes(ngrokPath, PosixFileAttributes.class)
