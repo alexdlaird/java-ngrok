@@ -17,6 +17,7 @@ import com.google.gson.JsonParseException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -32,6 +33,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.slf4j.Logger;
@@ -222,14 +224,22 @@ public class NgrokInstaller {
      */
     public void installNgrok(final Path ngrokPath, final NgrokVersion ngrokVersion) {
         final NgrokCDNUrl ngrokCDNUrl = getNgrokCDNUrl(ngrokVersion);
+        final String url = ngrokCDNUrl.getUrl();
 
         LOGGER.trace("Installing ngrok {} to {}{} ...", ngrokVersion, ngrokPath,
             Files.exists(ngrokPath) ? ", overwriting" : "");
 
-        final Path ngrokZip = Paths.get(ngrokPath.getParent().toString(), "ngrok.zip");
-        downloadFile(ngrokCDNUrl.getUrl(), ngrokZip);
-
-        installNgrokZip(ngrokZip, ngrokPath);
+        if (url.endsWith(".zip")) {
+            final Path archivePath = Paths.get(ngrokPath.getParent().toString(), "ngrok.zip");
+            downloadFile(url, archivePath);
+            installNgrokZip(archivePath, ngrokPath);
+        } else if (url.endsWith(".tgz") || url.endsWith(".tar.gz")) {
+            final Path archivePath = Paths.get(ngrokPath.getParent().toString(), "ngrok.tgz");
+            downloadFile(url, archivePath);
+            installNgrokTgz(archivePath, ngrokPath);
+        } else {
+            throw new JavaNgrokInstallerException(String.format("Unsupported archive format: %s", url));
+        }
     }
 
     /**
@@ -401,6 +411,108 @@ public class NgrokInstaller {
             }
         } catch (final IOException e) {
             throw new JavaNgrokInstallerException("An error occurred while unzipping ngrok.", e);
+        }
+    }
+
+    private void installNgrokTgz(final Path tgzPath, final Path ngrokPath) {
+        try {
+            final Path dir = ngrokPath.getParent();
+
+            LOGGER.trace("Extracting ngrok binary from {} to {} ...", tgzPath, ngrokPath);
+
+            Files.createDirectories(dir);
+
+            try (final GZIPInputStream gzipIn = new GZIPInputStream(new FileInputStream(tgzPath.toFile()))) {
+                final byte[] header = new byte[512];
+                while (readFully(gzipIn, header, 512) == 512) {
+                    boolean allZero = true;
+                    for (final byte b : header) {
+                        if (b != 0) {
+                            allZero = false;
+                            break;
+                        }
+                    }
+                    if (allZero) {
+                        break;
+                    }
+
+                    final String entryName = new String(header, 0, 100, StandardCharsets.US_ASCII).trim()
+                        .replace('\0', ' ').trim();
+                    final String sizeStr = new String(header, 124, 12, StandardCharsets.US_ASCII).trim()
+                        .replace('\0', ' ').trim();
+                    final long size = sizeStr.isEmpty() ? 0 : Long.parseLong(sizeStr, 8);
+                    final byte typeflag = header[156];
+
+                    final Path file = Paths.get(dir.toString(), entryName);
+                    if (!file.normalize().startsWith(dir)) {
+                        throw new JavaNgrokSecurityException("Bad tar entry, paths don't match");
+                    }
+
+                    if (typeflag == '5') {
+                        Files.createDirectories(file);
+                    } else if (typeflag == '0' || typeflag == 0) {
+                        final Path parent = file.getParent();
+                        if (!Files.isDirectory(parent)) {
+                            Files.createDirectories(parent);
+                        }
+
+                        try (final FileOutputStream out = new FileOutputStream(file.toFile())) {
+                            long remaining = size;
+                            final byte[] buffer = new byte[1024];
+                            while (remaining > 0) {
+                                final int toRead = (int) Math.min(buffer.length, remaining);
+                                final int read = gzipIn.read(buffer, 0, toRead);
+                                if (read < 0) {
+                                    break;
+                                }
+                                out.write(buffer, 0, read);
+                                remaining -= read;
+                            }
+                        }
+
+                        final long padding = (512 - (size % 512)) % 512;
+                        skipFully(gzipIn, padding);
+                    } else {
+                        final long totalSize = size + ((512 - (size % 512)) % 512);
+                        skipFully(gzipIn, totalSize);
+                    }
+                }
+            }
+
+            if (ngrokPath.getFileSystem().supportedFileAttributeViews().contains("posix")) {
+                final Set<PosixFilePermission> perms = Files.readAttributes(ngrokPath, PosixFileAttributes.class)
+                                                            .permissions();
+                perms.add(PosixFilePermission.OWNER_EXECUTE);
+                Files.setPosixFilePermissions(ngrokPath, perms);
+            }
+        } catch (final IOException e) {
+            throw new JavaNgrokInstallerException("An error occurred while extracting ngrok from tgz.", e);
+        }
+    }
+
+    private static int readFully(final InputStream in, final byte[] buffer, final int len) throws IOException {
+        int totalRead = 0;
+        while (totalRead < len) {
+            final int read = in.read(buffer, totalRead, len - totalRead);
+            if (read < 0) {
+                break;
+            }
+            totalRead += read;
+        }
+        return totalRead;
+    }
+
+    private static void skipFully(final InputStream in, long bytes) throws IOException {
+        while (bytes > 0) {
+            final long skipped = in.skip(bytes);
+            if (skipped <= 0) {
+                if (in.read() < 0) {
+                    break;
+                }
+                bytes--;
+            } else {
+                bytes -= skipped;
+            }
         }
     }
 

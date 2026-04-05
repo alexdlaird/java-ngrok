@@ -426,11 +426,18 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   from [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.5.0/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html),
   instead relying on `ngrok`'s own built-in retry mechanism on startup fails.
 
-## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.19...1.4.x)
+## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.20...1.4.x)
 
 The `1.4.x` branch is where support for Java 8 of `java-ngrok` was maintained. It is available through
 the `java8-ngrok` artifact
 on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok).
+
+## [1.4.20](https://github.com/alexdlaird/java-ngrok/compare/1.4.19...1.4.20)
+
+### Fixed
+
+- `ngrok` CDN URLs updated from `bin.equinox.io` to `bin.ngrok.com`.
+- Linux and FreeBSD downloads now use `.tgz` archives instead of `.zip`.
 
 ## [1.4.19](https://github.com/alexdlaird/java-ngrok/compare/1.4.17...1.4.19) - 2025-05-16
 
