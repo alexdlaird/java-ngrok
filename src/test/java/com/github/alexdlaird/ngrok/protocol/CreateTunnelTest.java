@@ -317,6 +317,94 @@ public class CreateTunnelTest {
     }
 
     @Test
+    public void testCreateTunnelV3Fields() {
+        // WHEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+            .withName("my-tunnel")
+            .withUrl("https://my-tunnel.ngrok.dev")
+            .withUpstream(new Upstream.Builder()
+                .withUrl("http://localhost:8000")
+                .withProtocol("http1")
+                .build())
+            .withPoolingEnabled(true)
+            .withTrafficPolicy(Map.of("on_http_request", List.of()))
+            .withBindings(List.of("public"))
+            .withDescription("description")
+            .build();
+
+        // THEN
+        assertEquals("https://my-tunnel.ngrok.dev", createTunnel.getUrl());
+        assertEquals("http://localhost:8000", createTunnel.getUpstream().getUrl());
+        assertEquals("http1", createTunnel.getUpstream().getProtocol());
+        assertTrue(createTunnel.isPoolingEnabled());
+        assertEquals(Map.of("on_http_request", List.of()), createTunnel.getTrafficPolicy());
+        assertEquals(List.of("public"), createTunnel.getBindings());
+        assertEquals("description", createTunnel.getDescription());
+    }
+
+    @Test
+    public void testCreateTunnelUpstreamShortcut() {
+        // WHEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+            .withUpstream("http://localhost:5000")
+            .build();
+
+        // THEN
+        assertEquals("http://localhost:5000", createTunnel.getUpstream().getUrl());
+        assertNull(createTunnel.getUpstream().getProtocol());
+    }
+
+    @Test
+    public void testCreateWithV3TunnelDefinition() {
+        // WHEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+            .withTunnelDefinition(Map.ofEntries(
+                Map.entry("url", "https://name.ngrok.dev"),
+                Map.entry("upstream", Map.of("url", "http://localhost:9000", "protocol", "http2")),
+                Map.entry("pooling_enabled", "true"),
+                Map.entry("bindings", List.of("public")),
+                Map.entry("description", "description")
+            ))
+            .build();
+
+        // THEN
+        assertEquals("https://name.ngrok.dev", createTunnel.getUrl());
+        assertEquals("http://localhost:9000", createTunnel.getUpstream().getUrl());
+        assertEquals("http2", createTunnel.getUpstream().getProtocol());
+        assertTrue(createTunnel.isPoolingEnabled());
+        assertEquals(List.of("public"), createTunnel.getBindings());
+        assertEquals("description", createTunnel.getDescription());
+    }
+
+    @Test
+    public void testCreateWithV3TunnelDefinitionUpstreamString() {
+        // WHEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+            .withTunnelDefinition(Map.of("upstream", "http://localhost:7000"))
+            .build();
+
+        // THEN
+        assertEquals("http://localhost:7000", createTunnel.getUpstream().getUrl());
+    }
+
+    @Test
+    public void testCreateWithV3TunnelDefinitionInlineTrafficPolicy() {
+        // WHEN
+        final Map<String, Object> policy = Map.of("on_http_request", List.of(Map.of("type", "deny")));
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+            .withTunnelDefinition(Map.of("traffic_policy", policy))
+            .build();
+
+        // THEN
+        assertEquals(policy, createTunnel.getTrafficPolicy());
+    }
+
+    @Test
+    public void testUpstreamRequiresUrl() {
+        assertThrows(IllegalArgumentException.class, () -> new Upstream.Builder().build());
+    }
+
+    @Test
     public void testCreateWithTunnelDefinitionOnHttpRequestResponse() {
         // WHEN
         final CreateTunnel createTunnel = new CreateTunnel.Builder()

@@ -14,6 +14,7 @@ import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.http.HttpClientException;
 import com.github.alexdlaird.http.Response;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
+import com.github.alexdlaird.ngrok.installer.ConfigVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import com.github.alexdlaird.ngrok.protocol.ApiResponse;
@@ -22,6 +23,8 @@ import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Proto;
 import com.github.alexdlaird.ngrok.protocol.Region;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
+import com.github.alexdlaird.ngrok.protocol.Tunnels;
+import com.github.alexdlaird.ngrok.protocol.Upstream;
 import com.github.alexdlaird.ngrok.protocol.Version;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -36,6 +39,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mockito.ArgumentCaptor;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.getNgrokBin;
 import static com.github.alexdlaird.util.StringUtils.isBlank;
@@ -53,9 +57,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -839,5 +846,238 @@ class NgrokClientTest extends NgrokTestCase {
 
         // THEN
         assertThat(javaNgrokHTTPException.getMessage(), startsWith("An error occurred when DELETing the tunnel"));
+    }
+
+    @Test
+    public void testConfigV2WithUpstreamRaises() {
+        // GIVEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+            .withUpstream("http://localhost:8000")
+            .build();
+
+        // WHEN / THEN
+        assertThrows(JavaNgrokException.class, () -> ngrokClient.connect(createTunnel));
+    }
+
+    @Test
+    public void testConfigV2WithBindingsRaises() {
+        // GIVEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+            .withAddr(8000)
+            .withProto(Proto.HTTP)
+            .withBindings(List.of("public"))
+            .build();
+
+        // WHEN / THEN
+        assertThrows(JavaNgrokException.class, () -> ngrokClient.connect(createTunnel));
+    }
+
+    @Test
+    public void testConfigV3RoutesToEndpointsApi() {
+        // GIVEN
+        final JavaNgrokConfig v3Config = new JavaNgrokConfig.Builder(javaNgrokConfig)
+            .withConfigVersion(ConfigVersion.V3)
+            .build();
+        final NgrokProcess mockProcess = mock(NgrokProcess.class);
+        when(mockProcess.getApiUrl()).thenReturn("http://localhost:4040");
+        when(mockProcess.getNgrokInstaller()).thenReturn(ngrokInstaller);
+        final HttpClient mockHttpClient = mock(HttpClient.class);
+        final Tunnel stubTunnel = mock(Tunnel.class);
+        when(stubTunnel.getName()).thenReturn("my-tunnel");
+        when(stubTunnel.getPublicUrl()).thenReturn("https://my.ngrok.dev");
+        final Response<Tunnel> stubResponse = new Response<>(201, stubTunnel, "", Map.of());
+        when(mockHttpClient.post(any(), any(), eq(Tunnel.class))).thenReturn(stubResponse);
+        final NgrokClient v3Client = new NgrokClient.Builder().withJavaNgrokConfig(v3Config)
+                                                              .withNgrokProcess(mockProcess)
+                                                              .withHttpClient(mockHttpClient)
+                                                              .build();
+
+        // WHEN
+        v3Client.connect(new CreateTunnel.Builder().withName("my-tunnel").withAddr(8000).build());
+
+        // THEN
+        verify(mockHttpClient, times(1)).post(eq("http://localhost:4040/api/endpoints"), any(),
+            eq(Tunnel.class));
+    }
+
+    @Test
+    public void testConfigV3TranslatesAddrToUpstream() {
+        // GIVEN
+        final JavaNgrokConfig v3Config = new JavaNgrokConfig.Builder(javaNgrokConfig)
+            .withConfigVersion(ConfigVersion.V3)
+            .build();
+        final NgrokProcess mockProcess = mock(NgrokProcess.class);
+        when(mockProcess.getApiUrl()).thenReturn("http://localhost:4040");
+        when(mockProcess.getNgrokInstaller()).thenReturn(ngrokInstaller);
+        final HttpClient mockHttpClient = mock(HttpClient.class);
+        final Tunnel stubTunnel = mock(Tunnel.class);
+        when(stubTunnel.getName()).thenReturn("my-tunnel");
+        when(stubTunnel.getPublicUrl()).thenReturn("https://my.ngrok.dev");
+        when(mockHttpClient.post(any(), any(), eq(Tunnel.class)))
+            .thenReturn(new Response<>(201, stubTunnel, "", Map.of()));
+        final ArgumentCaptor<CreateTunnel> requestCaptor =
+            ArgumentCaptor.forClass(CreateTunnel.class);
+        final NgrokClient v3Client = new NgrokClient.Builder().withJavaNgrokConfig(v3Config)
+                                                              .withNgrokProcess(mockProcess)
+                                                              .withHttpClient(mockHttpClient)
+                                                              .build();
+
+        // WHEN
+        v3Client.connect(new CreateTunnel.Builder().withName("my-tunnel").withAddr(8000).build());
+
+        // THEN
+        verify(mockHttpClient).post(any(), requestCaptor.capture(), eq(Tunnel.class));
+        final CreateTunnel posted = requestCaptor.getValue();
+        assertNotNull(posted.getUpstream());
+        assertEquals("http://localhost:8000", posted.getUpstream().getUrl());
+    }
+
+    @Test
+    public void testConfigV3TcpAddrTranslation() {
+        // GIVEN
+        final JavaNgrokConfig v3Config = new JavaNgrokConfig.Builder(javaNgrokConfig)
+            .withConfigVersion(ConfigVersion.V3)
+            .build();
+        final NgrokProcess mockProcess = mock(NgrokProcess.class);
+        when(mockProcess.getApiUrl()).thenReturn("http://localhost:4040");
+        when(mockProcess.getNgrokInstaller()).thenReturn(ngrokInstaller);
+        final HttpClient mockHttpClient = mock(HttpClient.class);
+        final Tunnel stubTunnel = mock(Tunnel.class);
+        when(stubTunnel.getName()).thenReturn("ssh");
+        when(stubTunnel.getPublicUrl()).thenReturn("tcp://1.tcp.ngrok.io:12345");
+        when(mockHttpClient.post(any(), any(), eq(Tunnel.class)))
+            .thenReturn(new Response<>(201, stubTunnel, "", Map.of()));
+        final ArgumentCaptor<CreateTunnel> requestCaptor =
+            ArgumentCaptor.forClass(CreateTunnel.class);
+        final NgrokClient v3Client = new NgrokClient.Builder().withJavaNgrokConfig(v3Config)
+                                                              .withNgrokProcess(mockProcess)
+                                                              .withHttpClient(mockHttpClient)
+                                                              .build();
+
+        // WHEN
+        v3Client.connect(new CreateTunnel.Builder().withName("ssh").withProto(Proto.TCP).withAddr(22).build());
+
+        // THEN
+        verify(mockHttpClient).post(any(), requestCaptor.capture(), eq(Tunnel.class));
+        assertEquals("tcp://localhost:22", requestCaptor.getValue().getUpstream().getUrl());
+    }
+
+    @Test
+    public void testConfigV3PassesUpstreamThrough() {
+        // GIVEN
+        final JavaNgrokConfig v3Config = new JavaNgrokConfig.Builder(javaNgrokConfig)
+            .withConfigVersion(ConfigVersion.V3)
+            .build();
+        final NgrokProcess mockProcess = mock(NgrokProcess.class);
+        when(mockProcess.getApiUrl()).thenReturn("http://localhost:4040");
+        when(mockProcess.getNgrokInstaller()).thenReturn(ngrokInstaller);
+        final HttpClient mockHttpClient = mock(HttpClient.class);
+        final Tunnel stubTunnel = mock(Tunnel.class);
+        when(stubTunnel.getName()).thenReturn("my-tunnel");
+        when(stubTunnel.getPublicUrl()).thenReturn("https://my.ngrok.dev");
+        when(mockHttpClient.post(any(), any(), eq(Tunnel.class)))
+            .thenReturn(new Response<>(201, stubTunnel, "", Map.of()));
+        final ArgumentCaptor<CreateTunnel> requestCaptor =
+            ArgumentCaptor.forClass(CreateTunnel.class);
+        final NgrokClient v3Client = new NgrokClient.Builder().withJavaNgrokConfig(v3Config)
+                                                              .withNgrokProcess(mockProcess)
+                                                              .withHttpClient(mockHttpClient)
+                                                              .build();
+
+        // WHEN
+        v3Client.connect(new CreateTunnel.Builder()
+            .withName("my-tunnel")
+            .withUpstream(new Upstream.Builder().withUrl("http://localhost:8000").withProtocol("http1").build())
+            .build());
+
+        // THEN
+        verify(mockHttpClient).post(any(), requestCaptor.capture(), eq(Tunnel.class));
+        final Upstream upstream = requestCaptor.getValue().getUpstream();
+        assertEquals("http://localhost:8000", upstream.getUrl());
+        assertEquals("http1", upstream.getProtocol());
+    }
+
+    @Test
+    public void testConfigV3GetTunnelsRoutesToEndpoints() {
+        // GIVEN
+        final JavaNgrokConfig v3Config = new JavaNgrokConfig.Builder(javaNgrokConfig)
+            .withConfigVersion(ConfigVersion.V3)
+            .build();
+        final NgrokProcess mockProcess = mock(NgrokProcess.class);
+        when(mockProcess.getApiUrl()).thenReturn("http://localhost:4040");
+        when(mockProcess.getNgrokInstaller()).thenReturn(ngrokInstaller);
+        final HttpClient mockHttpClient = mock(HttpClient.class);
+        final Tunnels stubTunnels = mock(Tunnels.class);
+        when(stubTunnels.getTunnels()).thenReturn(List.of());
+        when(mockHttpClient.get(any(), eq(Tunnels.class)))
+            .thenReturn(new Response<>(200, stubTunnels, "", Map.of()));
+        final NgrokClient v3Client = new NgrokClient.Builder().withJavaNgrokConfig(v3Config)
+                                                              .withNgrokProcess(mockProcess)
+                                                              .withHttpClient(mockHttpClient)
+                                                              .build();
+
+        // WHEN
+        v3Client.getTunnels();
+
+        // THEN
+        verify(mockHttpClient).get(eq("http://localhost:4040/api/endpoints"), eq(Tunnels.class));
+    }
+
+    @Test
+    public void testV3EndpointDefinitions() {
+        testRequiresEnvVar("NGROK_AUTHTOKEN");
+
+        // GIVEN
+        final Map<String, Object> config = Map.of(
+            "endpoints", List.of(Map.of(
+                "name", "v3-endpoint",
+                "upstream", Map.of("url", "http://localhost:8000"))));
+        final Path configPath2 = Path.of(javaNgrokConfig.getConfigPath().getParent().toString(), "config2.yml");
+        ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfig.getNgrokVersion(),
+            ConfigVersion.V3);
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfig)
+            .withConfigPath(configPath2)
+            .withConfigVersion(ConfigVersion.V3)
+            .build();
+        ngrokProcess2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+        final NgrokClient ngrokClient2 = new NgrokClient.Builder().withJavaNgrokConfig(javaNgrokConfig2)
+                                                                  .withNgrokProcess(ngrokProcess2)
+                                                                  .build();
+
+        // WHEN
+        final Tunnel tunnel = ngrokClient2.connect(new CreateTunnel.Builder().withName("v3-endpoint").build());
+
+        // THEN
+        assertEquals("v3-endpoint-api", tunnel.getName());
+        assertNotNull(tunnel.getUpstream());
+        assertEquals("http://localhost:8000", tunnel.getUpstream().getUrl());
+    }
+
+    @Test
+    public void testV3JavaNgrokDefault() {
+        testRequiresEnvVar("NGROK_AUTHTOKEN");
+
+        // GIVEN
+        final Map<String, Object> config = Map.of(
+            "endpoints", List.of(Map.of(
+                "name", "java-ngrok-default",
+                "upstream", Map.of("url", "http://localhost:8080"))));
+        final Path configPath2 = Path.of(javaNgrokConfig.getConfigPath().getParent().toString(), "config2.yml");
+        ngrokInstaller.installDefaultConfig(configPath2, config, javaNgrokConfig.getNgrokVersion(),
+            ConfigVersion.V3);
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfig)
+            .withConfigPath(configPath2)
+            .withConfigVersion(ConfigVersion.V3)
+            .build();
+        ngrokProcess2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+        final NgrokClient ngrokClient2 = new NgrokClient.Builder().withJavaNgrokConfig(javaNgrokConfig2)
+                                                                  .withNgrokProcess(ngrokProcess2)
+                                                                  .build();
+
+        // WHEN
+        final Tunnel tunnel = ngrokClient2.connect(new CreateTunnel.Builder().build());
+
+        // THEN
+        assertEquals("java-ngrok-default-api", tunnel.getName());
     }
 }
