@@ -84,7 +84,7 @@ public class NgrokClient {
      * set and a "java-ngrok-default" definition exists in <code>ngrok</code>'s config, it will be loaded and used.
      * Any properties defined on {@link CreateTunnel} will override properties from the loaded definition.
      *
-     * <p>In v3 mode, v2-shaped properties (<code>addr</code> / <code>proto</code>) are translated into the
+     * <p>In v3 mode, v2 properties (<code>addr</code> / <code>proto</code>) are translated into the
      * equivalent <code>upstream</code> block. Setting v3-only properties such as <code>upstream</code> or
      * <code>bindings</code> while {@link JavaNgrokConfig#getConfigVersion()} is {@link ConfigVersion#V2} raises
      * {@link JavaNgrokException}.
@@ -460,7 +460,7 @@ public class NgrokClient {
 
         final CreateTunnel built = createTunnelBuilder.build();
 
-        // In v3 mode, translate v2-shape `addr` / `proto` into the equivalent `upstream` block
+        // In v3 mode, translate v2 `addr` / `proto` into the equivalent `upstream` block
         if (isV3() && isNull(built.getUpstream()) && nonNull(built.getAddr())) {
             final String addr = built.getAddr();
             final String upstreamUrl;

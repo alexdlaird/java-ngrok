@@ -103,7 +103,7 @@ public class Tunnel {
     }
 
     /**
-     * Get the upstream of the tunnel. When the response carries only a v2-shape <code>config.addr</code>, an
+     * Get the upstream of the tunnel. When the response carries only a v2 <code>config.addr</code>, an
      * {@link Upstream} is synthesized from that address.
      */
     public Upstream getUpstream() {

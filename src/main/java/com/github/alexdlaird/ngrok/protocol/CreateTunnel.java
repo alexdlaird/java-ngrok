@@ -997,8 +997,8 @@ public class CreateTunnel {
 
             if (setDefaults) {
                 if (nonNull(upstream)) {
-                    // v3 endpoint shape: `upstream` replaces `addr`/`proto`. Null them out so they don't get
-                    // serialized into the request body, which the agent rejects on `/api/endpoints`.
+                    // v3 endpoint requests use `upstream` instead of `addr`/`proto`. Null them out so they
+                    // don't get serialized into the request body, which the agent rejects on `/api/endpoints`.
                     proto = null;
                     addr = null;
                     if (isNull(name)) {

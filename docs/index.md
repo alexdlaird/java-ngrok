@@ -152,7 +152,7 @@ final Tunnel tunnel = ngrokClient.connect(createTunnel);
 `java-ngrok` defaults to `ngrok`'s [v2 config](https://ngrok.com/docs/agent/config/v2/). Set
 `JavaNgrokConfig.configVersion` to `ConfigVersion.V3` to use the
 [v3 config](https://ngrok.com/docs/agent/config/v3/) (its `endpoints:` block is read alongside the `tunnels:`
-block, and `connect()` posts to `/api/endpoints` instead of `/api/tunnels`). v2-shaped `withAddr()` /
+block, and `connect()` posts to `/api/endpoints` instead of `/api/tunnels`). v2 `withAddr()` /
 `withProto()` arguments are translated into the equivalent `upstream` block automatically.
 
 ```yaml
