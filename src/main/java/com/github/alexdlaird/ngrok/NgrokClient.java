@@ -462,27 +462,41 @@ public class NgrokClient {
             createTunnelBuilder.withName(String.format("%s-api", name));
         }
 
+        // In v3 mode, user-passed addr/proto override a matched endpoint's upstream (mirrors v2's
+        // addr override behavior). Apply this before building, since the Builder's v3 default logic
+        // nulls addr/proto when upstream is set. (User-passed upstream is preserved by
+        // withTunnelDefinition's null-check, so it already wins.)
+        if (isV3() && nonNull(matched) && (userAddrProvided || userProtoProvided) && !userUpstreamProvided) {
+            final String addr = nonNull(createTunnel.getAddr()) ? createTunnel.getAddr() : "80";
+            final Proto proto = nonNull(createTunnel.getProto()) ? createTunnel.getProto() : Proto.HTTP;
+            final String upstreamUrl;
+            if (addr.contains("://")) {
+                upstreamUrl = addr;
+            } else if (proto == Proto.TCP) {
+                upstreamUrl = String.format("tcp://localhost:%s", addr);
+            } else {
+                upstreamUrl = String.format("http://localhost:%s", addr);
+            }
+            createTunnelBuilder.withUpstream(new Upstream.Builder().withUrl(upstreamUrl).build());
+        }
+
         final CreateTunnel built = createTunnelBuilder.build();
 
-        // In v3 mode, translate v2 `addr` / `proto` into the equivalent `upstream` block.
-        // User-passed addr/proto override a matched endpoint's upstream (mirrors v2's addr override
-        // behavior); a user-passed upstream wins over both.
-        if (isV3() && nonNull(built.getAddr())) {
-            final boolean overrideFromAddr = (userAddrProvided || userProtoProvided) && !userUpstreamProvided;
-            if (overrideFromAddr || isNull(built.getUpstream())) {
-                final String addr = built.getAddr();
-                final String upstreamUrl;
-                if (addr.contains("://")) {
-                    upstreamUrl = addr;
-                } else if (built.getProto() == Proto.TCP) {
-                    upstreamUrl = String.format("tcp://localhost:%s", addr);
-                } else {
-                    upstreamUrl = String.format("http://localhost:%s", addr);
-                }
-                return new CreateTunnel.Builder(built)
-                    .withUpstream(new Upstream.Builder().withUrl(upstreamUrl).build())
-                    .build();
+        // In v3 mode with no matched definition, translate v2 `addr` / `proto` into the equivalent
+        // `upstream` block (e.g. for kwarg-only invocations like connect(addr=8000)).
+        if (isV3() && isNull(built.getUpstream()) && nonNull(built.getAddr())) {
+            final String addr = built.getAddr();
+            final String upstreamUrl;
+            if (addr.contains("://")) {
+                upstreamUrl = addr;
+            } else if (built.getProto() == Proto.TCP) {
+                upstreamUrl = String.format("tcp://localhost:%s", addr);
+            } else {
+                upstreamUrl = String.format("http://localhost:%s", addr);
             }
+            return new CreateTunnel.Builder(built)
+                .withUpstream(new Upstream.Builder().withUrl(upstreamUrl).build())
+                .build();
         }
 
         return built;
