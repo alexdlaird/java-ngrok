@@ -21,7 +21,10 @@ import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import com.github.alexdlaird.ngrok.protocol.ApiResponse;
 import com.github.alexdlaird.ngrok.protocol.BindTls;
+import com.github.alexdlaird.ngrok.protocol.CreateEndpoint;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
+import com.github.alexdlaird.ngrok.protocol.Endpoint;
+import com.github.alexdlaird.ngrok.protocol.Endpoints;
 import com.github.alexdlaird.ngrok.protocol.Proto;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
@@ -54,6 +57,7 @@ public class NgrokClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(NgrokClient.class);
 
     private final Map<String, Tunnel> currentTunnels = new HashMap<>();
+    private final Map<String, Endpoint> currentEndpoints = new HashMap<>();
 
     private final String javaNgrokVersion;
     private final JavaNgrokConfig javaNgrokConfig;
@@ -101,6 +105,9 @@ public class NgrokClient {
      *                                    <code>java-ngrok</code>.
      * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
      * @throws JavaNgrokSecurityException The URL was not supported.
+     * @deprecated <code>ngrok</code> has deprecated the tunnels API in favor of
+     *     <a href="https://ngrok.com/docs/agent/api#endpoints" target="_blank">endpoints</a>. This method continues to
+     *     work, but new code should prefer {@link #connectEndpoint(CreateEndpoint)}.
      */
     public Tunnel connect(final CreateTunnel createTunnel) {
         ngrokProcess.start();
@@ -127,6 +134,10 @@ public class NgrokClient {
 
     /**
      * See {@link #connect(CreateTunnel)}.
+     *
+     * @deprecated <code>ngrok</code> has deprecated the tunnels API in favor of
+     *     <a href="https://ngrok.com/docs/agent/api#endpoints" target="_blank">endpoints</a>. This method continues to
+     *     work, but new code should prefer {@link #connectEndpoint(CreateEndpoint)}.
      */
     public Tunnel connect() {
         return connect(new CreateTunnel.Builder().withNgrokVersion(javaNgrokConfig.getNgrokVersion()).build());
@@ -141,6 +152,9 @@ public class NgrokClient {
      * @param publicUrl The public URL of the tunnel to disconnect.
      * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
      * @throws JavaNgrokSecurityException The URL was not supported.
+     * @deprecated <code>ngrok</code> has deprecated the tunnels API in favor of
+     *     <a href="https://ngrok.com/docs/agent/api#endpoints" target="_blank">endpoints</a>. This method continues to
+     *     work, but new code should prefer {@link #disconnectEndpoint(String)}.
      */
     public void disconnect(final String publicUrl) {
         // If ngrok is not running, there are no tunnels to disconnect
@@ -183,6 +197,9 @@ public class NgrokClient {
      * @throws JavaNgrokException         The response was invalid or not compatible with <code>java-ngrok</code>.
      * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
      * @throws JavaNgrokSecurityException The URL was not supported.
+     * @deprecated <code>ngrok</code> has deprecated the tunnels API in favor of
+     *     <a href="https://ngrok.com/docs/agent/api#endpoints" target="_blank">endpoints</a>. This method continues to
+     *     work, but new code should prefer {@link #getEndpoints()}.
      */
     public List<Tunnel> getTunnels() {
         ngrokProcess.start();
@@ -211,6 +228,9 @@ public class NgrokClient {
      * @param tunnel The Tunnel to update.
      * @throws JavaNgrokException         The API did not return <code>metrics</code>.
      * @throws JavaNgrokSecurityException The URL was not supported.
+     * @deprecated <code>ngrok</code> has deprecated the tunnels API in favor of
+     *     <a href="https://ngrok.com/docs/agent/api#endpoints" target="_blank">endpoints</a>. This method continues to
+     *     work, but new code should prefer {@link #refreshMetrics(Endpoint)}.
      */
     public void refreshMetrics(final Tunnel tunnel) {
         Response<Tunnel> latestTunnel = httpClient.get(String.format("%s%s", ngrokProcess.getApiUrl(),
@@ -224,6 +244,152 @@ public class NgrokClient {
     }
 
     /**
+     * Establish a new <code>ngrok</code> endpoint for the Endpoint creation request, returning an object representing
+     * the connected endpoint.
+     *
+     * <p>If an <code>endpoints:</code> definition in <code>ngrok</code>'s config file matches the given
+     * {@link CreateEndpoint.Builder#withName(String)}, it will be loaded and used to start the endpoint (note that
+     * "-api" will be appended to its name when started). When {@link CreateEndpoint.Builder#withName(String)} is not
+     * set and a "java-ngrok-default" endpoint definition exists in <code>ngrok</code>'s config, it will be loaded and
+     * used. Any properties defined on {@link CreateEndpoint} will override properties from the loaded endpoint
+     * definition.
+     *
+     * <p>If <code>ngrok</code> is not installed at {@link JavaNgrokConfig}'s <code>ngrokPath</code>, calling this
+     * method will first download and install <code>ngrok</code>.
+     *
+     * <p>If <code>ngrok</code> is not running, calling this method will first start a process with
+     * {@link JavaNgrokConfig}.
+     *
+     * @param createEndpoint The endpoint definition.
+     * @return The created Endpoint.
+     * @throws JavaNgrokException         The endpoint definition was invalid, or response was incompatible with
+     *                                    <code>java-ngrok</code>.
+     * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
+     * @throws JavaNgrokSecurityException The URL was not supported.
+     */
+    public Endpoint connectEndpoint(final CreateEndpoint createEndpoint) {
+        ngrokProcess.start();
+
+        final CreateEndpoint finalEndpoint = interpolateEndpointDefinition(createEndpoint);
+
+        LOGGER.info("Opening endpoint named: {}", finalEndpoint.getName());
+
+        final Response<Endpoint> response;
+        try {
+            response = httpClient.post(String.format("%s/api/endpoints", ngrokProcess.getApiUrl()), finalEndpoint,
+                Endpoint.class);
+        } catch (final HttpClientException e) {
+            throw new JavaNgrokHTTPException(String.format("An error occurred when POSTing to create the endpoint %s.",
+                finalEndpoint.getName()), e, e.getUrl(), e.getStatusCode(), e.getBody());
+        }
+
+        final Endpoint endpoint = response.getBody();
+
+        if (nonNull(endpoint.getName())) {
+            currentEndpoints.put(endpoint.getName(), endpoint);
+        }
+
+        return endpoint;
+    }
+
+    /**
+     * Disconnect the <code>ngrok</code> endpoint for the given name, if open.
+     *
+     * <p>If <code>ngrok</code> is not running, this method is a no-op.
+     *
+     * @param name The name of the endpoint to disconnect.
+     * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
+     * @throws JavaNgrokSecurityException The URL was not supported.
+     */
+    public void disconnectEndpoint(final String name) {
+        // If ngrok is not running, there are no endpoints to disconnect
+        if (!ngrokProcess.isRunning()) {
+            LOGGER.trace("\"ngrokPath\" {} is not running a process", javaNgrokConfig.getNgrokPath());
+
+            return;
+        }
+
+        if (!currentEndpoints.containsKey(name)) {
+            getEndpoints();
+
+            // One more check, if the given name is still not in the list of endpoints, it is not active
+            if (!currentEndpoints.containsKey(name)) {
+                return;
+            }
+        }
+
+        final Endpoint endpoint = currentEndpoints.get(name);
+
+        ngrokProcess.start();
+
+        LOGGER.info("Disconnecting endpoint: {}", endpoint.getName());
+
+        try {
+            httpClient.delete(ngrokProcess.getApiUrl() + endpoint.getUri());
+        } catch (final HttpClientException e) {
+            throw new JavaNgrokHTTPException(String.format("An error occurred when DELETing the endpoint %s.",
+                name), e, e.getUrl(), e.getStatusCode(), e.getBody());
+        }
+
+        currentEndpoints.remove(name);
+    }
+
+    /**
+     * Get a list of active <code>ngrok</code> endpoints.
+     *
+     * <p>If <code>ngrok</code> is not running, calling this method will first start a process with
+     * {@link JavaNgrokConfig}.
+     *
+     * @return The active <code>ngrok</code> endpoints.
+     * @throws JavaNgrokException         The response was invalid or not compatible with <code>java-ngrok</code>.
+     * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
+     * @throws JavaNgrokSecurityException The URL was not supported.
+     */
+    public List<Endpoint> getEndpoints() {
+        ngrokProcess.start();
+
+        try {
+            final Response<Endpoints> response = httpClient.get(String.format("%s/api/endpoints",
+                ngrokProcess.getApiUrl()), Endpoints.class);
+
+            currentEndpoints.clear();
+            final List<Endpoint> endpoints = response.getBody().getEndpoints();
+            if (nonNull(endpoints)) {
+                for (final Endpoint endpoint : endpoints) {
+                    if (nonNull(endpoint.getName())) {
+                        currentEndpoints.put(endpoint.getName(), endpoint);
+                    }
+                }
+            }
+
+            final List<Endpoint> sortedEndpoints = new ArrayList<>(currentEndpoints.values());
+            sortedEndpoints.sort(Comparator.comparing(Endpoint::getName));
+            return List.of(sortedEndpoints.toArray(new Endpoint[]{}));
+        } catch (final HttpClientException e) {
+            throw new JavaNgrokHTTPException("An error occurred when GETing the endpoints.", e, e.getUrl(),
+                e.getStatusCode(), e.getBody());
+        }
+    }
+
+    /**
+     * Get the latest metrics for the given {@link Endpoint} and update its <code>metrics</code> attribute.
+     *
+     * @param endpoint The Endpoint to update.
+     * @throws JavaNgrokException         The API did not return <code>metrics</code>.
+     * @throws JavaNgrokSecurityException The URL was not supported.
+     */
+    public void refreshMetrics(final Endpoint endpoint) {
+        final Response<Endpoint> latestEndpoint = httpClient.get(String.format("%s%s", ngrokProcess.getApiUrl(),
+            endpoint.getUri()), Endpoint.class);
+
+        if (isNull(latestEndpoint.getBody().getMetrics()) || latestEndpoint.getBody().getMetrics().isEmpty()) {
+            throw new JavaNgrokException("The ngrok API did not return \"metrics\" in the response");
+        }
+
+        endpoint.setMetrics(latestEndpoint.getBody().getMetrics());
+    }
+
+    /**
      * Terminate the <code>ngrok</code> processes, if running. This method will not block, it will just issue a kill
      * request.
      */
@@ -231,6 +397,7 @@ public class NgrokClient {
         ngrokProcess.stop();
 
         currentTunnels.clear();
+        currentEndpoints.clear();
     }
 
     /**
@@ -385,6 +552,50 @@ public class NgrokClient {
         }
 
         return createTunnelBuilder.build();
+    }
+
+    private synchronized CreateEndpoint interpolateEndpointDefinition(final CreateEndpoint createEndpoint) {
+        final CreateEndpoint.Builder createEndpointBuilder = new CreateEndpoint.Builder(createEndpoint);
+
+        final Map<String, Object> config;
+        if (Files.exists(javaNgrokConfig.getConfigPath())) {
+            config = ngrokProcess.getNgrokInstaller().getNgrokConfig(javaNgrokConfig.getConfigPath());
+        } else {
+            config = ngrokProcess.getNgrokInstaller().getDefaultConfig(javaNgrokConfig.getNgrokVersion(),
+                javaNgrokConfig.getConfigVersion());
+        }
+
+        final List<Map<String, Object>> endpointDefinitions =
+            (List<Map<String, Object>>) config.getOrDefault("endpoints", List.of());
+
+        String name = createEndpoint.getName();
+        Map<String, Object> matched = null;
+
+        if (isNull(name)) {
+            for (final Map<String, Object> def : endpointDefinitions) {
+                if ("java-ngrok-default".equals(def.get("name"))) {
+                    LOGGER.info("java-ngrok-default found defined in config, using for endpoint definition");
+                    matched = def;
+                    name = "java-ngrok-default";
+                    createEndpointBuilder.withName(name);
+                    break;
+                }
+            }
+        } else {
+            for (final Map<String, Object> def : endpointDefinitions) {
+                if (name.equals(def.get("name"))) {
+                    matched = def;
+                    break;
+                }
+            }
+        }
+
+        if (nonNull(matched)) {
+            createEndpointBuilder.withEndpointDefinition(matched);
+            createEndpointBuilder.withName(String.format("%s-api", name));
+        }
+
+        return createEndpointBuilder.build();
     }
 
     /**

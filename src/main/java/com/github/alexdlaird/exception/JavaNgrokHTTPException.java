@@ -8,6 +8,8 @@ package com.github.alexdlaird.exception;
 
 import com.github.alexdlaird.ngrok.NgrokClient;
 
+import static java.util.Objects.nonNull;
+
 /**
  * Thrown from {@link NgrokClient} when an error occurs making a request to the <code>ngrok</code> web interface.
  */
@@ -54,5 +56,14 @@ public class JavaNgrokHTTPException extends JavaNgrokException {
      */
     public String getBody() {
         return body;
+    }
+
+    @Override
+    public String getMessage() {
+        final String base = super.getMessage();
+        if (statusCode == 404 && nonNull(url) && url.contains("/api/endpoints")) {
+            return base + " (call NgrokClient.update() to get the latest ngrok binary for Endpoints support)";
+        }
+        return base;
     }
 }

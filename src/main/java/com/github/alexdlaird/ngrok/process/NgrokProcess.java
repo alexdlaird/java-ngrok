@@ -16,6 +16,7 @@ import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
+import com.github.alexdlaird.ngrok.protocol.Endpoints;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -370,13 +371,20 @@ public class NgrokProcess {
             throw new JavaNgrokSecurityException(String.format("URL must start with \"http\": %s", apiUrl));
         }
 
-        final Response<Tunnels> tunnelsResponse = httpClient.get(String.format("%s/api/tunnels", apiUrl),
-            Tunnels.class);
-        if (tunnelsResponse.getStatusCode() != HTTP_OK) {
+        if (!apiPathOk("/api/tunnels", Tunnels.class) && !apiPathOk("/api/endpoints", Endpoints.class)) {
             return false;
         }
 
         return nonNull(process) && process.isAlive();
+    }
+
+    private boolean apiPathOk(final String path, final Class<?> responseType) {
+        try {
+            final Response<?> response = httpClient.get(String.format("%s%s", apiUrl, path), responseType);
+            return response.getStatusCode() == HTTP_OK;
+        } catch (final RuntimeException e) {
+            return false;
+        }
     }
 
     private void logStartupLine(final String line) {

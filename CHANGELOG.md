@@ -4,7 +4,19 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/3.0.0...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/3.1.0...HEAD)
+
+## [3.1.0](https://github.com/alexdlaird/java-ngrok/compare/3.0.0...3.1.0) - TBD
+
+### Added
+
+- Support for `endpoints:` definitions in `ngrok`'s config file (including a `java-ngrok-default` auto-detected entry), mirroring the existing `tunnels:` block.
+- Support for `Endpoint`, `CreateEndpoint`, `NgrokClient.connectEndpoint()`, `NgrokClient.disconnectEndpoint()`, `NgrokClient.getEndpoints()`, and `NgrokClient.refreshMetrics(Endpoint)`, addressing [#158](https://github.com/alexdlaird/java-ngrok/issues/158).
+
+### Changed
+
+- `ngrok` has deprecated its tunnels API in favor of `endpoints`. `java-ngrok` continues to support both, but new integrations should prefer `connectEndpoint`.
+- `NgrokClient.kill()` now kills both tunnels and endpoints.
 
 ## [3.0.0](https://github.com/alexdlaird/java-ngrok/compare/2.5.1...3.0.0) - 2026-03-31
 
