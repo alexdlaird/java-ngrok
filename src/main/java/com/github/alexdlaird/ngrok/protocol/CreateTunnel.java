@@ -996,35 +996,45 @@ public class CreateTunnel {
             }
 
             if (setDefaults) {
-                if (isNull(proto)) {
-                    proto = Proto.HTTP;
-                }
-                if (isNull(addr)) {
-                    addr = "80";
-                }
-                if (isNull(name)) {
-                    if (!addr.startsWith("file://")) {
-                        name = String.format("%s-%s-%s", proto, addr, UUID.randomUUID());
-                    } else {
-                        name = String.format("%s-file-%s", proto, UUID.randomUUID());
+                if (nonNull(upstream)) {
+                    // v3 endpoint shape: `upstream` replaces `addr`/`proto`. Null them out so they don't get
+                    // serialized into the request body, which the agent rejects on `/api/endpoints`.
+                    proto = null;
+                    addr = null;
+                    if (isNull(name)) {
+                        name = String.format("ngrok-tunnel-%s", UUID.randomUUID());
                     }
-                }
-                if (ngrokVersion == NgrokVersion.V3) {
-                    if (nonNull(bindTls)) {
-                        if (bindTls == BindTls.TRUE) {
-                            schemes = List.of("https");
-                        } else if (bindTls == BindTls.FALSE) {
-                            schemes = List.of("http");
+                } else {
+                    if (isNull(proto)) {
+                        proto = Proto.HTTP;
+                    }
+                    if (isNull(addr)) {
+                        addr = "80";
+                    }
+                    if (isNull(name)) {
+                        if (!addr.startsWith("file://")) {
+                            name = String.format("%s-%s-%s", proto, addr, UUID.randomUUID());
                         } else {
-                            schemes = List.of("http", "https");
+                            name = String.format("%s-file-%s", proto, UUID.randomUUID());
                         }
-
-                        bindTls = null;
                     }
-                    if (nonNull(auth)) {
-                        basicAuth = List.of(auth);
+                    if (ngrokVersion == NgrokVersion.V3) {
+                        if (nonNull(bindTls)) {
+                            if (bindTls == BindTls.TRUE) {
+                                schemes = List.of("https");
+                            } else if (bindTls == BindTls.FALSE) {
+                                schemes = List.of("http");
+                            } else {
+                                schemes = List.of("http", "https");
+                            }
 
-                        auth = null;
+                            bindTls = null;
+                        }
+                        if (nonNull(auth)) {
+                            basicAuth = List.of(auth);
+
+                            auth = null;
+                        }
                     }
                 }
             }
