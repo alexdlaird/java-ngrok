@@ -71,14 +71,6 @@ public class Tunnel {
     }
 
     /**
-     * Alias of {@link #getPublicUrl()}. <code>ngrok</code>'s v3 config calls it <code>url</code>; both are accepted
-     * on deserialization and this getter returns the same value.
-     */
-    public String getUrl() {
-        return publicUrl;
-    }
-
-    /**
      * Set the tunnel's public URL.
      *
      * @param publicUrl The updated public URL.
