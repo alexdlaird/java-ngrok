@@ -96,7 +96,8 @@ public class Tunnel {
     }
 
     /**
-     * Get the tunnel config.
+     * Get the {@link TunnelConfig} block specific to v2 tunnels (carrying <code>addr</code>, <code>inspect</code>);
+     * <code>null</code> for v3 endpoints.
      */
     public TunnelConfig getConfig() {
         return config;
