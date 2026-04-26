@@ -402,6 +402,10 @@ public class NgrokClient {
     }
 
     private synchronized CreateTunnel interpolateTunnelDefinition(final CreateTunnel createTunnel) {
+        final boolean userAddrProvided = nonNull(createTunnel.getAddr());
+        final boolean userProtoProvided = nonNull(createTunnel.getProto());
+        final boolean userUpstreamProvided = nonNull(createTunnel.getUpstream());
+
         final CreateTunnel.Builder createTunnelBuilder = new CreateTunnel.Builder(createTunnel);
 
         final Map<String, Object> config;
@@ -460,20 +464,25 @@ public class NgrokClient {
 
         final CreateTunnel built = createTunnelBuilder.build();
 
-        // In v3 mode, translate v2 `addr` / `proto` into the equivalent `upstream` block
-        if (isV3() && isNull(built.getUpstream()) && nonNull(built.getAddr())) {
-            final String addr = built.getAddr();
-            final String upstreamUrl;
-            if (addr.contains("://")) {
-                upstreamUrl = addr;
-            } else if (built.getProto() == Proto.TCP) {
-                upstreamUrl = String.format("tcp://localhost:%s", addr);
-            } else {
-                upstreamUrl = String.format("http://localhost:%s", addr);
+        // In v3 mode, translate v2 `addr` / `proto` into the equivalent `upstream` block.
+        // User-passed addr/proto override a matched endpoint's upstream (mirrors v2's addr override
+        // behavior); a user-passed upstream wins over both.
+        if (isV3() && nonNull(built.getAddr())) {
+            final boolean overrideFromAddr = (userAddrProvided || userProtoProvided) && !userUpstreamProvided;
+            if (overrideFromAddr || isNull(built.getUpstream())) {
+                final String addr = built.getAddr();
+                final String upstreamUrl;
+                if (addr.contains("://")) {
+                    upstreamUrl = addr;
+                } else if (built.getProto() == Proto.TCP) {
+                    upstreamUrl = String.format("tcp://localhost:%s", addr);
+                } else {
+                    upstreamUrl = String.format("http://localhost:%s", addr);
+                }
+                return new CreateTunnel.Builder(built)
+                    .withUpstream(new Upstream.Builder().withUrl(upstreamUrl).build())
+                    .build();
             }
-            return new CreateTunnel.Builder(built)
-                .withUpstream(new Upstream.Builder().withUrl(upstreamUrl).build())
-                .build();
         }
 
         return built;
