@@ -62,7 +62,7 @@ public class JavaNgrokHTTPException extends JavaNgrokException {
     public String getMessage() {
         final String base = super.getMessage();
         if (statusCode == 404 && nonNull(url) && url.contains("/api/endpoints")) {
-            return base + " (call NgrokClient.update() to get the latest ngrok binary for Endpoints support)";
+            return base + " (your ngrok binary may be too old to support /api/endpoints; call NgrokClient.update())";
         }
         return base;
     }
