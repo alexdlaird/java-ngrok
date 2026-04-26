@@ -19,15 +19,14 @@ import com.github.alexdlaird.ngrok.conf.JavaNgrokVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
+import com.github.alexdlaird.ngrok.installer.ConfigVersion;
 import com.github.alexdlaird.ngrok.protocol.ApiResponse;
 import com.github.alexdlaird.ngrok.protocol.BindTls;
-import com.github.alexdlaird.ngrok.protocol.CreateEndpoint;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
-import com.github.alexdlaird.ngrok.protocol.Endpoint;
-import com.github.alexdlaird.ngrok.protocol.Endpoints;
 import com.github.alexdlaird.ngrok.protocol.Proto;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
+import com.github.alexdlaird.ngrok.protocol.Upstream;
 import com.github.alexdlaird.ngrok.protocol.Version;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -57,7 +56,6 @@ public class NgrokClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(NgrokClient.class);
 
     private final Map<String, Tunnel> currentTunnels = new HashMap<>();
-    private final Map<String, Endpoint> currentEndpoints = new HashMap<>();
 
     private final String javaNgrokVersion;
     private final JavaNgrokConfig javaNgrokConfig;
@@ -75,50 +73,56 @@ public class NgrokClient {
      * Establish a new <code>ngrok</code> tunnel for the Tunnel creation request, returning an object representing the
      * connected tunnel.
      *
-     * <p>If a <a href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
-     * target="_blank">tunnel definition in ngrok's config file</a> matches the given
-     * {@link CreateTunnel.Builder#withName(String)}, it will be loaded and used to start the tunnel (note that "-api"
-     * will be appended to its name when started). When {@link CreateTunnel.Builder#withName(String)} is not set and a
-     * "java-ngrok-default" tunnel definition exists in
-     * <code>ngrok</code>'s config, it will be loaded and used. Any properties defined on {@link CreateTunnel} will
-     * override properties from the loaded tunnel definition.
+     * <p>Routing is driven by {@link JavaNgrokConfig#getConfigVersion()}: {@link ConfigVersion#V2} posts to
+     * <code>/api/tunnels</code> and reads the v2 <code>tunnels:</code> config block; {@link ConfigVersion#V3} posts to
+     * <code>/api/endpoints</code> and reads the v3 <code>endpoints:</code> block (and a <code>tunnels:</code> block
+     * if also present, since <code>ngrok</code> allows both there).
+     *
+     * <p>If a tunnel definition in <code>ngrok</code>'s config file matches the given
+     * {@link CreateTunnel.Builder#withName(String)}, it will be loaded and used to start the tunnel (note that
+     * "-api" will be appended to its name when started). When {@link CreateTunnel.Builder#withName(String)} is not
+     * set and a "java-ngrok-default" definition exists in <code>ngrok</code>'s config, it will be loaded and used.
+     * Any properties defined on {@link CreateTunnel} will override properties from the loaded definition.
+     *
+     * <p>In v3 mode, v2-shaped properties (<code>addr</code> / <code>proto</code>) are translated into the
+     * equivalent <code>upstream</code> block. Setting v3-only properties such as <code>upstream</code> or
+     * <code>bindings</code> while {@link JavaNgrokConfig#getConfigVersion()} is {@link ConfigVersion#V2} raises
+     * {@link JavaNgrokException}.
      *
      * <p>If <code>ngrok</code> is not installed at {@link JavaNgrokConfig}'s <code>ngrokPath</code>, calling this
      * method will first download and install <code>ngrok</code>.
      *
-     * <p><code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v2.
-     * To install v3 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
-     * {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
-     *
      * <p>If <code>ngrok</code> is not running, calling this method will first start a process with
      * {@link JavaNgrokConfig}.
      *
-     * <p><strong>Note:</strong> <code>ngrok</code> v2's default behavior for <code>http</code> when no additional
-     * properties are passed is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This
-     * method will return a reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed,
-     * call {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
+     * <p><strong>Note:</strong> v2's default behavior for <code>http</code> when no additional properties are passed
+     * is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This method will return a
+     * reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed, call
+     * {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
      * <code>https</code> tunnel will be returned.
      *
      * @param createTunnel The tunnel definition.
      * @return The created Tunnel.
-     * @throws JavaNgrokException         The tunnel definition was invalid, or response was incompatible with
-     *                                    <code>java-ngrok</code>.
+     * @throws JavaNgrokException         The tunnel definition was invalid, the requested options are
+     *                                    incompatible with the configured config version, or the response was
+     *                                    incompatible with <code>java-ngrok</code>.
      * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
      * @throws JavaNgrokSecurityException The URL was not supported.
-     * @deprecated <code>ngrok</code> has deprecated the tunnels API in favor of
-     *     <a href="https://ngrok.com/docs/agent/api#endpoints" target="_blank">endpoints</a>. This method continues to
-     *     work, but new code should prefer {@link #connectEndpoint(CreateEndpoint)}.
      */
     public Tunnel connect(final CreateTunnel createTunnel) {
+        validateConfigVersionCompatibility(createTunnel);
+
         ngrokProcess.start();
 
         final CreateTunnel finalTunnel = interpolateTunnelDefinition(createTunnel);
 
         LOGGER.info("Opening tunnel named: {}", finalTunnel.getName());
 
+        final String apiPath = isV3() ? "/api/endpoints" : "/api/tunnels";
+
         final Response<Tunnel> response;
         try {
-            response = httpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), finalTunnel,
+            response = httpClient.post(String.format("%s%s", ngrokProcess.getApiUrl(), apiPath), finalTunnel,
                 Tunnel.class);
         } catch (final HttpClientException e) {
             throw new JavaNgrokHTTPException(String.format("An error occurred when POSTing to create the tunnel %s.",
@@ -127,17 +131,39 @@ public class NgrokClient {
 
         final Tunnel tunnel = response.getBody();
 
+        if (isV3() && isNull(tunnel.getUri()) && nonNull(tunnel.getName())) {
+            tunnel.setUri(String.format("/api/endpoints/%s", tunnel.getName()));
+        }
+
         currentTunnels.put(tunnel.getPublicUrl(), tunnel);
 
         return tunnel;
     }
 
+    private boolean isV3() {
+        return javaNgrokConfig.getConfigVersion() == ConfigVersion.V3;
+    }
+
+    private void validateConfigVersionCompatibility(final CreateTunnel createTunnel) {
+        if (isV3()) {
+            return;
+        }
+        final List<String> v3Only = new ArrayList<>();
+        if (nonNull(createTunnel.getUpstream())) {
+            v3Only.add("upstream");
+        }
+        if (nonNull(createTunnel.getBindings())) {
+            v3Only.add("bindings");
+        }
+        if (!v3Only.isEmpty()) {
+            throw new JavaNgrokException(String.format(
+                "Options %s require ConfigVersion.V3. Set JavaNgrokConfig.configVersion to V3 to use these.",
+                v3Only));
+        }
+    }
+
     /**
      * See {@link #connect(CreateTunnel)}.
-     *
-     * @deprecated <code>ngrok</code> has deprecated the tunnels API in favor of
-     *     <a href="https://ngrok.com/docs/agent/api#endpoints" target="_blank">endpoints</a>. This method continues to
-     *     work, but new code should prefer {@link #connectEndpoint(CreateEndpoint)}.
      */
     public Tunnel connect() {
         return connect(new CreateTunnel.Builder().withNgrokVersion(javaNgrokConfig.getNgrokVersion()).build());
@@ -152,9 +178,6 @@ public class NgrokClient {
      * @param publicUrl The public URL of the tunnel to disconnect.
      * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
      * @throws JavaNgrokSecurityException The URL was not supported.
-     * @deprecated <code>ngrok</code> has deprecated the tunnels API in favor of
-     *     <a href="https://ngrok.com/docs/agent/api#endpoints" target="_blank">endpoints</a>. This method continues to
-     *     work, but new code should prefer {@link #disconnectEndpoint(String)}.
      */
     public void disconnect(final String publicUrl) {
         // If ngrok is not running, there are no tunnels to disconnect
@@ -197,24 +220,28 @@ public class NgrokClient {
      * @throws JavaNgrokException         The response was invalid or not compatible with <code>java-ngrok</code>.
      * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
      * @throws JavaNgrokSecurityException The URL was not supported.
-     * @deprecated <code>ngrok</code> has deprecated the tunnels API in favor of
-     *     <a href="https://ngrok.com/docs/agent/api#endpoints" target="_blank">endpoints</a>. This method continues to
-     *     work, but new code should prefer {@link #getEndpoints()}.
      */
     public List<Tunnel> getTunnels() {
         ngrokProcess.start();
 
+        final String apiPath = isV3() ? "/api/endpoints" : "/api/tunnels";
+
         try {
-            final Response<Tunnels> response = httpClient.get(String.format("%s/api/tunnels",
-                ngrokProcess.getApiUrl()), Tunnels.class);
+            final Response<Tunnels> response = httpClient.get(String.format("%s%s",
+                ngrokProcess.getApiUrl(), apiPath), Tunnels.class);
 
             currentTunnels.clear();
             for (final Tunnel tunnel : response.getBody().getTunnels()) {
-                currentTunnels.put(tunnel.getPublicUrl(), tunnel);
+                if (isV3() && isNull(tunnel.getUri()) && nonNull(tunnel.getName())) {
+                    tunnel.setUri(String.format("/api/endpoints/%s", tunnel.getName()));
+                }
+                if (nonNull(tunnel.getPublicUrl())) {
+                    currentTunnels.put(tunnel.getPublicUrl(), tunnel);
+                }
             }
 
             final List<Tunnel> sortedTunnels = new ArrayList<>(currentTunnels.values());
-            sortedTunnels.sort(Comparator.comparing(Tunnel::getProto));
+            sortedTunnels.sort(Comparator.comparing(t -> nonNull(t.getProto()) ? t.getProto() : ""));
             return List.of(sortedTunnels.toArray(new Tunnel[]{}));
         } catch (final HttpClientException e) {
             throw new JavaNgrokHTTPException("An error occurred when GETing the tunnels.", e, e.getUrl(),
@@ -228,9 +255,6 @@ public class NgrokClient {
      * @param tunnel The Tunnel to update.
      * @throws JavaNgrokException         The API did not return <code>metrics</code>.
      * @throws JavaNgrokSecurityException The URL was not supported.
-     * @deprecated <code>ngrok</code> has deprecated the tunnels API in favor of
-     *     <a href="https://ngrok.com/docs/agent/api#endpoints" target="_blank">endpoints</a>. This method continues to
-     *     work, but new code should prefer {@link #refreshMetrics(Endpoint)}.
      */
     public void refreshMetrics(final Tunnel tunnel) {
         Response<Tunnel> latestTunnel = httpClient.get(String.format("%s%s", ngrokProcess.getApiUrl(),
@@ -244,152 +268,6 @@ public class NgrokClient {
     }
 
     /**
-     * Establish a new <code>ngrok</code> endpoint for the Endpoint creation request, returning an object representing
-     * the connected endpoint.
-     *
-     * <p>If an <code>endpoints:</code> definition in <code>ngrok</code>'s config file matches the given
-     * {@link CreateEndpoint.Builder#withName(String)}, it will be loaded and used to start the endpoint (note that
-     * "-api" will be appended to its name when started). When {@link CreateEndpoint.Builder#withName(String)} is not
-     * set and a "java-ngrok-default" endpoint definition exists in <code>ngrok</code>'s config, it will be loaded and
-     * used. Any properties defined on {@link CreateEndpoint} will override properties from the loaded endpoint
-     * definition.
-     *
-     * <p>If <code>ngrok</code> is not installed at {@link JavaNgrokConfig}'s <code>ngrokPath</code>, calling this
-     * method will first download and install <code>ngrok</code>.
-     *
-     * <p>If <code>ngrok</code> is not running, calling this method will first start a process with
-     * {@link JavaNgrokConfig}.
-     *
-     * @param createEndpoint The endpoint definition.
-     * @return The created Endpoint.
-     * @throws JavaNgrokException         The endpoint definition was invalid, or response was incompatible with
-     *                                    <code>java-ngrok</code>.
-     * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
-     * @throws JavaNgrokSecurityException The URL was not supported.
-     */
-    public Endpoint connectEndpoint(final CreateEndpoint createEndpoint) {
-        ngrokProcess.start();
-
-        final CreateEndpoint finalEndpoint = interpolateEndpointDefinition(createEndpoint);
-
-        LOGGER.info("Opening endpoint named: {}", finalEndpoint.getName());
-
-        final Response<Endpoint> response;
-        try {
-            response = httpClient.post(String.format("%s/api/endpoints", ngrokProcess.getApiUrl()), finalEndpoint,
-                Endpoint.class);
-        } catch (final HttpClientException e) {
-            throw new JavaNgrokHTTPException(String.format("An error occurred when POSTing to create the endpoint %s.",
-                finalEndpoint.getName()), e, e.getUrl(), e.getStatusCode(), e.getBody());
-        }
-
-        final Endpoint endpoint = response.getBody();
-
-        if (nonNull(endpoint.getName())) {
-            currentEndpoints.put(endpoint.getName(), endpoint);
-        }
-
-        return endpoint;
-    }
-
-    /**
-     * Disconnect the <code>ngrok</code> endpoint for the given name, if open.
-     *
-     * <p>If <code>ngrok</code> is not running, this method is a no-op.
-     *
-     * @param name The name of the endpoint to disconnect.
-     * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
-     * @throws JavaNgrokSecurityException The URL was not supported.
-     */
-    public void disconnectEndpoint(final String name) {
-        // If ngrok is not running, there are no endpoints to disconnect
-        if (!ngrokProcess.isRunning()) {
-            LOGGER.trace("\"ngrokPath\" {} is not running a process", javaNgrokConfig.getNgrokPath());
-
-            return;
-        }
-
-        if (!currentEndpoints.containsKey(name)) {
-            getEndpoints();
-
-            // One more check, if the given name is still not in the list of endpoints, it is not active
-            if (!currentEndpoints.containsKey(name)) {
-                return;
-            }
-        }
-
-        final Endpoint endpoint = currentEndpoints.get(name);
-
-        ngrokProcess.start();
-
-        LOGGER.info("Disconnecting endpoint: {}", endpoint.getName());
-
-        try {
-            httpClient.delete(ngrokProcess.getApiUrl() + endpoint.getUri());
-        } catch (final HttpClientException e) {
-            throw new JavaNgrokHTTPException(String.format("An error occurred when DELETing the endpoint %s.",
-                name), e, e.getUrl(), e.getStatusCode(), e.getBody());
-        }
-
-        currentEndpoints.remove(name);
-    }
-
-    /**
-     * Get a list of active <code>ngrok</code> endpoints.
-     *
-     * <p>If <code>ngrok</code> is not running, calling this method will first start a process with
-     * {@link JavaNgrokConfig}.
-     *
-     * @return The active <code>ngrok</code> endpoints.
-     * @throws JavaNgrokException         The response was invalid or not compatible with <code>java-ngrok</code>.
-     * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
-     * @throws JavaNgrokSecurityException The URL was not supported.
-     */
-    public List<Endpoint> getEndpoints() {
-        ngrokProcess.start();
-
-        try {
-            final Response<Endpoints> response = httpClient.get(String.format("%s/api/endpoints",
-                ngrokProcess.getApiUrl()), Endpoints.class);
-
-            currentEndpoints.clear();
-            final List<Endpoint> endpoints = response.getBody().getEndpoints();
-            if (nonNull(endpoints)) {
-                for (final Endpoint endpoint : endpoints) {
-                    if (nonNull(endpoint.getName())) {
-                        currentEndpoints.put(endpoint.getName(), endpoint);
-                    }
-                }
-            }
-
-            final List<Endpoint> sortedEndpoints = new ArrayList<>(currentEndpoints.values());
-            sortedEndpoints.sort(Comparator.comparing(Endpoint::getName));
-            return List.of(sortedEndpoints.toArray(new Endpoint[]{}));
-        } catch (final HttpClientException e) {
-            throw new JavaNgrokHTTPException("An error occurred when GETing the endpoints.", e, e.getUrl(),
-                e.getStatusCode(), e.getBody());
-        }
-    }
-
-    /**
-     * Get the latest metrics for the given {@link Endpoint} and update its <code>metrics</code> attribute.
-     *
-     * @param endpoint The Endpoint to update.
-     * @throws JavaNgrokException         The API did not return <code>metrics</code>.
-     * @throws JavaNgrokSecurityException The URL was not supported.
-     */
-    public void refreshMetrics(final Endpoint endpoint) {
-        final Response<Endpoint> latestEndpoint = httpClient.get(String.format("%s%s", ngrokProcess.getApiUrl(),
-            endpoint.getUri()), Endpoint.class);
-
-        if (isNull(latestEndpoint.getBody().getMetrics()) || latestEndpoint.getBody().getMetrics().isEmpty()) {
-            throw new JavaNgrokException("The ngrok API did not return \"metrics\" in the response");
-        }
-
-        endpoint.setMetrics(latestEndpoint.getBody().getMetrics());
-    }
-
-    /**
      * Terminate the <code>ngrok</code> processes, if running. This method will not block, it will just issue a kill
      * request.
      */
@@ -397,7 +275,6 @@ public class NgrokClient {
         ngrokProcess.stop();
 
         currentTunnels.clear();
-        currentEndpoints.clear();
     }
 
     /**
@@ -535,67 +412,71 @@ public class NgrokClient {
                 javaNgrokConfig.getConfigVersion());
         }
 
-        final String name;
-        final Map<String, Object> tunnelDefinitions = (Map<String, Object>) config.getOrDefault("tunnels", Map.of());
-        if (isNull(createTunnel.getName()) && tunnelDefinitions.containsKey("java-ngrok-default")) {
-            LOGGER.info("java-ngrok-default found defined in config, using for tunnel definition");
-
-            name = "java-ngrok-default";
-            createTunnelBuilder.withName(name);
-        } else {
-            name = createTunnel.getName();
-        }
-
-        if (nonNull(name) && tunnelDefinitions.containsKey(name)) {
-            createTunnelBuilder.withTunnelDefinition((Map<String, Object>) tunnelDefinitions.get(name));
-            createTunnelBuilder.withName(String.format("%s-api", name));
-        }
-
-        return createTunnelBuilder.build();
-    }
-
-    private synchronized CreateEndpoint interpolateEndpointDefinition(final CreateEndpoint createEndpoint) {
-        final CreateEndpoint.Builder createEndpointBuilder = new CreateEndpoint.Builder(createEndpoint);
-
-        final Map<String, Object> config;
-        if (Files.exists(javaNgrokConfig.getConfigPath())) {
-            config = ngrokProcess.getNgrokInstaller().getNgrokConfig(javaNgrokConfig.getConfigPath());
-        } else {
-            config = ngrokProcess.getNgrokInstaller().getDefaultConfig(javaNgrokConfig.getNgrokVersion(),
-                javaNgrokConfig.getConfigVersion());
-        }
-
-        final List<Map<String, Object>> endpointDefinitions =
-            (List<Map<String, Object>>) config.getOrDefault("endpoints", List.of());
-
-        String name = createEndpoint.getName();
+        String name = createTunnel.getName();
         Map<String, Object> matched = null;
 
-        if (isNull(name)) {
-            for (final Map<String, Object> def : endpointDefinitions) {
-                if ("java-ngrok-default".equals(def.get("name"))) {
-                    LOGGER.info("java-ngrok-default found defined in config, using for endpoint definition");
-                    matched = def;
-                    name = "java-ngrok-default";
-                    createEndpointBuilder.withName(name);
-                    break;
+        // v3 represents `endpoints:` as a list of objects (each with a `name` field)
+        if (isV3()) {
+            final List<Map<String, Object>> endpointDefinitions =
+                (List<Map<String, Object>>) config.getOrDefault("endpoints", List.of());
+            if (isNull(name)) {
+                for (final Map<String, Object> def : endpointDefinitions) {
+                    if ("java-ngrok-default".equals(def.get("name"))) {
+                        LOGGER.info("java-ngrok-default found defined in config, using for tunnel definition");
+                        matched = def;
+                        name = "java-ngrok-default";
+                        createTunnelBuilder.withName(name);
+                        break;
+                    }
+                }
+            } else {
+                for (final Map<String, Object> def : endpointDefinitions) {
+                    if (name.equals(def.get("name"))) {
+                        matched = def;
+                        break;
+                    }
                 }
             }
-        } else {
-            for (final Map<String, Object> def : endpointDefinitions) {
-                if (name.equals(def.get("name"))) {
-                    matched = def;
-                    break;
-                }
+        }
+
+        // `tunnels:` is the v2 block, but ngrok also allows it in v3 configs alongside `endpoints:`
+        if (isNull(matched)) {
+            final Map<String, Object> tunnelDefinitions =
+                (Map<String, Object>) config.getOrDefault("tunnels", Map.of());
+            if (isNull(name) && tunnelDefinitions.containsKey("java-ngrok-default")) {
+                LOGGER.info("java-ngrok-default found defined in config, using for tunnel definition");
+                name = "java-ngrok-default";
+                createTunnelBuilder.withName(name);
+            }
+            if (nonNull(name) && tunnelDefinitions.containsKey(name)) {
+                matched = (Map<String, Object>) tunnelDefinitions.get(name);
             }
         }
 
         if (nonNull(matched)) {
-            createEndpointBuilder.withEndpointDefinition(matched);
-            createEndpointBuilder.withName(String.format("%s-api", name));
+            createTunnelBuilder.withTunnelDefinition(matched);
+            createTunnelBuilder.withName(String.format("%s-api", name));
         }
 
-        return createEndpointBuilder.build();
+        final CreateTunnel built = createTunnelBuilder.build();
+
+        // In v3 mode, translate v2-shape `addr` / `proto` into the equivalent `upstream` block
+        if (isV3() && isNull(built.getUpstream()) && nonNull(built.getAddr())) {
+            final String addr = built.getAddr();
+            final String upstreamUrl;
+            if (addr.contains("://")) {
+                upstreamUrl = addr;
+            } else if (built.getProto() == Proto.TCP) {
+                upstreamUrl = String.format("tcp://localhost:%s", addr);
+            } else {
+                upstreamUrl = String.format("http://localhost:%s", addr);
+            }
+            return new CreateTunnel.Builder(built)
+                .withUpstream(new Upstream.Builder().withUrl(upstreamUrl).build())
+                .build();
+        }
+
+        return built;
     }
 
     /**

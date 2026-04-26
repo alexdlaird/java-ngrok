@@ -14,9 +14,9 @@ import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.http.Response;
 import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
+import com.github.alexdlaird.ngrok.installer.ConfigVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
-import com.github.alexdlaird.ngrok.protocol.Endpoints;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -371,7 +371,9 @@ public class NgrokProcess {
             throw new JavaNgrokSecurityException(String.format("URL must start with \"http\": %s", apiUrl));
         }
 
-        if (!apiPathOk("/api/tunnels", Tunnels.class) && !apiPathOk("/api/endpoints", Endpoints.class)) {
+        final String apiPath = javaNgrokConfig.getConfigVersion() == ConfigVersion.V3
+            ? "/api/endpoints" : "/api/tunnels";
+        if (!apiPathOk(apiPath, Tunnels.class)) {
             return false;
         }
 

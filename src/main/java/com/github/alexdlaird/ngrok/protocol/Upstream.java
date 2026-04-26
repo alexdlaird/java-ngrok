@@ -11,10 +11,10 @@ import java.util.Map;
 import static java.util.Objects.isNull;
 
 /**
- * An object representing the upstream of a <code>ngrok</code> Endpoint.
+ * An object representing the upstream of a <code>ngrok</code> tunnel.
  *
- * @see CreateEndpoint
- * @see Endpoint
+ * @see CreateTunnel
+ * @see Tunnel
  */
 public class Upstream {
 
@@ -30,7 +30,7 @@ public class Upstream {
     }
 
     /**
-     * Get the upstream URL to which the endpoint forwards traffic.
+     * Get the upstream URL to which the tunnel forwards traffic.
      */
     public String getUrl() {
         return url;
@@ -72,7 +72,7 @@ public class Upstream {
         }
 
         /**
-         * The upstream URL to which the endpoint will forward traffic.
+         * The upstream URL to which the tunnel will forward traffic.
          */
         public Builder withUrl(final String url) {
             this.url = url;
