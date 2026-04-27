@@ -16,10 +16,10 @@ import com.github.alexdlaird.http.HttpClientException;
 import com.github.alexdlaird.http.Response;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokVersion;
+import com.github.alexdlaird.ngrok.installer.ConfigVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
-import com.github.alexdlaird.ngrok.installer.ConfigVersion;
 import com.github.alexdlaird.ngrok.protocol.ApiResponse;
 import com.github.alexdlaird.ngrok.protocol.BindTls;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
@@ -140,6 +140,13 @@ public class NgrokClient {
         return tunnel;
     }
 
+    /**
+     * See {@link #connect(CreateTunnel)}.
+     */
+    public Tunnel connect() {
+        return connect(new CreateTunnel.Builder().withNgrokVersion(javaNgrokConfig.getNgrokVersion()).build());
+    }
+
     private boolean isV3() {
         return javaNgrokConfig.getConfigVersion() == ConfigVersion.V3;
     }
@@ -160,13 +167,6 @@ public class NgrokClient {
                 "Options %s require ConfigVersion.V3. Set JavaNgrokConfig.configVersion to V3 to use these.",
                 v3Only));
         }
-    }
-
-    /**
-     * See {@link #connect(CreateTunnel)}.
-     */
-    public Tunnel connect() {
-        return connect(new CreateTunnel.Builder().withNgrokVersion(javaNgrokConfig.getNgrokVersion()).build());
     }
 
     /**
