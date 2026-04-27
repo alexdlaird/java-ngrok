@@ -73,9 +73,9 @@ public class NgrokClient {
      * Establish a new <code>ngrok</code> tunnel for the Tunnel creation request, returning an object representing the
      * connected tunnel.
      *
-     * <p>Routing is driven by {@link JavaNgrokConfig#getConfigVersion()}: {@link ConfigVersion#V2} posts to
-     * <code>/api/tunnels</code> and reads the v2 <code>tunnels:</code> config block; {@link ConfigVersion#V3} posts to
-     * <code>/api/endpoints</code> and reads the v3 <code>endpoints:</code> block (and a <code>tunnels:</code> block
+     * <p>Routing is driven by {@link JavaNgrokConfig#getConfigVersion()}: {@link ConfigVersion#V2} uses
+     * <code>ngrok</code>'s Tunnels and reads the v2 <code>tunnels</code> config block; {@link ConfigVersion#V3} uses
+     * Endpoints and reads the v3 <code>endpoints</code> block (and a <code>tunnels</code> block
      * if also present, since <code>ngrok</code> allows both there).
      *
      * <p>If a tunnel definition in <code>ngrok</code>'s config file matches the given
@@ -425,7 +425,7 @@ public class NgrokClient {
         String name = createTunnel.getName();
         Map<String, Object> matched = null;
 
-        // v3 represents `endpoints:` as a list of objects (each with a `name` field)
+        // v3 represents `endpoints` as a list of objects (each with a `name` field)
         if (isV3()) {
             final List<Map<String, Object>> endpointDefinitions =
                 (List<Map<String, Object>>) config.getOrDefault("endpoints", List.of());
@@ -449,7 +449,7 @@ public class NgrokClient {
             }
         }
 
-        // `tunnels:` is the v2 block, but ngrok also allows it in v3 configs alongside `endpoints:`
+        // `tunnels` is the v2 block, but ngrok also allows it in v3 configs alongside `endpoints`
         if (isNull(matched)) {
             final Map<String, Object> tunnelDefinitions =
                 (Map<String, Object>) config.getOrDefault("tunnels", Map.of());
