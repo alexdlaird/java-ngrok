@@ -10,9 +10,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- Full support for `ngrok`'s v3 config schema. Set `JavaNgrokConfig.configVersion` to `ConfigVersion.V3` to route `NgrokClient.connect()`, `NgrokClient.disconnect()`, and `NgrokClient.getTunnels()` against `/api/endpoints` and to read `endpoints:` definitions from the config file.
-- New `Tunnel` getters mirroring v3 endpoint fields: `getUpstream()`, `isPoolingEnabled()`, `getTrafficPolicy()`, `getBindings()`, `getDescription()`, and `getMetadata()`. Matching `with*` methods on `CreateTunnel.Builder`.
-- v2 `withAddr()` / `withProto()` arguments are translated to a v3 `upstream` block when `configVersion` is `V3`.
+- Full support for `ngrok`'s v3 config schema. Set `JavaNgrokConfig.configVersion` to `ConfigVersion.V3` to have `NgrokClient.connect()` and other methods use `ngrok`'s Endpoints instead of Tunnels.
+- `Tunnel.getUpstream()`, populated from the v3 endpoint response (or synthesized from `config.addr` for v2). Raw v3 fields like `trafficPolicy` and `bindings` remain accessible via matching `Tunnel` getters.
+- v2 `withAddr()` / `withProto()` args are interpolated to a v3 `upstream` block when `configVersion` is `V3`.
 - Documentation updates.
 
 ## [3.0.0](https://github.com/alexdlaird/java-ngrok/compare/2.5.1...3.0.0) - 2026-03-31
