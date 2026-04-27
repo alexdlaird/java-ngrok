@@ -79,8 +79,8 @@ file), [as documented here](#tunnel-configuration).
 [`connect()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel))
 returns a [`Tunnel`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/Tunnel.html)
 and handles the differences for you through the `JavaNgrokConfig.configVersion` you set, routing to
-`/api/tunnels` for v2 or `/api/endpoints` for v3. Existing v2 code keeps working unchanged, and every v2 tunnel
-and v3 endpoint feature remains available. For v3-specific usage, see [Using v3 Endpoints](#using-v3-endpoints).
+`/api/tunnels` for v2 or `/api/endpoints` for v3. All `ngrok` features are available to you through this.
+For v3-specific Endpoints, see [Using v3 Endpoints](#using-v3-endpoints).
 
 ### Get Active Tunnels
 

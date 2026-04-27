@@ -77,8 +77,7 @@ file), [as documented here](https://alexdlaird.github.io/java-ngrok/#tunnel-conf
 
 > **Note:** `java-ngrok` unifies `ngrok`'s "tunnel" (v2) and "endpoint" (v3) concepts behind a single API:
 > `connect()` returns a `Tunnel` and handles the differences for you through the `JavaNgrokConfig.configVersion` you
-> set. Existing v2 code keeps working unchanged, and every v2 tunnel and v3 endpoint feature remains available.
-> For v3-specific usage, see [Using v3 Endpoints](https://alexdlaird.github.io/java-ngrok/#using-v3-endpoints).
+> set. All `ngrok` features are available to you through this. For v3-specific Endpoints, see [Using v3 Endpoints](https://alexdlaird.github.io/java-ngrok/#using-v3-endpoints).
 
 ### `ngrok`'s API
 
