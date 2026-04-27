@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.google.code.gson:gson:2.13.2"
+    implementation "com.google.code.gson:gson:2.14.0"
     implementation "org.yaml:snakeyaml:2.6"
     implementation "org.slf4j:slf4j-api:2.0.17"
     testImplementation "org.slf4j:slf4j-simple:2.0.17"
