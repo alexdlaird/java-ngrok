@@ -73,6 +73,15 @@ are supported by `ngrok` (or [`withName()`](https://javadoc.io/doc/com.github.al
 to use a tunnel defined in `ngrok`'s config
 file), [as documented here](#tunnel-configuration).
 
+### Tunnels and Endpoints
+
+`java-ngrok` unifies `ngrok`'s "tunnel" (v2) and "endpoint" (v3) concepts behind a single API:
+[`connect()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel))
+returns a [`Tunnel`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/Tunnel.html)
+and handles the differences for you through the `JavaNgrokConfig.configVersion` you set, routing to
+`/api/tunnels` for v2 or `/api/endpoints` for v3. Existing v2 code keeps working unchanged, and every v2 tunnel
+and v3 endpoint feature remains available. For v3-specific usage, see [Using v3 Endpoints](#using-v3-endpoints).
+
 ### Get Active Tunnels
 
 It can be useful to ask the `ngrok` client what tunnels are currently open. This can be accomplished with the
@@ -149,6 +158,8 @@ final CreateTunnel createTunnel = new CreateTunnel.Builder()
 final Tunnel tunnel = ngrokClient.connect(createTunnel);
 ```
 
+#### Using v3 Endpoints
+
 `java-ngrok` defaults to `ngrok`'s [v2 config](https://ngrok.com/docs/agent/config/v2/). Set
 `JavaNgrokConfig.configVersion` to `ConfigVersion.V3` to use the
 [v3 config](https://ngrok.com/docs/agent/config/v3/) (its `endpoints:` block is read alongside the `tunnels:`
@@ -167,6 +178,25 @@ endpoints:
   - name: java-ngrok-default
     upstream:
       url: http://localhost:80
+```
+
+You can also open a v3 endpoint without defining it in a config file:
+
+```java
+final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+        .withConfigVersion(ConfigVersion.V3)
+        .build();
+
+final NgrokClient ngrokClient = new NgrokClient.Builder()
+        .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
+
+// Open a v3 endpoint
+final CreateTunnel createEndpoint = new CreateTunnel.Builder()
+        .withUpstream(new Upstream.Builder().withUrl("http://localhost:8000").build())
+        .withBindings(List.of("public"))
+        .build();
+final Tunnel endpoint = ngrokClient.connect(createEndpoint);
 ```
 
 ## `ngrok`'s API
@@ -188,6 +218,11 @@ final ApiResponse endpointResponse = ngrokClient.api(
                 "--url", String.format("https://%s", domain),
                 "--traffic-policy-file", "policy.yml"));
 ```
+
+> **Note:** `api("endpoints", ...)` here invokes `ngrok`'s agent CLI to manage
+> [Cloud Endpoints](https://ngrok.com/docs/universal-gateway/cloud-endpoints/), which are dashboard-managed and
+> persist independently of any local agent. This is distinct from the local agent's `/api/endpoints` HTTP route
+> used by `connect()` when `JavaNgrokConfig.configVersion` is `ConfigVersion.V3` (see [Using v3 Endpoints](#using-v3-endpoints)).
 
 ## Event Logs
 
