@@ -4,7 +4,17 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/3.1.0...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/3.1.1...HEAD)
+
+## [3.1.1](https://github.com/alexdlaird/java-ngrok/compare/3.1.0...3.1.1) - 2026-04-27
+
+### Added
+
+- `CreateTunnel.trafficPolicyFile`, `CreateTunnel.agentTlsTermination`, `Upstream.proxyProtocol` for v3 config gaps.
+
+### Fixed
+
+- Build and stability improvements.
 
 ## [3.1.0](https://github.com/alexdlaird/java-ngrok/compare/3.0.0...3.1.0) - 2026-04-26
 
