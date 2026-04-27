@@ -73,14 +73,12 @@ are supported by `ngrok` (or [`withName()`](https://javadoc.io/doc/com.github.al
 to use a tunnel defined in `ngrok`'s config
 file), [as documented here](#tunnel-configuration).
 
-### Tunnels and Endpoints
-
-`java-ngrok` unifies `ngrok`'s "tunnel" (v2) and "endpoint" (v3) concepts behind a single API:
-[`connect()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel))
-returns a [`Tunnel`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/Tunnel.html)
-and handles the differences for you through the `JavaNgrokConfig.configVersion` you set. All `ngrok`
-features are available to you through this.
-For v3-specific Endpoints, see [Using v3 Endpoints](#using-v3-endpoints).
+> **Note:** `java-ngrok` unifies `ngrok`'s "tunnel" (v2) and "endpoint" (v3) concepts behind a single API:
+> [`connect()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel))
+> returns a [`Tunnel`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/Tunnel.html)
+> and handles the differences for you through the `JavaNgrokConfig.configVersion` you set. All `ngrok`
+> features are available to you through this.
+> For v3-specific Endpoints, see [Using v3 Endpoints](#using-v3-endpoints).
 
 ### Get Active Tunnels
 
