@@ -162,6 +162,12 @@ public class NgrokClient {
         if (nonNull(createTunnel.getBindings())) {
             v3Only.add("bindings");
         }
+        if (nonNull(createTunnel.getAgentTlsTermination())) {
+            v3Only.add("agentTlsTermination");
+        }
+        if (nonNull(createTunnel.getTrafficPolicyFile())) {
+            v3Only.add("trafficPolicyFile");
+        }
         if (!v3Only.isEmpty()) {
             throw new JavaNgrokException(String.format(
                 "Options %s require ConfigVersion.V3. Set JavaNgrokConfig.configVersion to V3 to use these.",

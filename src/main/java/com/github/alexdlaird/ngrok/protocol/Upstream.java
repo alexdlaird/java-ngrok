@@ -20,6 +20,7 @@ public class Upstream {
 
     private String url;
     private String protocol;
+    private String proxyProtocol;
 
     private Upstream() {
     }
@@ -27,6 +28,7 @@ public class Upstream {
     private Upstream(final Builder builder) {
         this.url = builder.url;
         this.protocol = builder.protocol;
+        this.proxyProtocol = builder.proxyProtocol;
     }
 
     /**
@@ -44,12 +46,20 @@ public class Upstream {
     }
 
     /**
+     * Get the PROXY protocol version (e.g., <code>1</code>, <code>2</code>).
+     */
+    public String getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    /**
      * Builder for an {@link Upstream}, see docs for that class for example usage.
      */
     public static class Builder {
 
         private String url;
         private String protocol;
+        private String proxyProtocol;
 
         /**
          * Use this constructor to build a new {@link Upstream}.
@@ -69,6 +79,9 @@ public class Upstream {
             if (upstreamDefinition.containsKey("protocol")) {
                 this.protocol = (String) upstreamDefinition.get("protocol");
             }
+            if (upstreamDefinition.containsKey("proxy_protocol")) {
+                this.proxyProtocol = (String) upstreamDefinition.get("proxy_protocol");
+            }
         }
 
         /**
@@ -84,6 +97,14 @@ public class Upstream {
          */
         public Builder withProtocol(final String protocol) {
             this.protocol = protocol;
+            return this;
+        }
+
+        /**
+         * The PROXY protocol version (e.g., <code>1</code>, <code>2</code>).
+         */
+        public Builder withProxyProtocol(final String proxyProtocol) {
+            this.proxyProtocol = proxyProtocol;
             return this;
         }
 

@@ -7,12 +7,14 @@
 package com.github.alexdlaird.ngrok.protocol;
 
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -397,6 +399,79 @@ public class CreateTunnelTest {
 
         // THEN
         assertEquals(policy, createTunnel.getTrafficPolicy());
+    }
+
+    @Test
+    public void testCreateTunnelV3UpstreamProxyProtocol() {
+        // WHEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+            .withUpstream(new Upstream.Builder()
+                .withUrl("http://localhost:8000")
+                .withProtocol("http1")
+                .withProxyProtocol("2")
+                .build())
+            .build();
+
+        // THEN
+        assertEquals("http://localhost:8000", createTunnel.getUpstream().getUrl());
+        assertEquals("http1", createTunnel.getUpstream().getProtocol());
+        assertEquals("2", createTunnel.getUpstream().getProxyProtocol());
+    }
+
+    @Test
+    public void testCreateTunnelV3TrafficPolicyFile() {
+        // WHEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+            .withTrafficPolicyFile("/path/to/policy.yml")
+            .build();
+
+        // THEN
+        assertEquals("/path/to/policy.yml", createTunnel.getTrafficPolicyFile());
+    }
+
+    @Test
+    public void testCreateTunnelV3AgentTlsTermination() {
+        // WHEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+            .withAgentTlsTermination(new AgentTlsTermination.Builder()
+                .withServerCertificate("/path/to/cert.pem")
+                .withServerPrivateKey("/path/to/key.pem")
+                .withMutualTlsCertificateAuthorities(List.of("/path/to/ca.pem"))
+                .build())
+            .build();
+
+        // THEN
+        assertNotNull(createTunnel.getAgentTlsTermination());
+        assertEquals("/path/to/cert.pem", createTunnel.getAgentTlsTermination().getServerCertificate());
+        assertEquals("/path/to/key.pem", createTunnel.getAgentTlsTermination().getServerPrivateKey());
+        assertEquals(List.of("/path/to/ca.pem"),
+            createTunnel.getAgentTlsTermination().getMutualTlsCertificateAuthorities());
+    }
+
+    @Test
+    public void testCreateWithV3TunnelDefinitionNewFields() {
+        // WHEN
+        final Map<String, Object> definition = new HashMap<>();
+        definition.put("upstream", Map.of("url", "http://localhost:9000", "proxy_protocol", "1"));
+        definition.put("traffic_policy_file", "/path/to/policy.yml");
+        definition.put("agent_tls_termination", Map.of(
+            "server_certificate", "/path/to/cert.pem",
+            "server_private_key", "/path/to/key.pem",
+            "mutual_tls_certificate_authorities", List.of("/path/to/ca.pem")
+        ));
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+            .withTunnelDefinition(definition)
+            .build();
+
+        // THEN
+        assertEquals("http://localhost:9000", createTunnel.getUpstream().getUrl());
+        assertEquals("1", createTunnel.getUpstream().getProxyProtocol());
+        assertEquals("/path/to/policy.yml", createTunnel.getTrafficPolicyFile());
+        assertNotNull(createTunnel.getAgentTlsTermination());
+        assertEquals("/path/to/cert.pem", createTunnel.getAgentTlsTermination().getServerCertificate());
+        assertEquals("/path/to/key.pem", createTunnel.getAgentTlsTermination().getServerPrivateKey());
+        assertEquals(List.of("/path/to/ca.pem"),
+            createTunnel.getAgentTlsTermination().getMutualTlsCertificateAuthorities());
     }
 
     @Test

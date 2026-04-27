@@ -76,8 +76,10 @@ public class CreateTunnel {
     private final String url;
     private final Upstream upstream;
     private final Map<String, Object> trafficPolicy;
+    private final String trafficPolicyFile;
     private final List<String> bindings;
     private final String description;
+    private final AgentTlsTermination agentTlsTermination;
 
     private CreateTunnel(final Builder builder) {
         this.ngrokVersion = builder.ngrokVersion;
@@ -114,8 +116,10 @@ public class CreateTunnel {
         this.url = builder.url;
         this.upstream = builder.upstream;
         this.trafficPolicy = builder.trafficPolicy;
+        this.trafficPolicyFile = builder.trafficPolicyFile;
         this.bindings = builder.bindings;
         this.description = builder.description;
+        this.agentTlsTermination = builder.agentTlsTermination;
     }
 
     /**
@@ -371,6 +375,20 @@ public class CreateTunnel {
     }
 
     /**
+     * Get the path to an external Traffic Policy file for this tunnel.
+     */
+    public String getTrafficPolicyFile() {
+        return trafficPolicyFile;
+    }
+
+    /**
+     * Get the agent TLS termination configuration for this tunnel.
+     */
+    public AgentTlsTermination getAgentTlsTermination() {
+        return agentTlsTermination;
+    }
+
+    /**
      * Builder for a {@link CreateTunnel}, which can be used to construct a request that conforms to <a
      * href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
      * target="_blank"><code>ngrok</code>'s tunnel definition</a>. See docs for that class for example usage.
@@ -413,8 +431,10 @@ public class CreateTunnel {
         private String url;
         private Upstream upstream;
         private Map<String, Object> trafficPolicy;
+        private String trafficPolicyFile;
         private List<String> bindings;
         private String description;
+        private AgentTlsTermination agentTlsTermination;
 
         /**
          * Use this constructor if default values should not be populated in required attributes when {@link #build()}
@@ -479,8 +499,10 @@ public class CreateTunnel {
             this.url = createTunnel.url;
             this.upstream = createTunnel.upstream;
             this.trafficPolicy = createTunnel.trafficPolicy;
+            this.trafficPolicyFile = createTunnel.trafficPolicyFile;
             this.bindings = createTunnel.bindings;
             this.description = createTunnel.description;
+            this.agentTlsTermination = createTunnel.agentTlsTermination;
         }
 
         /**
@@ -822,6 +844,22 @@ public class CreateTunnel {
         }
 
         /**
+         * The path to an external Traffic Policy file (v3 config only).
+         */
+        public Builder withTrafficPolicyFile(final String trafficPolicyFile) {
+            this.trafficPolicyFile = trafficPolicyFile;
+            return this;
+        }
+
+        /**
+         * The agent TLS termination configuration for <code>tls://</code> endpoints (v3 config only).
+         */
+        public Builder withAgentTlsTermination(final AgentTlsTermination agentTlsTermination) {
+            this.agentTlsTermination = agentTlsTermination;
+            return this;
+        }
+
+        /**
          * Populate any <code>null</code> attributes (except for <code>name</code>) in this Builder with values from the
          * given <code>tunnelDefinition</code>.
          *
@@ -942,6 +980,14 @@ public class CreateTunnel {
             }
             if (isNull(this.description) && tunnelDefinition.containsKey("description")) {
                 this.description = (String) tunnelDefinition.get("description");
+            }
+            if (isNull(this.trafficPolicyFile) && tunnelDefinition.containsKey("traffic_policy_file")) {
+                this.trafficPolicyFile = (String) tunnelDefinition.get("traffic_policy_file");
+            }
+            if (isNull(this.agentTlsTermination) && tunnelDefinition.containsKey("agent_tls_termination")) {
+                this.agentTlsTermination = new AgentTlsTermination
+                    .Builder((Map<String, Object>) tunnelDefinition.get("agent_tls_termination"))
+                    .build();
             }
             if (tunnelDefinition.containsKey("policy") || tunnelDefinition.containsKey("traffic_policy")) {
                 final String policyKey = tunnelDefinition.containsKey("policy") ? "policy" : "traffic_policy";

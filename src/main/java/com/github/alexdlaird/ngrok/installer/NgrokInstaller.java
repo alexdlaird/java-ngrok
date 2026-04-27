@@ -173,7 +173,9 @@ public class NgrokInstaller {
 
             final Map<String, Object> config = getNgrokConfig(configPath, false, ngrokVersion, configVersion);
 
-            config.putAll(getDefaultConfig(ngrokVersion, configVersion));
+            for (final Map.Entry<String, Object> entry : getDefaultConfig(ngrokVersion, configVersion).entrySet()) {
+                config.putIfAbsent(entry.getKey(), entry.getValue());
+            }
 
             config.putAll(data);
 
@@ -269,14 +271,25 @@ public class NgrokInstaller {
      * @throws JavaNgrokException A key or value failed validation.
      */
     public void validateConfig(final Map<String, Object> data) {
-        if (data.getOrDefault("web_addr", "127.0.0.1:4040").equals("false")) {
+        if ("3".equals(String.valueOf(data.get("version")))) {
+            final Object agent = data.get("agent");
+            if (agent instanceof Map) {
+                validateConfigValues((Map<String, Object>) agent);
+            }
+        } else {
+            validateConfigValues(data);
+        }
+    }
+
+    private void validateConfigValues(final Map<String, Object> values) {
+        if (values.getOrDefault("web_addr", "127.0.0.1:4040").equals("false")) {
             throw new JavaNgrokException("\"web_addr\" cannot be false, as the ngrok API is a "
                                          + "dependency for java-ngrok");
         }
-        if (data.getOrDefault("log_format", "term").equals("json")) {
+        if (values.getOrDefault("log_format", "term").equals("json")) {
             throw new JavaNgrokException("\"log_format\" must be \"term\" to be compatible with java-ngrok");
         }
-        if (!validLogLevels.contains((String) data.getOrDefault("log_level", "info"))) {
+        if (!validLogLevels.contains((String) values.getOrDefault("log_level", "info"))) {
             throw new JavaNgrokException("\"log_level\" must be \"info\" to be compatible with java-ngrok");
         }
     }

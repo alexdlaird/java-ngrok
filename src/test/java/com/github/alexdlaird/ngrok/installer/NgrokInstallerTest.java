@@ -162,6 +162,33 @@ class NgrokInstallerTest extends NgrokTestCase {
     }
 
     @Test
+    public void testV3AgentWebAddrFalseNotAllowed() {
+        // WHEN
+        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(
+            javaNgrokConfig.getConfigPath(),
+            Map.of("version", "3", "agent", Map.of("web_addr", "false")),
+            NgrokVersion.V3, ConfigVersion.V3));
+    }
+
+    @Test
+    public void testV3AgentLogFormatJsonNotAllowed() {
+        // WHEN
+        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(
+            javaNgrokConfig.getConfigPath(),
+            Map.of("version", "3", "agent", Map.of("log_format", "json")),
+            NgrokVersion.V3, ConfigVersion.V3));
+    }
+
+    @Test
+    public void testV3AgentLogLevelWarnNotAllowed() {
+        // WHEN
+        assertThrows(JavaNgrokException.class, () -> ngrokInstaller.installDefaultConfig(
+            javaNgrokConfig.getConfigPath(),
+            Map.of("version", "3", "agent", Map.of("log_level", "warn")),
+            NgrokVersion.V3, ConfigVersion.V3));
+    }
+
+    @Test
     public void testGetDefaultNgrokDirMac() {
         // GIVEN
         mockSystemProperty("os.name", "macOS");
