@@ -78,8 +78,8 @@ file), [as documented here](#tunnel-configuration).
 `java-ngrok` unifies `ngrok`'s "tunnel" (v2) and "endpoint" (v3) concepts behind a single API:
 [`connect()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#connect(com.github.alexdlaird.ngrok.protocol.CreateTunnel))
 returns a [`Tunnel`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/Tunnel.html)
-and handles the differences for you through the `JavaNgrokConfig.configVersion` you set, routing to
-`/api/tunnels` for v2 or `/api/endpoints` for v3. All `ngrok` features are available to you through this.
+and handles the differences for you through the `JavaNgrokConfig.configVersion` you set. All `ngrok`
+features are available to you through this.
 For v3-specific Endpoints, see [Using v3 Endpoints](#using-v3-endpoints).
 
 ### Get Active Tunnels
@@ -162,8 +162,8 @@ final Tunnel tunnel = ngrokClient.connect(createTunnel);
 
 `java-ngrok` defaults to `ngrok`'s [v2 config](https://ngrok.com/docs/agent/config/v2/). Set
 `JavaNgrokConfig.configVersion` to `ConfigVersion.V3` to use the
-[v3 config](https://ngrok.com/docs/agent/config/v3/) (its `endpoints:` block is read alongside the `tunnels:`
-block, and `connect()` posts to `/api/endpoints` instead of `/api/tunnels`). v2 `withAddr()` /
+[v3 config](https://ngrok.com/docs/agent/config/v3/) (its `endpoints` block is read alongside the `tunnels`
+block). v2 `withAddr()` /
 `withProto()` arguments are translated into the equivalent `upstream` block automatically.
 
 ```yaml
@@ -221,8 +221,8 @@ final ApiResponse endpointResponse = ngrokClient.api(
 
 > **Note:** `api("endpoints", ...)` here invokes `ngrok`'s agent CLI to manage
 > [Cloud Endpoints](https://ngrok.com/docs/universal-gateway/cloud-endpoints/), which are dashboard-managed and
-> persist independently of any local agent. This is distinct from the local agent's `/api/endpoints` HTTP route
-> used by `connect()` when `JavaNgrokConfig.configVersion` is `ConfigVersion.V3` (see [Using v3 Endpoints](#using-v3-endpoints)).
+> persist independently of any local agent. This is distinct from the local agent Endpoints
+> managed by `connect()` when `JavaNgrokConfig.configVersion` is `ConfigVersion.V3` (see [Using v3 Endpoints](#using-v3-endpoints)).
 
 ## Event Logs
 
