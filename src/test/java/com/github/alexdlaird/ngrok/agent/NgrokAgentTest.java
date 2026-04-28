@@ -34,7 +34,7 @@ class NgrokAgentTest extends NgrokTestCase {
     public void setUp() {
         super.setUp();
 
-        ngrokAgent = new NgrokAgent(ngrokProcessV3, httpClient);
+        ngrokAgent = new NgrokAgent(ngrokProcess, httpClient);
     }
 
     @Test
@@ -44,14 +44,14 @@ class NgrokAgentTest extends NgrokTestCase {
 
         // GIVEN
         final String tunnelName = "my-tunnel";
-        ngrokProcessV3.start();
+        ngrokProcess.start();
         final CreateTunnel request = new CreateTunnel.Builder(true)
             .withNgrokVersion(NgrokVersion.V3)
             .withName(tunnelName)
-            .withAddr(new URL(ngrokProcessV3.getApiUrl()).getPort())
+            .withAddr(new URL(ngrokProcess.getApiUrl()).getPort())
             .build();
         final Response<Tunnel> createResponse = httpClient.post(String.format("%s/api/tunnels",
-            ngrokProcessV3.getApiUrl()), request, Tunnel.class);
+            ngrokProcess.getApiUrl()), request, Tunnel.class);
         final String publicUrl = createResponse.getBody().getPublicUrl();
 
         Thread.sleep(1000);
@@ -121,7 +121,7 @@ class NgrokAgentTest extends NgrokTestCase {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
-        ngrokProcessV3.start();
+        ngrokProcess.start();
 
         // WHEN
         final Response<AgentStatus> response = ngrokAgent.getAgentStatus();

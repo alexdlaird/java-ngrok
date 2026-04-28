@@ -75,6 +75,10 @@ are supported by `ngrok` (or [`withName()`](https://javadoc.io/doc/com.github.al
 to use a tunnel defined in `ngrok`'s config
 file), [as documented here](https://alexdlaird.github.io/java-ngrok/#tunnel-configuration).
 
+> **Note:** `java-ngrok` unifies `ngrok`'s "tunnel" (v2) and "endpoint" (v3) concepts behind a single API:
+> `connect()` returns a `Tunnel` and handles the differences for you through the `JavaNgrokConfig.configVersion` you
+> set. All `ngrok` features are available to you through this. For v3-specific Endpoints, see [Using v3 Endpoints](https://alexdlaird.github.io/java-ngrok/#using-v3-endpoints).
+
 ### `ngrok`'s API
 
 The [`api()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#api(java.util.List)) method allows you to use the local

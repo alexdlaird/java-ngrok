@@ -5,12 +5,12 @@ plugins {
     id "idea"
     id "com.adarshr.test-logger" version "4.0.0"
     id "checkstyle"
-    id "com.github.spotbugs" version "6.4.8"
+    id "com.github.spotbugs" version "6.5.1"
     id "org.jreleaser" version "1.23.0"
 }
 
 group "com.github.alexdlaird"
-version "2.5.1"
+version "3.1.1"
 
 java {
     withJavadocJar()
@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.google.code.gson:gson:2.13.2"
+    implementation "com.google.code.gson:gson:2.14.0"
     implementation "org.yaml:snakeyaml:2.6"
     implementation "org.slf4j:slf4j-api:2.0.17"
     testImplementation "org.slf4j:slf4j-simple:2.0.17"

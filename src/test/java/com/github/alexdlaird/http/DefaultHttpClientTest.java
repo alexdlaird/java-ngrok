@@ -67,7 +67,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
-        ngrokProcessV3.start();
+        ngrokProcess.start();
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
             .withNgrokVersion(NgrokVersion.V3)
             .withName("my-tunnel")
@@ -75,7 +75,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
         // WHEN
         final Response<Tunnel> postResponse = defaultHttpClient.post(String.format("%s/api/tunnels",
-            ngrokProcessV3.getApiUrl()), createTunnel, Tunnel.class);
+            ngrokProcess.getApiUrl()), createTunnel, Tunnel.class);
 
         // THEN
         assertEquals(HTTP_CREATED, postResponse.getStatusCode());
@@ -87,17 +87,17 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
-        ngrokProcessV3.start();
+        ngrokProcess.start();
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
             .withNgrokVersion(NgrokVersion.V3)
             .withName("my-tunnel")
             .build();
         defaultHttpClient.post(String.format("%s/api/tunnels",
-            ngrokProcessV3.getApiUrl()), createTunnel, Tunnel.class);
+            ngrokProcess.getApiUrl()), createTunnel, Tunnel.class);
 
         // WHEN
         final Response<Tunnels> getResponse = defaultHttpClient.get(String.format("%s/api/tunnels",
-            ngrokProcessV3.getApiUrl()), Tunnels.class);
+            ngrokProcess.getApiUrl()), Tunnels.class);
 
         // THEN
         assertEquals(HTTP_OK, getResponse.getStatusCode());
@@ -116,15 +116,15 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
-        ngrokProcessV3.start();
+        ngrokProcess.start();
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
             .withNgrokVersion(NgrokVersion.V3)
             .build();
         final Tunnel tunnel = defaultHttpClient.post(String.format("%s/api/tunnels",
-            ngrokProcessV3.getApiUrl()), createTunnel, Tunnel.class).getBody();
+            ngrokProcess.getApiUrl()), createTunnel, Tunnel.class).getBody();
 
         // WHEN
-        final Response<?> deleteResponse = defaultHttpClient.delete(ngrokProcessV3.getApiUrl() + tunnel.getUri());
+        final Response<?> deleteResponse = defaultHttpClient.delete(ngrokProcess.getApiUrl() + tunnel.getUri());
 
         // THEN
         assertEquals(HTTP_NO_CONTENT, deleteResponse.getStatusCode());
@@ -136,7 +136,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
-        ngrokProcessV3.start();
+        ngrokProcess.start();
         final CreateTunnel createTunnel = new CreateTunnel.Builder(true)
             .withNgrokVersion(NgrokVersion.V3)
             .withName("my-tunnel")
@@ -144,7 +144,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
 
         // WHEN
         final HttpClientException exception = assertThrows(HttpClientException.class, () -> defaultHttpClient.put(
-            String.format("%s/api/tunnels", ngrokProcessV3.getApiUrl()), createTunnel, Tunnels.class));
+            String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), createTunnel, Tunnels.class));
 
         // THEN
         assertEquals(HTTP_BAD_METHOD, exception.getStatusCode());
@@ -156,14 +156,14 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
-        ngrokProcessV3.start();
+        ngrokProcess.start();
         final CreateTunnel request = new CreateTunnel.Builder(true)
             .withNgrokVersion(NgrokVersion.V3)
             .withName("my-tunnel")
-            .withAddr(new URL(ngrokProcessV3.getApiUrl()).getPort())
+            .withAddr(new URL(ngrokProcess.getApiUrl()).getPort())
             .build();
         final Response<Tunnel> createResponse = defaultHttpClient.post(String.format("%s/api/tunnels",
-            ngrokProcessV3.getApiUrl()), request, Tunnel.class);
+            ngrokProcess.getApiUrl()), request, Tunnel.class);
         final String publicUrl = createResponse.getBody().getPublicUrl();
 
         Thread.sleep(1000);
@@ -231,9 +231,9 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
-        final NgrokClient ngrokClientV3 = new NgrokClient.Builder()
-            .withJavaNgrokConfig(javaNgrokConfigV3)
-            .withNgrokProcess(ngrokProcessV3)
+        final NgrokClient ngrokClient = new NgrokClient.Builder()
+            .withJavaNgrokConfig(javaNgrokConfig)
+            .withNgrokProcess(ngrokProcess)
             .withHttpClient(defaultHttpClient)
             .build();
         final HttpURLConnection mockHttpUrlConnection = mock(HttpURLConnection.class);
@@ -243,7 +243,7 @@ public class DefaultHttpClientTest extends NgrokTestCase {
         }).when(mockHttpUrlConnection).getInputStream();
 
         // WHEN
-        assertThrows(JavaNgrokHTTPException.class, () -> ngrokClientV3.getTunnels());
+        assertThrows(JavaNgrokHTTPException.class, ngrokClient::getTunnels);
     }
 
     @Test

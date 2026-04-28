@@ -16,6 +16,7 @@ import com.github.alexdlaird.http.HttpClientException;
 import com.github.alexdlaird.http.Response;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokVersion;
+import com.github.alexdlaird.ngrok.installer.ConfigVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
@@ -25,6 +26,7 @@ import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Proto;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
+import com.github.alexdlaird.ngrok.protocol.Upstream;
 import com.github.alexdlaird.ngrok.protocol.Version;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -71,71 +73,66 @@ public class NgrokClient {
      * Establish a new <code>ngrok</code> tunnel for the Tunnel creation request, returning an object representing the
      * connected tunnel.
      *
-     * <p>If a <a href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
-     * target="_blank">tunnel definition in ngrok's config file</a> matches the given
-     * {@link CreateTunnel.Builder#withName(String)}, it will be loaded and used to start the tunnel (note that "-api"
-     * will be appended to its name when started). When {@link CreateTunnel.Builder#withName(String)} is not set and a
-     * "java-ngrok-default" tunnel definition exists in
-     * <code>ngrok</code>'s config, it will be loaded and used. Any properties defined on {@link CreateTunnel} will
-     * override properties from the loaded tunnel definition.
+     * <p>Routing is driven by {@link JavaNgrokConfig#getConfigVersion()}: {@link ConfigVersion#V2} uses
+     * <code>ngrok</code>'s Tunnels and reads the v2 <code>tunnels</code> config block; {@link ConfigVersion#V3} uses
+     * Endpoints and reads the v3 <code>endpoints</code> block (and a <code>tunnels</code> block
+     * if also present, since <code>ngrok</code> allows both there).
+     *
+     * <p>If a tunnel definition in <code>ngrok</code>'s config file matches the given
+     * {@link CreateTunnel.Builder#withName(String)}, it will be loaded and used to start the tunnel (note that
+     * "-api" will be appended to its name when started). When {@link CreateTunnel.Builder#withName(String)} is not
+     * set and a "java-ngrok-default" definition exists in <code>ngrok</code>'s config, it will be loaded and used.
+     * Any properties defined on {@link CreateTunnel} will override properties from the loaded definition.
+     *
+     * <p>In v3 mode, v2 properties (<code>addr</code> / <code>proto</code>) are translated into the
+     * equivalent <code>upstream</code> block. Setting v3-only properties such as <code>upstream</code> or
+     * <code>bindings</code> while {@link JavaNgrokConfig#getConfigVersion()} is {@link ConfigVersion#V2} raises
+     * {@link JavaNgrokException}.
      *
      * <p>If <code>ngrok</code> is not installed at {@link JavaNgrokConfig}'s <code>ngrokPath</code>, calling this
      * method will first download and install <code>ngrok</code>.
      *
-     * <p><code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v2.
-     * To install v3 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
-     * {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
-     *
      * <p>If <code>ngrok</code> is not running, calling this method will first start a process with
      * {@link JavaNgrokConfig}.
      *
-     * <p><strong>Note:</strong> <code>ngrok</code> v2's default behavior for <code>http</code> when no additional
-     * properties are passed is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This
-     * method will return a reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed,
-     * call {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
+     * <p><strong>Note:</strong> v2's default behavior for <code>http</code> when no additional properties are passed
+     * is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This method will return a
+     * reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed, call
+     * {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
      * <code>https</code> tunnel will be returned.
      *
      * @param createTunnel The tunnel definition.
      * @return The created Tunnel.
-     * @throws JavaNgrokException         The tunnel definition was invalid, or response was incompatible with
-     *                                    <code>java-ngrok</code>.
+     * @throws JavaNgrokException         The tunnel definition was invalid, the requested options are
+     *                                    incompatible with the configured config version, or the response was
+     *                                    incompatible with <code>java-ngrok</code>.
      * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
      * @throws JavaNgrokSecurityException The URL was not supported.
      */
     public Tunnel connect(final CreateTunnel createTunnel) {
+        validateConfigVersionCompatibility(createTunnel);
+
         ngrokProcess.start();
 
         final CreateTunnel finalTunnel = interpolateTunnelDefinition(createTunnel);
 
         LOGGER.info("Opening tunnel named: {}", finalTunnel.getName());
 
+        final String apiPath = isV3() ? "/api/endpoints" : "/api/tunnels";
+
         final Response<Tunnel> response;
         try {
-            response = httpClient.post(String.format("%s/api/tunnels", ngrokProcess.getApiUrl()), finalTunnel,
+            response = httpClient.post(String.format("%s%s", ngrokProcess.getApiUrl(), apiPath), finalTunnel,
                 Tunnel.class);
         } catch (final HttpClientException e) {
             throw new JavaNgrokHTTPException(String.format("An error occurred when POSTing to create the tunnel %s.",
                 finalTunnel.getName()), e, e.getUrl(), e.getStatusCode(), e.getBody());
         }
 
-        final Tunnel tunnel;
-        if (javaNgrokConfig.getNgrokVersion() == NgrokVersion.V2
-            && finalTunnel.getProto() == Proto.HTTP
-            && finalTunnel.getBindTls() == BindTls.BOTH) {
-            try {
-                final Response<Tunnel> getResponse = httpClient.get(ngrokProcess.getApiUrl()
-                                                                    + response.getBody().getUri() + "%20%28http%29",
-                    Tunnel.class);
-                tunnel = getResponse.getBody();
+        final Tunnel tunnel = response.getBody();
 
-                LOGGER.info("ngrok v2 opens multiple tunnels, fetching just HTTP tunnel {} for return",
-                    tunnel.getId());
-            } catch (final HttpClientException e) {
-                throw new JavaNgrokHTTPException(String.format("An error occurred when GETing the HTTP tunnel %s.",
-                    response.getBody().getName()), e, e.getUrl(), e.getStatusCode(), e.getBody());
-            }
-        } else {
-            tunnel = response.getBody();
+        if (isV3() && isNull(tunnel.getUri()) && nonNull(tunnel.getName())) {
+            tunnel.setUri(String.format("/api/endpoints/%s", tunnel.getName()));
         }
 
         currentTunnels.put(tunnel.getPublicUrl(), tunnel);
@@ -148,6 +145,34 @@ public class NgrokClient {
      */
     public Tunnel connect() {
         return connect(new CreateTunnel.Builder().withNgrokVersion(javaNgrokConfig.getNgrokVersion()).build());
+    }
+
+    private boolean isV3() {
+        return javaNgrokConfig.getConfigVersion() == ConfigVersion.V3;
+    }
+
+    private void validateConfigVersionCompatibility(final CreateTunnel createTunnel) {
+        if (isV3()) {
+            return;
+        }
+        final List<String> v3Only = new ArrayList<>();
+        if (nonNull(createTunnel.getUpstream())) {
+            v3Only.add("upstream");
+        }
+        if (nonNull(createTunnel.getBindings())) {
+            v3Only.add("bindings");
+        }
+        if (nonNull(createTunnel.getAgentTlsTermination())) {
+            v3Only.add("agentTlsTermination");
+        }
+        if (nonNull(createTunnel.getTrafficPolicyFile())) {
+            v3Only.add("trafficPolicyFile");
+        }
+        if (!v3Only.isEmpty()) {
+            throw new JavaNgrokException(String.format(
+                "Options %s require ConfigVersion.V3. Set JavaNgrokConfig.configVersion to V3 to use these.",
+                v3Only));
+        }
     }
 
     /**
@@ -205,17 +230,24 @@ public class NgrokClient {
     public List<Tunnel> getTunnels() {
         ngrokProcess.start();
 
+        final String apiPath = isV3() ? "/api/endpoints" : "/api/tunnels";
+
         try {
-            final Response<Tunnels> response = httpClient.get(String.format("%s/api/tunnels",
-                ngrokProcess.getApiUrl()), Tunnels.class);
+            final Response<Tunnels> response = httpClient.get(String.format("%s%s",
+                ngrokProcess.getApiUrl(), apiPath), Tunnels.class);
 
             currentTunnels.clear();
             for (final Tunnel tunnel : response.getBody().getTunnels()) {
-                currentTunnels.put(tunnel.getPublicUrl(), tunnel);
+                if (isV3() && isNull(tunnel.getUri()) && nonNull(tunnel.getName())) {
+                    tunnel.setUri(String.format("/api/endpoints/%s", tunnel.getName()));
+                }
+                if (nonNull(tunnel.getPublicUrl())) {
+                    currentTunnels.put(tunnel.getPublicUrl(), tunnel);
+                }
             }
 
             final List<Tunnel> sortedTunnels = new ArrayList<>(currentTunnels.values());
-            sortedTunnels.sort(Comparator.comparing(Tunnel::getProto));
+            sortedTunnels.sort(Comparator.comparing(t -> nonNull(t.getProto()) ? t.getProto() : ""));
             return List.of(sortedTunnels.toArray(new Tunnel[]{}));
         } catch (final HttpClientException e) {
             throw new JavaNgrokHTTPException("An error occurred when GETing the tunnels.", e, e.getUrl(),
@@ -376,6 +408,10 @@ public class NgrokClient {
     }
 
     private synchronized CreateTunnel interpolateTunnelDefinition(final CreateTunnel createTunnel) {
+        final boolean userAddrProvided = nonNull(createTunnel.getAddr());
+        final boolean userProtoProvided = nonNull(createTunnel.getProto());
+        final boolean userUpstreamProvided = nonNull(createTunnel.getUpstream());
+
         final CreateTunnel.Builder createTunnelBuilder = new CreateTunnel.Builder(createTunnel);
 
         final Map<String, Object> config;
@@ -386,23 +422,90 @@ public class NgrokClient {
                 javaNgrokConfig.getConfigVersion());
         }
 
-        final String name;
-        final Map<String, Object> tunnelDefinitions = (Map<String, Object>) config.getOrDefault("tunnels", Map.of());
-        if (isNull(createTunnel.getName()) && tunnelDefinitions.containsKey("java-ngrok-default")) {
-            LOGGER.info("java-ngrok-default found defined in config, using for tunnel definition");
+        String name = createTunnel.getName();
+        Map<String, Object> matched = null;
 
-            name = "java-ngrok-default";
-            createTunnelBuilder.withName(name);
-        } else {
-            name = createTunnel.getName();
+        // v3 represents `endpoints` as a list of objects (each with a `name` field)
+        if (isV3()) {
+            final List<Map<String, Object>> endpointDefinitions =
+                (List<Map<String, Object>>) config.getOrDefault("endpoints", List.of());
+            if (isNull(name)) {
+                for (final Map<String, Object> def : endpointDefinitions) {
+                    if ("java-ngrok-default".equals(def.get("name"))) {
+                        LOGGER.info("java-ngrok-default found defined in config, using for tunnel definition");
+                        matched = def;
+                        name = "java-ngrok-default";
+                        createTunnelBuilder.withName(name);
+                        break;
+                    }
+                }
+            } else {
+                for (final Map<String, Object> def : endpointDefinitions) {
+                    if (name.equals(def.get("name"))) {
+                        matched = def;
+                        break;
+                    }
+                }
+            }
         }
 
-        if (nonNull(name) && tunnelDefinitions.containsKey(name)) {
-            createTunnelBuilder.withTunnelDefinition((Map<String, Object>) tunnelDefinitions.get(name));
+        // `tunnels` is the v2 block, but ngrok also allows it in v3 configs alongside `endpoints`
+        if (isNull(matched)) {
+            final Map<String, Object> tunnelDefinitions =
+                (Map<String, Object>) config.getOrDefault("tunnels", Map.of());
+            if (isNull(name) && tunnelDefinitions.containsKey("java-ngrok-default")) {
+                LOGGER.info("java-ngrok-default found defined in config, using for tunnel definition");
+                name = "java-ngrok-default";
+                createTunnelBuilder.withName(name);
+            }
+            if (nonNull(name) && tunnelDefinitions.containsKey(name)) {
+                matched = (Map<String, Object>) tunnelDefinitions.get(name);
+            }
+        }
+
+        if (nonNull(matched)) {
+            createTunnelBuilder.withTunnelDefinition(matched);
             createTunnelBuilder.withName(String.format("%s-api", name));
         }
 
-        return createTunnelBuilder.build();
+        // In v3 mode, user-passed addr/proto override a matched endpoint's upstream (mirrors v2's
+        // addr override behavior). Apply this before building, since the Builder's v3 default logic
+        // nulls addr/proto when upstream is set. (User-passed upstream is preserved by
+        // withTunnelDefinition's null-check, so it already wins.)
+        if (isV3() && nonNull(matched) && (userAddrProvided || userProtoProvided) && !userUpstreamProvided) {
+            final String addr = nonNull(createTunnel.getAddr()) ? createTunnel.getAddr() : "80";
+            final Proto proto = nonNull(createTunnel.getProto()) ? createTunnel.getProto() : Proto.HTTP;
+            final String upstreamUrl;
+            if (addr.contains("://")) {
+                upstreamUrl = addr;
+            } else if (proto == Proto.TCP) {
+                upstreamUrl = String.format("tcp://localhost:%s", addr);
+            } else {
+                upstreamUrl = String.format("http://localhost:%s", addr);
+            }
+            createTunnelBuilder.withUpstream(new Upstream.Builder().withUrl(upstreamUrl).build());
+        }
+
+        final CreateTunnel built = createTunnelBuilder.build();
+
+        // In v3 mode with no matched definition, translate v2 `addr` / `proto` into the equivalent
+        // `upstream` block (e.g. for kwarg-only invocations like connect(addr=8000)).
+        if (isV3() && isNull(built.getUpstream()) && nonNull(built.getAddr())) {
+            final String addr = built.getAddr();
+            final String upstreamUrl;
+            if (addr.contains("://")) {
+                upstreamUrl = addr;
+            } else if (built.getProto() == Proto.TCP) {
+                upstreamUrl = String.format("tcp://localhost:%s", addr);
+            } else {
+                upstreamUrl = String.format("http://localhost:%s", addr);
+            }
+            return new CreateTunnel.Builder(built)
+                .withUpstream(new Upstream.Builder().withUrl(upstreamUrl).build())
+                .build();
+        }
+
+        return built;
     }
 
     /**

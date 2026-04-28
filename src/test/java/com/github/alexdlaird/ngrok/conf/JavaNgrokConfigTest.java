@@ -40,7 +40,7 @@ public class JavaNgrokConfigTest extends TestCase {
             .withMaxLogs(50)
             .withLogEventCallback(logEventCallback)
             .withStartupTimeout(5)
-            .withNgrokVersion(NgrokVersion.V2)
+            .withNgrokVersion(NgrokVersion.V3)
             .withApiKey("api-key")
             .withConfigVersion(ConfigVersion.V2)
             .build();
@@ -54,7 +54,7 @@ public class JavaNgrokConfigTest extends TestCase {
         assertEquals(50, javaNgrokConfig.getMaxLogs());
         assertEquals(logEventCallback, javaNgrokConfig.getLogEventCallback());
         assertEquals(5, javaNgrokConfig.getStartupTimeout());
-        assertEquals(NgrokVersion.V2, javaNgrokConfig.getNgrokVersion());
+        assertEquals(NgrokVersion.V3, javaNgrokConfig.getNgrokVersion());
         assertEquals("api-key", javaNgrokConfig.getApiKey());
         assertEquals(ConfigVersion.V2, javaNgrokConfig.getConfigVersion());
     }

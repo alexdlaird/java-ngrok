@@ -7,20 +7,30 @@
 package com.github.alexdlaird.ngrok.protocol;
 
 import com.google.gson.annotations.SerializedName;
+import java.util.List;
 import java.util.Map;
+
+import static java.util.Objects.nonNull;
 
 /**
  * An object representing a Tunnel response from <code>ngrok</code>'s API.
  */
 public class Tunnel {
 
-    @SerializedName("ID")
+    @SerializedName(value = "ID", alternate = {"id"})
     private String id;
     private String name;
     private String uri;
+    @SerializedName(value = "public_url", alternate = {"url"})
     private String publicUrl;
     private String proto;
     private TunnelConfig config;
+    private Upstream upstream;
+    private Boolean poolingEnabled;
+    private Map<String, Object> trafficPolicy;
+    private List<String> bindings;
+    private String description;
+    private String metadata;
     private Map<String, Metrics> metrics;
 
     /**
@@ -42,6 +52,15 @@ public class Tunnel {
      */
     public String getUri() {
         return uri;
+    }
+
+    /**
+     * Set the tunnel's relative URI.
+     *
+     * @param uri The updated URI.
+     */
+    public void setUri(final String uri) {
+        this.uri = uri;
     }
 
     /**
@@ -77,10 +96,60 @@ public class Tunnel {
     }
 
     /**
-     * Get the tunnel config.
+     * Get the {@link TunnelConfig} block specific to v2 tunnels (carrying <code>addr</code>, <code>inspect</code>);
+     * <code>null</code> for v3 endpoints.
      */
     public TunnelConfig getConfig() {
         return config;
+    }
+
+    /**
+     * Get the upstream of the tunnel. When the response carries only a v2 <code>config.addr</code>, an
+     * {@link Upstream} is synthesized from that address.
+     */
+    public Upstream getUpstream() {
+        if (nonNull(upstream)) {
+            return upstream;
+        }
+        if (nonNull(config) && nonNull(config.getAddr())) {
+            return new Upstream.Builder().withUrl(config.getAddr()).build();
+        }
+        return null;
+    }
+
+    /**
+     * Whether tunnel pooling is enabled.
+     */
+    public Boolean isPoolingEnabled() {
+        return poolingEnabled;
+    }
+
+    /**
+     * Get the traffic policy attached to the tunnel, if any.
+     */
+    public Map<String, Object> getTrafficPolicy() {
+        return trafficPolicy;
+    }
+
+    /**
+     * Get the bindings for this tunnel.
+     */
+    public List<String> getBindings() {
+        return bindings;
+    }
+
+    /**
+     * Get the user-defined description of this tunnel.
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Get the user-defined metadata of this tunnel.
+     */
+    public String getMetadata() {
+        return metadata;
     }
 
     /**

@@ -14,6 +14,7 @@ import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.http.Response;
 import com.github.alexdlaird.ngrok.NgrokClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
+import com.github.alexdlaird.ngrok.installer.ConfigVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.protocol.Tunnels;
@@ -265,14 +266,9 @@ public class NgrokProcess {
      */
     public void setAuthToken(final String authToken) {
         final List<String> args = new ArrayList<>();
-        if (javaNgrokConfig.getNgrokVersion() == NgrokVersion.V2) {
-            args.add("authtoken");
-            args.add(authToken);
-        } else {
-            args.add("config");
-            args.add("add-authtoken");
-            args.add(authToken);
-        }
+        args.add("config");
+        args.add("add-authtoken");
+        args.add(authToken);
         args.add("--log");
         args.add("stdout");
 
@@ -301,14 +297,9 @@ public class NgrokProcess {
      */
     public void setApiKey(final String apiKey) {
         final List<String> args = new ArrayList<>();
-        if (javaNgrokConfig.getNgrokVersion() == NgrokVersion.V3) {
-            args.add("config");
-            args.add("add-api-key");
-            args.add(apiKey);
-        } else {
-            throw new JavaNgrokException(String.format("ngrok %s does not have this command.",
-                javaNgrokConfig.getNgrokVersion()));
-        }
+        args.add("config");
+        args.add("add-api-key");
+        args.add(apiKey);
         args.add("--log");
         args.add("stdout");
 
@@ -380,13 +371,22 @@ public class NgrokProcess {
             throw new JavaNgrokSecurityException(String.format("URL must start with \"http\": %s", apiUrl));
         }
 
-        final Response<Tunnels> tunnelsResponse = httpClient.get(String.format("%s/api/tunnels", apiUrl),
-            Tunnels.class);
-        if (tunnelsResponse.getStatusCode() != HTTP_OK) {
+        final String apiPath = javaNgrokConfig.getConfigVersion() == ConfigVersion.V3
+            ? "/api/endpoints" : "/api/tunnels";
+        if (!apiPathOk(apiPath, Tunnels.class)) {
             return false;
         }
 
         return nonNull(process) && process.isAlive();
+    }
+
+    private boolean apiPathOk(final String path, final Class<?> responseType) {
+        try {
+            final Response<?> response = httpClient.get(String.format("%s%s", apiUrl, path), responseType);
+            return response.getStatusCode() == HTTP_OK;
+        } catch (final RuntimeException e) {
+            return false;
+        }
     }
 
     private void logStartupLine(final String line) {

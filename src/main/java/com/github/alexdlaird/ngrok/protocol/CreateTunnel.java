@@ -73,6 +73,13 @@ public class CreateTunnel {
     private final TunnelPolicy policyInbound;
     private final TunnelPolicy policyOutbound;
     private final Boolean poolingEnabled;
+    private final String url;
+    private final Upstream upstream;
+    private final Map<String, Object> trafficPolicy;
+    private final String trafficPolicyFile;
+    private final List<String> bindings;
+    private final String description;
+    private final AgentTlsTermination agentTlsTermination;
 
     private CreateTunnel(final Builder builder) {
         this.ngrokVersion = builder.ngrokVersion;
@@ -106,6 +113,13 @@ public class CreateTunnel {
         this.policyInbound = builder.policyInbound;
         this.policyOutbound = builder.policyOutbound;
         this.poolingEnabled = builder.poolingEnabled;
+        this.url = builder.url;
+        this.upstream = builder.upstream;
+        this.trafficPolicy = builder.trafficPolicy;
+        this.trafficPolicyFile = builder.trafficPolicyFile;
+        this.bindings = builder.bindings;
+        this.description = builder.description;
+        this.agentTlsTermination = builder.agentTlsTermination;
     }
 
     /**
@@ -326,6 +340,55 @@ public class CreateTunnel {
     }
 
     /**
+     * Get the public URL for the tunnel.
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    /**
+     * Get the upstream to which the tunnel will forward traffic.
+     */
+    public Upstream getUpstream() {
+        return upstream;
+    }
+
+    /**
+     * Get the traffic policy for this tunnel.
+     */
+    public Map<String, Object> getTrafficPolicy() {
+        return trafficPolicy;
+    }
+
+    /**
+     * Get the bindings for this tunnel.
+     */
+    public List<String> getBindings() {
+        return bindings;
+    }
+
+    /**
+     * Get the human-readable description of this tunnel.
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Get the path to an external Traffic Policy file for this tunnel.
+     */
+    public String getTrafficPolicyFile() {
+        return trafficPolicyFile;
+    }
+
+    /**
+     * Get the agent TLS termination configuration for this tunnel.
+     */
+    public AgentTlsTermination getAgentTlsTermination() {
+        return agentTlsTermination;
+    }
+
+    /**
      * Builder for a {@link CreateTunnel}, which can be used to construct a request that conforms to <a
      * href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
      * target="_blank"><code>ngrok</code>'s tunnel definition</a>. See docs for that class for example usage.
@@ -365,6 +428,13 @@ public class CreateTunnel {
         private TunnelPolicy policyInbound;
         private TunnelPolicy policyOutbound;
         private Boolean poolingEnabled;
+        private String url;
+        private Upstream upstream;
+        private Map<String, Object> trafficPolicy;
+        private String trafficPolicyFile;
+        private List<String> bindings;
+        private String description;
+        private AgentTlsTermination agentTlsTermination;
 
         /**
          * Use this constructor if default values should not be populated in required attributes when {@link #build()}
@@ -426,6 +496,13 @@ public class CreateTunnel {
             this.policyInbound = createTunnel.policyInbound;
             this.policyOutbound = createTunnel.policyOutbound;
             this.poolingEnabled = createTunnel.poolingEnabled;
+            this.url = createTunnel.url;
+            this.upstream = createTunnel.upstream;
+            this.trafficPolicy = createTunnel.trafficPolicy;
+            this.trafficPolicyFile = createTunnel.trafficPolicyFile;
+            this.bindings = createTunnel.bindings;
+            this.description = createTunnel.description;
+            this.agentTlsTermination = createTunnel.agentTlsTermination;
         }
 
         /**
@@ -719,6 +796,70 @@ public class CreateTunnel {
         }
 
         /**
+         * The public URL for the tunnel (v3 config only).
+         */
+        public Builder withUrl(final String url) {
+            this.url = url;
+            return this;
+        }
+
+        /**
+         * The upstream to which the tunnel will forward traffic (v3 config only).
+         */
+        public Builder withUpstream(final Upstream upstream) {
+            this.upstream = upstream;
+            return this;
+        }
+
+        /**
+         * Convenience that builds an {@link Upstream} with just a URL (v3 config only).
+         */
+        public Builder withUpstream(final String url) {
+            this.upstream = new Upstream.Builder().withUrl(url).build();
+            return this;
+        }
+
+        /**
+         * The traffic policy for this tunnel, as an inline object (v3 config only).
+         */
+        public Builder withTrafficPolicy(final Map<String, Object> trafficPolicy) {
+            this.trafficPolicy = trafficPolicy;
+            return this;
+        }
+
+        /**
+         * The bindings for this tunnel (v3 config only).
+         */
+        public Builder withBindings(final List<String> bindings) {
+            this.bindings = Collections.unmodifiableList(bindings);
+            return this;
+        }
+
+        /**
+         * A human-readable description of this tunnel (v3 config only).
+         */
+        public Builder withDescription(final String description) {
+            this.description = description;
+            return this;
+        }
+
+        /**
+         * The path to an external Traffic Policy file (v3 config only).
+         */
+        public Builder withTrafficPolicyFile(final String trafficPolicyFile) {
+            this.trafficPolicyFile = trafficPolicyFile;
+            return this;
+        }
+
+        /**
+         * The agent TLS termination configuration for <code>tls://</code> endpoints (v3 config only).
+         */
+        public Builder withAgentTlsTermination(final AgentTlsTermination agentTlsTermination) {
+            this.agentTlsTermination = agentTlsTermination;
+            return this;
+        }
+
+        /**
          * Populate any <code>null</code> attributes (except for <code>name</code>) in this Builder with values from the
          * given <code>tunnelDefinition</code>.
          *
@@ -823,31 +964,67 @@ public class CreateTunnel {
             if (isNull(this.poolingEnabled) && tunnelDefinition.containsKey("pooling_enabled")) {
                 this.poolingEnabled = Boolean.valueOf(String.valueOf(tunnelDefinition.get("pooling_enabled")));
             }
+            if (isNull(this.url) && tunnelDefinition.containsKey("url")) {
+                this.url = (String) tunnelDefinition.get("url");
+            }
+            if (isNull(this.upstream) && tunnelDefinition.containsKey("upstream")) {
+                final Object upstreamValue = tunnelDefinition.get("upstream");
+                if (upstreamValue instanceof Map) {
+                    this.upstream = new Upstream.Builder((Map<String, Object>) upstreamValue).build();
+                } else if (upstreamValue instanceof String) {
+                    this.upstream = new Upstream.Builder().withUrl((String) upstreamValue).build();
+                }
+            }
+            if (isNull(this.bindings) && tunnelDefinition.containsKey("bindings")) {
+                this.bindings = Collections.unmodifiableList((List<String>) tunnelDefinition.get("bindings"));
+            }
+            if (isNull(this.description) && tunnelDefinition.containsKey("description")) {
+                this.description = (String) tunnelDefinition.get("description");
+            }
+            if (isNull(this.trafficPolicyFile) && tunnelDefinition.containsKey("traffic_policy_file")) {
+                this.trafficPolicyFile = (String) tunnelDefinition.get("traffic_policy_file");
+            }
+            if (isNull(this.agentTlsTermination) && tunnelDefinition.containsKey("agent_tls_termination")) {
+                this.agentTlsTermination = new AgentTlsTermination
+                    .Builder((Map<String, Object>) tunnelDefinition.get("agent_tls_termination"))
+                    .build();
+            }
             if (tunnelDefinition.containsKey("policy") || tunnelDefinition.containsKey("traffic_policy")) {
                 final String policyKey = tunnelDefinition.containsKey("policy") ? "policy" : "traffic_policy";
+                final Object policyValue = tunnelDefinition.get(policyKey);
 
-                final Map<String, Object> policy = (Map<String, Object>) tunnelDefinition.get(policyKey);
-                if (isNull(this.policyInbound) && policy.containsKey("inbound")) {
-                    this.policyInbound = new TunnelPolicy
-                        .Builder((Map<String, Object>) policy.get("inbound"))
-                        .build();
-                }
-                // For HTTP, ngrok has renamed this key to "on_http_request", but it functions the same
-                if (isNull(this.policyInbound) && policy.containsKey("on_http_request")) {
-                    this.policyInbound = new TunnelPolicy
-                        .Builder((Map<String, Object>) policy.get("on_http_request"))
-                        .build();
-                }
-                if (isNull(this.policyOutbound) && policy.containsKey("outbound")) {
-                    this.policyOutbound = new TunnelPolicy
-                        .Builder((Map<String, Object>) policy.get("outbound"))
-                        .build();
-                }
-                // For HTTP, ngrok has renamed this key to "on_http_response", but it functions the same
-                if (isNull(this.policyOutbound) && policy.containsKey("on_http_response")) {
-                    this.policyOutbound = new TunnelPolicy
-                        .Builder((Map<String, Object>) policy.get("on_http_response"))
-                        .build();
+                if (policyValue instanceof Map) {
+                    final Map<String, Object> policy = (Map<String, Object>) policyValue;
+                    // v3 inline traffic_policy is an object the ngrok endpoint API consumes as-is
+                    if (isNull(this.trafficPolicy) && "traffic_policy".equals(policyKey)
+                        && (policy.containsKey("on_http_request") || policy.containsKey("on_http_response")
+                            || policy.containsKey("on_tcp_connect"))) {
+                        this.trafficPolicy = policy;
+                    }
+                    if (isNull(this.policyInbound) && policy.containsKey("inbound")) {
+                        this.policyInbound = new TunnelPolicy
+                            .Builder((Map<String, Object>) policy.get("inbound"))
+                            .build();
+                    }
+                    // For HTTP, ngrok has renamed this key to "on_http_request", but it functions the same
+                    if (isNull(this.policyInbound) && policy.containsKey("on_http_request")
+                        && isNull(this.trafficPolicy)) {
+                        this.policyInbound = new TunnelPolicy
+                            .Builder((Map<String, Object>) policy.get("on_http_request"))
+                            .build();
+                    }
+                    if (isNull(this.policyOutbound) && policy.containsKey("outbound")) {
+                        this.policyOutbound = new TunnelPolicy
+                            .Builder((Map<String, Object>) policy.get("outbound"))
+                            .build();
+                    }
+                    // For HTTP, ngrok has renamed this key to "on_http_response", but it functions the same
+                    if (isNull(this.policyOutbound) && policy.containsKey("on_http_response")
+                        && isNull(this.trafficPolicy)) {
+                        this.policyOutbound = new TunnelPolicy
+                            .Builder((Map<String, Object>) policy.get("on_http_response"))
+                            .build();
+                    }
                 }
             }
 
@@ -865,38 +1042,45 @@ public class CreateTunnel {
             }
 
             if (setDefaults) {
-                if (isNull(proto)) {
-                    proto = Proto.HTTP;
-                }
-                if (isNull(addr)) {
-                    addr = "80";
-                }
-                if (isNull(name)) {
-                    if (!addr.startsWith("file://")) {
-                        name = String.format("%s-%s-%s", proto, addr, UUID.randomUUID());
-                    } else {
-                        name = String.format("%s-file-%s", proto, UUID.randomUUID());
+                if (nonNull(upstream)) {
+                    // v3 endpoint requests use `upstream` instead of `addr`/`proto`. Null them out so they
+                    // don't get serialized into the request body, which the agent rejects on `/api/endpoints`.
+                    proto = null;
+                    addr = null;
+                    if (isNull(name)) {
+                        name = String.format("ngrok-tunnel-%s", UUID.randomUUID());
                     }
-                }
-                if (ngrokVersion == NgrokVersion.V2 && isNull(bindTls)) {
-                    bindTls = BindTls.BOTH;
-                }
-                if (ngrokVersion == NgrokVersion.V3) {
-                    if (nonNull(bindTls)) {
-                        if (bindTls == BindTls.TRUE) {
-                            schemes = List.of("https");
-                        } else if (bindTls == BindTls.FALSE) {
-                            schemes = List.of("http");
+                } else {
+                    if (isNull(proto)) {
+                        proto = Proto.HTTP;
+                    }
+                    if (isNull(addr)) {
+                        addr = "80";
+                    }
+                    if (isNull(name)) {
+                        if (!addr.startsWith("file://")) {
+                            name = String.format("%s-%s-%s", proto, addr, UUID.randomUUID());
                         } else {
-                            schemes = List.of("http", "https");
+                            name = String.format("%s-file-%s", proto, UUID.randomUUID());
                         }
-
-                        bindTls = null;
                     }
-                    if (nonNull(auth)) {
-                        basicAuth = List.of(auth);
+                    if (ngrokVersion == NgrokVersion.V3) {
+                        if (nonNull(bindTls)) {
+                            if (bindTls == BindTls.TRUE) {
+                                schemes = List.of("https");
+                            } else if (bindTls == BindTls.FALSE) {
+                                schemes = List.of("http");
+                            } else {
+                                schemes = List.of("http", "https");
+                            }
 
-                        auth = null;
+                            bindTls = null;
+                        }
+                        if (nonNull(auth)) {
+                            basicAuth = List.of(auth);
+
+                            auth = null;
+                        }
                     }
                 }
             }

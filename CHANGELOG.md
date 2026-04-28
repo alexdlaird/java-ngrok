@@ -4,7 +4,37 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/2.5.0...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/3.1.1...HEAD)
+
+## [3.1.1](https://github.com/alexdlaird/java-ngrok/compare/3.1.0...3.1.1) - 2026-04-27
+
+### Added
+
+- `CreateTunnel.trafficPolicyFile`, `CreateTunnel.agentTlsTermination`, `Upstream.proxyProtocol` for v3 config gaps.
+
+### Fixed
+
+- Build and stability improvements.
+
+## [3.1.0](https://github.com/alexdlaird/java-ngrok/compare/3.0.0...3.1.0) - 2026-04-26
+
+### Added
+
+- Full support for `ngrok`'s v3 config schema. Set `JavaNgrokConfig.configVersion` to `ConfigVersion.V3` to have `NgrokClient.connect()` and other methods use `ngrok`'s Endpoints instead of Tunnels.
+- `Tunnel.getUpstream()`, populated from the v3 endpoint response (or synthesized from `config.addr` for v2). Raw v3 fields like `trafficPolicy` and `bindings` remain accessible via matching `Tunnel` getters.
+- v2 `withAddr()` / `withProto()` args are interpolated to a v3 `upstream` block when `configVersion` is `V3`.
+- Documentation updates.
+
+## [3.0.0](https://github.com/alexdlaird/java-ngrok/compare/2.5.1...3.0.0) - 2026-03-31
+
+### Breaking
+
+- Removed support for `ngrok` v2, as v2 binaries are no longer distributed by `ngrok`. Only `ngrok` v3 is now supported.
+
+### Changed
+
+- Updated Linux and FreeBSD CDN URLs from `.zip` to `.tgz`.
+- Added `.tgz` archive extraction support alongside existing `.zip` support.
 
 ## [2.5.1](https://github.com/alexdlaird/java-ngrok/compare/2.5.0...2.5.1) - 2026-03-06
 
@@ -463,11 +493,18 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   from [`JavaNgrokConfig`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/1.5.0/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.html),
   instead relying on `ngrok`'s own built-in retry mechanism on startup fails.
 
-## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.19...1.4.x)
+## [1.4.x](https://github.com/alexdlaird/java-ngrok/compare/1.4.20...1.4.x)
 
 The `1.4.x` branch is where support for Java 8 of `java-ngrok` was maintained. It is available through
 the `java8-ngrok` artifact
 on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java8-ngrok).
+
+## [1.4.20](https://github.com/alexdlaird/java-ngrok/compare/1.4.19...1.4.20)
+
+### Fixed
+
+- `ngrok` CDN URLs updated from `bin.equinox.io` to `bin.ngrok.com`.
+- Linux and FreeBSD downloads now use `.tgz` archives instead of `.zip`.
 
 ## [1.4.19](https://github.com/alexdlaird/java-ngrok/compare/1.4.17...1.4.19) - 2025-05-16
 
