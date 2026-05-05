@@ -26,6 +26,7 @@ public enum NgrokV3CDNUrl implements NgrokCDNUrl {
     FREEBSD_i386("ngrok-v3-stable-freebsd-386.tgz"),
     FREEBSD_i386_arm("ngrok-v3-stable-freebsd-arm.tgz"),
     FREEBSD_x86_64("ngrok-v3-stable-freebsd-amd64.tgz");
+    FREEBSD_x86_64_arm("ngrok-v3-stable-freebsd-arm64.zip");
 
     private static final String CDN_URL_PREFIX = "https://bin.ngrok.com/c/bNyj1mQVY4c/";
 
