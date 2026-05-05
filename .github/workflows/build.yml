@@ -4,9 +4,9 @@ run-name: Build ${{ github.ref_name }}
 
 on:
   push:
-    branches: [ main, develop, 1.4.x ]
+    branches: [ develop, 1.4.x ]
   pull_request:
-    branches: [ main, develop, 1.4.x ]
+    branches: [ develop, 1.4.x ]
   schedule:
     - cron: "0 10 * * *"
   workflow_dispatch:

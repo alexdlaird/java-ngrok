@@ -1,51 +1,75 @@
 name: Release
 
-run-name: Release ${{ github.ref_name }}
+run-name: Release ${{ inputs.bump_type }}
 
 on:
-  release:
-    types: [ created ]
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        default: patch
+        options:
+          - patch
+          - minor
+          - major
 
 permissions:
   contents: write
-  issues: none
-  pull-requests: none
 
 jobs:
-  validate-version:
-    name: Validate Version
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v6
-      - name: Set up JDK 11
-        uses: actions/setup-java@v5
-        with:
-          java-version: 11
-          distribution: zulu
-      - name: Validate version
-        run: make validate-release VERSION=${GITHUB_REF#refs/tags/}
+  prereq:
+    uses: alexdlaird/.github/.github/workflows/release-prereq.yml@main
+    with:
+      bump_type: ${{ inputs.bump_type }}
+      version_file: 'build.gradle'
+      version_pattern: 's/^version ".*"/version "${VERSION}"/'
+      repo_slug: alexdlaird/java-ngrok
+    secrets:
+      bot_app_id: ${{ secrets.RELEASE_BOT_APP_ID }}
+      bot_private_key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
 
   build:
-    name: Build
+    needs: prereq
     uses: alexdlaird/java-ngrok/.github/workflows/build.yml@main
     secrets: inherit
 
   release:
-    name: Release
-    needs: [build, validate-version]
-
+    needs: [prereq, build]
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prereq.outputs.squash_commit_sha }}
+
       - name: Set up JDK 11
         uses: actions/setup-java@v5
         with:
           java-version: 11
           distribution: zulu
-      - name: Publish
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          VERSION: ${{ needs.prereq.outputs.version }}
+          SHA: ${{ needs.prereq.outputs.squash_commit_sha }}
+          RELEASE_NOTES: ${{ needs.prereq.outputs.release_notes }}
+        run: |
+          gh release create "$VERSION" \
+            --target "$SHA" \
+            --title "$VERSION" \
+            --notes "$RELEASE_NOTES"
+
+      - name: Publish to Maven Central
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.JRELEASER_MAVENCENTRAL_USERNAME }}
@@ -54,3 +78,11 @@ jobs:
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
         run: make upload
+
+  cleanup:
+    needs: [prereq, release]
+    if: always() && needs.prereq.result == 'success'
+    uses: alexdlaird/.github/.github/workflows/release-cleanup.yml@main
+    secrets:
+      bot_app_id: ${{ secrets.RELEASE_BOT_APP_ID }}
+      bot_private_key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
