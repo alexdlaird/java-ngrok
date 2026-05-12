@@ -1,4 +1,5 @@
 site_name: java-ngrok - A Java wrapper for ngrok
+site_url: https://alexdlaird.github.io/java-ngrok/
 repo_url: https://github.com/alexdlaird/java-ngrok
 site_description: A Java wrapper for ngrok that manages its own binary, making ngrok available via a convenient Java API.
 site_author: Alex Laird
