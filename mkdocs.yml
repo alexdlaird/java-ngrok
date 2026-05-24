@@ -1,7 +1,7 @@
-site_name: java-ngrok - A Java wrapper for ngrok; programmatic tunnels and webhook testing
+site_name: java-ngrok - A Java wrapper for ngrok; programmatic tunnels for ingress, webhooks, and APIs
 site_url: https://java-ngrok.alexlaird.com/
 repo_url: https://github.com/alexdlaird/java-ngrok
-site_description: A Java wrapper for ngrok; programmatic tunnels and webhook testing.
+site_description: A Java wrapper for ngrok; programmatic tunnels for ingress, webhooks, and APIs.
 site_author: Alex Laird
 copyright: 2021-2025, Alex Laird
 site_dir: build/site

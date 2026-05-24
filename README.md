@@ -1,4 +1,4 @@
-<p align="center"><img alt="java-ngrok - a Java wrapper for ngrok" src="https://github.com/alexdlaird/java-ngrok/raw/main/logo.png" /></p>
+<p align="center"><img alt="java-ngrok - A Java wrapper for ngrok; programmatic tunnels for ingress, webhooks, and APIs" src="https://github.com/alexdlaird/java-ngrok/raw/main/logo.png" /></p>
 
 [![Version](https://img.shields.io/maven-central/v/com.github.alexdlaird/java-ngrok)](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok)
 [![Java Versions](https://img.shields.io/badge/Java-11+-blue)](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok)
