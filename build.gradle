@@ -110,7 +110,7 @@ publishing {
             }
             pom {
                 name = project.name
-                description = "A Java wrapper for ngrok; programmatic tunnels for ingress, webhooks, and APIs"
+                description = "A Java wrapper for ngrok; programmatic tunnels for ingress, webhooks, demos, and APIs"
                 url = "https://alexdlaird.github.io/java-ngrok/"
                 licenses {
                     license {
