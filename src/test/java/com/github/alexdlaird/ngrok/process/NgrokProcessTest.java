@@ -13,8 +13,10 @@ import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -109,22 +111,23 @@ public class NgrokProcessTest extends NgrokTestCase {
         // GIVEN
         ngrokProcess.start();
         assertTrue(ngrokProcess.isRunning());
-        final ProcessHandle processHandle = ProcessHandle.allProcesses()
-                                                         .filter(p -> p.info()
-                                                                       .command()
-                                                                       .orElse("")
-                                                                       .contains(
-                                                                           javaNgrokConfig.getNgrokPath().toString()))
-                                                         .findFirst().orElse(null);
-        assertNotNull(processHandle);
+        final List<ProcessHandle> ngrokProcesses = ProcessHandle.allProcesses()
+                                                                .filter(p -> p.info()
+                                                                              .command()
+                                                                              .orElse("")
+                                                                              .contains(
+                                                                                  javaNgrokConfig.getNgrokPath().toString()))
+                                                                .collect(Collectors.toList());
+        assertThat(ngrokProcesses.size(), greaterThan(0));
 
-        // THEN Kill the process by external means, java-ngrok will clean up the state
-        processHandle.destroy();
+        // THEN Kill the process by external means, java-ngrok will clean up the state. On some
+        // platforms (e.g. Windows) ngrok spawns more than one process for the same binary, so every
+        // matching process is terminated to ensure the one java-ngrok tracks is among them.
+        ngrokProcesses.forEach(ProcessHandle::destroy);
         long timeoutTime = System.currentTimeMillis() + 10 * 1000;
-        while (processHandle.isAlive() && ngrokProcess.isRunning() && System.currentTimeMillis() < timeoutTime) {
+        while (ngrokProcess.isRunning() && System.currentTimeMillis() < timeoutTime) {
             Thread.sleep(50);
         }
-        assertFalse(processHandle.isAlive());
         assertFalse(ngrokProcess.isRunning());
 
         // THEN test we can successfully restart the process
