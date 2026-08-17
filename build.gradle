@@ -9,10 +9,13 @@ plugins {
     id "org.jreleaser" version "1.25.0"
 }
 
-group "com.github.alexdlaird"
-version "3.1.2"
+group = "com.github.alexdlaird"
+version = "3.1.2"
 
 java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
     withJavadocJar()
     withSourcesJar()
 }
@@ -34,7 +37,7 @@ dependencies {
 }
 
 tasks.register("createProperties", WriteProperties) {
-    outputFile new File(projectDir, "src/main/resources/version.properties")
+    destinationFile = new File(projectDir, "src/main/resources/version.properties")
     property "version", version
     finalizedBy sourcesJar
 }
@@ -57,7 +60,7 @@ test {
 }
 
 testlogger {
-    slowThreshold 2000
+    slowThreshold = 2000
 }
 
 jacoco {
@@ -67,7 +70,7 @@ jacoco {
 jacocoTestReport {
     reports {
         xml.required = true
-        xml.destination file("build/reports/jacoco/report.xml")
+        xml.outputLocation = file("build/reports/jacoco/report.xml")
     }
 }
 
