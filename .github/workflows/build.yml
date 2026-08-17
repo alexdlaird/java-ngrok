@@ -41,7 +41,7 @@ jobs:
       max-parallel: 3
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
-        java-version: [ "21" ]
+        java-version: [ "25" ]
         include:
           - java-version: "11"
             os: ubuntu-latest
@@ -49,17 +49,24 @@ jobs:
             os: ubuntu-latest
           - java-version: "17"
             os: ubuntu-latest
+          - java-version: "21"
+            os: ubuntu-latest
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v6
-      - name: Set up JDK ${{ matrix.java-version }}
+      - name: Set up JDKs
         uses: actions/setup-java@v5
         with:
-          java-version: ${{ matrix.java-version }}
+          java-version: |
+            ${{ matrix.java-version }}
+            25
           distribution: zulu
       - name: Build
         run: make build
       - name: Test
+        env:
+          ORG_GRADLE_PROJECT_testJavaVersion: ${{ matrix.java-version }}
+          GRADLE_OPTS: -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_11_X64,JAVA_HOME_15_X64,JAVA_HOME_17_X64,JAVA_HOME_21_X64
         run: make test
