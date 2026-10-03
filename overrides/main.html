@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+<meta name="google-site-verification" content="t99S86vWzqAXMI5YN66Viuh9esuMQCveAD3RBbJXLdY" />
+
+{% set og_title = (page.title ~ ' - ' ~ config.site_name) if page and page.title and page.title != config.site_name else config.site_name %}
+{% set og_description = (page.meta.description if page and page.meta else None) or config.site_description %}
+{% set og_image = 'https://github.com/alexdlaird/java-ngrok/raw/main/logo.png' %}
+{% set og_url = page.canonical_url if page else config.site_url %}
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="{{ config.site_name }}" />
+<meta property="og:title" content="{{ og_title }}" />
+<meta property="og:description" content="{{ og_description }}" />
+<meta property="og:url" content="{{ og_url }}" />
+<meta property="og:image" content="{{ og_image }}" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{{ og_title }}" />
+<meta name="twitter:description" content="{{ og_description }}" />
+<meta name="twitter:image" content="{{ og_image }}" />
+
+{{ super() }}
+{% endblock %}
