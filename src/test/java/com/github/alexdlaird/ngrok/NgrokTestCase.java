@@ -10,6 +10,7 @@ import com.github.alexdlaird.exception.JavaNgrokException;
 import com.github.alexdlaird.http.DefaultHttpClient;
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
+import com.github.alexdlaird.ngrok.installer.ConfigVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import com.google.gson.Gson;
@@ -33,6 +34,9 @@ public class NgrokTestCase extends TestCase {
     protected final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
         .withConfigPath(Path.of("build", ".ngrok", "config.yml").toAbsolutePath())
         .withNgrokPath(Path.of("build", "bin", "v3", getNgrokBin()))
+        .build();
+    protected final JavaNgrokConfig javaNgrokConfigV2 = new JavaNgrokConfig.Builder(javaNgrokConfig)
+        .withConfigVersion(ConfigVersion.V2)
         .build();
 
     protected final HttpClient retryHttpClient = new DefaultHttpClient.Builder()

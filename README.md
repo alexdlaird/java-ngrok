@@ -60,7 +60,7 @@ final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
 // <Tunnel: "https://some-endpoint.internal" -> "http://localhost:9000">
 final CreateTunnel createInternalEndpoint = new CreateTunnel.Builder()
         .withAddr("9000")
-        .withDomain("some-endpoint.internal")
+        .withUrl("https://some-endpoint.internal")
         .withPoolingEnabled(true)
         .build();
 final Tunnel internalEndpoint = ngrokClient.connect(createInternalEndpoint);

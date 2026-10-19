@@ -58,7 +58,7 @@ final Tunnel namedTunnel = ngrokClient.connect(createNamedTunnel);
 // <Tunnel: "https://some-endpoint.internal" -> "http://localhost:9000">
 final CreateTunnel createInternalEndpoint = new CreateTunnel.Builder()
         .withAddr("9000")
-        .withDomain("some-endpoint.internal")
+        .withUrl("https://some-endpoint.internal")
         .withPoolingEnabled(true)
         .build();
 final Tunnel internalEndpoint = ngrokClient.connect(createInternalEndpoint);
@@ -111,7 +111,7 @@ accomplished by using `java-ngrok` to open a TCP tunnel to the desired service.
 final CreateTunnel mysqlCreateTunnel = new CreateTunnel.Builder()
         .withProto(Proto.TCP)
         .withAddr(3306)
-        .withRemoteAddr("1.tcp.ngrok.io:12345")
+        .withUrl("tcp://1.tcp.ngrok.io:12345")
         .build();
 final Tunnel mysqlTunnel = ngrokClient.connect(mysqlCreateTunnel);
 ```
@@ -129,23 +129,24 @@ final Tunnel fileserverTunnel = ngrokClient.connect(fileserverCreateTunnel);
 
 ### Tunnel Configuration
 
-It is possible to configure the tunnel when it is created, for instance adding authentication, a subdomain, or other
-additional [tunnel configurations that are supported by `ngrok`](https://ngrok.com/docs/agent/config/v2/#common-tunnel-configuration-properties).
+It is possible to configure the tunnel when it is created, for instance adding authentication, a domain, or other
+additional [endpoint configurations that are supported by `ngrok`](https://ngrok.com/docs/agent/config/v3/#endpoint-configuration-options).
 This is accomplished by using [`CreateTunnel.Builder`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html)
-to set what properties will be used when the tunnel is created. Here is an example that opens a tunnel with subdomain
-`foo`, requires basic authentication for requests, and defines a circuit breaker.
+to set what properties will be used when the tunnel is created. Here is an example that opens a tunnel with the
+domain `some-domain.ngrok.dev`, requires basic authentication for requests, and defines a circuit breaker.
 
 ```java
 final CreateTunnel createTunnel = new CreateTunnel.Builder()
-        .withSubdomain("foo")
-        .withAuth("username:password")
-        .withCircuitBreaker(50)
+        .withUrl("https://some-domain.ngrok.dev")
+        .withTrafficPolicy(Map.of("on_http_request", List.of(Map.of("actions", List.of(
+                Map.of("type", "basic-auth", "config", Map.of("credentials", List.of("username:password"))),
+                Map.of("type", "circuit-breaker", "config", Map.of("error_threshold", 0.5)))))))
         .build();
 
 final Tunnel tunnel = ngrokClient.connect(createTunnel);
 ```
 
-If you already have a tunnel [defined in `ngrok`'s config file](https://ngrok.com/docs/agent/config/v2/#tunnel-configurations), you can start it by its name (note that "-api"
+If you already have a tunnel [defined in `ngrok`'s config file](https://ngrok.com/docs/agent/config/v3/#endpoint-definitions), you can start it by its name (note that "-api"
 will be appended to its name when started).
 
 ```java
@@ -158,11 +159,10 @@ final Tunnel tunnel = ngrokClient.connect(createTunnel);
 
 #### Using v3 Endpoints
 
-`java-ngrok` defaults to `ngrok`'s [v2 config](https://ngrok.com/docs/agent/config/v2/). Set
-`JavaNgrokConfig.configVersion` to `ConfigVersion.V3` to use the
-[v3 config](https://ngrok.com/docs/agent/config/v3/) (its `endpoints` block is read alongside the `tunnels`
-block). v2 `withAddr()` /
-`withProto()` arguments are translated into the equivalent `upstream` block automatically.
+`java-ngrok` defaults to `ngrok`'s [v3 config](https://ngrok.com/docs/agent/config/v3/) (its `endpoints` block is
+read alongside the `tunnels` block). v2 `withAddr()` / `withProto()` arguments are translated into the equivalent
+`upstream` block automatically. Set `JavaNgrokConfig.configVersion` to `ConfigVersion.V2` to use the
+[v2 config](https://ngrok.com/docs/agent/config/v2/) instead.
 
 ```yaml
 version: "3"
@@ -181,14 +181,6 @@ endpoints:
 You can also open a v3 endpoint without defining it in a config file:
 
 ```java
-final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-        .withConfigVersion(ConfigVersion.V3)
-        .build();
-
-final NgrokClient ngrokClient = new NgrokClient.Builder()
-        .withJavaNgrokConfig(javaNgrokConfig)
-        .build();
-
 // Open a v3 endpoint
 final CreateTunnel createEndpoint = new CreateTunnel.Builder()
         .withUpstream(new Upstream.Builder().withUrl("http://localhost:8000").build())
@@ -220,7 +212,7 @@ final ApiResponse endpointResponse = ngrokClient.api(
 > **Note:** `api("endpoints", ...)` here invokes `ngrok`'s agent CLI to manage
 > [Cloud Endpoints](https://ngrok.com/docs/universal-gateway/cloud-endpoints/), which are dashboard-managed and
 > persist independently of any local agent. This is distinct from the local agent Endpoints
-> managed by `connect()` when `JavaNgrokConfig.configVersion` is `ConfigVersion.V3` (see [Using v3 Endpoints](#using-v3-endpoints)).
+> managed by `connect()` (see [Using v3 Endpoints](#using-v3-endpoints)).
 
 ## Event Logs
 

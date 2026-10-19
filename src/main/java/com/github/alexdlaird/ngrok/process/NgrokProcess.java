@@ -515,15 +515,5 @@ public class NgrokProcess {
         public void stop() {
             this.alive = false;
         }
-
-        /**
-         * Get the <code>ngrok</code> logs.
-         *
-         * @deprecated Use {@link NgrokProcess#getLogs()} instead.
-         */
-        @Deprecated
-        public List<NgrokLog> getLogs() {
-            return ngrokProcess.getLogs();
-        }
     }
 }

@@ -139,7 +139,7 @@ public class NgrokInstaller {
      * See {@link #installDefaultConfig(Path, Map, NgrokVersion, ConfigVersion)}.
      */
     public synchronized void installDefaultConfig(final Path configPath, final Map<String, Object> data) {
-        installDefaultConfig(configPath, data, NgrokVersion.V3, ConfigVersion.V2);
+        installDefaultConfig(configPath, data, NgrokVersion.V3, ConfigVersion.V3);
     }
 
     /**
@@ -148,7 +148,7 @@ public class NgrokInstaller {
     public synchronized void installDefaultConfig(final Path configPath,
                                                   final Map<String, Object> data,
                                                   final NgrokVersion ngrokVersion) {
-        installDefaultConfig(configPath, data, ngrokVersion, ConfigVersion.V2);
+        installDefaultConfig(configPath, data, ngrokVersion, ConfigVersion.V3);
     }
 
     /**
@@ -331,7 +331,7 @@ public class NgrokInstaller {
      * See {@link #getNgrokConfig(Path, boolean, NgrokVersion, ConfigVersion)}.
      */
     public synchronized Map<String, Object> getNgrokConfig(final Path configPath, final boolean useCache) {
-        return getNgrokConfig(configPath, useCache, NgrokVersion.V3, ConfigVersion.V2);
+        return getNgrokConfig(configPath, useCache, NgrokVersion.V3, ConfigVersion.V3);
     }
 
     /**
