@@ -7,6 +7,7 @@
 package com.github.alexdlaird.ngrok.protocol;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static java.util.Objects.isNull;
 
@@ -74,13 +75,13 @@ public class Upstream {
          */
         public Builder(final Map<String, Object> upstreamDefinition) {
             if (upstreamDefinition.containsKey("url")) {
-                this.url = (String) upstreamDefinition.get("url");
+                this.url = Objects.toString(upstreamDefinition.get("url"), null);
             }
             if (upstreamDefinition.containsKey("protocol")) {
                 this.protocol = (String) upstreamDefinition.get("protocol");
             }
             if (upstreamDefinition.containsKey("proxy_protocol")) {
-                this.proxyProtocol = (String) upstreamDefinition.get("proxy_protocol");
+                this.proxyProtocol = Objects.toString(upstreamDefinition.get("proxy_protocol"), null);
             }
         }
 

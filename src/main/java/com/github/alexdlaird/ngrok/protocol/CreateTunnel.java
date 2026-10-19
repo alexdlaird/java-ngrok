@@ -8,11 +8,24 @@ package com.github.alexdlaird.ngrok.protocol;
 
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokClient;
-import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import static java.util.Objects.isNull;
@@ -34,11 +47,13 @@ import static java.util.Objects.nonNull;
  *
  * final Tunnel httpTunnel = ngrokClient.connect(createTunnel);
  * </pre>
- * <h2><code>ngrok</code> Version Compatibility</h2>
- * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
- * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
- * {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
+ * <h2>Passthrough Options</h2>
+ * Options that do not have a typed builder method can be passed through to <code>ngrok</code> with
+ * {@link CreateTunnel.Builder#withOption(String, Object)} or {@link CreateTunnel.Builder#withOptions(Map)}. These are
+ * added to the top level of the serialized request when it is serialized with Gson (as
+ * {@link com.github.alexdlaird.http.DefaultHttpClient} does).
  */
+@JsonAdapter(CreateTunnel.OptionsTypeAdapterFactory.class)
 public class CreateTunnel {
 
     // The ngrokVersion is transient so that it can be serialized to a valid request
@@ -80,6 +95,8 @@ public class CreateTunnel {
     private final List<String> bindings;
     private final String description;
     private final AgentTlsTermination agentTlsTermination;
+    // The options are transient so that they are only serialized as top-level keys by OptionsTypeAdapterFactory
+    private final transient Map<String, Object> options;
 
     private CreateTunnel(final Builder builder) {
         this.ngrokVersion = builder.ngrokVersion;
@@ -120,6 +137,7 @@ public class CreateTunnel {
         this.bindings = builder.bindings;
         this.description = builder.description;
         this.agentTlsTermination = builder.agentTlsTermination;
+        this.options = Collections.unmodifiableMap(new LinkedHashMap<>(builder.options));
     }
 
     /**
@@ -389,11 +407,26 @@ public class CreateTunnel {
     }
 
     /**
+     * Get the passthrough options that will be sent to <code>ngrok</code> as top-level keys of the request. See
+     * {@link Builder#withOption(String, Object)}.
+     */
+    public Map<String, Object> getOptions() {
+        return options;
+    }
+
+    /**
      * Builder for a {@link CreateTunnel}, which can be used to construct a request that conforms to <a
      * href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
      * target="_blank"><code>ngrok</code>'s tunnel definition</a>. See docs for that class for example usage.
      */
     public static class Builder {
+
+        private static final Set<String> TUNNEL_DEFINITION_KEYS = Set.of("name", "proto", "domain", "addr",
+            "inspect", "bind_tls", "auth", "host_header", "subdomain", "crt", "key", "remote_addr", "metadata",
+            "schemes", "basic_auth", "oauth", "circuit_breaker", "compression", "mutual_tls_cas", "proxy_proto",
+            "websocket_tcp_converter", "terminate_at", "request_header", "response_header", "ip_restriction",
+            "verify_webhook", "user_agent_filter", "pooling_enabled", "url", "upstream", "bindings", "description",
+            "traffic_policy_file", "agent_tls_termination", "policy", "traffic_policy");
 
         private boolean setDefaults = false;
 
@@ -435,6 +468,7 @@ public class CreateTunnel {
         private List<String> bindings;
         private String description;
         private AgentTlsTermination agentTlsTermination;
+        private final Map<String, Object> options = new LinkedHashMap<>();
 
         /**
          * Use this constructor if default values should not be populated in required attributes when {@link #build()}
@@ -503,6 +537,7 @@ public class CreateTunnel {
             this.bindings = createTunnel.bindings;
             this.description = createTunnel.description;
             this.agentTlsTermination = createTunnel.agentTlsTermination;
+            this.options.putAll(createTunnel.options);
         }
 
         /**
@@ -860,13 +895,77 @@ public class CreateTunnel {
         }
 
         /**
+         * A passthrough option to send to <code>ngrok</code>, for options that do not have a typed builder method. The
+         * <code>key</code> is sent verbatim as a top-level key of the request, so it should match <code>ngrok</code>'s
+         * config (for instance, <code>snake_case</code>). Calling this again with the same <code>key</code> replaces
+         * its value.
+         *
+         * <p>If a typed builder method sets the same option, the typed value takes precedence, including defaults
+         * populated when {@link #build()} is called (for instance, <code>proto</code>, <code>addr</code>, and
+         * <code>name</code>), so prefer typed builder methods where they exist. A typed value that is
+         * <code>null</code> does not override the passthrough option.
+         *
+         * <pre>
+         * final CreateTunnel createTunnel = new CreateTunnel.Builder()
+         *         .withAddr(5000)
+         *         .withOption("verify_upstream_tls", false)
+         *         .build();
+         * </pre>
+         *
+         * @param key   The <code>ngrok</code> option name.
+         * @param value The option value, which will be serialized to JSON.
+         */
+        public Builder withOption(final String key, final Object value) {
+            this.options.put(Objects.requireNonNull(key), value);
+            return this;
+        }
+
+        /**
+         * Passthrough options to send to <code>ngrok</code>, added to any options already set. See
+         * {@link #withOption(String, Object)} for details and precedence.
+         *
+         * <pre>
+         * final CreateTunnel createTunnel = new CreateTunnel.Builder()
+         *         .withAddr(5000)
+         *         .withOptions(Map.of("verify_upstream_tls", false))
+         *         .build();
+         * </pre>
+         *
+         * @param options The <code>ngrok</code> options, keyed by option name.
+         */
+        public Builder withOptions(final Map<String, Object> options) {
+            for (final Map.Entry<String, Object> option : options.entrySet()) {
+                withOption(option.getKey(), option.getValue());
+            }
+            return this;
+        }
+
+        /**
          * Populate any <code>null</code> attributes (except for <code>name</code>) in this Builder with values from the
-         * given <code>tunnelDefinition</code>.
+         * given <code>tunnelDefinition</code>. Keys without a typed builder method are kept as passthrough options
+         * (see {@link #withOption(String, Object)}). Keys already set as passthrough options are not overridden.
          *
          * @param tunnelDefinition The map from which <code>null</code> attributes will be populated.
          * @throws IllegalArgumentException The argument was invalid.
          */
-        public Builder withTunnelDefinition(Map<String, Object> tunnelDefinition) {
+        public Builder withTunnelDefinition(final Map<String, Object> tunnelDefinition) {
+            final Map<String, Object> definition = new HashMap<>(tunnelDefinition);
+            definition.keySet().removeAll(options.keySet());
+
+            populateTypedAttributes(definition);
+
+            for (final Map.Entry<String, Object> entry : definition.entrySet()) {
+                if (!TUNNEL_DEFINITION_KEYS.contains(entry.getKey())) {
+                    this.options.put(entry.getKey(), entry.getValue());
+                }
+            }
+
+            // Returning this to allow chained configuration of
+            // properties not visible in ngrok's GET /api/tunnels endpoint
+            return this;
+        }
+
+        private void populateTypedAttributes(final Map<String, Object> tunnelDefinition) {
             if (isNull(this.proto) && tunnelDefinition.containsKey("proto")) {
                 this.proto = Proto.valueOf(((String) tunnelDefinition.get("proto")).toUpperCase());
             }
@@ -874,7 +973,7 @@ public class CreateTunnel {
                 this.domain = (String) tunnelDefinition.get("domain");
             }
             if (isNull(this.addr) && tunnelDefinition.containsKey("addr")) {
-                this.addr = (String) tunnelDefinition.get("addr");
+                this.addr = Objects.toString(tunnelDefinition.get("addr"), null);
             }
             if (isNull(this.inspect) && tunnelDefinition.containsKey("inspect")) {
                 this.inspect = Boolean.valueOf(String.valueOf(tunnelDefinition.get("inspect")));
@@ -926,7 +1025,7 @@ public class CreateTunnel {
                 this.mutualTlsCas = (String) tunnelDefinition.get("mutual_tls_cas");
             }
             if (isNull(this.proxyProto) && tunnelDefinition.containsKey("proxy_proto")) {
-                this.proxyProto = (String) tunnelDefinition.get("proxy_proto");
+                this.proxyProto = Objects.toString(tunnelDefinition.get("proxy_proto"), null);
             }
             if (isNull(this.websocketTcpConverter) && tunnelDefinition.containsKey("websocket_tcp_converter")) {
                 this.websocketTcpConverter = Boolean.valueOf(
@@ -1027,10 +1126,6 @@ public class CreateTunnel {
                     }
                 }
             }
-
-            // Returning this to allow chained configuration of
-            // properties not visible in ngrok's GET /api/tunnels endpoint
-            return this;
         }
 
         /**
@@ -1086,6 +1181,47 @@ public class CreateTunnel {
             }
 
             return new CreateTunnel(this);
+        }
+    }
+
+    /**
+     * Serializes {@link CreateTunnel#getOptions()} as top-level keys of the request. Typed attributes that are
+     * serialized take precedence over a passthrough option with the same key.
+     */
+    static class OptionsTypeAdapterFactory implements TypeAdapterFactory {
+
+        @Override
+        public <T> TypeAdapter<T> create(final Gson gson, final TypeToken<T> type) {
+            if (!CreateTunnel.class.isAssignableFrom(type.getRawType())) {
+                return null;
+            }
+
+            final TypeAdapter<T> delegate = gson.getDelegateAdapter(this, type);
+            final TypeAdapter<JsonElement> jsonElementAdapter = gson.getAdapter(JsonElement.class);
+
+            return new TypeAdapter<>() {
+                @Override
+                public void write(final JsonWriter out, final T value) throws IOException {
+                    if (isNull(value) || ((CreateTunnel) value).getOptions().isEmpty()) {
+                        delegate.write(out, value);
+                        return;
+                    }
+
+                    final JsonObject request = delegate.toJsonTree(value).getAsJsonObject();
+                    for (final Map.Entry<String, Object> option : ((CreateTunnel) value).getOptions().entrySet()) {
+                        final JsonElement typedValue = request.get(option.getKey());
+                        if (isNull(typedValue) || typedValue.isJsonNull()) {
+                            request.add(option.getKey(), gson.toJsonTree(option.getValue()));
+                        }
+                    }
+                    jsonElementAdapter.write(out, request);
+                }
+
+                @Override
+                public T read(final JsonReader in) throws IOException {
+                    return delegate.read(in);
+                }
+            };
         }
     }
 }

@@ -1,4 +1,4 @@
-<p align="center"><img alt="java-ngrok - a Java wrapper for ngrok" src="https://github.com/alexdlaird/java-ngrok/raw/main/logo.png" /></p>
+<p align="center"><img alt="java-ngrok - A Java wrapper for ngrok; programmatic tunnels for ingress, webhooks, demos, and APIs" src="https://github.com/alexdlaird/java-ngrok/raw/main/logo.png" /></p>
 
 [![Version](https://img.shields.io/maven-central/v/com.github.alexdlaird/java-ngrok)](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok)
 [![Java Versions](https://img.shields.io/badge/Java-11+-blue)](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok)
@@ -8,12 +8,12 @@
 [![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://alexdlaird.github.io/java-ngrok/)
 [![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)](https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE)
 
-`java-ngrok` is a Java wrapper for `ngrok` that manages its own binary, making `ngrok` available via a convenient Java
-API.
+`java-ngrok` is a Java wrapper for `ngrok` that provides programmatic tunnels for ingress, webhooks, demos, and APIs.
+It downloads and manages the `ngrok` agent for you, making it available through a Java API. It runs anywhere the
+`ngrok` agent does. The library is mature and stable, and it tracks new `ngrok` releases.
 
 [`ngrok`](https://ngrok.com) is a reverse proxy that opens secure tunnels from public URLs to localhost. It's perfect
-for rapid
-development (test webhooks, demo local websites, enable SSH access), establishing ingress to external
+for rapid development (test webhooks, demo local websites, enable SSH access), establishing ingress to external
 networks and devices, building production APIs (traffic policies, OAuth, load balancing), and more. And
 it's made even more powerful with native Java integration through the `java-ngrok` client.
 
@@ -244,6 +244,18 @@ final NgrokClient ngrokClient = new NgrokClient.Builder()
 If these events aren't necessary for your use case, some resources can be freed up by turning them off. [`JavaNgrokConfig.Builder.withoutMonitoring()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withoutMonitoring())
 will disable logging, or you can call [`NgrokProcess.ProcessMonitor.stop()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/process/NgrokProcess.ProcessMonitor.html#stop())
 to stop monitoring on a running process.
+
+`java-ngrok` logs through [SLF4J](https://www.slf4j.org/), and `ngrok`'s own output is logged by the
+`com.github.alexdlaird.ngrok.process.NgrokProcess` logger. To quiet it, raise that logger's level in your logging
+backend. For example, with Logback:
+
+```xml
+<!-- Quiet ngrok's own output -->
+<logger name="com.github.alexdlaird.ngrok.process.NgrokProcess" level="WARN"/>
+
+<!-- Or quiet all java-ngrok output -->
+<logger name="com.github.alexdlaird" level="WARN"/>
+```
 
 ## Configuration
 

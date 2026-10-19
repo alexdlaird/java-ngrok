@@ -4,7 +4,15 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/3.1.2...HEAD)
+## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/3.2.0...HEAD)
+
+## [3.2.0](https://github.com/alexdlaird/java-ngrok/compare/3.1.2...3.2.0) - 2026-10-19
+
+### Added
+
+- `NgrokClient.connectAll()`, to start every tunnel defined in `ngrok`'s config file.
+- `NgrokException.getNgrokErrorCode()`, the `ngrok` error code parsed from `getNgrokError()`.
+- Build and stability improvements.
 
 ## [3.1.2](https://github.com/alexdlaird/java-ngrok/compare/3.1.1...3.1.2) - 2026-04-29
 

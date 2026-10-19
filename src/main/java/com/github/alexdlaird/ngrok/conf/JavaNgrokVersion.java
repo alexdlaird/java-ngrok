@@ -17,6 +17,8 @@ public class JavaNgrokVersion {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaNgrokVersion.class);
 
+    private static final Object LOCK = new Object();
+
     private static JavaNgrokVersion instance = null;
 
     private final String version;
@@ -30,13 +32,15 @@ public class JavaNgrokVersion {
      *
      * @return The singleton instance.
      */
-    public static synchronized JavaNgrokVersion getInstance() {
-        if (instance == null) {
-            final String version = getVersionFromProperties();
-            instance = new JavaNgrokVersion(version);
-        }
+    public static JavaNgrokVersion getInstance() {
+        synchronized (LOCK) {
+            if (instance == null) {
+                final String version = getVersionFromProperties();
+                instance = new JavaNgrokVersion(version);
+            }
 
-        return instance;
+            return instance;
+        }
     }
 
     private static String getVersionFromProperties() {

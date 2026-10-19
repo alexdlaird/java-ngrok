@@ -17,7 +17,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: read
 
 jobs:
   prereq:
@@ -25,7 +24,7 @@ jobs:
     with:
       bump_type: ${{ inputs.bump_type }}
       version_file: 'build.gradle'
-      version_pattern: 's/^version ".*"/version "${VERSION}"/'
+      version_pattern: 's/^version = ".*"/version = "${VERSION}"/'
       repo_slug: alexdlaird/java-ngrok
     secrets:
       bot_app_id: ${{ secrets.RELEASE_BOT_APP_ID }}
@@ -33,7 +32,7 @@ jobs:
 
   build:
     needs: prereq
-    uses: alexdlaird/java-ngrok/.github/workflows/build.yml@main
+    uses: ./.github/workflows/build.yml
     secrets: inherit
 
   release:
@@ -45,10 +44,10 @@ jobs:
         with:
           ref: ${{ needs.prereq.outputs.squash_commit_sha }}
 
-      - name: Set up JDK 11
+      - name: Set up JDK 25
         uses: actions/setup-java@v5
         with:
-          java-version: 11
+          java-version: 25
           distribution: zulu
 
       - name: Generate GitHub App token
@@ -84,8 +83,6 @@ jobs:
     needs: [prereq, release]
     if: always() && needs.prereq.result == 'success'
     uses: alexdlaird/.github/.github/workflows/release-cleanup.yml@main
-    with:
-      squash_boundary: ${{ needs.prereq.outputs.squash_boundary }}
     secrets:
       bot_app_id: ${{ secrets.RELEASE_BOT_APP_ID }}
       bot_private_key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
