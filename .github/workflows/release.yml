@@ -24,7 +24,7 @@ jobs:
     with:
       bump_type: ${{ inputs.bump_type }}
       version_file: 'build.gradle'
-      version_pattern: 's/^version ".*"/version "${VERSION}"/'
+      version_pattern: 's/^version = ".*"/version = "${VERSION}"/'
       repo_slug: alexdlaird/java-ngrok
     secrets:
       bot_app_id: ${{ secrets.RELEASE_BOT_APP_ID }}
