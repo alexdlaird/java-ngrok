@@ -217,7 +217,9 @@ public class JavaNgrokConfig {
 
         /**
          * The path to the <code>ngrok</code> binary, defaults to being placed in the same directory as
-         * <a href="https://ngrok.com/docs/agent/config/v2" target="_blank"><code>ngrok's</code> configs</a>.
+         * <a href="https://ngrok.com/docs/agent/config/v2" target="_blank"><code>ngrok's</code> configs</a>. If not
+         * set here, the {@link Builder} will attempt to use the environment variable
+         * <code>JAVA_NGROK_NGROK_PATH</code> if it is set.
          */
         public Builder withNgrokPath(final Path ngrokPath) {
             this.ngrokPath = ngrokPath;
@@ -281,6 +283,10 @@ public class JavaNgrokConfig {
          * Build the {@link JavaNgrokConfig}.
          */
         public JavaNgrokConfig build() {
+            final String envNgrokPath = System.getenv("JAVA_NGROK_NGROK_PATH");
+            if (isNull(ngrokPath) && nonNull(envNgrokPath)) {
+                ngrokPath = Path.of(envNgrokPath);
+            }
             if (isNull(ngrokPath)) {
                 ngrokPath = NgrokInstaller.DEFAULT_NGROK_PATH;
             }

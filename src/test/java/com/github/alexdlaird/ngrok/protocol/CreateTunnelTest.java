@@ -390,6 +390,30 @@ public class CreateTunnelTest {
     }
 
     @Test
+    public void testCreateWithTunnelDefinitionNumericValues() {
+        // WHEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+            .withTunnelDefinition(Map.of("addr", 8000, "proxy_proto", 1))
+            .build();
+
+        // THEN
+        assertEquals("8000", createTunnel.getAddr());
+        assertEquals("1", createTunnel.getProxyProto());
+    }
+
+    @Test
+    public void testCreateWithV3TunnelDefinitionNumericUpstreamValues() {
+        // WHEN
+        final CreateTunnel createTunnel = new CreateTunnel.Builder()
+            .withTunnelDefinition(Map.of("upstream", Map.of("url", 8080, "proxy_protocol", 2)))
+            .build();
+
+        // THEN
+        assertEquals("8080", createTunnel.getUpstream().getUrl());
+        assertEquals("2", createTunnel.getUpstream().getProxyProtocol());
+    }
+
+    @Test
     public void testCreateWithV3TunnelDefinitionInlineTrafficPolicy() {
         // WHEN
         final Map<String, Object> policy = Map.of("on_http_request", List.of(Map.of("type", "deny")));

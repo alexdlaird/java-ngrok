@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -51,16 +52,16 @@ public class NgrokProcess {
     private final JavaNgrokConfig javaNgrokConfig;
     private final NgrokInstaller ngrokInstaller;
     private final HttpClient httpClient;
-    private final List<NgrokLog> logs = new ArrayList<>();
+    private final List<NgrokLog> logs = Collections.synchronizedList(new ArrayList<>());
 
-    private Process process;
+    private volatile Process process;
     private ProcessMonitor processMonitor;
 
     private String apiUrl;
-    private boolean tunnelStarted;
-    private boolean clientConnected;
+    private volatile boolean tunnelStarted;
+    private volatile boolean clientConnected;
     private String startupError;
-    private BufferedReader reader;
+    private volatile BufferedReader reader;
 
     /**
      * If <code>ngrok</code> is not already installed at {@link JavaNgrokConfig#getNgrokPath()}, the given
@@ -127,7 +128,7 @@ public class NgrokProcess {
      * @throws NgrokException             <code>ngrok</code> could not start.
      * @throws JavaNgrokSecurityException The URL was not supported.
      */
-    public void start() {
+    public synchronized void start() {
         if (isRunning()) {
             return;
         }
@@ -235,7 +236,7 @@ public class NgrokProcess {
      * Terminate the <code>ngrok</code> processes, if running. This method will not block, it will just issue a kill
      * request.
      */
-    public void stop() {
+    public synchronized void stop() {
         if (!isRunning()) {
             LOGGER.debug("\"ngrokPath\" {} is not running a process", javaNgrokConfig.getNgrokPath());
 
@@ -418,9 +419,11 @@ public class NgrokProcess {
         }
 
         ngrokLog(ngrokLog);
-        logs.add(ngrokLog);
-        if (logs.size() > javaNgrokConfig.getMaxLogs()) {
-            logs.remove(0);
+        synchronized (logs) {
+            logs.add(ngrokLog);
+            if (logs.size() > javaNgrokConfig.getMaxLogs()) {
+                logs.remove(0);
+            }
         }
 
         if (nonNull(javaNgrokConfig.getLogEventCallback())) {

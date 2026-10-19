@@ -8,7 +8,6 @@ package com.github.alexdlaird.ngrok.protocol;
 
 import com.github.alexdlaird.http.HttpClient;
 import com.github.alexdlaird.ngrok.NgrokClient;
-import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -48,11 +47,6 @@ import static java.util.Objects.nonNull;
  *
  * final Tunnel httpTunnel = ngrokClient.connect(createTunnel);
  * </pre>
- * <h2><code>ngrok</code> Version Compatibility</h2>
- * <code>java-ngrok</code> is compatible with <code>ngrok</code> v2 and v3, but by default it will install v3. To
- * install v2 instead, set the version with {@link JavaNgrokConfig.Builder#withNgrokVersion(NgrokVersion)} and
- * {@link CreateTunnel.Builder#withNgrokVersion(NgrokVersion)}.
- *
  * <h2>Passthrough Options</h2>
  * Options that do not have a typed builder method can be passed through to <code>ngrok</code> with
  * {@link CreateTunnel.Builder#withOption(String, Object)} or {@link CreateTunnel.Builder#withOptions(Map)}. These are
@@ -979,7 +973,7 @@ public class CreateTunnel {
                 this.domain = (String) tunnelDefinition.get("domain");
             }
             if (isNull(this.addr) && tunnelDefinition.containsKey("addr")) {
-                this.addr = (String) tunnelDefinition.get("addr");
+                this.addr = Objects.toString(tunnelDefinition.get("addr"), null);
             }
             if (isNull(this.inspect) && tunnelDefinition.containsKey("inspect")) {
                 this.inspect = Boolean.valueOf(String.valueOf(tunnelDefinition.get("inspect")));
@@ -1031,7 +1025,7 @@ public class CreateTunnel {
                 this.mutualTlsCas = (String) tunnelDefinition.get("mutual_tls_cas");
             }
             if (isNull(this.proxyProto) && tunnelDefinition.containsKey("proxy_proto")) {
-                this.proxyProto = (String) tunnelDefinition.get("proxy_proto");
+                this.proxyProto = Objects.toString(tunnelDefinition.get("proxy_proto"), null);
             }
             if (isNull(this.websocketTcpConverter) && tunnelDefinition.containsKey("websocket_tcp_converter")) {
                 this.websocketTcpConverter = Boolean.valueOf(

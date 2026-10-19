@@ -21,7 +21,6 @@ import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import com.github.alexdlaird.ngrok.installer.NgrokVersion;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import com.github.alexdlaird.ngrok.protocol.ApiResponse;
-import com.github.alexdlaird.ngrok.protocol.BindTls;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Proto;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
@@ -95,12 +94,6 @@ public class NgrokClient {
      * <p>If <code>ngrok</code> is not running, calling this method will first start a process with
      * {@link JavaNgrokConfig}.
      *
-     * <p><strong>Note:</strong> v2's default behavior for <code>http</code> when no additional properties are passed
-     * is to open <em>two</em> tunnels, one <code>http</code> and one <code>https</code>. This method will return a
-     * reference to the <code>http</code> tunnel in this case. If only a single tunnel is needed, call
-     * {@link CreateTunnel.Builder#withBindTls(BindTls)} with {@link BindTls#TRUE} and a reference to the
-     * <code>https</code> tunnel will be returned.
-     *
      * @param createTunnel The tunnel definition.
      * @return The created Tunnel.
      * @throws JavaNgrokException         The tunnel definition was invalid, the requested options are
@@ -109,7 +102,7 @@ public class NgrokClient {
      * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
      * @throws JavaNgrokSecurityException The URL was not supported.
      */
-    public Tunnel connect(final CreateTunnel createTunnel) {
+    public synchronized Tunnel connect(final CreateTunnel createTunnel) {
         validateConfigVersionCompatibility(createTunnel);
 
         ngrokProcess.start();
@@ -145,6 +138,55 @@ public class NgrokClient {
      */
     public Tunnel connect() {
         return connect(new CreateTunnel.Builder().withNgrokVersion(javaNgrokConfig.getNgrokVersion()).build());
+    }
+
+    /**
+     * Establish a <code>ngrok</code> tunnel for each tunnel definition in <code>ngrok</code>'s config file, returning
+     * a list of objects representing the connected tunnels. Each is started with {@link #connect(CreateTunnel)} by
+     * its name.
+     *
+     * <p>Routing is driven by {@link JavaNgrokConfig#getConfigVersion()}: {@link ConfigVersion#V2} reads the v2
+     * <code>tunnels</code> config block; {@link ConfigVersion#V3} reads the v3 <code>endpoints</code> block (and a
+     * <code>tunnels</code> block if also present).
+     *
+     * <p>The "java-ngrok-default" definition is not started, since it is the definition {@link #connect()} uses
+     * when no name is given.
+     *
+     * @return The created Tunnels.
+     * @throws JavaNgrokException         A tunnel definition was invalid, or the response was incompatible with
+     *                                    <code>java-ngrok</code>.
+     * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
+     * @throws JavaNgrokSecurityException The URL was not supported.
+     */
+    public List<Tunnel> connectAll() {
+        if (!Files.exists(javaNgrokConfig.getConfigPath())) {
+            return List.of();
+        }
+
+        final Map<String, Object> config = ngrokProcess.getNgrokInstaller()
+            .getNgrokConfig(javaNgrokConfig.getConfigPath());
+
+        final List<String> names = new ArrayList<>();
+        if (isV3()) {
+            final List<Map<String, Object>> endpointDefinitions =
+                (List<Map<String, Object>>) config.getOrDefault("endpoints", List.of());
+            for (final Map<String, Object> def : endpointDefinitions) {
+                names.add((String) def.get("name"));
+            }
+        }
+        names.addAll(((Map<String, Object>) config.getOrDefault("tunnels", Map.of())).keySet());
+
+        final List<Tunnel> tunnels = new ArrayList<>();
+        for (final String name : names) {
+            if (nonNull(name) && !"java-ngrok-default".equals(name)) {
+                tunnels.add(connect(new CreateTunnel.Builder()
+                    .withNgrokVersion(javaNgrokConfig.getNgrokVersion())
+                    .withName(name)
+                    .build()));
+            }
+        }
+
+        return tunnels;
     }
 
     private boolean isV3() {
@@ -185,7 +227,7 @@ public class NgrokClient {
      * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
      * @throws JavaNgrokSecurityException The URL was not supported.
      */
-    public void disconnect(final String publicUrl) {
+    public synchronized void disconnect(final String publicUrl) {
         // If ngrok is not running, there are no tunnels to disconnect
         if (!ngrokProcess.isRunning()) {
             LOGGER.trace("\"ngrokPath\" {} is not running a process", javaNgrokConfig.getNgrokPath());
@@ -229,7 +271,7 @@ public class NgrokClient {
      * @throws JavaNgrokHTTPException     An HTTP error occurred communicating with the <code>ngrok</code> API.
      * @throws JavaNgrokSecurityException The URL was not supported.
      */
-    public List<Tunnel> getTunnels() {
+    public synchronized List<Tunnel> getTunnels() {
         ngrokProcess.start();
 
         final String apiPath = isV3() ? "/api/endpoints" : "/api/tunnels";
@@ -264,7 +306,7 @@ public class NgrokClient {
      * @throws JavaNgrokException         The API did not return <code>metrics</code>.
      * @throws JavaNgrokSecurityException The URL was not supported.
      */
-    public void refreshMetrics(final Tunnel tunnel) {
+    public synchronized void refreshMetrics(final Tunnel tunnel) {
         Response<Tunnel> latestTunnel = httpClient.get(String.format("%s%s", ngrokProcess.getApiUrl(),
             tunnel.getUri()), Tunnel.class);
 
@@ -279,7 +321,7 @@ public class NgrokClient {
      * Terminate the <code>ngrok</code> processes, if running. This method will not block, it will just issue a kill
      * request.
      */
-    public void kill() {
+    public synchronized void kill() {
         ngrokProcess.stop();
 
         currentTunnels.clear();
@@ -295,12 +337,12 @@ public class NgrokClient {
      * <pre>
      * // Setting an auth token allows you to do things like open multiple tunnels at the same time
      * final NgrokClient ngrokClient = new NgrokClient.Builder().build();
-     * ngrokClient.setAuthToken("&lt;NGROK_AUTHTOKEN&gt;")
+     * ngrokClient.setAuthToken("&lt;NGROK_AUTHTOKEN&gt;");
      *
      * // &lt;NgrokTunnel: "https://&lt;public_sub1&gt;.ngrok.io" -&gt; "http://localhost:80"&gt;
      * final Tunnel ngrokTunnel1 = ngrokClient.connect();
      * // &lt;NgrokTunnel: "https://&lt;public_sub2&gt;.ngrok.io" -&gt; "http://localhost:8000"&gt;
-     * final CreateTunnel sshCreateTunnel = new CreateTunnel.Builder()
+     * final CreateTunnel createTunnel = new CreateTunnel.Builder()
      *         .withAddr(8000)
      *         .build();
      * final Tunnel ngrokTunnel2 = ngrokClient.connect(createTunnel);

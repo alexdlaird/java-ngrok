@@ -9,11 +9,15 @@ package com.github.alexdlaird.exception;
 import com.github.alexdlaird.ngrok.process.NgrokLog;
 import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Thrown from {@link NgrokProcess} when an error occurs interacting directly with the <code>ngrok</code> binary.
  */
 public class NgrokException extends JavaNgrokException {
+
+    private static final Pattern NGROK_ERROR_CODE_PATTERN = Pattern.compile("ERR_NGROK_\\d+");
 
     private final List<NgrokLog> ngrokLogs;
     private final String ngrokError;
@@ -82,5 +86,23 @@ public class NgrokException extends JavaNgrokException {
      */
     public String getNgrokError() {
         return ngrokError;
+    }
+
+    /**
+     * Get the <code>ngrok</code> error code parsed from {@link #getNgrokError()}, if present. See
+     * <a href="https://ngrok.com/docs/errors/" target="_blank"><code>ngrok</code>'s error code reference</a> for
+     * details on each code.
+     */
+    public String getNgrokErrorCode() {
+        return parseNgrokErrorCode(ngrokError);
+    }
+
+    private static String parseNgrokErrorCode(final String ngrokError) {
+        if (ngrokError == null) {
+            return null;
+        }
+
+        final Matcher matcher = NGROK_ERROR_CODE_PATTERN.matcher(ngrokError);
+        return matcher.find() ? matcher.group() : null;
     }
 }

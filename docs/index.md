@@ -9,8 +9,8 @@
 [![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)](https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE)
 
 `java-ngrok` is a Java wrapper for `ngrok` that provides programmatic tunnels for ingress, webhooks, demos, and APIs.
-It downloads and manages the `ngrok` agent for you, making it available through a Java API. The library is mature and
-stable, and it tracks new `ngrok` releases.
+It downloads and manages the `ngrok` agent for you, making it available through a Java API. It runs anywhere the
+`ngrok` agent does. The library is mature and stable, and it tracks new `ngrok` releases.
 
 [`ngrok`](https://ngrok.com) is a reverse proxy that opens secure tunnels from public URLs to localhost. It's perfect
 for rapid development (test webhooks, demo local websites, enable SSH access), establishing ingress to external
@@ -244,6 +244,18 @@ final NgrokClient ngrokClient = new NgrokClient.Builder()
 If these events aren't necessary for your use case, some resources can be freed up by turning them off. [`JavaNgrokConfig.Builder.withoutMonitoring()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/conf/JavaNgrokConfig.Builder.html#withoutMonitoring())
 will disable logging, or you can call [`NgrokProcess.ProcessMonitor.stop()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/process/NgrokProcess.ProcessMonitor.html#stop())
 to stop monitoring on a running process.
+
+`java-ngrok` logs through [SLF4J](https://www.slf4j.org/), and `ngrok`'s own output is logged by the
+`com.github.alexdlaird.ngrok.process.NgrokProcess` logger. To quiet it, raise that logger's level in your logging
+backend. For example, with Logback:
+
+```xml
+<!-- Quiet ngrok's own output -->
+<logger name="com.github.alexdlaird.ngrok.process.NgrokProcess" level="WARN"/>
+
+<!-- Or quiet all java-ngrok output -->
+<logger name="com.github.alexdlaird" level="WARN"/>
+```
 
 ## Configuration
 

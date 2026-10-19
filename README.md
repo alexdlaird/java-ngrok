@@ -9,8 +9,8 @@
 [![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)](https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE)
 
 `java-ngrok` is a Java wrapper for `ngrok` that provides programmatic tunnels for ingress, webhooks, demos, and APIs.
-It downloads and manages the `ngrok` agent for you, making it available through a Java API. The library is mature and
-stable, and it tracks new `ngrok` releases.
+It downloads and manages the `ngrok` agent for you, making it available through a Java API. It runs anywhere the
+`ngrok` agent does. The library is mature and stable, and it tracks new `ngrok` releases.
 
 [`ngrok`](https://ngrok.com) is a reverse proxy that opens secure tunnels from public URLs to localhost. It's perfect
 for rapid development (test webhooks, demo local websites, enable SSH access), establishing ingress to external
