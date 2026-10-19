@@ -10,6 +10,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 /**
@@ -83,6 +84,10 @@ public class Tunnel {
      * Get the proto of the tunnel.
      */
     public String getProto() {
+        if (isNull(proto) && nonNull(publicUrl) && publicUrl.contains("://")) {
+            return publicUrl.substring(0, publicUrl.indexOf("://"));
+        }
+
         return proto;
     }
 

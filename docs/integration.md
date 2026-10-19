@@ -269,7 +269,7 @@ RUN curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc \
       && apt install ngrok
 
 RUN mkdir -p /root/.config/ngrok
-RUN echo "version: 2\nweb_addr: 0.0.0.0:4040" >> /root/.config/ngrok/ngrok.yml
+RUN echo "version: 3\nagent:\n  web_addr: 0.0.0.0:4040" >> /root/.config/ngrok/ngrok.yml
 
 # Provision your Java application
 ENV NGROK_BINARY_PATH="/usr/local/bin/ngrok"
@@ -319,7 +319,7 @@ docker run -v ./ngrok.yml:/root/.config/ngrok/ngrok.yml -it my-java-ngrok
 ### Web Inspector
 
 If you want to use `ngrok`'s web inspector, be sure to expose its port. Be sure whatever config file you use
-[sets `web_addr: 0.0.0.0:4040`](https://ngrok.com/docs/agent/config/v2/#web_addr).
+[sets `web_addr: 0.0.0.0:4040`](https://ngrok.com/docs/agent/config/v3/#web_addr).
 
 ```sh
 docker run --env-file .env -p 4040:4040 -it my-java-ngrok

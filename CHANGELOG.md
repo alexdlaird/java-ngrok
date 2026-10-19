@@ -6,6 +6,19 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/3.2.0...HEAD)
 
+### Breaking
+
+- `JavaNgrokConfig.configVersion` now defaults to `ConfigVersion.V3`, as `ngrok` has deprecated `tunnels` in favor of [Endpoints](https://ngrok.com/docs/agent/config/v3/). v2-only options (like `withSubdomain()`, `withRemoteAddr()`, `withAuth()`, and `withHostHeader()`) aren't supported by Endpoints, so use `withUrl()` and [Traffic Policy](https://ngrok.com/docs/traffic-policy/) actions instead, or set `configVersion` to `ConfigVersion.V2` to keep the previous behavior.
+- `NgrokInstaller.installDefaultConfig()` and `NgrokInstaller.getNgrokConfig()` overloads without a `ConfigVersion` now default to `ConfigVersion.V3`.
+
+### Removed
+
+- `NgrokProcess.ProcessMonitor.getLogs()`, which was deprecated in favor of `NgrokProcess.getLogs()`.
+
+### Fixed
+
+- Build and stability improvements.
+
 ## [3.2.0](https://github.com/alexdlaird/java-ngrok/compare/3.1.2...3.2.0) - 2026-10-19
 
 ### Added

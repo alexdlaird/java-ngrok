@@ -137,7 +137,7 @@ public class JavaNgrokConfig {
         private int maxLogs = 100;
         private int startupTimeout = 15;
         private boolean keepMonitoring = true;
-        private ConfigVersion configVersion = ConfigVersion.V2;
+        private ConfigVersion configVersion = ConfigVersion.V3;
 
         private Path ngrokPath;
         private Path configPath;
@@ -217,7 +217,7 @@ public class JavaNgrokConfig {
 
         /**
          * The path to the <code>ngrok</code> binary, defaults to being placed in the same directory as
-         * <a href="https://ngrok.com/docs/agent/config/v2" target="_blank"><code>ngrok's</code> configs</a>. If not
+         * <a href="https://ngrok.com/docs/agent/config/v3" target="_blank"><code>ngrok's</code> configs</a>. If not
          * set here, the {@link Builder} will attempt to use the environment variable
          * <code>JAVA_NGROK_NGROK_PATH</code> if it is set.
          */
@@ -227,7 +227,7 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * The path to the <code>ngrok</code> config file, defaults to <a href="https://ngrok.com/docs/agent/config/v2"
+         * The path to the <code>ngrok</code> config file, defaults to <a href="https://ngrok.com/docs/agent/config/v3"
          * target="_blank"><code>ngrok's</code> default config location</a>.
          */
         public Builder withConfigPath(final Path configPath) {

@@ -370,7 +370,7 @@ public class NgrokClient {
      * final CreateTunnel createInternalEndpoint = new CreateTunnel.Builder()
      *     .withAddr("9000")
      *     .withProto(Proto.TLS)
-     *     .withDomain("some-endpoint.internal")
+     *     .withUrl("tls://some-endpoint.internal")
      *     .withPoolingEnabled(true)
      *     .build();
      * final Tunnel internalEndpoint = ngrokClient.connect(createInternalEndpoint);
@@ -516,14 +516,16 @@ public class NgrokClient {
         // addr override behavior). Apply this before building, since the Builder's v3 default logic
         // nulls addr/proto when upstream is set. (User-passed upstream is preserved by
         // withTunnelDefinition's null-check, so it already wins.)
+        Proto translatedProto = null;
         if (isV3() && nonNull(matched) && (userAddrProvided || userProtoProvided) && !userUpstreamProvided) {
             final String addr = nonNull(createTunnel.getAddr()) ? createTunnel.getAddr() : "80";
             final Proto proto = nonNull(createTunnel.getProto()) ? createTunnel.getProto() : Proto.HTTP;
+            translatedProto = proto;
             final String upstreamUrl;
             if (addr.contains("://")) {
                 upstreamUrl = addr;
-            } else if (proto == Proto.TCP) {
-                upstreamUrl = String.format("tcp://localhost:%s", addr);
+            } else if (proto == Proto.TCP || proto == Proto.TLS) {
+                upstreamUrl = String.format("localhost:%s", addr);
             } else {
                 upstreamUrl = String.format("http://localhost:%s", addr);
             }
@@ -539,17 +541,33 @@ public class NgrokClient {
             final String upstreamUrl;
             if (addr.contains("://")) {
                 upstreamUrl = addr;
-            } else if (built.getProto() == Proto.TCP) {
-                upstreamUrl = String.format("tcp://localhost:%s", addr);
+            } else if (built.getProto() == Proto.TCP || built.getProto() == Proto.TLS) {
+                upstreamUrl = String.format("localhost:%s", addr);
             } else {
                 upstreamUrl = String.format("http://localhost:%s", addr);
             }
-            return new CreateTunnel.Builder(built)
+            return withTcpOrTlsEndpointDefaults(new CreateTunnel.Builder(built)
                 .withUpstream(new Upstream.Builder().withUrl(upstreamUrl).build())
-                .build();
+                .build(), built.getProto());
         }
 
-        return built;
+        return withTcpOrTlsEndpointDefaults(built, translatedProto);
+    }
+
+    private CreateTunnel withTcpOrTlsEndpointDefaults(final CreateTunnel createTunnel, final Proto proto) {
+        if (proto != Proto.TCP && proto != Proto.TLS) {
+            return createTunnel;
+        }
+
+        final CreateTunnel.Builder createTunnelBuilder = new CreateTunnel.Builder(createTunnel);
+        if (isNull(createTunnel.getUrl())) {
+            createTunnelBuilder.withUrl(String.format("%s://", proto.name().toLowerCase()));
+        }
+        if (isNull(createTunnel.isInspect())) {
+            createTunnelBuilder.withoutInspect();
+        }
+
+        return createTunnelBuilder.build();
     }
 
     /**

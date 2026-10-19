@@ -9,6 +9,7 @@ package com.github.alexdlaird.ngrok.process;
 import com.github.alexdlaird.exception.NgrokException;
 import com.github.alexdlaird.ngrok.NgrokTestCase;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
+import com.github.alexdlaird.ngrok.installer.ConfigVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -81,7 +82,7 @@ public class NgrokProcessTest extends NgrokTestCase {
             .withConfigPath(configPath2)
             .build();
         ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(),
-            Map.of("web_addr", ngrokProcess.getApiUrl().replace("http://", "")), javaNgrokConfig.getNgrokVersion());
+            Map.of("web_addr", ngrokProcess.getApiUrl().replace("http://", "")), javaNgrokConfig.getNgrokVersion(), ConfigVersion.V2);
         Thread.sleep(3000);
 
         // WHEN
@@ -140,8 +141,9 @@ public class NgrokProcessTest extends NgrokTestCase {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 
         // GIVEN
-        ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(), Map.of("web_addr", "localhost:4040"),
-            javaNgrokConfig.getNgrokVersion());
+        ngrokInstaller.installDefaultConfig(javaNgrokConfig.getConfigPath(),
+            Map.of("version", "2", "web_addr", "localhost:4040"),
+            javaNgrokConfig.getNgrokVersion(), ConfigVersion.V2);
         final Path ngrokPath2 = Path.of(javaNgrokConfig.getNgrokPath().getParent().toString(),
             "2",
             NgrokInstaller.getNgrokBin());
@@ -152,7 +154,7 @@ public class NgrokProcessTest extends NgrokTestCase {
             .withConfigPath(configPath2)
             .build();
         ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(),
-            Map.of("web_addr", "localhost:4041"), javaNgrokConfig.getNgrokVersion());
+            Map.of("web_addr", "localhost:4041"), javaNgrokConfig.getNgrokVersion(), ConfigVersion.V2);
         ngrokProcess2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
 
         // WHEN
