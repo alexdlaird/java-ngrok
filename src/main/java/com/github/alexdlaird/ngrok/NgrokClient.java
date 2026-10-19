@@ -214,6 +214,8 @@ public class NgrokClient {
             throw new JavaNgrokHTTPException(String.format("An error occurred when DELETing the tunnel %s.",
                 publicUrl), e, e.getUrl(), e.getStatusCode(), e.getBody());
         }
+
+        currentTunnels.remove(publicUrl);
     }
 
     /**
