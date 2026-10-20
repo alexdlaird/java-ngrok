@@ -489,6 +489,33 @@ class NgrokClientTest extends NgrokTestCase {
     }
 
     @Test
+    public void testRegionalConnectUrl() {
+        testRequiresEnvVar("NGROK_AUTHTOKEN");
+
+        // GIVEN
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfig)
+            .withConfigPath(Path.of("build", ".ngrok-connect-url", "config.yml").toAbsolutePath())
+            .build();
+        ngrokInstaller.installDefaultConfig(javaNgrokConfig2.getConfigPath(),
+            Map.of("agent", Map.of("connect_url", "connect.au.ngrok-agent.com:443")));
+        ngrokProcess2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+        final NgrokClient ngrokClient2 = new NgrokClient.Builder().withJavaNgrokConfig(javaNgrokConfig2)
+                                                                  .withNgrokProcess(ngrokProcess2)
+                                                                  .build();
+
+        // WHEN
+        ngrokClient2.connect(new CreateTunnel.Builder().withAddr(5000).build());
+        final Map<?, ?> status = ngrokClient2.getHttpClient()
+                                             .get(String.format("%s/api/status", ngrokProcess2.getApiUrl()), Map.class)
+                                             .getBody();
+
+        // THEN
+        final List<?> legs = (List<?>) ((Map<?, ?>) status.get("session")).get("legs");
+        assertEquals(1, legs.size());
+        assertEquals("au", ((Map<?, ?>) legs.get(0)).get("region"));
+    }
+
+    @Test
     public void testConnectFileserver() {
         testRequiresEnvVar("NGROK_AUTHTOKEN");
 

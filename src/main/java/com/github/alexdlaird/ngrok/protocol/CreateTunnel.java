@@ -416,7 +416,7 @@ public class CreateTunnel {
 
     /**
      * Builder for a {@link CreateTunnel}, which can be used to construct a request that conforms to <a
-     * href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
+     * href="https://ngrok.com/docs/agent/config/v3/#endpoint-definitions"
      * target="_blank"><code>ngrok</code>'s tunnel definition</a>. See docs for that class for example usage.
      */
     public static class Builder {
@@ -550,7 +550,7 @@ public class CreateTunnel {
 
         /**
          * A friendly name for the tunnel, or the name of a <a
-         * href="https://ngrok.com/docs/agent/config/v2/#tunnel-configurations"
+         * href="https://ngrok.com/docs/agent/config/v3/#endpoint-definitions"
          * target="_blank">ngrok tunnel definition</a> defined in <code>ngrok</code>'s config file.
          */
         public Builder withName(final String name) {
@@ -961,7 +961,7 @@ public class CreateTunnel {
             }
 
             // Returning this to allow chained configuration of
-            // properties not visible in ngrok's GET /api/tunnels endpoint
+            // properties not visible in ngrok's GET /api/tunnels or /api/endpoints endpoints
             return this;
         }
 

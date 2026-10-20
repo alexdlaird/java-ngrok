@@ -23,7 +23,7 @@ it's made even more powerful with native Java integration through the `java-ngro
 on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok).
 
 If you want `ngrok` to be available from the command
-line, [`pyngrok`](https://pyngrok.readthedocs.io/en/latest/#installation)
+line, [`pyngrok`](https://pyngrok.readthedocs.io/en/stable/#installation)
 can be installed using `pip` to manage that for you.
 
 ## Basic Usage
@@ -103,7 +103,7 @@ final ApiResponse endpointResponse = ngrokClient.api(
 
 ### Command Line Usage
 
-Assuming you have also installed [`pyngrok`](https://pyngrok.readthedocs.io/en/latest/#installation), all features of
+Assuming you have also installed [`pyngrok`](https://pyngrok.readthedocs.io/en/stable/#installation), all features of
 `ngrok` are available
 on the command line.
 

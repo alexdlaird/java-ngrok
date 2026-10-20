@@ -23,7 +23,7 @@ it's made even more powerful with native Java integration through the `java-ngro
 on [Maven Central](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok).
 
 If you want `ngrok` to be available from the command
-line, [`pyngrok`](https://pyngrok.readthedocs.io/en/latest/#installation)
+line, [`pyngrok`](https://pyngrok.readthedocs.io/en/stable/#installation)
 can be installed using `pip` to manage that for you.
 
 ## Open a Tunnel
@@ -258,8 +258,8 @@ which can then be passed to [`NgrokClient`](https://javadoc.io/doc/com.github.al
 
 ```java
 final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-        .withRegion(Region.AU)
-        .withMaxLogs(10);
+        .withMaxLogs(10)
+        .build();
 
 final NgrokClient ngrokClient = new NgrokClient.Builder()
         .withJavaNgrokConfig(javaNgrokConfig)
@@ -303,10 +303,33 @@ final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
         .withConfigPath(Path.of("opt", "ngrok", "config.yml"))
         .build();
 
- final NgrokClient ngrokClient = new NgrokClient.Builder()
+final NgrokClient ngrokClient = new NgrokClient.Builder()
         .withJavaNgrokConfig(javaNgrokConfig)
         .build();
 ```
+
+### Setting the Region
+
+By default, `ngrok` chooses the region with the lowest latency for you. To pick a region instead, set
+[`connect_url`](https://ngrok.com/docs/agent/connect-url) in `ngrok`'s config file to that region's address. The
+region is set when the `ngrok` agent starts, so it applies to every tunnel that agent opens.
+
+```java
+final Path configPath = Path.of("opt", "ngrok", "au.yml");
+new NgrokInstaller().installDefaultConfig(configPath,
+        Map.of("agent", Map.of("connect_url", "connect.au.ngrok-agent.com:443")));
+
+final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
+        .withConfigPath(configPath)
+        .build();
+
+final NgrokClient ngrokClient = new NgrokClient.Builder()
+        .withJavaNgrokConfig(javaNgrokConfig)
+        .build();
+```
+
+To use more than one region at the same time, start a separate agent for each by giving each `NgrokClient` a
+`JavaNgrokConfig` with its own config file.
 
 ### Binary Path
 
@@ -325,7 +348,7 @@ final NgrokClient ngrokClient = new NgrokClient.Builder()
 
 ## Command Line Usage
 
-Assuming you have also installed [`pyngrok`](https://pyngrok.readthedocs.io/en/latest/#installation), all features of
+Assuming you have also installed [`pyngrok`](https://pyngrok.readthedocs.io/en/stable/#installation), all features of
 `ngrok` are available
 on the command line.
 
