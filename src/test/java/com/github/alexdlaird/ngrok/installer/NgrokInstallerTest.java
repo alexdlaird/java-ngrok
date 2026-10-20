@@ -105,10 +105,28 @@ class NgrokInstallerTest extends NgrokTestCase {
 
         // THEN
         assertNotNull(ngrokConfig);
-        assertEquals(2, ngrokConfig.size());
+        assertEquals(1, ngrokConfig.size());
         assertEquals("2", ngrokConfig.get("version"));
-        assertEquals("us", ngrokConfig.get("region"));
+        assertFalse(ngrokConfig.containsKey("region"));
         assertTrue(Files.exists(javaNgrokConfigTmp.getConfigPath()));
+    }
+
+    @Test
+    public void testInstallDefaultConfigMergesNestedData() throws IOException {
+        // GIVEN
+        final Path configPath = Path.of("build", ".ngrok", "config_merge_tmp.yml").toAbsolutePath();
+        Files.deleteIfExists(configPath);
+        ngrokInstaller.installDefaultConfig(configPath, Map.of("agent", Map.of("authtoken", "some-token")));
+
+        // WHEN
+        ngrokInstaller.installDefaultConfig(configPath,
+            Map.of("agent", Map.of("connect_url", "connect.au.ngrok-agent.com:443")));
+
+        // THEN
+        final Map<String, Object> ngrokConfig = ngrokInstaller.getNgrokConfig(configPath, false, NgrokVersion.V3,
+            ConfigVersion.V3);
+        assertEquals(Map.of("authtoken", "some-token", "connect_url", "connect.au.ngrok-agent.com:443"),
+            ngrokConfig.get("agent"));
     }
 
     @Test

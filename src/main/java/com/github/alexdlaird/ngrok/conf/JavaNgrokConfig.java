@@ -101,7 +101,7 @@ public class JavaNgrokConfig {
     }
 
     /**
-     * Get the region in which <code>ngrok</code> will start.
+     * Get the region the <code>ngrok</code> agent connects to when it starts, which applies to all of its tunnels.
      */
     public Region getRegion() {
         return region;
@@ -245,7 +245,8 @@ public class JavaNgrokConfig {
         }
 
         /**
-         * The region in which <code>ngrok</code> should start.
+         * The region the <code>ngrok</code> agent connects to when it starts, which applies to all of its tunnels. If
+         * not set, <code>ngrok</code> chooses the region with the lowest latency.
          */
         public Builder withRegion(final Region region) {
             this.region = region;

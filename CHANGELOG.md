@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased](https://github.com/alexdlaird/java-ngrok/compare/4.0.0...HEAD)
 
+### Fixed
+
+- Stability and bug fixes.
+
 ## [4.0.0](https://github.com/alexdlaird/java-ngrok/compare/3.2.0...4.0.0) - 2026-10-19
 
 ### Breaking

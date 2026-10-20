@@ -177,7 +177,7 @@ public class NgrokInstaller {
                 config.putIfAbsent(entry.getKey(), entry.getValue());
             }
 
-            config.putAll(data);
+            mergeConfig(config, data);
 
             validateConfig(config);
 
@@ -191,6 +191,18 @@ public class NgrokInstaller {
         } catch (final IOException e) {
             throw new JavaNgrokInstallerException(String.format("An error while installing the default "
                                                                 + "ngrok config to %s.", configPath), e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void mergeConfig(final Map<String, Object> config, final Map<String, Object> data) {
+        for (final Map.Entry<String, Object> entry : data.entrySet()) {
+            final Object existing = config.get(entry.getKey());
+            if (entry.getValue() instanceof Map && existing instanceof Map) {
+                mergeConfig((Map<String, Object>) existing, (Map<String, Object>) entry.getValue());
+            } else {
+                config.put(entry.getKey(), entry.getValue());
+            }
         }
     }
 
@@ -352,9 +364,6 @@ public class NgrokInstaller {
                                                 final ConfigVersion configVersion) {
         final HashMap<String, Object> config = new HashMap<>();
         config.put("version", configVersion.getVersion());
-        if (configVersion == ConfigVersion.V2) {
-            config.put("region", "us");
-        }
         return config;
     }
 
