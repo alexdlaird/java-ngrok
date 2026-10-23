@@ -194,6 +194,17 @@ public class DefaultHttpClientTest extends NgrokTestCase {
     }
 
     @Test
+    public void testUrlWithParametersAppendedToExistingQuery()
+        throws UnsupportedEncodingException {
+        // WHEN
+        final String url = defaultHttpClient.urlWithParameters("https://example.test/api?limit=2#frag",
+            List.of(new Parameter("tunnel_name", "demo")));
+
+        // THEN
+        assertEquals("https://example.test/api?limit=2&tunnel_name=demo#frag", url);
+    }
+
+    @Test
     public void testGetRetries()
         throws IOException, InterruptedException {
         // GIVEN
