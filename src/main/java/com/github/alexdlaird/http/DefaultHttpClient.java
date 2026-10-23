@@ -345,8 +345,11 @@ public class DefaultHttpClient implements HttpClient {
     protected String urlWithParameters(final String url,
                                        final List<Parameter> parameters)
         throws UnsupportedEncodingException {
+        final int fragmentIndex = url.indexOf('#');
+        final String urlWithoutFragment = fragmentIndex >= 0 ? url.substring(0, fragmentIndex) : url;
+
         final StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(url);
+        stringBuilder.append(urlWithoutFragment);
 
         if (nonNull(parameters) && !parameters.isEmpty()) {
             boolean first = true;
@@ -354,7 +357,11 @@ public class DefaultHttpClient implements HttpClient {
                 if (!first) {
                     stringBuilder.append("&");
                 } else {
-                    stringBuilder.append("?");
+                    if (!urlWithoutFragment.contains("?")) {
+                        stringBuilder.append("?");
+                    } else if (!urlWithoutFragment.endsWith("?")) {
+                        stringBuilder.append("&");
+                    }
 
                     first = false;
                 }
@@ -363,6 +370,10 @@ public class DefaultHttpClient implements HttpClient {
                 stringBuilder.append("=");
                 stringBuilder.append(URLEncoder.encode(parameter.getValue(), encoding));
             }
+        }
+
+        if (fragmentIndex >= 0) {
+            stringBuilder.append(url.substring(fragmentIndex));
         }
 
         return stringBuilder.toString();
