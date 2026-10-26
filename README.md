@@ -1,4 +1,4 @@
-<p align="center"><img alt="java-ngrok - A Java wrapper for ngrok; programmatic tunnels for ingress, webhooks, demos, and APIs" src="logo.png" /></p>
+<p align="center"><img alt="java-ngrok - The complete ngrok agent for Java: programmatic tunnels for ingress, inspection, webhooks, demos, and APIs" src="logo.png" /></p>
 
 [![Version](https://img.shields.io/maven-central/v/com.github.alexdlaird/java-ngrok)](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok)
 [![Java Versions](https://img.shields.io/badge/Java-11+-blue)](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok)
@@ -8,14 +8,11 @@
 [![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://alexdlaird.github.io/java-ngrok/)
 [![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)](https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE)
 
-`java-ngrok` is a Java wrapper for `ngrok` that provides programmatic tunnels for ingress, webhooks, demos, and APIs.
-It downloads and manages the `ngrok` agent for you, making it available through a Java API. It runs anywhere the
-`ngrok` agent does. The library is mature and stable, and it tracks new `ngrok` releases.
-
-[`ngrok`](https://ngrok.com) is a reverse proxy that opens secure tunnels from public URLs to localhost. It's perfect
-for rapid development (test webhooks, demo local websites, enable SSH access), establishing ingress to external
-networks and devices, building production APIs (traffic policies, OAuth, load balancing), and more. And
-it's made even more powerful with native Java integration through the `java-ngrok` client.
+`java-ngrok` gives Java the complete `ngrok` agent, with programmatic tunnels for ingress, inspection, webhooks, demos,
+and APIs. [`ngrok`](https://ngrok.com) is a reverse proxy that opens secure tunnels from public URLs to localhost, and
+because `java-ngrok` runs the real agent, you get everything it offers, from traffic policies and OAuth to its web
+inspector, request replay, and `ngrok.yml` config, all callable from Java. It downloads and manages the agent for you,
+runs on Java 11+, and tracks new `ngrok` releases.
 
 ## Installation
 

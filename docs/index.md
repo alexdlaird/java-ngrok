@@ -1,4 +1,4 @@
-<p align="center"><img alt="java-ngrok - A Java wrapper for ngrok; programmatic tunnels for ingress, webhooks, demos, and APIs" src="https://github.com/alexdlaird/java-ngrok/raw/main/logo.png" /></p>
+<p align="center"><img alt="java-ngrok - The complete ngrok agent for Java: programmatic tunnels for ingress, inspection, webhooks, demos, and APIs" src="https://github.com/alexdlaird/java-ngrok/raw/main/logo.png" /></p>
 
 [![Version](https://img.shields.io/maven-central/v/com.github.alexdlaird/java-ngrok)](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok)
 [![Java Versions](https://img.shields.io/badge/Java-11+-blue)](https://central.sonatype.com/artifact/com.github.alexdlaird/java-ngrok)
@@ -8,14 +8,11 @@
 [![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://alexdlaird.github.io/java-ngrok/)
 [![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)](https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE)
 
-`java-ngrok` is a Java wrapper for `ngrok` that provides programmatic tunnels for ingress, webhooks, demos, and APIs.
-It downloads and manages the `ngrok` agent for you, making it available through a Java API. It runs anywhere the
-`ngrok` agent does. The library is mature and stable, and it tracks new `ngrok` releases.
-
-[`ngrok`](https://ngrok.com) is a reverse proxy that opens secure tunnels from public URLs to localhost. It's perfect
-for rapid development (test webhooks, demo local websites, enable SSH access), establishing ingress to external
-networks and devices, building production APIs (traffic policies, OAuth, load balancing), and more. And
-it's made even more powerful with native Java integration through the `java-ngrok` client.
+`java-ngrok` gives Java the complete `ngrok` agent, with programmatic tunnels for ingress, inspection, webhooks, demos,
+and APIs. [`ngrok`](https://ngrok.com) is a reverse proxy that opens secure tunnels from public URLs to localhost, and
+because `java-ngrok` runs the real agent, you get everything it offers, from traffic policies and OAuth to its web
+inspector, request replay, and `ngrok.yml` config, all callable from Java. It downloads and manages the agent for you,
+runs on Java 11+, and tracks new `ngrok` releases.
 
 ## Installation
 
@@ -300,7 +297,7 @@ You can override this behavior with [`JavaNgrokConfig.Builder.withConfigPath(Pat
 
 ```java
 final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-        .withConfigPath(Path.of("opt", "ngrok", "config.yml"))
+        .withConfigPath(Path.of("/opt/ngrok/config.yml"))
         .build();
 
 final NgrokClient ngrokClient = new NgrokClient.Builder()
@@ -315,7 +312,7 @@ By default, `ngrok` chooses the region with the lowest latency for you. To pick 
 region is set when the `ngrok` agent starts, so it applies to every tunnel that agent opens.
 
 ```java
-final Path configPath = Path.of("opt", "ngrok", "au.yml");
+final Path configPath = Path.of("/opt/ngrok/au.yml");
 new NgrokInstaller().installDefaultConfig(configPath,
         Map.of("agent", Map.of("connect_url", "connect.au.ngrok-agent.com:443")));
 
@@ -338,7 +335,7 @@ and passing that config to [`NgrokClient`](https://javadoc.io/doc/com.github.ale
 
 ```java
 final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-        .withNgrokPath(Path.of("usr", "local", "bin", "ngrok"))
+        .withNgrokPath(Path.of("/usr/local/bin/ngrok"))
         .build();
 
 final NgrokClient ngrokClient = new NgrokClient.Builder()
