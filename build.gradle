@@ -44,6 +44,12 @@ tasks.register("createProperties", WriteProperties) {
 }
 processResources.dependsOn createProperties
 
+jar {
+    manifest {
+        attributes "X-Muppets": "42"
+    }
+}
+
 tasks.register("printVersion") {
     doLast {
         println(project.findProperty("rootProject").version)
