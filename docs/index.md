@@ -8,11 +8,10 @@
 [![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://alexdlaird.github.io/java-ngrok/)
 [![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)](https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE)
 
-`java-ngrok` gives Java the complete `ngrok` agent, with programmatic tunnels for ingress, inspection, webhooks, demos,
-and APIs. [`ngrok`](https://ngrok.com) is a reverse proxy that opens secure tunnels from public URLs to localhost, and
-because `java-ngrok` runs the real agent, you get everything it offers, from traffic policies and OAuth to its web
-inspector, request replay, and `ngrok.yml` config, all callable from Java. It downloads and manages the agent for you,
-runs on Java 11+, and tracks new `ngrok` releases.
+`java-ngrok` gives Java the complete [`ngrok` agent](https://ngrok.com/docs/gateway/agent), with programmatic tunnels
+for ingress, inspection, webhooks, demos, and APIs. [`ngrok`](https://ngrok.com) is a reverse proxy that opens secure
+tunnels from public URLs to localhost, and because `java-ngrok` runs the real agent, you get everything it offers, from
+traffic policies and OAuth to its web inspector and request replay, all callable from Java.
 
 ## Installation
 
