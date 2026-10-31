@@ -18,14 +18,18 @@ class that lets you use the config to enable `ngrok` and pass it some useful par
 public class NgrokConfiguration {
     private boolean enabled;
 
+    private Path binaryPath;
+
     private String publicUrl;
+
+    private NgrokClient ngrokClient;
 }
 ```
 
 And pass parameters to your Spring application through
 [your config file](https://github.com/alexdlaird/java-ngrok-example-spring/blob/main/src/main/resources/application.properties):
 
-```yaml
+```properties
 spring.profiles.active=dev
 ngrok.enabled=true
 ```
@@ -49,8 +53,16 @@ public class NgrokWebServerEventListener {
     public void onApplicationEvent(final WebServerInitializedEvent event) {
         // Only install and initialize ngrok if we're actually using it
         if (ngrokConfiguration.isEnabled()) {
+            final JavaNgrokConfig.Builder javaNgrokConfigBuilder = new JavaNgrokConfig.Builder();
+            if (nonNull(ngrokConfiguration.getBinaryPath())) {
+                log.info("Using {} as the ngrok binary", ngrokConfiguration.getBinaryPath());
+                javaNgrokConfigBuilder.withNgrokPath(ngrokConfiguration.getBinaryPath());
+            }
+
             final NgrokClient ngrokClient = new NgrokClient.Builder()
+                    .withJavaNgrokConfig(javaNgrokConfigBuilder.build())
                     .build();
+            ngrokConfiguration.setNgrokClient(ngrokClient);
 
             final int port = event.getWebServer().getPort();
 
@@ -60,7 +72,7 @@ public class NgrokWebServerEventListener {
             final Tunnel tunnel = ngrokClient.connect(createTunnel);
             final String publicUrl = tunnel.getPublicUrl();
 
-            log.info(String.format("ngrok tunnel \"%s\" -> \"http://127.0.0.1:%d\"",publicUrl, port));
+            log.info("ngrok tunnel \"{}\" -> \"http://127.0.0.1:{}\"", publicUrl, port);
 
             // Update any base URLs or webhooks to use the public ngrok URL
             ngrokConfiguration.setPublicUrl(publicUrl);
@@ -78,7 +90,7 @@ Now Spring can be started by the usual means, setting `ngrok.enabled` in the con
 
 1. Run `./gradlew build` to build the application
 1. Start application with `java -jar build/libs/java-ngrok-example-spring-1.0.0-SNAPSHOT.jar`
-1. Check the logs for the `ngrok` tunnel's public URL, which should tunnel to  `http://localhost:8080`
+1. Check the logs for the `ngrok` tunnel's public URL, which should tunnel to `http://localhost:8080`
 
 
 ## Dropwizard
@@ -87,7 +99,7 @@ Now Spring can be started by the usual means, setting `ngrok.enabled` in the con
 ### Configuration
 
 Create
-a [`NgrokConfiguration`](https://github.com/alexdlaird/java-ngrok-example-dropwizard/blob/main/src/main/java/com/github/alexdlaird/conf/NgrokConfiguration.java)
+a [`NgrokConfiguration`](https://github.com/alexdlaird/java-ngrok-example-dropwizard/blob/main/src/main/java/com/github/alexdlaird/ngrok/example/dropwizard/conf/NgrokConfiguration.java)
 class that lets you use the config to enable `ngrok` and pass it some useful parameters.
 
 ```java
@@ -95,8 +107,18 @@ public class NgrokConfiguration {
     @JsonProperty
     private boolean enabled = false;
 
+    private NgrokClient ngrokClient;
+
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public void setNgrokClient(final NgrokClient ngrokClient) {
+        this.ngrokClient = ngrokClient;
+    }
+
+    public NgrokClient getNgrokClient() {
+        return ngrokClient;
     }
 }
 ```
@@ -106,11 +128,14 @@ to [the Dropwizard Configuration for your Application](https://www.dropwizard.io
 
 ```java
 public class JavaNgrokExampleDropwizardConfiguration extends Configuration {
+
     @JsonProperty
     private String environment = "dev";
 
     @JsonProperty("ngrok")
     private NgrokConfiguration ngrokConfiguration;
+
+    private String publicUrl;
 
     public String getEnvironment() {
         return environment;
@@ -119,11 +144,19 @@ public class JavaNgrokExampleDropwizardConfiguration extends Configuration {
     public NgrokConfiguration getNgrokConfiguration() {
         return ngrokConfiguration;
     }
+
+    public String getPublicUrl() {
+        return publicUrl;
+    }
+
+    public void setPublicUrl(String publicUrl) {
+        this.publicUrl = publicUrl;
+    }
 }
 ```
 
 And pass parameters to your Dropwizard application through
-[your config file](https://github.com/alexdlaird/java-ngrok-example-dropwizard/blob/main/config.yml):
+[your config file](https://github.com/alexdlaird/java-ngrok-example-dropwizard/blob/main/src/main/resources/config.yml):
 
 ```yaml
 ngrok:
@@ -134,12 +167,12 @@ Now Dropwizard can be started by the usual means, setting `ngrok.enabled` in the
 
 1. Run `mvn install` to build the application
 1. Start application with `java -jar target/java-ngrok-example-dropwizard-1.0.0-SNAPSHOT.jar server src/main/resources/config.yml`
-1. Check the logs for the `ngrok` tunnel's public URL, which should tunnel to  `http://localhost:8080`
+1. Check the logs for the `ngrok` tunnel's public URL, which should tunnel to `http://localhost:8080`
 
 ### Application Integration
 
 If `ngrok.enabled` config flag is set, `java-ngrok` will be initialized when Dropwizard is booting. An easy place to do
-this is in the `run()` method of [the Application](https://github.com/alexdlaird/java-ngrok-example-dropwizard/blob/main/src/main/java/com/github/alexdlaird/JavaNgrokExampleDropwizardApplication.java).
+this is in the `run()` method of [the Application](https://github.com/alexdlaird/java-ngrok-example-dropwizard/blob/main/src/main/java/com/github/alexdlaird/ngrok/example/dropwizard/JavaNgrokExampleDropwizardApplication.java).
 
 ```java
 public class JavaNgrokExampleDropwizardApplication extends Application<JavaNgrokExampleDropwizardConfiguration> {
@@ -154,6 +187,7 @@ public class JavaNgrokExampleDropwizardApplication extends Application<JavaNgrok
                 configuration.getNgrokConfiguration().isEnabled()) {
             final NgrokClient ngrokClient = new NgrokClient.Builder()
                     .build();
+            configuration.getNgrokConfiguration().setNgrokClient(ngrokClient);
 
             final int port = getPort(configuration);
 
@@ -169,6 +203,8 @@ public class JavaNgrokExampleDropwizardApplication extends Application<JavaNgrok
             configuration.setPublicUrl(publicUrl);
             initWebhooks(publicUrl);
         }
+
+        // ... Implement the rest of our Dropwizard application
     }
 
     private int getPort(JavaNgrokExampleDropwizardConfiguration configuration) {
@@ -206,7 +242,7 @@ class Module extends AbstractModule {
 }
 ```
 
-Then create a [`NgrokApplicatinLifecycle` class](https://github.com/alexdlaird/java-ngrok-example-play/blob/main/app/services/NgrokApplicationLifecycle.scala).
+Then create a [`NgrokApplicationLifecycle` class](https://github.com/alexdlaird/java-ngrok-example-play/blob/main/app/services/NgrokApplicationLifecycle.scala).
 If `ngrok.enabled` config flag is set, `java-ngrok` will be initialized when Play is booting in a `dev` environment.
 
 ```scala
@@ -228,20 +264,23 @@ class NgrokApplicationLifecycle @Inject()(config: Configuration, lifecycle: Appl
     val tunnel: Tunnel = ngrokClient.connect(createTunnel)
 
     println(s" * ngrok tunnel \"${tunnel.getPublicUrl}\" -> \"http://localhost:$port\"")
+
+    lifecycle.addStopHook(() => Future.successful(ngrokClient.kill()))
   }
 }
 ```
 
 Pass parameters to your Play application through
 [your config file](https://github.com/alexdlaird/java-ngrok-example-play/blob/main/conf/application.conf) (including
-making `.ngrok.io` an allowed host):
+making `ngrok`'s domains allowed hosts):
 
 ```
+environment="dev"
 ngrok {
     enabled=true
 }
 play.filters.hosts {
-  allowed = [".ngrok.io", "localhost:9000"]
+  allowed = [".ngrok.app", ".ngrok-free.app", ".ngrok.dev", ".ngrok-free.dev", ".ngrok.io", "localhost:9000"]
 }
 ```
 
@@ -249,7 +288,7 @@ Now Play can be started by the usual means, setting `ngrok.enabled` in the confi
 
 1. Run `sbt compile package` to build the application
 1. Start application with `sbt run`
-1. Check the logs for the `ngrok` tunnel's public URL, which should tunnel to  `http://localhost:9000`
+1. Request `http://localhost:9000` (Play starts the application on the first request), then check the logs for the `ngrok` tunnel's public URL, which should tunnel to `http://localhost:9000`
 
 ## Docker
 
@@ -272,17 +311,18 @@ RUN mkdir -p /root/.config/ngrok
 RUN echo "version: 3\nagent:\n  web_addr: 0.0.0.0:4040" >> /root/.config/ngrok/ngrok.yml
 
 # Provision your Java application
-ENV NGROK_BINARY_PATH="/usr/local/bin/ngrok"
+ENV JAVA_NGROK_NGROK_PATH="/usr/local/bin/ngrok"
 COPY my-java-ngrok-app.jar /root/my-java-ngrok-app.jar
 CMD ["java", "-jar", "/root/my-java-ngrok-app.jar"]
 ```
 
-In the above example, `ngrok` will be installed to `/usr/local/bin/ngrok`. You'll need to [specify this binary path](https://alexdlaird.github.io/java-ngrok/#binary-path)
-for `ngrok` in your Java application to ensure `java-ngrok`'s installer is bypassed.
+In the above example, `ngrok` will be installed to `/usr/local/bin/ngrok`, and `JAVA_NGROK_NGROK_PATH` tells `java-ngrok`
+to use that binary, so its installer is bypassed. You can instead [specify this binary path](https://alexdlaird.github.io/java-ngrok/#binary-path)
+for `ngrok` in your Java application.
 
 ```java
 final JavaNgrokConfig javaNgrokConfig = new JavaNgrokConfig.Builder()
-        .withNgrokPath(Path.of("usr", "local", "bin", "ngrok"))
+        .withNgrokPath(Path.of("/usr/local/bin/ngrok"))
         .build();
 
 final NgrokClient ngrokClient = new NgrokClient.Builder()
@@ -322,7 +362,7 @@ If you want to use `ngrok`'s web inspector, be sure to expose its port. Be sure 
 [sets `web_addr: 0.0.0.0:4040`](https://ngrok.com/docs/agent/config/v3/#web_addr).
 
 ```sh
-docker run --env-file .env -p 4040:4040 -it my-java-ngrok
+docker run --env-file .env -p 127.0.0.1:4040:4040 -it my-java-ngrok
 ```
 
 ### Docker Compose
@@ -337,7 +377,7 @@ services:
     volumes:
       - ./ngrok.yml:/root/.config/ngrok/ngrok.yml
     ports:
-      - 4040:4040
+      - "127.0.0.1:4040:4040"
 ```
 
 Then launch it with:
@@ -359,7 +399,7 @@ example above, but it could be modified to work with other frameworks.
 ```java
 @ExtendWith(DropwizardExtensionsSupport.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class JavaNgrokTestCase extends TestCase {
+class JavaNgrokTestCase {
 
     private final static DropwizardAppExtension<JavaNgrokExampleDropwizardConfiguration> dropwizardAppExtension = new DropwizardAppExtension<>(
         JavaNgrokExampleDropwizardApplication.class,
@@ -368,7 +408,7 @@ class JavaNgrokTestCase extends TestCase {
     
     private NgrokClient ngrokClient;
     
-    private String baseUrl;
+    protected String baseUrl;
     
     @BeforeAll
     public void setUpClass() {
@@ -376,7 +416,7 @@ class JavaNgrokTestCase extends TestCase {
                 .build();
 
         final CreateTunnel createTunnel = new CreateTunnel.Builder()
-                .withAddr(EXT.getLocalPort())
+                .withAddr(dropwizardAppExtension.getLocalPort())
                 .build();
         final Tunnel tunnel = ngrokClient.connect(createTunnel);
         this.baseUrl = tunnel.getPublicUrl();
@@ -385,7 +425,7 @@ class JavaNgrokTestCase extends TestCase {
     }
 
     @AfterAll
-    public void tearUpClass() {
+    public void tearDownClass() {
         ngrokClient.kill();
     }
 }

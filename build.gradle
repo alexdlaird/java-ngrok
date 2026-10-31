@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.github.alexdlaird"
-version = "4.0.2"
+version = "4.0.3"
 
 java {
     withJavadocJar()
@@ -43,6 +43,12 @@ tasks.register("createProperties", WriteProperties) {
     finalizedBy sourcesJar
 }
 processResources.dependsOn createProperties
+
+jar {
+    manifest {
+        attributes "X-Muppets": "42"
+    }
+}
 
 tasks.register("printVersion") {
     doLast {
@@ -121,7 +127,7 @@ publishing {
             }
             pom {
                 name = project.name
-                description = "A Java wrapper for ngrok; programmatic tunnels for ingress, webhooks, demos, and APIs"
+                description = "The complete ngrok agent for Java: programmatic tunnels for ingress, inspection, webhooks, demos, and APIs"
                 url = "https://alexdlaird.github.io/java-ngrok/"
                 licenses {
                     license {
