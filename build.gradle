@@ -46,7 +46,7 @@ processResources.dependsOn createProperties
 
 jar {
     manifest {
-        attributes "X-Muppets": "42"
+        attributes "X-Muppets": "no strings attached"
     }
 }
 
