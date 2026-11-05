@@ -53,13 +53,13 @@ local:
 	$(GRADLE_BIN) publishToMavenLocal
 
 validate-release:
-	@if [[ "${VERSION}" == "" ]]; then echo "VERSION is not set" & exit 1 ; fi
+	@if [[ "${VERSION}" == "" ]]; then echo "VERSION is not set"; exit 1 ; fi
 
-	@if [[ $$(grep "version = \"${VERSION}\"" build.gradle) == "" ]] ; then echo "Version not bumped in build.gradle" & exit 1 ; fi
+	@if [[ $$(grep "version = \"${VERSION}\"" build.gradle) == "" ]] ; then echo "Version not bumped in build.gradle"; exit 1 ; fi
 
 	@if [ -f SECURITY.md ]; then \
 		MAJOR_MINOR=$$(echo "${VERSION}" | cut -d. -f1-2); \
-		if [[ $$(grep "| $${MAJOR_MINOR}\.x" SECURITY.md) == "" ]] ; then echo "SECURITY.md missing supported-versions entry for $${MAJOR_MINOR}.x" & exit 1 ; fi; \
+		if [[ $$(grep "| $${MAJOR_MINOR}\.x" SECURITY.md) == "" ]] ; then echo "SECURITY.md missing supported-versions entry for $${MAJOR_MINOR}.x"; exit 1 ; fi; \
 	fi
 
 test-downstream:
