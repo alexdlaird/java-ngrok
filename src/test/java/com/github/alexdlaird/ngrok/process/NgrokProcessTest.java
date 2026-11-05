@@ -11,6 +11,7 @@ import com.github.alexdlaird.ngrok.NgrokTestCase;
 import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.installer.ConfigVersion;
 import com.github.alexdlaird.ngrok.installer.NgrokInstaller;
+import com.github.alexdlaird.util.ProcessUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import static com.github.alexdlaird.ngrok.installer.NgrokInstaller.WINDOWS;
@@ -30,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 
 public class NgrokProcessTest extends NgrokTestCase {
@@ -227,6 +230,44 @@ public class NgrokProcessTest extends NgrokTestCase {
         // THEN
         assertTrue(ngrokProcess2.isRunning());
         assertFalse(ngrokProcess2.getProcessMonitor().isMonitoring());
+    }
+
+    @Test
+    public void testLogEventCallbackErrorDoesNotStopNgrok()
+        throws InterruptedException {
+        testRequiresEnvVar("NGROK_AUTHTOKEN");
+
+        // GIVEN
+        final Function<NgrokLog, Void> failingLogEventCallback = ngrokLog -> {
+            throw new IllegalStateException("Callback failed");
+        };
+        final JavaNgrokConfig javaNgrokConfig2 = new JavaNgrokConfig.Builder(javaNgrokConfig)
+            .withLogEventCallback(failingLogEventCallback)
+            .build();
+        ngrokProcess2 = new NgrokProcess(javaNgrokConfig2, ngrokInstaller);
+
+        // WHEN
+        ngrokProcess2.start();
+        Thread.sleep(1000);
+
+        // THEN
+        assertTrue(ngrokProcess2.isRunning());
+        assertTrue(ngrokProcess2.getProcessMonitor().isMonitoring());
+    }
+
+    @Test
+    public void testUpdateRunsUpdateCommand() {
+        // GIVEN
+        try (MockedStatic<ProcessUtils> processUtils = Mockito.mockStatic(ProcessUtils.class)) {
+            processUtils.when(() -> ProcessUtils.captureRunProcess(any(), any())).thenReturn("");
+
+            // WHEN
+            ngrokProcess.update();
+
+            // THEN
+            processUtils.verify(() -> ProcessUtils.captureRunProcess(javaNgrokConfig.getNgrokPath(),
+                List.of("update")));
+        }
     }
 
     @Test
