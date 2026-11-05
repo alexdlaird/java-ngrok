@@ -13,7 +13,7 @@ on:
   workflow_call:
 
 permissions:
-  contents: write
+  contents: read
   issues: none
   pull-requests: none
 
@@ -24,6 +24,8 @@ jobs:
   validate:
     name: Validate
     uses: ./.github/workflows/validate.yml
+    permissions:
+      contents: write
     secrets: inherit
 
   build:
