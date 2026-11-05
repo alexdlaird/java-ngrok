@@ -5,10 +5,13 @@ import com.github.alexdlaird.ngrok.process.NgrokProcess;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Objects.nonNull;
 
@@ -16,6 +19,8 @@ import static java.util.Objects.nonNull;
  * Convenience methods for executing processes and capturing their output.
  */
 public class ProcessUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessUtils.class);
+
     /**
      * Start a blocking <code>ngrok</code> process with the binary at the given path and the passed args. When the
      * process returns, so will this method, and the captured output from the process along with it.
@@ -56,6 +61,27 @@ public class ProcessUtils {
         }
 
         return result;
+    }
+
+    /**
+     * Read and discard the rest of a process's output on a daemon thread, until the output ends or the reader is
+     * closed. A process writing to a pipe that nothing reads blocks once the pipe's buffer is full.
+     *
+     * @param reader The reader for the process's output.
+     * @return The thread doing the reading.
+     */
+    public static Thread drainInBackground(final BufferedReader reader) {
+        final Thread thread = new Thread(() -> {
+            try {
+                reader.transferTo(Writer.nullWriter());
+            } catch (final IOException e) {
+                LOGGER.trace("Stopped draining process output, the reader was closed", e);
+            }
+        }, "java-ngrok-output-drain");
+        thread.setDaemon(true);
+        thread.start();
+
+        return thread;
     }
 
     private static String captureOutput(final BufferedReader reader)

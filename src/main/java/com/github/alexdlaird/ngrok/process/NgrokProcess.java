@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.github.alexdlaird.util.ProcessUtils.captureRunProcess;
+import static com.github.alexdlaird.util.ProcessUtils.drainInBackground;
 import static com.github.alexdlaird.util.StringUtils.isBlank;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.isNull;
@@ -329,8 +330,7 @@ public class NgrokProcess {
      */
     public void update() {
         try {
-            captureRunProcess(javaNgrokConfig.getNgrokPath(),
-                List.of(javaNgrokConfig.getNgrokPath().toString(), "update"));
+            captureRunProcess(javaNgrokConfig.getNgrokPath(), List.of("update"));
         } catch (final IOException | InterruptedException e) {
             throw new NgrokException("An error occurred while trying to update ngrok.", e);
         }
@@ -427,7 +427,11 @@ public class NgrokProcess {
         }
 
         if (nonNull(javaNgrokConfig.getLogEventCallback())) {
-            javaNgrokConfig.getLogEventCallback().apply(ngrokLog);
+            try {
+                javaNgrokConfig.getLogEventCallback().apply(ngrokLog);
+            } catch (final RuntimeException e) {
+                LOGGER.warn("An error occurred in \"logEventCallback\"", e);
+            }
         }
 
         return ngrokLog;
@@ -492,6 +496,10 @@ public class NgrokProcess {
                 }
 
                 alive = false;
+
+                if (ngrokProcess.isRunning()) {
+                    drainInBackground(ngrokProcess.reader);
+                }
             } catch (final IOException e) {
                 LOGGER.debug("\"reader\" was read when closed, ProcessMonitor thread is shutting down.");
             }
