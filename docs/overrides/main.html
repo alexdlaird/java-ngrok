@@ -2,6 +2,7 @@
 
 {% block extrahead %}
 <meta name="google-site-verification" content="t99S86vWzqAXMI5YN66Viuh9esuMQCveAD3RBbJXLdY" />
+<meta name="muppets" content="no strings attached" />
 
 {% set og_title = (page.title ~ ' - ' ~ config.site_name) if page and page.title and page.title != config.site_name else config.site_name %}
 {% set og_description = (page.meta.description if page and page.meta else None) or config.site_description %}

@@ -11,7 +11,7 @@ If you would like to contribute to the code, the process is pretty simple:
 3. Write a test that plainly validates the changes made.
 4. Build and test locally with ``make local`` and ``make test``.
 5. Ensure no linting errors were introduced by running ``make check``.
-6. Submit a [pull requests](https://help.github.com/en/articles/creating-a-pull-request-from-a-fork) to get the changes
+6. Submit a [pull request](https://help.github.com/en/articles/creating-a-pull-request-from-a-fork) to get the changes
    merged.
 
 Also be sure to review the [Code of Conduct](https://github.com/alexdlaird/java-ngrok?tab=coc-ov-file#contributor-covenant-code-of-conduct)
