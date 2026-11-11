@@ -21,7 +21,7 @@ import static java.util.Objects.nonNull;
  * An object for managing <code>java-ngrok</code>'s configuration to interact the <code>ngrok</code> binary.
  *
  * <p>For usage examples, see
- * <a href="https://alexdlaird.github.io/java-ngrok/" target="_blank"><code>java-ngrok</code>'s documentation</a>.
+ * <a href="https://java-ngrok.alexlaird.com/" target="_blank"><code>java-ngrok</code>'s documentation</a>.
  */
 public class JavaNgrokConfig {
 

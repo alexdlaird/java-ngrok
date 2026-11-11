@@ -43,7 +43,7 @@ import static java.util.Objects.nonNull;
  * A helper for downloading and installing <code>ngrok</code> for the current system.
  *
  * <p>For usage examples, see
- * <a href="https://alexdlaird.github.io/java-ngrok/" target="_blank"><code>java-ngrok</code>'s documentation</a>.
+ * <a href="https://java-ngrok.alexlaird.com/" target="_blank"><code>java-ngrok</code>'s documentation</a>.
  */
 public class NgrokInstaller {
 

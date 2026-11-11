@@ -48,7 +48,7 @@ import static java.util.Objects.nonNull;
  * Can be configured with {@link JavaNgrokConfig}.
  *
  * <p>For usage examples, see
- * <a href="https://alexdlaird.github.io/java-ngrok/" target="_blank"><code>java-ngrok</code>'s documentation</a>.
+ * <a href="https://java-ngrok.alexlaird.com/" target="_blank"><code>java-ngrok</code>'s documentation</a>.
  */
 public class NgrokClient {
 

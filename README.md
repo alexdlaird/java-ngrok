@@ -5,7 +5,7 @@
 [![Coverage](https://img.shields.io/codecov/c/github/alexdlaird/java-ngrok)](https://codecov.io/gh/alexdlaird/java-ngrok)
 [![Build](https://img.shields.io/github/actions/workflow/status/alexdlaird/java-ngrok/build.yml)](https://github.com/alexdlaird/java-ngrok/actions/workflows/build.yml)
 [![Code Quality](https://api.codacy.com/project/badge/Grade/940d16178f8f4e8abfcf9bf2873894b3)](https://app.codacy.com/gh/alexdlaird/java-ngrok?utm_source=github.com&utm_medium=referral&utm_content=alexdlaird/java-ngrok&utm_campaign=Badge_Grade)
-[![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://alexdlaird.github.io/java-ngrok/)
+[![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://java-ngrok.alexlaird.com/)
 [![GitHub License](https://img.shields.io/github/license/alexdlaird/java-ngrok)](https://github.com/alexdlaird/java-ngrok/blob/main/LICENSE)
 
 `java-ngrok` gives Java the complete [`ngrok` agent](https://ngrok.com/docs/gateway/agent), with programmatic tunnels
@@ -69,17 +69,17 @@ a [`CreateTunnel`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/lates
 that allows you to pass additional properties that
 are supported by `ngrok` (or [`withName()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/protocol/CreateTunnel.Builder.html#withName(java.lang.String))
 to use a tunnel defined in `ngrok`'s config
-file), [as documented here](https://alexdlaird.github.io/java-ngrok/#tunnel-configuration).
+file), [as documented here](https://java-ngrok.alexlaird.com/#tunnel-configuration).
 
 > **Note:** `java-ngrok` unifies `ngrok`'s "tunnel" (v2) and "endpoint" (v3) concepts behind a single API:
 > `connect()` returns a `Tunnel` and handles the differences for you through the `JavaNgrokConfig.configVersion` you
-> set. All `ngrok` features are available to you through this. For v3-specific Endpoints, see [Using v3 Endpoints](https://alexdlaird.github.io/java-ngrok/#using-v3-endpoints).
+> set. All `ngrok` features are available to you through this. For v3-specific Endpoints, see [Using v3 Endpoints](https://java-ngrok.alexlaird.com/#using-v3-endpoints).
 
 ### `ngrok`'s API
 
 The [`api()`](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest/com.github.alexdlaird.ngrok/com/github/alexdlaird/ngrok/NgrokClient.html#api(java.util.List)) method allows you to use the local
 `ngrok` agent to make requests against [the `ngrok` API](https://ngrok.com/docs/agent/cli-api/), if you
-have [set an API key](https://alexdlaird.github.io/java-ngrok/#setting-the-authtoken-or-api_key).
+have [set an API key](https://java-ngrok.alexlaird.com/#setting-the-authtoken-or-api_key).
 For example, here's how you would reserve a `ngrok` domain, then create a Cloud Endpoint with an associated traffic
 policy:
 
@@ -113,15 +113,15 @@ see [`ngrok`'s official documentation](https://ngrok.com/docs/agent/cli/).
 ## Documentation
 
 For more advanced usage, `java-ngrok`'s official documentation is available
-[here on GitHub](https://alexdlaird.github.io/java-ngrok/), with additional API documentation on [javadoc.io](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest).
+[here on GitHub](https://java-ngrok.alexlaird.com/), with additional API documentation on [javadoc.io](https://javadoc.io/doc/com.github.alexdlaird/java-ngrok/latest).
 
 ### Integration Examples
 
-- [Spring](https://alexdlaird.github.io/java-ngrok/integration/#spring)
-- [Dropwizard](https://alexdlaird.github.io/java-ngrok/integration/#dropwizard)
-- [Play (Scala)](https://alexdlaird.github.io/java-ngrok/integration/#play-scala)
-- [Docker](https://alexdlaird.github.io/java-ngrok/integration/#docker)
-- [End-to-End Testing](https://alexdlaird.github.io/java-ngrok/integration/#end-to-end-testing)
+- [Spring](https://java-ngrok.alexlaird.com/integration/#spring)
+- [Dropwizard](https://java-ngrok.alexlaird.com/integration/#dropwizard)
+- [Play (Scala)](https://java-ngrok.alexlaird.com/integration/#play-scala)
+- [Docker](https://java-ngrok.alexlaird.com/integration/#docker)
+- [End-to-End Testing](https://java-ngrok.alexlaird.com/integration/#end-to-end-testing)
 
 ### Java 8
 

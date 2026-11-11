@@ -317,7 +317,7 @@ CMD ["java", "-jar", "/root/my-java-ngrok-app.jar"]
 ```
 
 In the above example, `ngrok` will be installed to `/usr/local/bin/ngrok`, and `JAVA_NGROK_NGROK_PATH` tells `java-ngrok`
-to use that binary, so its installer is bypassed. You can instead [specify this binary path](https://alexdlaird.github.io/java-ngrok/#binary-path)
+to use that binary, so its installer is bypassed. You can instead [specify this binary path](https://java-ngrok.alexlaird.com/#binary-path)
 for `ngrok` in your Java application.
 
 ```java
