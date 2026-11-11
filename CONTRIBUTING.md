@@ -9,7 +9,8 @@ If you would like to contribute to the code, the process is pretty simple:
    and [other documentation](https://java-ngrok.alexlaird.com/), and [`ngrok`'s documentation](https://ngrok.com/docs).
 2. Fork [the repository on GitHub](https://github.com/alexdlaird/java-ngrok) and start implementing changes.
 3. Write a test that plainly validates the changes made.
-4. Build and test locally with ``make local`` and ``make test``.
+4. Build and test locally with ``make local`` and ``make test``, then run ``make test-downstream`` to ensure
+   [java-ngrok-example-dropwizard](https://github.com/alexdlaird/java-ngrok-example-dropwizard) still works with your changes.
 5. Ensure no linting errors were introduced by running ``make check``.
 6. Submit a [pull request](https://help.github.com/en/articles/creating-a-pull-request-from-a-fork) to get the changes
    merged.
